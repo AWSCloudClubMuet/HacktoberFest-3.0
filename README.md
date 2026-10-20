@@ -1,26 +1,18 @@
-# 🚀 HacktoberFest-Hackathon 2025 - Team Quark AI
+# 🚀 HacktoberFest-Hackathon 2026
 
-Welcome to the **HacktoberFest-Hackathon 2025**! 🎉  
+Welcome to the **HacktoberFest-Hackathon 2026**! 🎉  
 This repository is the central workspace for all participants to collaborate, code, and submit their projects. Read the instructions carefully to understand the workflow and rules for the event.
 
 ---
 
 ## 🏁 Hackathon Overview
 
-The **Hackathon 2025** brings together creative developers, designers, and innovators to solve real-world problems through technology.  
+The **Hackathon 2026** brings together creative developers, designers, and innovators to solve real-world problems through technology.  
 Your goal is to design, develop, and deliver a working solution.
 
-<<<<<<< HEAD
 - **Format:** Team-based hackathon  
-- **Duration:** 7 hrs  
+- **Duration:** 6 hrs  
 - **Submission:** Teams will fork this repo, develop their solution, and submit via Pull Request to the `submission` branch.  
-=======
-- **Format:** Team-based hackathon
-- **Duration:** 7 hrs
-- **Submission:** Teams will fork this repo, develop their solution, and submit via Pull Request to the `submission` branch.
->>>>>>> 110c0da95bb79f73a4d76277c52351c15878f14f
-
----
 
 ## 🧰 Prerequisites
 
@@ -55,29 +47,14 @@ To ensure smooth participation, follow the official workflow and collaboration r
 
 ## ⏱ Time Limits
 
-<<<<<<< HEAD
 - Each team will have **7 hrs** to complete their project.  
 - **Pull Requests must be submitted before the deadline.**  
 - Late submissions will **not** be considered, regardless of progress.  
-=======
-- Each team will have **7 hrs** to complete their project.
-- **Pull Requests must be submitted before the deadline.**
-- Late submissions will **not** be considered, regardless of progress.
->>>>>>> 110c0da95bb79f73a4d76277c52351c15878f14f
-
----
 
 ## 🚫 Disqualification Rules
 
-<<<<<<< HEAD
 - ❌ **Late Pull Requests** (after the deadline) will not be accepted.  
-=======
-- ❌ **Late Pull Requests** (after the deadline) will not be accepted.
->>>>>>> 110c0da95bb79f73a4d76277c52351c15878f14f
-
 Ensure all work is original and created during the event timeframe.
-
----
 
 ## 💬 Need Help?
 
