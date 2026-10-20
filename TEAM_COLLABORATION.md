@@ -42,7 +42,7 @@ Example:
 - One person should handle merging at a time to prevent conflicts.
 - Run tests or check app functionality before every commit.
 - Communicate code changes before integrating them.
-- Document any major change in your `README.md` or comments.
+- Document any major change in your Projects Folder `README.md`.
 
 ---
 
