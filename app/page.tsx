@@ -496,7 +496,7 @@ export default function Page() {
                   {myApplications.length === 0 && <div className="empty-state"><Send /><h3>No applications yet</h3><p>When you apply to a gig, its status will show up here.</p></div>}
                   <div className="activity-list">
                     {myApplications.map((app) => (
-                      <Card key={app.id} className="activity-card">
+                      <Card key={app.id} className="activity-card clickable" onClick={() => setSelectedGigId(app.gig_id)}>
                         <div className="row-between">
                           <button className="link-title" onClick={() => setSelectedGigId(app.gig_id)}>{app.gig_title}</button>
                           <span className="badge-row"><StatusBadge status={app.gig_status} /><StatusBadge status={app.status} /></span>
@@ -515,15 +515,15 @@ export default function Page() {
                       const gigApps = appsForGig(gig.id)
                       const accepted = gigApps.find((a) => a.status === 'Accepted')
                       return (
-                        <Card key={gig.id} className="activity-card">
+                        <Card key={gig.id} className="activity-card clickable" onClick={() => setSelectedGigId(gig.id)}>
                           <div className="row-between">
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status={gig.display_status} />
                           </div>
                           <span className="activity-meta">{gig.type} · {gig.category} · {paymentLabel(gig.payment_type)}{gig.budget ? ` · PKR ${Number(gig.budget).toLocaleString('en-US')}` : ''} · Deadline {deadlineInfo(gig.deadline).full}</span>
-                          {accepted && <p className="activity-message">Working with <button className="link-inline" onClick={() => openProfile(accepted.applicant_id)}>{accepted.applicant_name}</button></p>}
+                          {accepted && <p className="activity-message">Working with <button className="link-inline" onClick={(e) => { e.stopPropagation(); openProfile(accepted.applicant_id) }}>{accepted.applicant_name}</button></p>}
                           {gigApps.length > 0 && (
-                            <div className="applicant-list">
+                            <div className="applicant-list" onClick={(e) => e.stopPropagation()}>
                               {gigApps.map((app) => (
                                 <div key={app.id} className="applicant-row">
                                   <div className="person"><Avatar name={app.applicant_name} id={app.applicant_id} size="sm" /><div><button className="link-inline strong" onClick={() => openProfile(app.applicant_id)}>{app.applicant_name}</button><span>{app.applicant_major}</span></div></div>
@@ -538,7 +538,7 @@ export default function Page() {
                               ))}
                             </div>
                           )}
-                          <div className="card-actions">
+                          <div className="card-actions" onClick={(e) => e.stopPropagation()}>
                             {gig.display_status === 'In Progress' && <Button size="sm" onClick={() => doGigStatus(gig, 'Completed')}><Check data-icon="inline-start" />Mark completed</Button>}
                             {gig.display_status === 'Open' && <Button size="sm" variant="outline" className="btn-danger" onClick={() => doGigStatus(gig, 'Cancelled')}>Cancel gig</Button>}
                             {gig.display_status === 'Completed' && !myReviewFor(gig.id) && gig.accepted_applicant_id && (
@@ -558,18 +558,18 @@ export default function Page() {
                       const otherId = gig.user_id === me.id ? gig.accepted_applicant_id : gig.user_id
                       const other = users.find((u) => u.id === otherId)
                       return (
-                        <Card key={gig.id} className="activity-card">
+                        <Card key={gig.id} className="activity-card clickable" onClick={() => setSelectedGigId(gig.id)}>
                           <div className="row-between">
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status="Completed" />
                           </div>
                           <p className="activity-message">How did it go with {other?.name}?</p>
-                          <div className="card-actions"><Button size="sm" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {other?.name.split(' ')[0]}</Button></div>
+                          <div className="card-actions" onClick={(e) => e.stopPropagation()}><Button size="sm" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {other?.name.split(' ')[0]}</Button></div>
                         </Card>
                       )
                     })}
                     {reviews.filter((r) => r.reviewer_id === me.id).map((r) => (
-                      <Card key={r.id} className="activity-card">
+                      <Card key={r.id} className="activity-card clickable" onClick={() => setSelectedGigId(r.gig_id)}>
                         <div className="row-between"><span className="strong-text">{r.gig_title}</span><Stars rating={r.rating} /></div>
                         <p className="activity-message">You reviewed {users.find((u) => u.id === r.reviewee_id)?.name}: “{r.comment}”</p>
                       </Card>

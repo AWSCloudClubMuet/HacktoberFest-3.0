@@ -77,6 +77,8 @@ input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
 .activity-tabs button[data-active], .activity-tabs button[aria-selected='true'] { color: #e96955; border-bottom-color: #e96955; font-weight: 700; background: transparent; }
 .activity-list { display: flex; flex-direction: column; gap: 11px; margin-top: 20px; }
 .activity-card { background: #fff; border: 1px solid #e9e5df; border-radius: 10px; padding: 16px 18px; gap: 8px; box-shadow: none; }
+.activity-card.clickable { cursor: pointer; }
+.activity-card.clickable:hover { border-color: #d9d2c7; }
 .row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .badge-row { display: inline-flex; gap: 6px; }
 .link-title { background: none; border: 0; padding: 0; font-size: 13px; font-weight: 700; letter-spacing: -.2px; color: #242321; text-align: left; }
