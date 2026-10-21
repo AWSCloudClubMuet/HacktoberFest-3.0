@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import AuthWaves from '@/components/auth-waves'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -46,7 +45,6 @@ export default function SignupPage() {
 
   return (
     <div className="auth-shell">
-      <AuthWaves />
       <Card className="auth-card">
         <div className="auth-brand">
           <img src="/logo.png" alt="campusloop logo" className="brand-logo" />

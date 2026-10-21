@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
-import AuthWaves from '@/components/auth-waves'
 
 const DEMO = [
   { name: 'Emma Rodriguez', email: 'emma@campusloop.edu' },
@@ -41,7 +40,6 @@ export default function LoginPage() {
 
   return (
     <div className="auth-shell">
-      <AuthWaves />
       <Card className="auth-card">
         <div className="auth-brand">
           <img src="/logo.png" alt="campusloop logo" className="brand-logo" />
