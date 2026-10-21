@@ -1,0 +1,22 @@
+<svg width="1400" height="420" viewBox="0 0 1400 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="420" gradientUnits="userSpaceOnUse"><stop stop-color="#172C20"/><stop offset=".55" stop-color="#245C3A"/><stop offset="1" stop-color="#39734B"/></linearGradient>
+    <linearGradient id="field" x1="700" y1="230" x2="700" y2="420" gradientUnits="userSpaceOnUse"><stop stop-color="#DCE9A8" stop-opacity=".2"/><stop offset="1" stop-color="#DCE9A8" stop-opacity=".75"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#0D1B12" flood-opacity=".28"/></filter>
+    <clipPath id="round"><rect width="1400" height="420" rx="30"/></clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="1400" height="420" fill="url(#bg)"/>
+    <circle cx="1180" cy="78" r="210" fill="#DCE9A8" fill-opacity=".06"><animate attributeName="r" values="190;225;190" dur="7s" repeatCount="indefinite"/></circle>
+    <circle cx="1250" cy="30" r="120" fill="#FFFEF9" fill-opacity=".05"/>
+    <path d="M0 335C180 270 305 286 475 330C650 375 830 295 1000 284C1160 274 1285 306 1400 344V420H0V335Z" fill="url(#field)"/>
+    <path d="M0 365C180 319 328 326 475 362C675 411 875 326 1035 322C1200 318 1310 353 1400 376V420H0V365Z" fill="#172C20" fill-opacity=".38"/>
+    <g opacity=".45" stroke="#DCE9A8" stroke-width="3" stroke-linecap="round"><path d="M910 418C930 350 964 306 1014 278"/><path d="M966 354C942 340 930 319 934 293"/><path d="M969 352C997 345 1017 326 1027 301"/><path d="M1110 420C1122 352 1149 301 1194 259"/><path d="M1146 347C1120 331 1108 307 1114 280"/><path d="M1148 345C1178 335 1197 313 1204 286"/><path d="M1270 420C1275 366 1297 326 1334 292"/><path d="M1292 355C1271 344 1260 326 1263 305"/></g>
+    <g transform="translate(76 64)"><rect width="58" height="58" rx="16" fill="#DCE9A8"/><text x="29" y="39" text-anchor="middle" font-size="29" fill="#245C3A">✳</text><text x="76" y="39" font-family="Manrope,Arial,sans-serif" font-size="30" font-weight="800" fill="#FFFEF9">Kisan<tspan fill="#DCE9A8">Mandi</tspan></text></g>
+    <text x="76" y="184" font-family="Manrope,Arial,sans-serif" font-size="56" font-weight="800" letter-spacing="-2" fill="#FFFEF9">Know your price.</text>
+    <text x="76" y="248" font-family="Georgia,serif" font-size="58" font-style="italic" fill="#DCE9A8">Grow with confidence.</text>
+    <text x="78" y="294" font-family="DM Sans,Arial,sans-serif" font-size="19" fill="#D6E2D4">Market prices • Direct trade • Farmer-first tools • English + Urdu</text>
+    <g filter="url(#shadow)" transform="translate(1030 115)"><rect width="268" height="154" rx="20" fill="#FFFEF9"/><text x="24" y="34" font-family="DM Sans,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#68756B">WHEAT · TODAY</text><text x="24" y="86" font-family="Manrope,Arial,sans-serif" font-size="38" font-weight="800" fill="#1C2C21">Rs 4,250</text><path d="M25 123L62 109L98 116L137 88L174 98L214 62L243 48" stroke="#39734B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><animate attributeName="stroke-dasharray" values="0 400;400 0" dur="2.4s" repeatCount="indefinite"/></path><circle cx="243" cy="48" r="7" fill="#245C3A"><animate attributeName="r" values="6;9;6" dur="1.5s" repeatCount="indefinite"/></circle></g>
+    <g fill="#DCE9A8"><circle cx="915" cy="105" r="5"><animate attributeName="cy" values="105;89;105" dur="3s" repeatCount="indefinite"/></circle><circle cx="1350" cy="190" r="4"><animate attributeName="cy" values="190;174;190" dur="4s" repeatCount="indefinite"/></circle><circle cx="968" cy="63" r="3"><animate attributeName="opacity" values=".2;1;.2" dur="2s" repeatCount="indefinite"/></circle></g>
+  </g>
+</svg>

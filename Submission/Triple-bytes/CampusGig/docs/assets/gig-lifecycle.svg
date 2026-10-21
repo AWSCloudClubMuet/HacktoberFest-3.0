@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-labelledby="t d">
+  <title id="t">Gig lifecycle</title>
+  <desc id="d">A gig moves from Open to In Progress when the owner accepts an applicant, then to Completed. An Open gig can be Cancelled or shows as Expired after its deadline.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#59368c"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9a93a6"/>
+    </marker>
+  </defs>
+
+  <style>
+    text { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; text-anchor: middle; }
+    .node { stroke-width: 2; animation: glow 6s ease-in-out infinite; }
+    .n2 { animation-delay: 2s; }
+    .n3 { animation-delay: 4s; }
+    @keyframes glow {
+      0%, 55%, 100% { filter: none; transform: translateY(0); }
+      12%, 30% { filter: drop-shadow(0 6px 10px rgba(89,54,140,.35)); transform: translateY(-4px); }
+    }
+    .flow { stroke-dasharray: 8 8; animation: dash 1.2s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset: -16; } }
+    .label { font-size: 22px; font-weight: 700; }
+    .caption { font-size: 14px; fill: #5d5668; }
+    .side { font-size: 17px; font-weight: 700; fill: #6b6475; }
+    .note { font-size: 12px; fill: #8a8394; }
+  </style>
+
+  <rect width="1000" height="300" rx="20" fill="#fbf9fd" stroke="#e8e2ee"/>
+
+  <g transform="translate(0 4)">
+    <rect class="node" x="60" y="70" width="200" height="76" rx="14" fill="#edf3e9" stroke="#376047"/>
+    <text class="label" x="160" y="116" fill="#376047">Open</text>
+
+    <rect class="node n2" x="400" y="70" width="200" height="76" rx="14" fill="#e8eff4" stroke="#476577"/>
+    <text class="label" x="500" y="116" fill="#476577">In Progress</text>
+
+    <rect class="node n3" x="740" y="70" width="200" height="76" rx="14" fill="#f5e9f1" stroke="#875574"/>
+    <text class="label" x="840" y="116" fill="#875574">Completed</text>
+
+    <path class="flow" d="M262 108 H396" fill="none" stroke="#59368c" stroke-width="3" marker-end="url(#arrow)"/>
+    <path class="flow" d="M602 108 H736" fill="none" stroke="#59368c" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <text class="caption" x="330" y="86">owner accepts</text>
+    <text class="caption" x="330" y="146">one applicant</text>
+    <text class="caption" x="670" y="86">owner marks</text>
+    <text class="caption" x="670" y="146">complete</text>
+
+    <path d="M840 150 V180" fill="none" stroke="#59368c" stroke-width="2" stroke-dasharray="3 5"/>
+    <text class="caption" x="840" y="200">both sides review each other</text>
+    <text class="note" x="840" y="218">average rating is always calculated</text>
+
+    <path class="flow" d="M160 150 V212" fill="none" stroke="#9a93a6" stroke-width="2" marker-end="url(#arrow-grey)"/>
+    <rect x="70" y="214" width="180" height="48" rx="12" fill="#eeeeee" stroke="#9a93a6"/>
+    <text class="side" x="160" y="244">Cancelled</text>
+    <text class="note" x="160" y="276">owner cancels an Open gig</text>
+
+    <rect x="400" y="214" width="200" height="48" rx="12" fill="#ffffff" stroke="#c8c1d2" stroke-dasharray="5 5"/>
+    <text class="side" x="500" y="244">Expired</text>
+    <text class="note" x="500" y="276">computed: Open + deadline passed</text>
+  </g>
+</svg>
