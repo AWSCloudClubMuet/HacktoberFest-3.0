@@ -98,5 +98,3 @@ recommendArtists(artist)
 ## 📦 Expected Deliverable
 
 A working TuneWave music-player core demonstrating all three milestones and their stated operations and rules.
-
-

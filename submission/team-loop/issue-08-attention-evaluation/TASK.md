@@ -55,8 +55,8 @@ for epoch in range(50):
 **Problem:**
 Consider single-head attention:
 
-`S = QKᵀ / √d`  
-`P = softmax(S)` (row-wise)  
+`S = QKᵀ / √d`
+`P = softmax(S)` (row-wise)
 `O = PV`
 
 **Required analysis and implementation:**
@@ -103,4 +103,3 @@ For each case, diagnose the training behavior, propose interventions, and justif
 
 ## 📦 Expected Deliverables
 A written technical analysis covering all four tasks, along with corrected training code or fixes and a NumPy attention implementation with gradient-check evidence.
-

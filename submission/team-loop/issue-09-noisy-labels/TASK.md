@@ -115,5 +115,3 @@ Experts relabeled **400** randomly selected crowd-labeled tickets and identified
 
 ## 📦 Expected Deliverables
 A documented analysis with confidence intervals and supporting calculations, annotation-quality findings, a targeted expert-review plan, noise-robust training proposals, and a trustworthy evaluation strategy.
-
-
