@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+  <title id="title">CampusGig</title>
+  <desc id="desc">CampusGig - a campus gig and skill swap marketplace. Learn together. Build something real.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#241238"/>
+      <stop offset="55%" stop-color="#59368c"/>
+      <stop offset="100%" stop-color="#8a5fd1"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#ffffff" fill-opacity="0.12"/>
+    </pattern>
+    <clipPath id="card">
+      <rect width="1200" height="340" rx="26"/>
+    </clipPath>
+  </defs>
+
+  <style>
+    text { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+    .serif { font-family: Georgia, 'Times New Roman', serif; font-style: italic; }
+    .float-a { animation: float 7s ease-in-out infinite; }
+    .float-b { animation: float 9s ease-in-out infinite reverse; }
+    .float-c { animation: float 11s ease-in-out infinite; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+    .pulse { animation: pulse 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .slide-in { animation: slide-in 1.2s cubic-bezier(.2,.8,.2,1) both; }
+    .d1 { animation-delay: .15s; }
+    .d2 { animation-delay: .4s; }
+    .d3 { animation-delay: .65s; }
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .phrase { opacity: 0; animation: cycle 12s ease-in-out infinite; }
+    .p2 { animation-delay: 3s; }
+    .p3 { animation-delay: 6s; }
+    .p4 { animation-delay: 9s; }
+    @keyframes cycle {
+      0% { opacity: 0; transform: translateY(10px); }
+      4%, 21% { opacity: 1; transform: translateY(0); }
+      25%, 100% { opacity: 0; transform: translateY(-10px); }
+    }
+    .sweep { animation: sweep 5s ease-in-out infinite; }
+    @keyframes sweep {
+      0% { transform: translateX(-420px); }
+      60%, 100% { transform: translateX(1200px); }
+    }
+  </style>
+
+  <g clip-path="url(#card)">
+    <rect width="1200" height="340" fill="url(#bg)"/>
+    <rect width="1200" height="340" fill="url(#dots)"/>
+
+    <circle class="float-a" cx="1040" cy="70" r="120" fill="#ffffff" fill-opacity="0.07"/>
+    <circle class="float-b" cx="930" cy="290" r="80" fill="#e5d9f5" fill-opacity="0.10"/>
+    <circle class="float-c" cx="1150" cy="250" r="46" fill="#ffffff" fill-opacity="0.10"/>
+    <circle class="float-b" cx="640" cy="40" r="26" fill="#e5d9f5" fill-opacity="0.12"/>
+    <rect class="float-c" x="760" y="210" width="70" height="70" rx="16" fill="#ffffff" fill-opacity="0.06" transform="rotate(18 795 245)"/>
+
+    <g class="slide-in d1">
+      <rect class="pulse" x="80" y="66" width="68" height="68" rx="14" fill="#e5d9f5"/>
+      <text x="114" y="114" font-size="40" font-weight="800" fill="#59368c" text-anchor="middle">&#8599;</text>
+      <text x="168" y="124" font-size="78" font-weight="800" fill="#ffffff" letter-spacing="-3">campusgig<tspan fill="#a8d08d">.</tspan></text>
+    </g>
+
+    <g class="slide-in d2">
+      <text x="82" y="204" font-size="38" font-weight="700" fill="#ffffff" letter-spacing="-1">Learn together.</text>
+      <text class="serif" x="82" y="250" font-size="40" fill="#e5d9f5">Build something real.</text>
+    </g>
+
+    <g class="slide-in d3">
+      <text x="82" y="296" font-size="15" fill="#e5d9f5" fill-opacity="0.85" letter-spacing="2">STUDENT SKILLS MARKETPLACE  &#183;  PAID  &#183;  SKILL SWAP  &#183;  FREE</text>
+    </g>
+
+    <g transform="translate(860 150)">
+      <g class="phrase">
+        <rect x="-10" y="-34" width="250" height="52" rx="26" fill="#ffffff" fill-opacity="0.16"/>
+        <text x="115" y="0" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">Post a gig</text>
+      </g>
+      <g class="phrase p2">
+        <rect x="-10" y="-34" width="250" height="52" rx="26" fill="#ffffff" fill-opacity="0.16"/>
+        <text x="115" y="0" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">Apply in seconds</text>
+      </g>
+      <g class="phrase p3">
+        <rect x="-10" y="-34" width="250" height="52" rx="26" fill="#ffffff" fill-opacity="0.16"/>
+        <text x="115" y="0" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">Swap your skills</text>
+      </g>
+      <g class="phrase p4">
+        <rect x="-10" y="-34" width="250" height="52" rx="26" fill="#ffffff" fill-opacity="0.16"/>
+        <text x="115" y="0" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">Earn real reviews</text>
+      </g>
+    </g>
+
+    <rect class="sweep" x="0" y="328" width="420" height="4" fill="url(#shine)"/>
+  </g>
+</svg>
