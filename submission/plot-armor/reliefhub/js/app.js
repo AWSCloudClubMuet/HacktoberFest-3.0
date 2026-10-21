@@ -2,6 +2,7 @@
 const App = {
   modules: [],
   state: { role: localStorage.getItem('rh_role') || 'coordinator' },
+  _renderSeq: 0,
 
   registerModule(mod) {
     this.modules.push(mod);
@@ -31,6 +32,7 @@ const App = {
   },
 
   async render() {
+    const seq = ++this._renderSeq;
     this.renderNav();
     const view = document.getElementById('view');
     view.innerHTML = '';
@@ -40,7 +42,9 @@ const App = {
       UI.h('p', { class: 'page-sub' }, mod.subtitle || ''),
     ]));
     try {
-      view.append(await mod.render(view));
+      const node = await mod.render(view);
+      if (seq !== this._renderSeq) return; /* a newer render superseded this one */
+      view.append(node);
     } catch (err) {
       view.append(UI.h('div', { class: 'error-box' }, `Failed to load ${mod.title}: ${err.message}`));
     }
