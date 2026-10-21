@@ -83,6 +83,15 @@ runTest("M1: Role flexibility (user acts as Poster on one gig, Applicant on anot
   assert(myApplications.length > 0, "User must be able to act as applicant on other gigs");
 });
 
+runTest("M1: Edit profile description/bio and skills", () => {
+  const updated = mockDb.updateUserProfile("usr_1", {
+    bio: "Updated student bio for final semester research.",
+    skills: ["React", "TypeScript", "GraphQL"]
+  });
+  assert(updated.bio === "Updated student bio for final semester research.", "Bio must update");
+  assert(updated.skills.includes("GraphQL"), "Skills must update");
+});
+
 runTest("M1: Validated gig creation (Paid requires positive budget)", () => {
   // Test valid gig creation
   const validGig = mockDb.createGig({

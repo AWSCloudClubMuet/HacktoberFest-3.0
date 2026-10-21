@@ -23,14 +23,10 @@
           My activity <span class="nav-count" id="header-activity-count"></span>
         </button>
         <button class="nav-link" id="nav-tab-profile" data-view="view-profile">Profile</button>
-        <button class="nav-link" id="nav-tab-api" data-view="view-api">API console</button>
       </nav>
 
-      <div class="user-switcher">
-        <label for="select-active-user">Viewing as</label>
-        <select id="select-active-user" aria-label="Switch active student">
-          <!-- Populated from mockApi users -->
-        </select>
+      <div class="header-auth-area" id="header-auth-area">
+        <!-- Rendered dynamically: Log in button or Active student info with Switch / Log out -->
       </div>
     </div>
   </header>
@@ -102,26 +98,6 @@
             </div>
           </div>
 
-          <div class="filter-section">
-            <div class="filter-heading">Status</div>
-            <div class="filter-options">
-              <label class="filter-radio-label">
-                <input type="radio" name="filter-status" value="All"> All
-              </label>
-              <label class="filter-radio-label">
-                <input type="radio" name="filter-status" value="Open" checked> Open only
-              </label>
-              <label class="filter-radio-label">
-                <input type="radio" name="filter-status" value="In Progress"> In progress
-              </label>
-              <label class="filter-radio-label">
-                <input type="radio" name="filter-status" value="Completed"> Completed
-              </label>
-              <label class="filter-radio-label">
-                <input type="radio" name="filter-status" value="Expired"> Expired
-              </label>
-            </div>
-          </div>
 
           <div class="filter-section">
             <div class="filter-heading">Budget ($)</div>
@@ -288,28 +264,31 @@
       </div>
     </div>
 
-    <!-- -------------------------------------------------------------------
-         VIEW 6: API CONSOLE
-         ------------------------------------------------------------------- -->
-    <div class="view-panel" id="view-api">
-      <div style="max-width: 800px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem;">
-        <h2>Mock API & Seed Data</h2>
-        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 1.25rem;">
-          All data is read and written through the mock API engine. You can reset to initial seed data anytime.
-        </p>
+    </div>
+  </main>
 
-        <div style="margin-bottom: 1.25rem; font-size: 13px;">
-          <div><strong>Users:</strong> <span id="api-stat-users">0</span> (min 12)</div>
-          <div><strong>Gigs:</strong> <span id="api-stat-gigs">0</span> (min 25)</div>
-          <div><strong>Applications:</strong> <span id="api-stat-apps">0</span> (min 20)</div>
-          <div><strong>Reviews:</strong> <span id="api-stat-revs">0</span> (min 8)</div>
-        </div>
+  <!-- =======================================================================
+       STUDENT LOGIN / SWITCH ACCOUNT MODAL
+       ======================================================================= -->
+  <div class="modal-shim" id="modal-login">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-top">
+        <h3>Student Sign In</h3>
+        <button class="close-btn" id="btn-close-login-modal" aria-label="Close">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 1rem;">
+        Select your campus student account to sign in:
+      </p>
 
-        <button class="btn-danger" id="btn-reset-db">Reset to initial seed data</button>
+      <div id="login-students-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
+        <!-- Populated dynamically with students -->
+      </div>
+
+      <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-secondary" id="btn-cancel-login-modal">Cancel</button>
       </div>
     </div>
-
-  </main>
+  </div>
 
   <!-- =======================================================================
        MUTUAL REVIEW MODAL

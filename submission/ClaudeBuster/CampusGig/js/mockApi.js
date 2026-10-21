@@ -124,6 +124,25 @@ class MockDatabase {
     return this.users.map(u => this.getUserProfile(u.id));
   }
 
+  updateUserProfile(userId, updates = {}) {
+    const user = this.users.find(u => u.id === userId);
+    if (!user) throw new Error("User not found.");
+
+    if (updates.bio !== undefined) {
+      user.bio = updates.bio.trim();
+    }
+    if (updates.skills !== undefined) {
+      if (Array.isArray(updates.skills)) {
+        user.skills = updates.skills;
+      } else if (typeof updates.skills === "string") {
+        user.skills = updates.skills.split(",").map(s => s.trim()).filter(Boolean);
+      }
+    }
+
+    this.persist();
+    return this.getUserProfile(userId);
+  }
+
   // =========================================================================
   // GIG METHODS (Milestone 1, 2, 3)
   // =========================================================================
