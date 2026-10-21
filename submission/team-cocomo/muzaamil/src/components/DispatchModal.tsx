@@ -4,7 +4,8 @@ import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { useRun } from "./toast";
 import { Button, Field, Input, Modal, Notice, Panel, PanelTitle, Select, cx } from "./ui";
-import { fmt, qty } from "../lib/format";
+import { fmt, pct, qty } from "../lib/format";
+import { useI18n } from "../i18n";
 
 /** New-dispatch dialog. `campId`/`needId` preselect the form, e.g. when opened from a need row. */
 export function DispatchModal({ campId, needId, onClose }: { campId?: string; needId?: string; onClose: () => void }) {
@@ -16,6 +17,7 @@ export function DispatchModal({ campId, needId, onClose }: { campId?: string; ne
 }
 
 function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialCamp?: string; initialNeed?: string; onDone: () => void }) {
+  const { t } = useI18n();
   const camps = useQuery(api.camps.list);
   const needs = useQuery(api.needs.list);
   const create = useMutation(api.dispatches.create);
@@ -38,9 +40,9 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
 
   let error: string | null = null;
   if (limits && quantity !== "") {
-    if (!Number.isInteger(q) || q < 1) error = "Enter a whole number of at least 1";
-    else if (q > limits.stock) error = `Only ${qty(limits.stock, limits.unit)} of ${limits.itemName} in the warehouse. Lower the quantity or restock first.`;
-    else if (q > limits.remaining) error = `Only ${qty(limits.remaining, limits.unit)} of this need is still unreserved.`;
+    if (!Number.isInteger(q) || q < 1) error = t("Enter a whole number of at least 1");
+    else if (q > limits.stock) error = t("Only {quantity} of {name} in the warehouse. Lower the quantity or restock first.", { quantity: qty(limits.stock, limits.unit), name: t(limits.itemName) });
+    else if (q > limits.remaining) error = t("Only {quantity} of this need is still unreserved.", { quantity: qty(limits.remaining, limits.unit) });
   }
   const canSubmit = !!limits && quantity !== "" && !error && limits.max > 0;
 
@@ -48,7 +50,7 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
     e.preventDefault();
     if (!canSubmit) return;
     setBusy(true);
-    const ok = await run(create({ camp_id: campId as Id<"camps">, need_id: needId as Id<"needs">, quantity: q }), `Dispatch created · ${qty(q, limits!.unit)} reserved`);
+    const ok = await run(create({ camp_id: campId as Id<"camps">, need_id: needId as Id<"needs">, quantity: q }), t("Dispatch created · {quantity} reserved", { quantity: qty(q, limits!.unit) }));
     setBusy(false);
     if (ok) onDone();
   }
@@ -63,8 +65,8 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
   return (
     <Panel>
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <PanelTitle kicker="New dispatch" title="Send supplies to a camp" onClose={onDone} />
-        <Field label="1 · Camp">
+        <PanelTitle kicker={t("New dispatch")} title={t("Send supplies to a camp")} onClose={onDone} />
+        <Field label={t("{step} · Camp", { step: fmt(1) })}>
           <Select
             value={campId}
             onChange={(e) => {
@@ -73,16 +75,16 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
               setQuantity("");
             }}
           >
-            <option value="">Choose a camp…</option>
+            <option value="">{t("Choose a camp…")}</option>
             {openCamps.map((c) => (
               <option key={c._id} value={c._id}>
                 {c.name} · {c.district}
-                {c.criticalGaps ? ` · ${c.criticalGaps} critical` : ""}
+                {c.criticalGaps ? t(" · {count} critical", { count: fmt(c.criticalGaps) }) : ""}
               </option>
             ))}
           </Select>
         </Field>
-        <Field label="2 · Need">
+        <Field label={t("{step} · Need", { step: fmt(2) })}>
           <Select
             value={needId}
             onChange={(e) => {
@@ -91,10 +93,10 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
             }}
             disabled={!campId}
           >
-            <option value="">{campId ? (campNeeds.length ? "Choose a need…" : "This camp has no needs yet") : "Choose a camp first"}</option>
+            <option value="">{campId ? (campNeeds.length ? t("Choose a need…") : t("This camp has no needs yet")) : t("Choose a camp first")}</option>
             {campNeeds.map((n) => (
               <option key={n._id} value={n._id} disabled={n.remaining === 0}>
-                {n.item?.name} · {n.priority} · {Math.round(n.pct * 100)}% met{n.remaining === 0 ? " · fully covered" : ""}
+                {t(n.item?.name ?? "Unknown item")} · {t(n.priority)} · {t("{percent} met", { percent: pct(n.pct) })}{n.remaining === 0 ? t(" · fully covered") : ""}
               </option>
             ))}
           </Select>
@@ -102,21 +104,21 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
 
         {limits && (
           <div className="flex flex-col rounded-lg border border-line bg-tint px-3.5 py-1.5">
-            {row("Required", qty(limits.required, limits.unit))}
-            {row("− Delivered", fmt(limits.fulfilled))}
-            {row("− Open dispatches", fmt(limits.reserved))}
-            {row("Remaining unreserved", fmt(limits.remaining), true)}
-            {row("Warehouse stock available", fmt(limits.stock), true, limits.stock < limits.remaining ? "text-alert" : "")}
+            {row(t("Required"), qty(limits.required, limits.unit))}
+            {row(t("− Delivered"), fmt(limits.fulfilled))}
+            {row(t("− Open dispatches"), fmt(limits.reserved))}
+            {row(t("Remaining unreserved"), fmt(limits.remaining), true)}
+            {row(t("Warehouse stock available"), fmt(limits.stock), true, limits.stock < limits.remaining ? "text-alert" : "")}
             <div className="flex items-baseline justify-between py-2.5">
-              <span className="text-sm font-bold">Max you can send now</span>
+              <span className="text-sm font-bold">{t("Max you can send now")}</span>
               <span className="flex items-baseline gap-2">
                 <span className={cx("text-[32px] font-extrabold leading-9 tracking-[-0.03em] tabular-nums", limits.max === 0 ? "text-alert" : "text-ok-ink")}>{fmt(limits.max)}</span>
-                <span className="font-mono text-[11px] text-muted">{limits.max === 0 ? "nothing left" : `limited by ${limits.limitedBy}`}</span>
+                <span className="font-mono text-[11px] text-muted">{limits.max === 0 ? t("nothing left") : t("limited by {limit}", { limit: t(limits.limitedBy) })}</span>
               </span>
             </div>
           </div>
         )}
-        <Field label="3 · Quantity" error={error}>
+        <Field label={t("{step} · Quantity", { step: fmt(3) })} error={error}>
           <div className="flex gap-2">
             <Input
               type="number"
@@ -130,20 +132,20 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
             />
             {limits && limits.max > 0 && (
               <Button type="button" variant="secondary" className="h-[42px] shrink-0" onClick={() => setQuantity(String(limits.max))}>
-                Use max · {fmt(limits.max)}
+                {t("Use max · {count}", { count: fmt(limits.max) })}
               </Button>
             )}
           </div>
         </Field>
         {limits && limits.max === 0 && (
-          <Notice tone="warning">{limits.stock === 0 ? "This item is out of stock." : "This need is already covered by delivered and open dispatches."}</Notice>
+          <Notice tone="warning">{limits.stock === 0 ? t("This item is out of stock.") : t("This need is already covered by delivered and open dispatches.")}</Notice>
         )}
         <div className="flex gap-2.5">
           <Button type="button" variant="secondary" className="flex-1" onClick={onDone}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button type="submit" className="flex-[1.4]" disabled={!canSubmit || busy}>
-            {busy ? "Reserving…" : "Reserve stock & dispatch"}
+            {busy ? t("Reserving…") : t("Reserve stock & dispatch")}
           </Button>
         </div>
       </form>

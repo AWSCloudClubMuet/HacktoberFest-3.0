@@ -5,6 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import { Loading } from "./components/ui";
 import { useViewer } from "./lib/viewer";
+import { useI18n } from "./i18n";
 import SignIn from "./pages/SignIn";
 import Overview from "./pages/Overview";
 import Camps from "./pages/Camps";
@@ -42,6 +43,7 @@ function VolunteerOnly({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  const { t } = useI18n();
   const { isLoading, isAuthenticated } = useConvexAuth();
   const { viewer } = useViewer();
   const { signOut } = useAuthActions();
@@ -49,7 +51,7 @@ export default function App() {
   if (isLoading) {
     return (
       <div className="grid min-h-screen place-items-center">
-        <div className="label">Loading ReliefHub…</div>
+        <div className="label">{t("Loading ReliefHub…")}</div>
       </div>
     );
   }
@@ -60,9 +62,9 @@ export default function App() {
     return (
       <div className="grid min-h-screen place-items-center">
         <div className="flex flex-col gap-4 text-center">
-          <p>This account is unavailable. Sign in with an active account.</p>
+          <p>{t("This account is unavailable. Sign in with an active account.")}</p>
           <button className="cursor-pointer font-semibold underline" onClick={() => void signOut()}>
-            Back to sign in
+            {t("Back to sign in")}
           </button>
         </div>
       </div>

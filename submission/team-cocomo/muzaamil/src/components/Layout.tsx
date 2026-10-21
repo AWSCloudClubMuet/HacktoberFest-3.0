@@ -5,7 +5,9 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import { fmt, initials } from "../lib/format";
 import { useViewer } from "../lib/viewer";
+import { useI18n } from "../i18n";
 import CommandPalette from "./CommandPalette";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { Button, Mark, PlusIcon, cx } from "./ui";
 
 // Day 1 of the response.
@@ -34,6 +36,7 @@ const icons: Record<string, string> = {
 };
 
 export default function Layout() {
+  const { t, locale } = useI18n();
   const { viewer, isCoordinator } = useViewer();
   const counts = useQuery(api.dashboard.nav, isCoordinator ? {} : "skip");
   const { signOut } = useAuthActions();
@@ -43,16 +46,16 @@ export default function Layout() {
   useEffect(() => setSyncedAt(new Date()), [counts]);
 
   const day = Math.max(1, Math.floor((now.getTime() - RESPONSE_START) / 86_400_000) + 1);
-  const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" });
-  const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  const date = now.toLocaleDateString(locale, { weekday: "short", day: "2-digit", month: "short", year: "numeric" });
+  const time = now.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 
   const tabs: { to: string; label: string; end?: boolean; count?: number; flag?: { text: string; tone: "danger" | "warning" } | null }[] = isCoordinator
     ? [
         { to: "/", label: "Overview", end: true },
         { to: "/log", label: "Quick log" },
         { to: "/camps", label: "Camps", count: counts?.camps },
-        { to: "/needs", label: "Needs", count: counts?.needs, flag: counts?.criticalGaps ? { text: `${counts.criticalGaps} critical`, tone: "danger" } : null },
-        { to: "/warehouse", label: "Warehouse", count: counts?.inventory, flag: counts?.lowStock ? { text: `${counts.lowStock} low`, tone: "warning" } : null },
+        { to: "/needs", label: "Needs", count: counts?.needs, flag: counts?.criticalGaps ? { text: t("{count} critical", { count: fmt(counts.criticalGaps) }), tone: "danger" } : null },
+        { to: "/warehouse", label: "Warehouse", count: counts?.inventory, flag: counts?.lowStock ? { text: t("{count} low", { count: fmt(counts.lowStock) }), tone: "warning" } : null },
         { to: "/dispatches", label: "Dispatches", count: counts?.dispatches },
         { to: "/donations", label: "Donations", count: counts?.donations },
         { to: "/volunteers", label: "Volunteers", count: counts?.volunteers },
@@ -64,22 +67,22 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col justify-between border-r border-line bg-paper px-3 pb-4 pt-5">
+      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col justify-between overflow-y-auto border-e border-line bg-paper px-3 pb-4 pt-5">
         <div className="flex flex-col gap-7">
           <NavLink to="/" className="flex items-center gap-2.5 px-2.5">
             <Mark />
             <span className="flex flex-col">
               <span className="text-[17px] font-extrabold leading-5 tracking-[-0.02em]">ReliefHub</span>
-              <span className="text-[11px] text-muted">Sindh flood response</span>
+              <span className="text-[11px] text-muted">{t("Sindh flood response")}</span>
             </span>
           </NavLink>
           <nav className="flex flex-col gap-0.5">
-            <div className="label px-2.5 pb-2">{isCoordinator ? "Operations" : "My work"}</div>
-            {tabs.map((t) => (
+            <div className="label px-2.5 pb-2">{t(isCoordinator ? "Operations" : "My work")}</div>
+            {tabs.map((tab) => (
               <NavLink
-                key={t.to}
-                to={t.to}
-                end={t.end}
+                key={tab.to}
+                to={tab.to}
+                end={tab.end}
                 className={({ isActive }) =>
                   cx(
                     "group flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm transition-colors",
@@ -90,20 +93,20 @@ export default function Layout() {
                 {({ isActive }) => (
                   <>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={isActive ? "text-signal" : "text-faint"}>
-                      <path d={icons[t.to]} />
+                      <path d={icons[tab.to]} />
                     </svg>
-                    <span className="flex-1">{t.label}</span>
-                    {t.flag ? (
+                    <span className="flex-1">{t(tab.label)}</span>
+                    {tab.flag ? (
                       <span
                         className={cx(
                           "rounded-md px-1.5 py-px text-[11px] font-semibold",
-                          t.flag.tone === "danger" ? "bg-alert text-white" : "bg-warn-wash text-warn-ink",
+                          tab.flag.tone === "danger" ? "bg-alert text-white" : "bg-warn-wash text-warn-ink",
                         )}
                       >
-                        {t.flag.text}
+                        {tab.flag.text}
                       </span>
                     ) : (
-                      t.count != null && <span className={cx("font-mono text-xs", isActive ? "text-ghost" : "text-muted")}>{t.count}</span>
+                      tab.count != null && <span className={cx("font-mono text-xs", isActive ? "text-ghost" : "text-muted")}>{fmt(tab.count)}</span>
                     )}
                   </>
                 )}
@@ -111,38 +114,41 @@ export default function Layout() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-2.5 rounded-xl border border-line bg-tint p-2.5">
+        <div className="flex flex-col gap-3 pt-5">
+          <LanguageSwitcher />
+          <div className="flex items-center gap-2.5 rounded-xl border border-line bg-tint p-2.5">
           <span title={viewer?.email} className="grid size-8 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-white">
             {viewer ? initials(viewer.name) : ""}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-[13px] font-semibold">{viewer?.name}</span>
-            <span className="text-xs text-muted">{isCoordinator ? "Coordinator" : "Field volunteer"}</span>
+            <span className="text-xs text-muted">{t(isCoordinator ? "Coordinator" : "Field volunteer")}</span>
           </div>
           <button onClick={() => void signOut().then(() => navigate("/", { replace: true }))} className="cursor-pointer rounded-md px-1.5 py-1 text-xs font-semibold text-muted hover:bg-alert-wash hover:text-alert-ink">
-            Sign out
+            {t("Sign out")}
           </button>
+        </div>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-paper/90 px-8 backdrop-blur">
-          <div className="flex items-center gap-3 text-[13px] text-muted">
+        <header className="sticky top-0 z-20 flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-line bg-paper/90 px-5 py-3 backdrop-blur xl:px-8">
+          <div className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
             <span className="flex items-center gap-2 rounded-md bg-ok-wash px-2 py-1 text-xs font-semibold text-ok-ink">
               <span className="pulse size-[7px] rounded-full bg-ok" />
-              Live
+              {t("Live")}
             </span>
-            <span className="font-semibold text-ink">Day {day}</span>
+            <span className="font-semibold text-ink">{t("Day {day}", { day: fmt(day) })}</span>
             <span className="text-ghost">|</span>
-            <span>{date}</span>
+            <bdi>{date}</bdi>
             <span className="text-ghost">|</span>
-            <span className="font-mono text-xs text-ink">{time} PKT</span>
+            <span className="font-mono text-xs text-ink"><bdi>{time}</bdi> {t("PKT")}</span>
           </div>
           <div className="flex items-center gap-2.5">
             <CommandPalette />
             {isCoordinator && (
               <Button onClick={() => navigate("/dispatches?new")}>
-                <PlusIcon /> New dispatch
+                <PlusIcon /> {t("New dispatch")}
               </Button>
             )}
           </div>
@@ -152,13 +158,13 @@ export default function Layout() {
           <Outlet />
         </main>
 
-        <footer className="flex items-center justify-between border-t border-line bg-paper px-8 py-3 font-mono text-[11px] text-muted">
+        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-paper px-8 py-3 font-mono text-[11px] text-muted">
           <span>
-            Synced {syncedAt.toLocaleTimeString("en-GB")}
+            {t("Synced {time}", { time: syncedAt.toLocaleTimeString(locale) })}
           </span>
           {counts && (
             <span>
-              Cash PKR {fmt(counts.cash)} · In-kind {counts.inKind} records
+              {t("Cash PKR {cash} · In-kind {count} records", { cash: fmt(counts.cash), count: fmt(counts.inKind) })}
             </span>
           )}
         </footer>

@@ -3,6 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { pct } from "../lib/format";
+import { useI18n } from "../i18n";
 import { campCoords, DEPOTS, INDUS, MANCHAR_LAKE, nearestDepot, project, SINDH_OUTLINE } from "../lib/geo";
 
 export type MapCamp = {
@@ -120,6 +121,7 @@ function CampPin({
   selected: boolean;
   onSelect: (id: string) => void;
 }) {
+  const { t } = useI18n();
   const halo = useRef<THREE.Mesh>(null);
   const [lng, lat] = campCoords(camp);
   const pos = toWorld(lng, lat);
@@ -177,7 +179,7 @@ function CampPin({
             }`}
           >
             {camp.name.split(" ")[0]}{" "}
-            <span className="font-mono text-[11px]">{camp.status === "Full" ? "· Full" : pct(camp.needsMet)}</span>
+            <span className="font-mono text-[11px]">{camp.status === "Full" ? `· ${t("Full")}` : pct(camp.needsMet)}</span>
           </button>
         </Html>
       )}

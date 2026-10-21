@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes } from "react";
 import { createPortal } from "react-dom";
+import { useI18n } from "../i18n";
 
 const cx = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(" ");
 
@@ -63,10 +64,11 @@ export function IconButton({
   children,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string; tone?: "ink" | "alert" }) {
+  const { t } = useI18n();
   return (
     <button
-      aria-label={label}
-      title={label}
+      aria-label={t(label)}
+      title={t(label)}
       className={cx(
         "grid size-8 shrink-0 cursor-pointer place-items-center rounded-md border border-line bg-paper transition-[background-color,border-color,color,scale] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-40",
         PRESS,
@@ -212,6 +214,7 @@ export function Panel({ className, children }: { className?: string; children: R
 }
 
 export function PanelTitle({ kicker, title, onClose }: { kicker: string; title: string; onClose?: () => void }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-1">
@@ -219,7 +222,7 @@ export function PanelTitle({ kicker, title, onClose }: { kicker: string; title: 
         <h2 className="text-xl font-bold leading-7 tracking-[-0.02em]">{title}</h2>
       </div>
       {onClose && (
-        <button onClick={onClose} type="button" aria-label="Close" className="cursor-pointer rounded-md p-1.5 text-muted hover:bg-tint hover:text-ink">
+        <button onClick={onClose} type="button" aria-label={t("Close")} className="cursor-pointer rounded-md p-1.5 text-muted hover:bg-tint hover:text-ink">
           <CloseIcon />
         </button>
       )}
@@ -324,7 +327,7 @@ export function Stat({
         <span className={cx("text-[34px] font-bold leading-9 tracking-[-0.03em]", tone && statTone[tone].value)}>{value}</span>
         {unit && <span className="text-[15px] font-medium text-muted">{unit}</span>}
       </span>
-      {sub && <span className="truncate text-[13px] text-muted">{sub}</span>}
+      {sub && <span className="break-words text-[13px] leading-5 text-muted">{sub}</span>}
     </Card>
   );
 }
@@ -342,7 +345,8 @@ export function Empty({ children }: { children: ReactNode }) {
 }
 
 export function Loading() {
-  return <div className="label px-6 py-16 text-center">Loading…</div>;
+  const { t } = useI18n();
+  return <div className="label px-6 py-16 text-center">{t("Loading…")}</div>;
 }
 
 /* ---------- Forms ---------- */
@@ -363,6 +367,7 @@ const inputBase =
 export function Input({ invalid, className, ...props }: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean; ref?: Ref<HTMLInputElement> }) {
   return (
     <input
+      dir={props.dir ?? (["email", "tel", "number", "password"].includes(props.type ?? "") ? "ltr" : undefined)}
       className={cx(inputBase, invalid ? "border-alert bg-alert-wash" : "border-line-strong", props.type === "number" && "font-mono text-sm", className)}
       {...props}
     />
@@ -372,10 +377,11 @@ export function Input({ invalid, className, ...props }: InputHTMLAttributes<HTML
 const caret = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%235F635D' stroke-width='2' fill='none'/%3E%3C/svg%3E\")";
 
 export function Select({ invalid, className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean }) {
+  const { dir } = useI18n();
   return (
     <select
-      className={cx(inputBase, "cursor-pointer appearance-none bg-[length:14px] bg-[right_10px_center] bg-no-repeat pr-9", invalid ? "border-alert" : "border-line-strong", className)}
-      style={{ backgroundImage: caret }}
+      className={cx(inputBase, "cursor-pointer appearance-none bg-[length:14px] bg-no-repeat pe-9", invalid ? "border-alert" : "border-line-strong", className)}
+      style={{ backgroundImage: caret, backgroundPosition: dir === "rtl" ? "left 10px center" : "right 10px center" }}
       {...props}
     >
       {children}
@@ -464,7 +470,8 @@ export function Notice({ tone, children }: { tone: "error" | "warning" | "info" 
 }
 
 export function ReadOnlyNote() {
-  return <Notice tone="lock">You're signed in as a Field Volunteer, so this is view-only. Coordinators can make changes here.</Notice>;
+  const { t } = useI18n();
+  return <Notice tone="lock">{t("You're signed in as a Field Volunteer, so this is view-only. Coordinators can make changes here.")}</Notice>;
 }
 
 /* ---------- Badges ---------- */
@@ -498,32 +505,36 @@ export function Badge({ tone = "neutral", dot, className, children }: { tone?: T
 }
 
 export function CampStatusPill({ status }: { status: "Open" | "Full" | "Closed" }) {
+  const { t } = useI18n();
   const tone: Tone = status === "Open" ? "success" : status === "Full" ? "warning" : "neutral";
   return (
     <Badge tone={tone} dot>
-      {status}
+      {t(status)}
     </Badge>
   );
 }
 
 export function PriorityPill({ priority }: { priority: "High" | "Medium" | "Low" }) {
+  const { t } = useI18n();
   const tone: Tone = priority === "High" ? "danger" : priority === "Medium" ? "warning" : "neutral";
-  return <Badge tone={tone}>{priority}</Badge>;
+  return <Badge tone={tone}>{t(priority)}</Badge>;
 }
 
 export function LowStockTag() {
+  const { t } = useI18n();
   return (
     <Badge tone="warning" dot>
-      Low stock
+      {t("Low stock")}
     </Badge>
   );
 }
 
 export function DispatchPill({ status }: { status: "Pending" | "In Transit" | "Delivered" | "Cancelled" }) {
+  const { t } = useI18n();
   const tone: Tone = { Pending: "neutral", "In Transit": "info", Delivered: "success", Cancelled: "neutral" }[status] as Tone;
   return (
     <Badge tone={tone} dot className={status === "Cancelled" ? "text-faint line-through" : undefined}>
-      {status}
+      {t(status)}
     </Badge>
   );
 }
@@ -537,7 +548,8 @@ const skillTone: Record<string, string> = {
 };
 
 export function SkillPill({ skill }: { skill: string }) {
-  return <span className={cx("inline-flex rounded-md px-2 py-0.5 text-xs font-semibold", skillTone[skill] ?? "bg-tint text-ink-2")}>{skill}</span>;
+  const { t } = useI18n();
+  return <span className={cx("inline-flex rounded-md px-2 py-0.5 text-xs font-semibold", skillTone[skill] ?? "bg-tint text-ink-2")}>{t(skill)}</span>;
 }
 
 export function Avatar({ name, tone = "soft" }: { name: string; tone?: "soft" | "solid" | "dashed" }) {

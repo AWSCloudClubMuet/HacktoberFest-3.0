@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import { useRun } from "../components/toast";
 import { Badge, Button, CampStatusPill, Input, PageHeader, Segmented, Select, SkillPill, cx } from "../components/ui";
-import { fmt, pct, PRIORITIES, qty, stamp, type Priority } from "../lib/format";
+import { fmt, pct, PRIORITIES, qty, stamp, unitLabel, type Priority } from "../lib/format";
+import { useI18n } from "../i18n";
 import {
   activeIntent,
   classifyOffline,
@@ -168,9 +169,10 @@ function useField(parsed: string): [string, (v: string) => void] {
 }
 
 function Slot({ label, children, grow }: { label: string; children: ReactNode; grow?: boolean }) {
+  const { t } = useI18n();
   return (
     <label className={cx("flex min-w-0 flex-col gap-1", grow ? "flex-[1.4]" : "flex-1")}>
-      <span className="label text-[10px]">{label}</span>
+      <span className="label text-[10px]">{t(label)}</span>
       {children}
     </label>
   );
@@ -179,9 +181,10 @@ function Slot({ label, children, grow }: { label: string; children: ReactNode; g
 const mini = "h-9 rounded-md text-[13px]";
 
 function Fact({ label, value, tone }: { label: string; value: ReactNode; tone?: string }) {
+  const { t } = useI18n();
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
-      <span className="label text-[10px]">{label}</span>
+      <span className="label text-[10px]">{t(label)}</span>
       <span className={cx("truncate text-[15px] font-bold tabular-nums tracking-[-0.01em]", tone)}>{value}</span>
     </div>
   );
@@ -193,9 +196,10 @@ function Hint({ tone = "muted", children }: { tone?: "muted" | "alert" | "warn" 
 }
 
 function CampOptions({ world }: { world: World }) {
+  const { t } = useI18n();
   return (
     <>
-      <option value="">Choose a camp…</option>
+      <option value="">{t("Choose a camp…")}</option>
       {world.camps
         .filter((c) => c.status !== "Closed")
         .map((c) => (
@@ -208,12 +212,13 @@ function CampOptions({ world }: { world: World }) {
 }
 
 function ItemOptions({ world }: { world: World }) {
+  const { t } = useI18n();
   return (
     <>
-      <option value="">Choose an item…</option>
+      <option value="">{t("Choose an item…")}</option>
       {world.items.map((i) => (
         <option key={i._id} value={i._id}>
-          {i.name} ({i.unit})
+          {i.name} ({unitLabel(1, i.unit)})
         </option>
       ))}
     </>
@@ -221,6 +226,7 @@ function ItemOptions({ world }: { world: World }) {
 }
 
 function DispatchCard({ parsed, world, register }: CardProps) {
+  const { t, dir } = useI18n();
   const create = useMutation(api.dispatches.create);
   const run = useRun();
   const [campId, setCampId] = useField(parsed.camp?._id ?? "");
@@ -236,18 +242,18 @@ function DispatchCard({ parsed, world, register }: CardProps) {
 
   let problem: string | null = null;
   if (limits && amount) {
-    if (!Number.isInteger(q) || q < 1) problem = "Enter a whole number";
-    else if (q > limits.max) problem = limits.max === 0 ? "Nothing can be sent for this need right now." : `At most ${fmt(limits.max)} can go now (limited by ${limits.limitedBy}).`;
+    if (!Number.isInteger(q) || q < 1) problem = t("Enter a whole number");
+    else if (q > limits.max) problem = limits.max === 0 ? t("Nothing can be sent for this need right now.") : t("At most {max} can go now (limited by {limit}).", { max: fmt(limits.max), limit: t(limits.limitedBy) });
   }
   const ok = !!camp && !!need && !!limits && !!amount && !problem;
 
   useEffect(() => {
     register({
       ready: [camp, need, amount].filter(Boolean).length / 3,
-      summary: need && camp ? `${qty(q || 0, limits?.unit)} ${need.item?.name} → ${camp.name}` : "Dispatch",
+      summary: need && camp ? `${qty(q || 0, limits?.unit)} ${need.item?.name ?? t("Item")} ${dir === "rtl" ? "←" : "→"} ${camp.name}` : t("Dispatch"),
       href: "/dispatches",
-      disabledReason: ok ? null : "Pick a camp, a need and a quantity",
-      run: () => run(create({ camp_id: camp!._id, need_id: need!._id, quantity: q }), `Dispatch created · ${qty(q, limits!.unit)} reserved`),
+      disabledReason: ok ? null : t("Pick a camp, a need and a quantity"),
+      run: () => run(create({ camp_id: camp!._id, need_id: need!._id, quantity: q }), t("Dispatch created · {quantity} reserved", { quantity: qty(q, limits!.unit) })),
     });
   });
 
@@ -261,15 +267,15 @@ function DispatchCard({ parsed, world, register }: CardProps) {
         </Slot>
         <Slot label="Need" grow>
           <Select className={mini} value={needId} onChange={(e) => setNeedId(e.target.value)} disabled={!camp}>
-            <option value={`${campId}:`}>{camp ? (campNeeds.length ? "Choose a need…" : "No needs at this camp") : "Camp first"}</option>
+            <option value={`${campId}:`}>{t(camp ? (campNeeds.length ? "Choose a need…" : "No needs at this camp") : "Camp first")}</option>
             {campNeeds.map((n) => (
               <option key={n._id} value={`${campId}:${n._id}`} disabled={n.remaining === 0}>
-                {n.item?.name} · {Math.round(n.pct * 100)}% met
+                {n.item?.name ?? t("Item")} · {t("{percent} met", { percent: pct(n.pct) })}
               </option>
             ))}
           </Select>
         </Slot>
-        <Slot label={`Quantity${limits ? ` (${limits.unit})` : ""}`}>
+        <Slot label={limits ? t("Quantity ({unit})", { unit: unitLabel(1, limits.unit) }) : t("Quantity")}>
           <Input className={mini} type="number" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} invalid={!!problem} />
         </Slot>
       </div>
@@ -279,19 +285,20 @@ function DispatchCard({ parsed, world, register }: CardProps) {
           <Fact label="Still needed" value={fmt(limits.remaining)} />
           <Fact label="Max now" value={fmt(limits.max)} tone={limits.max ? "text-ok-ink" : "text-alert-ink"} />
           {limits.max > 0 && q !== limits.max && (
-            <Button size="sm" variant="secondary" className="ml-auto" onClick={() => setAmount(String(limits.max))}>
-              Use max
+            <Button size="sm" variant="secondary" className="ms-auto" onClick={() => setAmount(String(limits.max))}>
+              {t("Use max")}
             </Button>
           )}
         </div>
       )}
       {problem && <Hint tone="alert">{problem}</Hint>}
-      {noNeed && <Hint tone="warn">{camp!.name} has no need for {parsed.item!.name}. Add the need first, then dispatch against it.</Hint>}
+      {noNeed && <Hint tone="warn">{t("{camp} has no need for {item}. Add the need first, then dispatch against it.", { camp: camp!.name, item: parsed.item!.name })}</Hint>}
     </div>
   );
 }
 
 function NeedCard({ parsed, world, register, onSwitch }: CardProps) {
+  const { t } = useI18n();
   const create = useMutation(api.needs.create);
   const run = useRun();
   const [campId, setCampId] = useField(parsed.camp?._id ?? "");
@@ -307,11 +314,11 @@ function NeedCard({ parsed, world, register, onSwitch }: CardProps) {
   useEffect(() => {
     register({
       ready: [camp, item, amount].filter(Boolean).length / 3,
-      summary: camp && item ? `${camp.name} needs ${qty(q || 0, item.unit)} ${item.name}` : "Need",
+      summary: camp && item ? t("{camp} needs {quantity} {item}", { camp: camp.name, quantity: qty(q || 0, item.unit), item: item.name }) : t("Need"),
       href: camp ? `/camps/${camp._id}` : "/needs",
-      disabledReason: existing ? "That need already exists" : ok ? null : "Pick a camp, an item and a quantity",
+      disabledReason: existing ? t("That need already exists") : ok ? null : t("Pick a camp, an item and a quantity"),
       run: () =>
-        run(create({ camp_id: camp!._id, inventory_item_id: item!._id, required_quantity: q, priority: priority as Priority }), `Need added to ${camp!.name}`),
+        run(create({ camp_id: camp!._id, inventory_item_id: item!._id, required_quantity: q, priority: priority as Priority }), t("Need added to {camp}", { camp: camp!.name })),
     });
   });
 
@@ -328,21 +335,21 @@ function NeedCard({ parsed, world, register, onSwitch }: CardProps) {
             <ItemOptions world={world} />
           </Select>
         </Slot>
-        <Slot label={`Required${item ? ` (${item.unit})` : ""}`}>
+        <Slot label={item ? t("Required ({unit})", { unit: unitLabel(1, item.unit) }) : t("Required")}>
           <Input className={mini} type="number" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} />
         </Slot>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <Segmented size="sm" value={priority as Priority} onChange={setPriority} options={PRIORITIES.map((p) => ({ value: p, label: p }))} />
-        {item && <span className={cx("font-mono text-xs", item.lowStock ? "text-alert-ink" : "text-muted")}>{qty(item.stock, item.unit)} in the warehouse</span>}
+        <Segmented size="sm" value={priority as Priority} onChange={setPriority} options={PRIORITIES.map((p) => ({ value: p, label: t(p) }))} />
+        {item && <span className={cx("font-mono text-xs", item.lowStock ? "text-alert-ink" : "text-muted")}>{t("{quantity} in the warehouse", { quantity: qty(item.stock, item.unit) })}</span>}
       </div>
       {existing && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-warn-line bg-warn-wash px-3.5 py-2.5">
           <Hint tone="warn">
-            {camp?.name} already needs {item?.name}: {fmt(existing.fulfilled_quantity)} of {qty(existing.required_quantity, item?.unit)} delivered.
+            {t("{camp} already needs {item}: {delivered} of {required} delivered.", { camp: camp!.name, item: item!.name, delivered: fmt(existing.fulfilled_quantity), required: qty(existing.required_quantity, item?.unit) })}
           </Hint>
           <Button size="sm" variant="secondary" onClick={() => onSwitch("dispatch")}>
-            Dispatch instead
+            {t("Dispatch instead")}
           </Button>
         </div>
       )}
@@ -351,6 +358,7 @@ function NeedCard({ parsed, world, register, onSwitch }: CardProps) {
 }
 
 function DonationCard({ parsed, world, register }: CardProps) {
+  const { t } = useI18n();
   const create = useMutation(api.donations.create);
   const run = useRun();
   const [type, setType] = useField(parsed.cash ? "Cash" : "In-Kind");
@@ -365,13 +373,15 @@ function DonationCard({ parsed, world, register }: CardProps) {
   useEffect(() => {
     register({
       ready: [amount, cash || item, donor].filter(Boolean).length / 3,
-      summary: cash ? `Rs ${fmt(q || 0)} cash${donor ? ` from ${donor}` : ""}` : `${qty(q || 0, item?.unit)} ${item?.name ?? "goods"}${donor ? ` from ${donor}` : ""}`,
+      summary: cash
+        ? donor ? t("Rs {amount} cash from {donor}", { amount: fmt(q || 0), donor }) : t("Rs {amount} cash", { amount: fmt(q || 0) })
+        : donor ? t("{quantity} {item} from {donor}", { quantity: qty(q || 0, item?.unit), item: item?.name ?? t("goods"), donor }) : `${qty(q || 0, item?.unit)} ${item?.name ?? t("goods")}`,
       href: "/donations",
-      disabledReason: ok ? null : cash ? "Enter the amount" : "Pick an item and a quantity",
+      disabledReason: ok ? null : t(cash ? "Enter the amount" : "Pick an item and a quantity"),
       run: () =>
         run(
           create({ type: cash ? "Cash" : "In-Kind", amount_or_quantity: q, item_id: cash ? undefined : item!._id, donor: donor || undefined }),
-          cash ? `Donation recorded · Rs ${fmt(q)}` : `Donation recorded · +${qty(q, item!.unit)} ${item!.name} in stock`,
+          cash ? t("Donation recorded · Rs {amount}", { amount: fmt(q) }) : t("Donation recorded · +{quantity} {item} in stock", { quantity: qty(q, item!.unit), item: item!.name }),
         ),
     });
   });
@@ -380,7 +390,7 @@ function DonationCard({ parsed, world, register }: CardProps) {
     <div className="flex flex-col gap-3.5">
       <div className="flex gap-2.5">
         <Slot label="Type">
-          <Segmented size="sm" value={type as "Cash" | "In-Kind"} onChange={setType} options={[{ value: "In-Kind", label: "Goods" }, { value: "Cash", label: "Cash" }]} />
+          <Segmented size="sm" value={type as "Cash" | "In-Kind"} onChange={setType} options={[{ value: "In-Kind", label: t("Goods") }, { value: "Cash", label: t("Cash") }]} />
         </Slot>
         {!cash && (
           <Slot label="Item" grow>
@@ -389,16 +399,16 @@ function DonationCard({ parsed, world, register }: CardProps) {
             </Select>
           </Slot>
         )}
-        <Slot label={cash ? "Amount (Rs)" : `Quantity${item ? ` (${item.unit})` : ""}`}>
+        <Slot label={cash ? t("Amount (Rs)") : item ? t("Quantity ({unit})", { unit: unitLabel(1, item.unit) }) : t("Quantity")}>
           <Input className={mini} type="number" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} />
         </Slot>
       </div>
       <Slot label="Donor (optional)">
-        <Input className={mini} value={donor} placeholder="Anonymous" onChange={(e) => setDonor(e.target.value)} />
+        <Input className={mini} value={donor} placeholder={t("Anonymous")} onChange={(e) => setDonor(e.target.value)} />
       </Slot>
       {!cash && item && ok && (
         <Hint tone="ok">
-          Warehouse goes from {fmt(item.stock)} to {qty(item.stock + q, item.unit)}.
+          {t("Warehouse goes from {before} to {after}.", { before: fmt(item.stock), after: qty(item.stock + q, item.unit) })}
         </Hint>
       )}
     </div>
@@ -406,6 +416,7 @@ function DonationCard({ parsed, world, register }: CardProps) {
 }
 
 function AssignCard({ parsed, world, register }: CardProps) {
+  const { t, dir } = useI18n();
   const assign = useMutation(api.volunteers.assign);
   const run = useRun();
   const [volId, setVolId] = useField(parsed.volunteer?._id ?? "");
@@ -418,10 +429,10 @@ function AssignCard({ parsed, world, register }: CardProps) {
   useEffect(() => {
     register({
       ready: [vol, camp].filter(Boolean).length / 2,
-      summary: vol && camp ? `${vol.name} → ${camp.name}` : "Assign volunteer",
+      summary: vol && camp ? `${vol.name} ${dir === "rtl" ? "←" : "→"} ${camp.name}` : t("Assign volunteer"),
       href: "/volunteers",
-      disabledReason: busy ? `${vol?.name} is already at ${busy}` : ok ? null : "Pick a volunteer and a camp",
-      run: () => run(assign({ id: vol!._id, camp_id: camp!._id }), `${vol!.name} assigned to ${camp!.name}`),
+      disabledReason: busy ? t("{volunteer} is already at {camp}", { volunteer: vol!.name, camp: busy }) : ok ? null : t("Pick a volunteer and a camp"),
+      run: () => run(assign({ id: vol!._id, camp_id: camp!._id }), t("{volunteer} assigned to {camp}", { volunteer: vol!.name, camp: camp!.name })),
     });
   });
 
@@ -430,11 +441,10 @@ function AssignCard({ parsed, world, register }: CardProps) {
       <div className="flex gap-2.5">
         <Slot label="Volunteer" grow>
           <Select className={mini} value={volId} onChange={(e) => setVolId(e.target.value)}>
-            <option value="">Choose a volunteer…</option>
+            <option value="">{t("Choose a volunteer…")}</option>
             {world.volunteers.map((v) => (
               <option key={v._id} value={v._id}>
-                {v.name} · {v.skill}
-                {v.campName ? ` · at ${v.campName}` : " · available"}
+                {v.name} · {t(v.skill)} · {v.campName ? t("at {camp}", { camp: v.campName }) : t("available")}
               </option>
             ))}
           </Select>
@@ -448,7 +458,7 @@ function AssignCard({ parsed, world, register }: CardProps) {
       {vol && (
         <div className="flex items-center gap-2.5">
           <SkillPill skill={vol.skill} />
-          {busy ? <Hint tone="warn">Already at {busy}. Unassign them on the Volunteers page first.</Hint> : <Hint>Available now.</Hint>}
+          {busy ? <Hint tone="warn">{t("Already at {camp}. Unassign them on the Volunteers page first.", { camp: busy })}</Hint> : <Hint>{t("Available now.")}</Hint>}
         </div>
       )}
     </div>
@@ -456,15 +466,16 @@ function AssignCard({ parsed, world, register }: CardProps) {
 }
 
 function StockCard({ parsed, world, register }: CardProps) {
+  const { t } = useI18n();
   const [itemId, setItemId] = useField(parsed.item?._id ?? "");
   const item = world.items.find((i) => i._id === itemId);
   const navigate = useNavigate();
   useEffect(() => {
     register({
       ready: item ? 1 : 0,
-      summary: item ? `${item.name}: ${qty(item.stock, item.unit)} on hand` : "Stock check",
+      summary: item ? t("{item}: {quantity} on hand", { item: item.name, quantity: qty(item.stock, item.unit) }) : t("Stock check"),
       href: item ? `/warehouse?q=${encodeURIComponent(item.name)}` : "/warehouse",
-      disabledReason: item ? null : "Pick an item",
+      disabledReason: item ? null : t("Pick an item"),
       run: async () => {
         navigate(`/warehouse?q=${encodeURIComponent(item!.name)}`);
         return false;
@@ -481,15 +492,15 @@ function StockCard({ parsed, world, register }: CardProps) {
       {item && (
         <div className="flex items-end gap-6 rounded-lg bg-tint px-3.5 py-3">
           <div className="flex flex-col gap-0.5">
-            <span className="label text-[10px]">Available</span>
+            <span className="label text-[10px]">{t("Available")}</span>
             <span className={cx("text-[30px] font-extrabold leading-9 tracking-[-0.03em] tabular-nums", item.lowStock ? "text-alert-ink" : "text-ink")}>
-              {fmt(item.stock)} <span className="text-sm font-semibold text-muted">{item.unit}</span>
+              {fmt(item.stock)} <span className="text-sm font-semibold text-muted">{unitLabel(item.stock, item.unit)}</span>
             </span>
           </div>
           <Fact label="Reserved" value={fmt(item.reserved)} />
           <Fact label="Reorder at" value={fmt(item.reorder_level)} />
-          <Fact label="Camps asking" value={item.needCount} />
-          {item.lowStock && <Badge tone="danger" className="mb-1 ml-auto">Low stock</Badge>}
+          <Fact label="Camps asking" value={fmt(item.needCount)} />
+          {item.lowStock && <Badge tone="danger" className="mb-1 ms-auto">{t("Low stock")}</Badge>}
         </div>
       )}
     </div>
@@ -497,15 +508,16 @@ function StockCard({ parsed, world, register }: CardProps) {
 }
 
 function CampCard({ parsed, world, register }: CardProps) {
+  const { t } = useI18n();
   const [campId, setCampId] = useField(parsed.camp?._id ?? "");
   const camp = world.camps.find((c) => c._id === campId);
   const navigate = useNavigate();
   useEffect(() => {
     register({
       ready: camp ? 1 : 0,
-      summary: camp ? `${camp.name}: ${pct(camp.needsMet)} of needs met` : "Camp status",
+      summary: camp ? t("{camp}: {percent} of needs met", { camp: camp.name, percent: pct(camp.needsMet) }) : t("Camp status"),
       href: camp ? `/camps/${camp._id}` : "/camps",
-      disabledReason: camp ? null : "Pick a camp",
+      disabledReason: camp ? null : t("Pick a camp"),
       run: async () => {
         navigate(`/camps/${camp!._id}`);
         return false;
@@ -516,7 +528,7 @@ function CampCard({ parsed, world, register }: CardProps) {
     <div className="flex flex-col gap-3.5">
       <Slot label="Camp">
         <Select className={mini} value={campId} onChange={(e) => setCampId(e.target.value)}>
-          <option value="">Choose a camp…</option>
+          <option value="">{t("Choose a camp…")}</option>
           {world.camps.map((c) => (
             <option key={c._id} value={c._id}>
               {c.name} · {c.district}
@@ -528,9 +540,9 @@ function CampCard({ parsed, world, register }: CardProps) {
         <div className="flex items-center gap-6 rounded-lg bg-tint px-3.5 py-3">
           <Fact label="Families" value={`${fmt(camp.current_families)} / ${fmt(camp.capacity)}`} />
           <Fact label="Needs met" value={pct(camp.needsMet)} tone={camp.needsMet == null ? undefined : camp.needsMet < 0.4 ? "text-alert-ink" : camp.needsMet < 0.7 ? "text-warn-ink" : "text-ok-ink"} />
-          <Fact label="Critical" value={camp.criticalGaps} tone={camp.criticalGaps ? "text-alert-ink" : undefined} />
-          <Fact label="Volunteers" value={camp.volunteers} />
-          <span className="ml-auto">
+          <Fact label="Critical" value={fmt(camp.criticalGaps)} tone={camp.criticalGaps ? "text-alert-ink" : undefined} />
+          <Fact label="Volunteers" value={fmt(camp.volunteers)} />
+          <span className="ms-auto">
             <CampStatusPill status={camp.status} />
           </span>
         </div>
@@ -552,6 +564,7 @@ const WRITES: Intent[] = ["dispatch", "need", "donation", "assign"];
 /* ---------- Page ---------- */
 
 export default function QuickLog() {
+  const { t, dir } = useI18n();
   const camps = useQuery(api.camps.list);
   const items = useQuery(api.inventory.list);
   const volunteers = useQuery(api.volunteers.list);
@@ -665,12 +678,13 @@ export default function QuickLog() {
   return (
     <MotionConfig reducedMotion="user">
       <PageHeader
-        kicker="Quick log · type what happened, it becomes the form"
-        title="Say it once. ReliefHub fills in the rest."
-        deck="Write a dispatch, a need, a donation or an assignment the way you'd say it on the radio. Camps, items and quantities are matched against live data before anything is saved."
+        kicker={t("Quick log · type what happened, it becomes the form")}
+        title={t("Say it once. ReliefHub fills in the rest.")}
+        deck={t("Write a dispatch, a need, a donation or an assignment the way you'd say it on the radio. Camps, items and quantities are matched against live data before anything is saved.")}
       />
 
-      <div className="rise mx-auto flex w-full max-w-[720px] flex-col gap-3 pt-2">
+      <div dir={dir} className="rise mx-auto flex w-full max-w-[720px] flex-col gap-3 pt-2">
+        <p id="quicklog-language-note" className="text-center text-[13px] leading-5 text-muted">{t("Quick log currently accepts English entries. Use the English examples below.")}</p>
         <motion.div
           layout
           transition={reduce ? { duration: 0.15 } : { type: "spring", duration: 0.45, bounce: 0.12 }}
@@ -685,7 +699,7 @@ export default function QuickLog() {
               <motion.span
                 key={intent}
                 aria-hidden
-                className="absolute inset-y-0 left-0 z-10 w-[3px] origin-top"
+                className="absolute inset-y-0 start-0 z-10 w-[3px] origin-top"
                 style={{ backgroundColor: META[intent].edge }}
                 initial={{ scaleY: 0 }}
                 animate={{ scaleY: 1 }}
@@ -708,8 +722,10 @@ export default function QuickLog() {
                   if (!e.target.value.trim()) setMem(initialMemory);
                 }}
                 onKeyDown={onKeyDown}
-                aria-label="Describe what happened"
-                aria-describedby="quicklog-hint"
+                aria-label={t("Describe what happened")}
+                aria-describedby="quicklog-hint quicklog-language-note"
+                dir="ltr"
+                lang="en"
                 autoComplete="off"
                 spellCheck={false}
                 className="relative z-[1] h-8 w-full bg-transparent text-[19px] font-medium tracking-[-0.01em] text-ink caret-ink outline-none focus-visible:outline-none"
@@ -719,7 +735,7 @@ export default function QuickLog() {
             <span aria-hidden className={cx("size-1.5 shrink-0 rounded-full bg-signal transition-opacity duration-300", thinking ? "opacity-100" : "opacity-0")} />
             {intent && !ghost && (
               <Badge tone="neutral" className="shrink-0">
-                {META[intent].label}
+                {t(META[intent].label)}
               </Badge>
             )}
           </motion.div>
@@ -740,10 +756,10 @@ export default function QuickLog() {
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t border-line bg-tint/60 px-5 py-3">
                   <span className="min-w-0 truncate text-[13px] text-muted">
-                    {readOnly ? "Field volunteers can't log this. Ask a coordinator." : c?.disabledReason ?? c?.summary}
+                    {readOnly ? t("Field volunteers can't log this. Ask a coordinator.") : c?.disabledReason ?? c?.summary}
                   </span>
                   <Button size="sm" onClick={() => void submit()} disabled={!c || !!c.disabledReason || readOnly || busy} className="gap-2">
-                    {busy ? "Saving…" : META[intent].verb}
+                    {t(busy ? "Saving…" : META[intent].verb)}
                     <kbd className="font-mono text-[11px] font-medium opacity-60">↵</kbd>
                   </Button>
                 </div>
@@ -751,10 +767,10 @@ export default function QuickLog() {
             )}
           </AnimatePresence>
 
-          <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-signal transition-transform duration-300 ease-out" style={{ transform: `scaleX(${ghost ? ready * 0.4 : ready})` }} />
+          <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-signal transition-transform duration-300 ease-out rtl:origin-right" style={{ transform: `scaleX(${ghost ? ready * 0.4 : ready})` }} />
         </motion.div>
 
-        <div className="flex min-h-9 flex-wrap items-center justify-center gap-2" role="group" aria-label={ui.kind === "choose" ? "Did you mean" : "Try an example"}>
+        <div className="flex min-h-9 flex-wrap items-center justify-center gap-2" role="group" aria-label={t(ui.kind === "choose" ? "Did you mean" : "Try an example")}>
           <AnimatePresence mode="popLayout" initial={false}>
             {ui.kind === "choose"
               ? ui.options.map((o, i) => (
@@ -773,8 +789,8 @@ export default function QuickLog() {
                     )}
                   >
                     <Glyph d={META[o].icon} className="size-3.5" />
-                    {META[o].label}?
-                    <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-signal" style={{ transform: `scaleX(${Math.min(1, (result.intent.probabilities[o] ?? 0) * 2)})` }} />
+                    {t("{intent}?", { intent: t(META[o].label) })}
+                    <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-signal rtl:origin-right" style={{ transform: `scaleX(${Math.min(1, (result.intent.probabilities[o] ?? 0) * 2)})` }} />
                   </motion.button>
                 ))
               : !text &&
@@ -782,6 +798,8 @@ export default function QuickLog() {
                   <motion.button
                     key={ex}
                     type="button"
+                    dir="ltr"
+                    lang="en"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 0.1 } }}
@@ -797,10 +815,10 @@ export default function QuickLog() {
         </div>
 
         <div className="flex items-center justify-center gap-3 font-mono text-[11px] text-faint">
-          <p id="quicklog-hint">↵ save · esc clear · tab keep preview · ← → pick a suggestion</p>
+          <p id="quicklog-hint">{t("↵ save · esc clear · tab keep preview · ← → pick a suggestion")}</p>
           {hud && (
             <span aria-hidden className="rounded-md bg-paper px-1.5 py-0.5 tabular-nums text-muted shadow-border">
-              {hud.cached ? "cached" : hud.model === "jev-offline" ? "offline" : `${hud.latency}ms`} · {hud.questions}q · {hud.model}
+              {hud.cached ? t("cached") : hud.model === "jev-offline" ? t("offline") : t("{count} ms", { count: fmt(hud.latency) })} · {t("{count} questions", { count: fmt(hud.questions) })} · <bdi>{hud.model}</bdi>
             </span>
           )}
         </div>
@@ -808,9 +826,9 @@ export default function QuickLog() {
         {log.length > 0 && (
           <section className="mt-4 flex flex-col">
             <div className="flex items-center justify-between px-1 pb-2">
-              <h2 className="label">Logged from this device</h2>
+              <h2 className="label">{t("Logged from this device")}</h2>
               <button type="button" onClick={() => setLog([])} className="cursor-pointer text-[12px] font-semibold text-muted hover:text-ink">
-                Clear
+                {t("Clear")}
               </button>
             </div>
             <ul className="overflow-hidden rounded-xl bg-paper shadow-border">
@@ -829,7 +847,7 @@ export default function QuickLog() {
                       <span className={cx("grid size-7 shrink-0 place-items-center rounded-md", META[l.intent].tile)}>
                         <Glyph d={META[l.intent].icon} className="size-3.5" />
                       </span>
-                      <span className="min-w-0 flex-1 truncate text-sm font-semibold">{l.summary}</span>
+                      <span className="min-w-0 flex-1 truncate text-sm font-semibold"><span className="text-muted">{t(META[l.intent].label)} · </span><bdi>{l.summary}</bdi></span>
                       <span className="shrink-0 font-mono text-[11px] text-muted">{stamp(l.at)}</span>
                     </Link>
                   </motion.li>
@@ -841,7 +859,7 @@ export default function QuickLog() {
       </div>
 
       <div role="status" aria-live="polite" className="sr-only">
-        {ui.kind === "committed" && intent ? `Showing ${META[intent].label} form` : ""}
+        {ui.kind === "committed" && intent ? t("Showing {intent} form", { intent: t(META[intent].label) }) : ""}
       </div>
     </MotionConfig>
   );
@@ -856,7 +874,7 @@ function CyclingPlaceholder() {
     return () => clearInterval(id);
   }, [reduce]);
   return (
-    <span aria-hidden className="pointer-events-none absolute inset-0 flex items-center overflow-hidden">
+    <span aria-hidden dir="ltr" lang="en" className="pointer-events-none absolute inset-0 flex items-center overflow-hidden">
       <AnimatePresence initial={false}>
         <motion.span
           key={i}

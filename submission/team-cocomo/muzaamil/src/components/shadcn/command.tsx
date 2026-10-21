@@ -3,6 +3,7 @@ import { Command as CommandPrimitive } from "cmdk"
 import { Dialog as DialogPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { SearchIcon } from "@/components/ui"
+import { useI18n } from "@/i18n"
 
 function Command({
   className,
@@ -37,6 +38,7 @@ function CommandDialog({
   className?: string
   commandProps?: React.ComponentProps<typeof CommandPrimitive>
 }) {
+  const { t } = useI18n()
   return (
     <DialogPrimitive.Root {...props}>
       <DialogPrimitive.Portal>
@@ -47,8 +49,8 @@ function CommandDialog({
             className
           )}
         >
-          <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
-          <DialogPrimitive.Description className="sr-only">{description}</DialogPrimitive.Description>
+          <DialogPrimitive.Title className="sr-only">{t(title)}</DialogPrimitive.Title>
+          <DialogPrimitive.Description className="sr-only">{t(description)}</DialogPrimitive.Description>
           <Command {...commandProps}>{children}</Command>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -159,7 +161,7 @@ function CommandShortcut({
     <span
       data-slot="command-shortcut"
       className={cn(
-        "ml-auto font-mono text-[11px] text-muted",
+        "ms-auto font-mono text-[11px] text-muted",
         className
       )}
       {...props}

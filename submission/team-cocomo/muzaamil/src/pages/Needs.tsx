@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import type { FunctionReturnType } from "convex/server";
 import { EvilBarChart } from "@/components/evilcharts/charts/recharts-bar-chart";
+import { ChartTooltip, ChartTooltipContent } from "@/components/evilcharts/ui/recharts-tooltip";
 import { EvilPieChart } from "@/components/evilcharts/charts/recharts-pie-chart";
 import { ChartCard, LegendDots, PALETTE, series } from "../components/charts";
 import { Card, Empty, Flag, Loading, PageHeader, PriorityPill, SearchBox, Segmented, Select, TableHead, Toggle, Toolbar, Vessel, cx } from "../components/ui";
 import { CATEGORIES, fmt, levelText, pct, PRIORITIES, qty, type Priority } from "../lib/format";
+import { useI18n } from "../i18n";
 
 export default function Needs() {
+  const { t } = useI18n();
   const needs = useQuery(api.needs.list);
   const [priority, setPriority] = useState<"All" | Priority>("All");
   const [category, setCategory] = useState("All");
@@ -23,59 +26,59 @@ export default function Needs() {
         (priority === "All" || n.priority === priority) &&
         (category === "All" || n.item?.category === category) &&
         (!criticalOnly || n.isCriticalGap) &&
-        (!q || n.item?.name.toLowerCase().includes(q) || n.camp?.name.toLowerCase().includes(q) || n.camp?.district.toLowerCase().includes(q)),
+        (!q || (n.item && t(n.item.name).toLowerCase().includes(q)) || n.item?.name.toLowerCase().includes(q) || n.camp?.name.toLowerCase().includes(q) || n.camp?.district.toLowerCase().includes(q)),
     );
-  }, [needs, priority, category, criticalOnly, search]);
+  }, [needs, priority, category, criticalOnly, search, t]);
 
   const critical = (needs ?? []).filter((n) => n.isCriticalGap).length;
 
   return (
     <>
       <PageHeader
-        kicker={`Needs · ${needs?.length ?? 0} across every camp`}
+        kicker={t("Needs · {count} across every camp", { count: fmt(needs?.length ?? 0) })}
         title={
           <>
-            {needs?.length ?? 0} needs.{" "}
+            {t("{count} needs.", { count: fmt(needs?.length ?? 0) })}{" "}
             {critical > 0 ? (
               <span className="text-alert">
-                {critical} critical {critical === 1 ? "gap" : "gaps"}.
+                {t(critical === 1 ? "{count} critical gap." : "{count} critical gaps.", { count: fmt(critical) })}
               </span>
             ) : (
-              "No critical gaps."
+              t("No critical gaps.")
             )}
           </>
         }
-        deck="A critical gap is a High-priority need below 40% delivered. Sorted worst first. Open a camp to add, edit or dispatch against its needs."
+        deck={t("A critical gap is a High-priority need below 40% delivered. Sorted worst first. Open a camp to add, edit or dispatch against its needs.")}
       />
       {needs && <NeedCharts needs={needs} />}
       <Card>
         <Toolbar>
-          <SearchBox value={search} onChange={setSearch} placeholder="Search item, camp or district" />
+          <SearchBox value={search} onChange={setSearch} placeholder={t("Search item, camp or district")} />
           <div className="flex items-center gap-2.5">
             <Toggle on={criticalOnly} onClick={() => setCriticalOnly((v) => !v)}>
-              Critical gaps only · {critical}
+              {t("Critical gaps only · {count}", { count: fmt(critical) })}
             </Toggle>
-            <Segmented value={priority} onChange={setPriority} options={[{ value: "All", label: "All" }, ...PRIORITIES.map((p) => ({ value: p, label: p }))]} />
+            <Segmented value={priority} onChange={setPriority} options={[{ value: "All", label: t("All") }, ...PRIORITIES.map((p) => ({ value: p, label: t(p) }))]} />
             <Select value={category} onChange={(e) => setCategory(e.target.value)} className="h-[38px] w-44 text-[13px] font-semibold">
-              <option value="All">All categories</option>
+              <option value="All">{t("All categories")}</option>
               {CATEGORIES.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>{t(c)}</option>
               ))}
             </Select>
           </div>
         </Toolbar>
         <TableHead>
-          <span className="w-[270px] shrink-0 pl-[15px]">Camp</span>
-          <span className="w-[210px] shrink-0">Item</span>
-          <span className="w-[90px] shrink-0">Priority</span>
-          <span className="flex-1">Progress</span>
-          <span className="w-[150px] shrink-0">Left to send</span>
-          <span className="w-[70px] shrink-0 text-right">Met</span>
+          <span className="w-[270px] shrink-0 ps-[15px]">{t("Camp")}</span>
+          <span className="w-[210px] shrink-0">{t("Item")}</span>
+          <span className="w-[90px] shrink-0">{t("Priority")}</span>
+          <span className="flex-1">{t("Progress")}</span>
+          <span className="w-[150px] shrink-0">{t("Left to send")}</span>
+          <span className="w-[70px] shrink-0 text-end">{t("Met")}</span>
         </TableHead>
         {!needs ? (
           <Loading />
         ) : rows.length === 0 ? (
-          <Empty>No needs match these filters.</Empty>
+          <Empty>{t("No needs match these filters.")}</Empty>
         ) : (
           rows.map((n) => (
             <Link key={n._id} to={`/camps/${n.camp_id}`} className="group flex h-[60px] items-center border-b border-line px-5 last:border-b-0 hover:bg-tint/70">
@@ -87,21 +90,21 @@ export default function Needs() {
                 </span>
               </span>
               <span className="flex w-[210px] shrink-0 flex-col gap-0.5">
-                <span className="truncate text-sm">{n.item?.name}</span>
-                <span className="text-xs text-muted">{n.item?.category}</span>
+                <span className="truncate text-sm">{n.item ? t(n.item.name) : ""}</span>
+                <span className="text-xs text-muted">{n.item ? t(n.item.category) : ""}</span>
               </span>
               <span className="flex w-[90px] shrink-0">
                 <PriorityPill priority={n.priority} />
               </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-[7px] pr-8">
+              <span className="flex min-w-0 flex-1 flex-col gap-[7px] pe-8">
                 <Vessel fulfilled={n.fulfilled_quantity} reserved={n.reserved} required={n.required_quantity} />
                 <span className="truncate font-mono text-[11px] text-muted">
                   {fmt(n.fulfilled_quantity)} / {qty(n.required_quantity, n.item?.unit)}
-                  {n.reserved > 0 && ` · +${fmt(n.reserved)} reserved`}
+                  {n.reserved > 0 && <> · {t("+{count} reserved", { count: fmt(n.reserved) })}</>}
                 </span>
               </span>
               <span className="w-[150px] shrink-0 font-mono text-xs">{qty(n.remaining, n.item?.unit)}</span>
-              <span className={cx("w-[70px] shrink-0 text-right text-xl font-bold tracking-[-0.02em]", levelText(n.pct))}>{pct(n.pct)}</span>
+              <span className={cx("w-[70px] shrink-0 text-end text-xl font-bold tracking-[-0.02em]", levelText(n.pct))}>{pct(n.pct)}</span>
             </Link>
           ))
         )}
@@ -113,9 +116,10 @@ export default function Needs() {
 type Need = FunctionReturnType<typeof api.needs.list>[number];
 
 function NeedCharts({ needs }: { needs: Need[] }) {
+  const { t, dir } = useI18n();
   const byCamp = new Map<string, Need[]>();
   for (const n of needs) {
-    const name = n.camp?.name.split(" ")[0] ?? "Camp";
+    const name = n.camp?.name.split(" ")[0] ?? t("Camp");
     byCamp.set(name, [...(byCamp.get(name) ?? []), n]);
   }
   // One value per camp, split into three series so each bar takes its health colour.
@@ -128,31 +132,37 @@ function NeedCharts({ needs }: { needs: Need[] }) {
   const crit = needs.filter((n) => n.isCriticalGap).length;
   const below = needs.filter((n) => !n.isCriticalGap && n.pct < 0.7).length;
   const slices = [
-    { status: "critical", label: "Critical gap", count: crit, color: PALETTE.alert },
-    { status: "watch", label: "Below 70%", count: below, color: PALETTE.warn },
-    { status: "ok", label: "On track", count: needs.length - crit - below, color: PALETTE.ok },
+    { status: "critical", label: t("Critical gap"), count: crit, color: PALETTE.alert },
+    { status: "watch", label: t("Below 70%"), count: below, color: PALETTE.warn },
+    { status: "ok", label: t("On track"), count: needs.length - crit - below, color: PALETTE.ok },
   ];
   return (
     <div className="grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-6">
-      <ChartCard title="Fulfilment by camp" sub="Average share delivered across each camp's needs, weakest first">
+      <ChartCard title={t("Fulfilment by camp")} sub={t("Average share delivered across each camp's needs, weakest first")}>
         <EvilBarChart
           data={camps}
-          config={{ critical: series("Under 40%", PALETTE.alert), watch: series("40–70%", PALETTE.warn), ok: series("70% or more", PALETTE.ok) }}
+          config={{ critical: series(t("Under 40%"), PALETTE.alert), watch: series(t("40–70%"), PALETTE.warn), ok: series(t("70% or more"), PALETTE.ok) }}
           stackType="stacked"
           barRadius={4}
           className="aspect-auto h-[240px]"
         >
           <EvilBarChart.Grid />
-          <EvilBarChart.XAxis dataKey="camp" />
-          <EvilBarChart.YAxis domain={[0, 100]} width={34} tickFormatter={(v: number) => `${v}%`} />
-          <EvilBarChart.Tooltip roundness="md" />
-          <EvilBarChart.Legend variant="rounded-square" align="left" />
+          <EvilBarChart.XAxis dataKey="camp" reversed={dir === "rtl"} />
+          <EvilBarChart.YAxis domain={[0, 100]} width={34} tickFormatter={(v: number) => pct(v / 100)} orientation={dir === "rtl" ? "right" : "left"} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent roundness="md" formatter={(value, name, item) => (
+            <div className="flex w-full items-center gap-2">
+              <span className="size-2.5 shrink-0 rounded-[2px]" style={{ background: item.color }} />
+              <span className="flex-1 text-muted-foreground">{t(name === "critical" ? "Under 40%" : name === "watch" ? "40–70%" : "70% or more")}</span>
+              <span className="font-mono font-medium tabular-nums">{pct(Number(value) / 100)}</span>
+            </div>
+          )} />} />
+          <EvilBarChart.Legend variant="rounded-square" align={dir === "rtl" ? "right" : "left"} />
           <EvilBarChart.Bar dataKey="critical" />
           <EvilBarChart.Bar dataKey="watch" />
           <EvilBarChart.Bar dataKey="ok" />
         </EvilBarChart>
       </ChartCard>
-      <ChartCard title="Need health" sub={`${needs.length} needs across every camp`}>
+      <ChartCard title={t("Need health")} sub={t("{count} needs across every camp", { count: fmt(needs.length) })}>
         <div className="flex h-full items-center gap-5">
           <div className="relative h-[200px] w-[200px] flex-none">
             <EvilPieChart
@@ -163,15 +173,21 @@ function NeedCharts({ needs }: { needs: Need[] }) {
               className="aspect-square h-[200px]"
             >
               <EvilPieChart.Pie innerRadius="62%" outerRadius="95%" paddingAngle={3} cornerRadius={4} />
-              <EvilPieChart.Tooltip roundness="md" />
+              <ChartTooltip content={<ChartTooltipContent nameKey="status" hideLabel roundness="md" formatter={(value, name, item) => (
+                <div className="flex w-full items-center gap-2">
+                  <span className="size-2.5 shrink-0 rounded-[2px]" style={{ background: item.color }} />
+                  <span className="flex-1 text-muted-foreground">{slices.find((slice) => slice.status === name)?.label ?? t(String(name))}</span>
+                  <span className="font-mono font-medium tabular-nums">{fmt(Number(value))}</span>
+                </div>
+              )} />} />
             </EvilPieChart>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[30px] font-bold leading-8 tracking-[-0.03em] text-alert">{crit}</span>
-              <span className="text-xs text-muted">critical</span>
+              <span className="text-[30px] font-bold leading-8 tracking-[-0.03em] text-alert">{fmt(crit)}</span>
+              <span className="text-xs text-muted">{t("critical")}</span>
             </div>
           </div>
           <div className="flex-1">
-            <LegendDots items={slices.map((s) => ({ label: s.label, color: s.color, value: s.count }))} />
+            <LegendDots items={slices.map((s) => ({ label: s.label, color: s.color, value: fmt(s.count) }))} />
           </div>
         </div>
       </ChartCard>

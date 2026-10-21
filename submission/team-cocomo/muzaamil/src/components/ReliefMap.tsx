@@ -2,6 +2,7 @@ import { LngLatBounds, Map as MapLibre, Marker, NavigationControl, setWorkerUrl,
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useEffect, useRef, useState } from "react";
 import { pct } from "../lib/format";
+import { tr, useI18n } from "../i18n";
 import { campCoords, DEPOTS, nearestDepot } from "../lib/geo";
 import CampMap, { type MapCamp } from "./CampMap";
 
@@ -27,7 +28,7 @@ function pinElement(c: MapCamp, size: number, selected: boolean, showLabel: bool
   const el = document.createElement("button");
   el.type = "button";
   el.setAttribute("aria-label", `${c.name}, ${c.district}`);
-  el.title = `${c.name} · ${c.district} · ${c.status === "Closed" ? "closed" : `${pct(c.needsMet)} needs met`}`;
+  el.title = `${c.name} · ${c.district} · ${c.status === "Closed" ? tr("Closed") : tr("{percent} needs met", { percent: pct(c.needsMet) })}`;
   el.style.cssText = "display:flex;align-items:center;gap:6px;cursor:pointer;background:none;border:0;padding:0;";
   const color = pinColor(c);
   const dot = document.createElement("span");
@@ -35,8 +36,9 @@ function pinElement(c: MapCamp, size: number, selected: boolean, showLabel: bool
   el.appendChild(dot);
   if (showLabel) {
     const label = document.createElement("span");
-    label.textContent = `${c.name.split(" ")[0]} · ${c.status === "Closed" ? "closed" : pct(c.needsMet)}`;
-    label.style.cssText = `font:600 11px Archivo,sans-serif;white-space:nowrap;padding:3px 7px;border-radius:6px;background:${selected ? "#111311" : "rgba(255,255,255,.95)"};color:${selected ? "#fff" : "#30332f"};box-shadow:0 1px 3px rgba(17,19,17,.18);`;
+    label.textContent = `${c.name.split(" ")[0]} · ${c.status === "Closed" ? tr("Closed") : pct(c.needsMet)}`;
+    label.dir = "auto";
+    label.style.cssText = `font:600 11px var(--font-sans);white-space:nowrap;padding:3px 7px;border-radius:6px;background:${selected ? "#111311" : "rgba(255,255,255,.95)"};color:${selected ? "#fff" : "#30332f"};box-shadow:0 1px 3px rgba(17,19,17,.18);`;
     el.appendChild(label);
   }
   return el;
@@ -80,6 +82,7 @@ export default function ReliefMap({
   focusId?: string;
   labels?: boolean;
 }) {
+  const { language, t } = useI18n();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibre | null>(null);
   const markers = useRef<Marker[]>([]);
@@ -90,10 +93,16 @@ export default function ReliefMap({
 
   useEffect(() => {
     if (!container.current) return;
+    setReady(false);
     let loaded = false;
     const map = new MapLibre({
       container: container.current,
       style: STYLE_URL,
+      locale: {
+        "NavigationControl.ZoomIn": t("Zoom in"),
+        "NavigationControl.ZoomOut": t("Zoom out"),
+        "AttributionControl.ToggleAttribution": t("Map attribution"),
+      },
       bounds: SINDH_BOUNDS,
       fitBoundsOptions: { padding: 24 },
       attributionControl: { compact: true },
@@ -126,7 +135,7 @@ export default function ReliefMap({
     }, 10_000);
     for (const d of DEPOTS) {
       const el = document.createElement("span");
-      el.title = d.name;
+      el.title = tr(d.name);
       el.style.cssText = "width:12px;height:12px;border-radius:3px;background:#111311;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);";
       new Marker({ element: el }).setLngLat([d.lng, d.lat]).addTo(map);
     }
@@ -141,7 +150,7 @@ export default function ReliefMap({
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -160,7 +169,7 @@ export default function ReliefMap({
       });
       return new Marker({ element: el, anchor: showLabel ? "left" : "center", offset: showLabel ? [-size / 2, 0] : [0, 0] }).setLngLat(campCoords(c)).addTo(map);
     });
-  }, [camps, selectedId, labels]);
+  }, [camps, selectedId, labels, language]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -180,7 +189,7 @@ export default function ReliefMap({
       for (const d of DEPOTS) b.extend([d.lng, d.lat]);
       map.fitBounds(b, { padding: { top: 40, bottom: 40, left: 40, right: 140 }, animate: false, maxZoom: 8 });
     }
-  }, [focusId, camps.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [focusId, camps.length, ready, language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (failed) {
     return (
@@ -191,14 +200,15 @@ export default function ReliefMap({
       </div>
     );
   }
-  return <div ref={container} className="relative w-full bg-tint" style={{ height }} />;
+  return <div ref={container} data-geographic-map dir="ltr" className="relative w-full bg-tint" style={{ height }} />;
 }
 
 export function MapKey() {
+  const { t } = useI18n();
   const dot = (color: string, label: string) => (
     <span className="flex items-center gap-1.5">
       <span className="size-2.5 rounded-full border-2 border-white" style={{ background: color, boxShadow: "0 0 0 1px rgba(17,19,17,.2)" }} />
-      {label}
+      {t(label)}
     </span>
   );
   return (
@@ -208,13 +218,13 @@ export function MapKey() {
       {dot("#f79009", "Full")}
       {dot("#b9bcb5", "Closed")}
       <span className="flex items-center gap-1.5">
-        <span className="size-2.5 rounded-[3px] bg-ink" /> Depot
+        <span className="size-2.5 rounded-[3px] bg-ink" /> {t("Depot")}
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="w-4 border-t-2 border-dashed border-info" /> In transit
+        <span className="w-4 border-t-2 border-dashed border-info" /> {t("In transit")}
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="w-4 border-t-2 border-dashed border-faint" /> Pending
+        <span className="w-4 border-t-2 border-dashed border-faint" /> {t("Pending")}
       </span>
     </div>
   );

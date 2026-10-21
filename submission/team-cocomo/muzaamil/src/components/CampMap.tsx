@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { pct } from "../lib/format";
 import { campCoords, DEPOTS, INDUS, nearestDepot, SINDH_OUTLINE } from "../lib/geo";
 import { cx } from "./ui";
+import { useI18n } from "../i18n";
 
 export type MapCamp = {
   _id: string;
@@ -50,6 +51,7 @@ export default function CampMap({
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const { t } = useI18n();
   const outline = useMemo(() => SINDH_OUTLINE.map(([lng, lat]) => toXY(lng, lat).join(",")).join(" "), []);
   const river = useMemo(() => smoothPath(INDUS), []);
   const maxFamilies = Math.max(1, ...camps.map((c) => c.families));
@@ -62,7 +64,7 @@ export default function CampMap({
   const byId = new Map(placed.map((p) => [p.camp._id, p]));
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full select-none" role="img" aria-label="Map of camps in Sindh">
+    <svg data-geographic-map direction="ltr" viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full select-none" role="img" aria-label={t("Map of camps in Sindh")}>
       <polygon points={outline} fill="#FFFFFF" stroke="var(--color-line-strong)" strokeWidth="1.2" strokeLinejoin="round" />
       <path d={river} fill="none" stroke="var(--color-river)" strokeWidth="5" strokeLinecap="round" />
 
@@ -88,7 +90,7 @@ export default function CampMap({
 
       {DEPOTS.map((d) => {
         const [x, y] = toXY(d.lng, d.lat);
-        return <rect key={d.name} x={x - 5} y={y - 5} width="10" height="10" fill="var(--color-ink)"><title>{d.name}</title></rect>;
+        return <rect key={d.name} x={x - 5} y={y - 5} width="10" height="10" fill="var(--color-ink)"><title>{t(d.name)}</title></rect>;
       })}
 
       {placed.map(({ camp, x, y, r, lng }) => {
@@ -96,7 +98,7 @@ export default function CampMap({
         const critical = !closed && camp.criticalGaps > 0;
         const selected = camp._id === selectedId;
         const left = lng < 68.3;
-        const label = `${camp.name.split(" ")[0]} ${closed ? "· closed" : pct(camp.needsMet)}`;
+        const label = `${camp.name.split(" ")[0]} ${closed ? `· ${t("Closed")}` : pct(camp.needsMet)}`;
         const labelW = label.length * 6.6 + 10;
         const lx = left ? x - r - 6 - labelW : x + r + 6;
         return (
@@ -129,10 +131,11 @@ export default function CampMap({
 }
 
 export function MapLegend() {
+  const { t } = useI18n();
   const item = (swatch: React.ReactNode, label: string) => (
     <span className="flex items-center gap-1.5">
       {swatch}
-      {label}
+      {t(label)}
     </span>
   );
   return (

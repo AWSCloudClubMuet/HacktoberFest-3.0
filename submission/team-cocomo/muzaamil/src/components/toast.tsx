@@ -1,5 +1,7 @@
 import { ConvexError } from "convex/values";
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { useI18n } from "../i18n";
+import { translateMessage } from "../i18n/translate";
 
 type Toast = { id: number; kind: "ok" | "error"; text: string; leaving?: boolean };
 
@@ -11,6 +13,7 @@ const TOAST_MS = 4500;
 const TOAST_EXIT_MS = 150;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { language } = useI18n();
   const [toasts, setToasts] = useState<Toast[]>([]);
   const push = useCallback((kind: Toast["kind"], text: string) => {
     const id = Date.now() + Math.random();
@@ -22,7 +25,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ push }}>
       {children}
-      <div className="pointer-events-none fixed bottom-6 right-6 z-50 flex w-96 flex-col gap-2" aria-live="polite">
+      <div className="pointer-events-none fixed bottom-6 end-6 z-50 flex w-96 max-w-[calc(100vw-3rem)] flex-col gap-2" aria-live="polite">
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -30,7 +33,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className="toast pointer-events-auto flex items-start gap-3 rounded-xl border border-transparent bg-ink px-4 py-3 text-sm leading-5 text-white shadow-pop"
           >
             <span className={`mt-1.5 size-2 shrink-0 rounded-full ${t.kind === "error" ? "bg-alert" : "bg-ok"}`} />
-            <span className="flex-1">{t.text}</span>
+            <span className="flex-1">{translateMessage(language, t.text)}</span>
           </div>
         ))}
       </div>

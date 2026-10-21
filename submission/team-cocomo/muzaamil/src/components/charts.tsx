@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import type { ChartConfig } from "@/components/evilcharts/ui/recharts-chart";
 import { Section } from "./ui";
+import { getLanguage, intlLocales, useI18n } from "../i18n";
+import type { Language } from "../i18n";
+import { fmt } from "../lib/format";
 
 export const PALETTE = {
   ink: "#111311",
@@ -62,9 +65,10 @@ export function ChartCard({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const { t, dir } = useI18n();
   return (
-    <Section title={title} sub={sub} right={right} className={className}>
-      <div className="flex flex-1 flex-col px-4 pb-4 pt-3 [&>[data-chart]]:flex-none">{children}</div>
+    <Section title={typeof title === "string" ? t(title) : title} sub={typeof sub === "string" ? t(sub) : sub} right={right} className={className}>
+      <div dir={dir} className="flex flex-1 flex-col px-4 pb-4 pt-3 [&>[data-chart]]:flex-none [&_.recharts-surface]:[direction:ltr] [&_.recharts-surface_text]:[unicode-bidi:plaintext]">{children}</div>
       {footer}
     </Section>
   );
@@ -73,7 +77,7 @@ export function ChartCard({
 export type Day = { key: string; label: string; start: number; end: number };
 
 /** The last `n` calendar days ending today, oldest first. */
-export function lastDays(n: number, now = Date.now()): Day[] {
+export function lastDays(n: number, now = Date.now(), language: Language = getLanguage()): Day[] {
   const today = new Date(now);
   today.setHours(0, 0, 0, 0);
   return Array.from({ length: n }, (_, i) => {
@@ -82,7 +86,7 @@ export function lastDays(n: number, now = Date.now()): Day[] {
     const start = d.getTime();
     return {
       key: d.toISOString().slice(0, 10),
-      label: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
+      label: d.toLocaleDateString(intlLocales[language], { day: "2-digit", month: "short" }),
       start,
       end: start + 86_400_000,
     };
@@ -94,17 +98,20 @@ export function byDay<T extends { created_at: number }>(rows: T[], days: Day[], 
   return days.map((d) => rows.filter((r) => r.created_at >= d.start && r.created_at < d.end).reduce((s, r) => s + value(r), 0));
 }
 
-export const compact = (n: number) =>
-  n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `${Math.round(n / 100) / 10}k` : String(Math.round(n));
+export const compact = (n: number, language: Language = getLanguage()) =>
+  language === "en"
+    ? n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `${Math.round(n / 100) / 10}k` : String(Math.round(n))
+    : new Intl.NumberFormat(intlLocales[language], { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
 export function LegendDots({ items }: { items: { label: string; color: string; value?: ReactNode }[] }) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col gap-2">
       {items.map((i) => (
         <div key={i.label} className="flex items-center gap-2.5 text-[13px]">
           <span className="size-2.5 shrink-0 rounded-[3px]" style={{ background: i.color }} />
-          <span className="flex-1 truncate text-ink-2">{i.label}</span>
-          {i.value != null && <span className="font-mono text-xs font-semibold">{i.value}</span>}
+          <span className="flex-1 truncate text-ink-2">{t(i.label)}</span>
+          {i.value != null && <bdi className="font-mono text-xs font-semibold">{typeof i.value === "number" ? fmt(i.value) : i.value}</bdi>}
         </div>
       ))}
     </div>

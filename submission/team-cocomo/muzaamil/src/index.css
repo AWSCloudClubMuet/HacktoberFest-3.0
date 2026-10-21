@@ -162,6 +162,29 @@ input[type="number"]::-webkit-inner-spin-button {
   color: var(--color-ink);
 }
 
+/* Urdu and Sindhi use an Arabic font with complete Sindhi glyph coverage. */
+html[dir="rtl"] {
+  --font-sans: "Noto Sans Arabic", "Archivo", sans-serif;
+  --font-mono: "Noto Sans Arabic", sans-serif;
+}
+html[dir="rtl"] .label {
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.7;
+}
+html[dir="rtl"] .display {
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+html[dir="rtl"] input,
+html[dir="rtl"] select {
+  letter-spacing: 0;
+}
+/* A physical map and chart coordinates keep their geographic/numeric direction. */
+[data-geographic-map] {
+  direction: ltr;
+}
+
 @keyframes modal-rise {
   from {
     opacity: 0;
