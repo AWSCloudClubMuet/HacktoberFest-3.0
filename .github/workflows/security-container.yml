@@ -1,0 +1,50 @@
+name: Security - Container
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-image:
+    name: Trivy image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build container image
+        run: docker build --tag security-app:ci submission/webies/automated-security-vulnerability-02/app
+
+      - name: Scan container image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: image
+          image-ref: security-app:ci
+          format: sarif
+          output: submission/webies/automated-security-vulnerability-02/reports/trivy-image.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          version: 'v0.76.0'
+          cache: true
+
+      - name: Upload SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-sarif-container
+          path: submission/webies/automated-security-vulnerability-02/reports/trivy-image.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: submission/webies/automated-security-vulnerability-02/reports/trivy-image.sarif
+          category: trivy-image

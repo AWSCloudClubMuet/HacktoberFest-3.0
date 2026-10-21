@@ -1,7 +1,7 @@
 node_modules/
 .venv/
-reports/*
-!reports/.gitkeep
+**/reports/*
+!**/reports/.gitkeep
 .demo/
 .env
 .env.*
