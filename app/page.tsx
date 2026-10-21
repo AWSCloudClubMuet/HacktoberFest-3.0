@@ -352,10 +352,16 @@ export default function Page() {
         <div className="sidebar-bottom">
           <button className="nav-item" onClick={() => me && openProfile(me.id)}><Settings />My profile</button>
           {me && (
-            <button className="profile-mini profile-mini-button" onClick={() => openProfile(me.id)}>
-              <Avatar name={me.name} id={me.id} />
-              <div><strong>{me.name}</strong><span>{majorLine(me.name, me.major, me.semester)}</span></div>
-            </button>
+            <div className="profile-mini-wrap">
+              <div className="profile-hover-menu">
+                <button onClick={() => openProfile(me.id)}><Users />Profile</button>
+                <button onClick={doSignOut}><LogOut />Logout</button>
+              </div>
+              <button className="profile-mini profile-mini-button" onClick={() => openProfile(me.id)}>
+                <Avatar name={me.name} id={me.id} />
+                <div><strong>{me.name}</strong><span>{majorLine(me.name, me.major, me.semester)}</span></div>
+              </button>
+            </div>
           )}
         </div>
       </aside>
