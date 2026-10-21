@@ -25,7 +25,6 @@ import {
   Pencil,
   Plus,
   Search,
-  Settings,
   Send,
   Star,
   Users,
@@ -350,7 +349,6 @@ export default function Page() {
           <button className={`nav-item ${savedOnly ? 'active' : ''}`} onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
         </nav>
         <div className="sidebar-bottom">
-          <button className="nav-item" onClick={() => me && openProfile(me.id)}><Settings />My profile</button>
           {me && (
             <div className="profile-mini-wrap">
               <div className="profile-hover-menu">
