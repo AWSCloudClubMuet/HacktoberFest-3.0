@@ -4,11 +4,15 @@
  * time, so this module self-registers and injects its own small stylesheet
  * (same trick camps.js uses with a link tag, just inline since I ship one file).
  *
- * Design decision: the province outline is a hand-simplified Sindh silhouette —
+ * Design decisions: the province outline is a hand-simplified Sindh silhouette —
  * wide arable north, the Kirthar range wall on the west, the Rann/delta coast
  * and the Thar edge on the east. Points are stored as real lat/lon and drawn
- * through one linear projection, so camp markers (added next) land where the
- * geography says. A believable stylization, not survey-accurate.
+ * through one linear projection, so camp markers (positioned by their real
+ * district geography) land where the geography says. Marker size = families
+ * sheltered, marker colour = fulfilment health joined per camp — healthy >=60%
+ * green, strained 30-59% amber, critical <30% red, using the same
+ * sum(fulfilled)/sum(required) rule as the dashboard's Overall Fulfilment KPI.
+ * A believable stylization, not survey-accurate.
  */
 (function () {
   if (!document.getElementById('opsmap-module-css')) {
@@ -33,6 +37,39 @@
       '.ops-province { fill: rgba(16, 185, 129, .13); stroke: #34d399; stroke-width: 1.6; stroke-linejoin: round; }',
       '.ops-grid line { stroke: rgba(209, 250, 229, .09); stroke-width: 1; }',
       '.ops-river { fill: none; stroke: rgba(147, 226, 199, .35); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1 7; }',
+      '.ops-wrap { display: flex; gap: var(--sp-4); align-items: stretch; flex-wrap: wrap; }',
+      '.ops-side { flex: 0 1 340px; min-width: 260px; display: flex; flex-direction: column; gap: var(--sp-2); }',
+      '.ops-side-title { margin: 0 0 2px; font-size: var(--fs-md); font-weight: 700; }',
+      '.ops-row {',
+      '  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;',
+      '  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-md);',
+      '  padding: 9px 12px; cursor: pointer; font-family: var(--font-body); color: var(--ink);',
+      '  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease),',
+      '              transform var(--dur-2) cubic-bezier(0.19, 1, 0.22, 1);',
+      '}',
+      '.ops-row:hover, .ops-row:focus-visible {',
+      '  border-color: var(--brand-strong); box-shadow: 0 0 0 3px rgba(16, 185, 129, .16);',
+      '  transform: translateX(3px); outline: none;',
+      '}',
+      '.ops-dot { flex: none; width: 13px; height: 13px; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35); }',
+      '.ops-row-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }',
+      '.ops-row-name { font-size: var(--fs-sm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      '.ops-row-sub { font-size: var(--fs-2xs); color: var(--muted); }',
+      '.ops-row-pct { margin-left: auto; flex: none; }',
+      '.ops-marker .core, .ops-marker .ring { transform-box: fill-box; transform-origin: center;',
+      '  transition: transform var(--dur-2) var(--ease); }',
+      '.ops-marker:hover .core { transform: scale(1.22); }',
+      '.ops-marker text { font-family: var(--font-body, sans-serif); font-size: 11.5px; font-weight: 600;',
+      '  fill: #d1fae5; paint-order: stroke; stroke: rgba(5, 42, 31, .85); stroke-width: 3px; pointer-events: none; }',
+      '.ops-marker.tone-bad .core { animation: ops-pulse 2.2s var(--ease) infinite; }',
+      '@keyframes ops-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.28); } }',
+      '.ops-legend { display: flex; gap: var(--sp-5); flex-wrap: wrap; align-items: center; }',
+      '.ops-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: var(--fs-sm); color: var(--ink-soft); }',
+      '.ops-legend-item .sw { flex: none; width: 12px; height: 12px; border-radius: 50%; }',
+      '.ops-legend-item svg { display: block; }',
+      '.ops-explainer { margin: var(--sp-3) 0 0; color: var(--muted); font-size: var(--fs-sm); }',
+      '.ops-note { margin-left: auto; font-size: var(--fs-2xs); color: var(--muted); font-variant-numeric: tabular-nums; }',
+      '@media (max-width: 860px) { .ops-note { margin-left: 0; width: 100%; } }',
     ].join('\n');
     document.head.append(style);
   }
@@ -62,6 +99,37 @@ App.registerModule({
     [68.15, 26.10], [68.35, 25.75], [68.37, 25.38], [68.15, 25.00], [67.90, 24.70],
     [67.55, 24.30], [67.35, 24.00],
   ],
+
+  /* Approximate district seats — consistent positions, not survey data. */
+  GEO: {
+    sukkur:    { lat: 27.70, lon: 68.85, label: 'end' },   /* north             */
+    larkana:   { lat: 27.56, lon: 68.20, label: 'end' },   /* northwest         */
+    khairpur:  { lat: 27.30, lon: 68.90, label: 'start' }, /* centre-north-east */
+    nawabshah: { lat: 26.25, lon: 68.40, label: 'start' }, /* centre            */
+    jamshoro:  { lat: 25.43, lon: 68.00, label: 'end' },   /* centre-west       */
+    hyderabad: { lat: 25.38, lon: 68.37, label: 'start' }, /* south-centre      */
+    thatta:    { lat: 24.75, lon: 67.90, label: 'start' }, /* south-west coast  */
+    badin:     { lat: 24.65, lon: 68.85, label: 'start' }, /* south-east        */
+  },
+
+  HEALTH: {
+    ok:   { color: '#10b981', label: 'Healthy' },
+    warn: { color: '#d97706', label: 'Strained' },
+    bad:  { color: '#dc2626', label: 'Critical' },
+  },
+
+  /* Fulfilment per camp: join needs on camp_id, sum(fulfilled)/sum(required) —
+   * same rule as the dashboard KPI. No open needs -> neutral green. */
+  campHealth(camp, needs) {
+    const mine = needs.filter(n => String(n.camp_id) === String(camp.id));
+    if (!mine.length) return { pct: null, tone: 'ok', color: this.HEALTH.ok.color, label: 'No open needs' };
+    const req = mine.reduce((s, n) => s + (+n.required_quantity || 0), 0);
+    const ful = mine.reduce((s, n) => s + (+n.fulfilled_quantity || 0), 0);
+    if (!req) return { pct: null, tone: 'ok', color: this.HEALTH.ok.color, label: 'No open needs' };
+    const pct = Math.round((ful / req) * 100);
+    const tone = pct >= 60 ? 'ok' : pct >= 30 ? 'warn' : 'bad';
+    return { pct, tone, color: this.HEALTH[tone].color, label: this.HEALTH[tone].label };
+  },
 
   /* Mild Catmull-Rom smoothing so the lat/lon polyline reads as a coastline,
    * not a polygon. k small = mostly faithful with softened corners. */
@@ -96,6 +164,24 @@ App.registerModule({
   },
 
   async render() {
+    const [camps, needs] = await Promise.all([API.list('camps'), API.list('needs')]);
+    const self = this;
+
+    /* Marker radius scales with families against the busiest camp. */
+    const maxFam = Math.max(1, ...camps.map(c => +c.current_families || 0));
+    const rows = camps.map((c, i) => {
+      const geo = self.GEO[String(c.district || '').toLowerCase()] ||
+        { lat: 26.1 + (i % 3) * 0.4, lon: 68.5 + (i % 4) * 0.25, label: 'start' }; /* unknown district: spread near centre */
+      const [x, y] = self.PROJ(geo.lon, geo.lat);
+      const closed = c.status === 'Closed';
+      return {
+        camp: c, health: self.campHealth(c, needs),
+        x, y, anchor: geo.label,
+        r: 6.5 + 9 * ((+c.current_families || 0) / maxFam),
+        closed,
+      };
+    }).sort((a, b) => (a.health.pct ?? 101) - (b.health.pct ?? 101)); /* worst first in the list */
+
     const outlineD = this.smoothPath(this.OUTLINE, true);
     const riverD = this.smoothPath(this.RIVER, false, 0.22);
 
@@ -120,15 +206,94 @@ App.registerModule({
       this.S('text', { x: 15, y: 3.4, dy: 2, 'text-anchor': 'middle', 'font-size': 6, fill: 'rgba(209,250,229,.8)' }, 'N'),
     ]);
 
+    const markers = this.S('g');
+    for (const row of rows) {
+      const { camp, health, x, y, r, anchor, closed } = row;
+      markers.append(this.S('g', {
+        class: 'ops-marker tone-' + health.tone, 'data-camp': String(camp.id),
+      }, [
+        this.S('circle', { class: 'hit', cx: x, cy: y, r: r + 10, fill: 'transparent' }),
+        this.S('circle', {
+          class: 'ring', cx: x, cy: y, r: r + 4.5, fill: 'none',
+          stroke: health.color, 'stroke-width': 1.4, opacity: .55,
+        }),
+        this.S('circle', {
+          class: 'core', cx: x, cy: y, r: r,
+          fill: closed ? 'rgba(8, 61, 46, .85)' : health.color,
+          stroke: health.color, 'stroke-width': 2, /* closed camps render hollow */
+        }),
+        this.S('text', {
+          x: anchor === 'end' ? x - r - 7 : x + r + 7, y: y + 4,
+          'text-anchor': anchor,
+        }, camp.district),
+      ]));
+    }
+
     const mapSvg = this.S('svg', {
       viewBox: '0 0 600 520', role: 'img',
-      'aria-label': 'Stylized map of Sindh province, emerald on deep green.',
-    }, [clip, shape, grid, this.S('path', { class: 'ops-river', d: riverD, 'aria-hidden': 'true' })]);
+      'aria-label': 'Stylized map of Sindh province with one marker per relief camp, sized by families sheltered and coloured by fulfilment health.',
+    }, [clip, shape, grid, this.S('path', { class: 'ops-river', d: riverD, 'aria-hidden': 'true' }), markers]);
 
     const mapPanel = UI.h('div', { class: 'ops-map-panel reveal' }, [
       UI.h('span', { class: 'ops-plate' }, 'Sindh · Flood Response 2026'),
       compass, mapSvg,
     ]);
-    return UI.h('div', {}, [mapPanel]);
+
+    /* ---- side list (mirrors the markers; helps on small screens) ---- */
+    const listBox = UI.h('div', { class: 'ops-side reveal', style: '--d:110ms' }, [
+      UI.h('h3', { class: 'ops-side-title' }, 'All camps, worst fulfilment first'),
+      ...rows.map(row => UI.h('button', {
+        class: 'ops-row', type: 'button', 'data-camp': String(row.camp.id),
+      }, [
+        UI.h('span', { class: 'ops-dot', style: `background:${row.health.color}` }),
+        UI.h('span', { class: 'ops-row-main' }, [
+          UI.h('span', { class: 'ops-row-name' }, row.camp.name),
+          UI.h('span', { class: 'ops-row-sub' },
+            `${row.camp.district} · ${row.camp.current_families}/${row.camp.capacity} families · ${row.camp.status}`),
+        ]),
+        UI.h('span', { class: 'ops-row-pct' },
+          UI.badge(row.health.pct == null ? 'stable' : row.health.pct + '%', row.health.tone)),
+      ])),
+    ]);
+
+    /* ---- legend + one-line explainer (dashboard panel style) ---- */
+    const activeCamps = camps.filter(c => c.status !== 'Closed');
+    const families = activeCamps.reduce((s, c) => s + (+c.current_families || 0), 0);
+    const reqTotal = needs.reduce((s, n) => s + (+n.required_quantity || 0), 0);
+    const fulTotal = needs.reduce((s, n) => s + (+n.fulfilled_quantity || 0), 0);
+    const overall = reqTotal ? Math.round((fulTotal / reqTotal) * 100) : null;
+
+    const legend = UI.h('div', { class: 'panel reveal', style: '--d:220ms' }, [
+      UI.h('h3', {}, 'How to read the map'),
+      UI.h('div', { class: 'ops-legend' }, [
+        UI.h('span', { class: 'ops-legend-item' }, [
+          UI.h('span', { class: 'sw', style: 'background:#10b981' }), 'Healthy — 60%+ fulfilled',
+        ]),
+        UI.h('span', { class: 'ops-legend-item' }, [
+          UI.h('span', { class: 'sw', style: 'background:#d97706' }), 'Strained — 30–59%',
+        ]),
+        UI.h('span', { class: 'ops-legend-item' }, [
+          UI.h('span', { class: 'sw', style: 'background:#dc2626' }), 'Critical — under 30%',
+        ]),
+        UI.h('span', { class: 'ops-legend-item' }, [
+          this.S('svg', { width: 30, height: 22, viewBox: '0 0 30 22', 'aria-hidden': 'true' }, [
+            this.S('circle', { cx: 8, cy: 11, r: 4, fill: 'none', stroke: '#10b981', 'stroke-width': 2 }),
+            this.S('circle', { cx: 22, cy: 11, r: 8.5, fill: 'rgba(16,185,129,.2)', stroke: '#10b981', 'stroke-width': 2 }),
+          ]),
+          'Marker size — families sheltered',
+        ]),
+        UI.h('span', { class: 'ops-legend-item' }, [
+          UI.h('span', { class: 'sw', style: 'background:rgba(8,61,46,.85); box-shadow: inset 0 0 0 2px #10b981' }),
+          'Hollow — closed camp',
+        ]),
+        UI.h('span', { class: 'ops-note' },
+          `${camps.length} camps · ${families.toLocaleString()} families sheltered` +
+          (overall == null ? '' : ` · ${overall}% overall fulfilment`)),
+      ]),
+      UI.h('p', { class: 'ops-explainer' },
+        'Every camp on the Sindh map is sized by the families it shelters and coloured by how much of its requested aid has arrived — hover for details, click any camp or row to open the registry. The dotted line is the Indus.'),
+    ]);
+
+    return UI.h('div', {}, [UI.h('div', { class: 'ops-wrap' }, [mapPanel, listBox]), legend]);
   },
 });
