@@ -19,10 +19,36 @@ App.registerModule({
     const canEdit = App.canEdit();
     const root = UI.h('div');
 
+    const CATEGORIES = ['Food & Water', 'Medicine', 'Shelter', 'Hygiene', 'Clothing', 'Energy'];
+
+    /* Filter state — table body refreshes live from the already-loaded list. */
+    let query = '';
+    let category = 'All';
+    const tableBox = UI.h('div');
+    const countNote = UI.h('span', { class: 'toolbar-note' });
+
+    function isLow(i) { return +i.stock <= +i.reorder_level; }
+
+    function matches(i) {
+      if (category !== 'All' && i.category !== category) return false;
+      const q = query.trim().toLowerCase();
+      return !q || i.name.toLowerCase().includes(q);
+    }
+
+    function refresh() {
+      const visible = items.filter(matches);
+      const lowCount = items.filter(isLow).length;
+      countNote.textContent = `${visible.length} of ${items.length} items · ${lowCount} low stock`;
+      tableBox.innerHTML = '';
+      tableBox.append(UI.table(buildColumns(), visible, query || category !== 'All'
+        ? 'No items match your search or filter.'
+        : (canEdit ? 'No inventory items yet — add the first one.' : 'No inventory items registered yet.')));
+    }
+
     function openItemForm(item) {
       const fields = [
         { name: 'name', label: 'Item Name', placeholder: 'e.g. Mineral Water Bottles (1.5L)' },
-        { name: 'category', label: 'Category', options: ['Food & Water', 'Medicine', 'Shelter', 'Hygiene', 'Clothing', 'Energy'] },
+        { name: 'category', label: 'Category', options: CATEGORIES },
         { name: 'unit', label: 'Unit', placeholder: 'e.g. carton, box, kit' },
         { name: 'stock', label: 'Stock', type: 'number', min: 0, placeholder: '0' },
         { name: 'reorder_level', label: 'Reorder Level', type: 'number', min: 0, placeholder: '0' },
@@ -71,38 +97,45 @@ App.registerModule({
     }
 
     function stockBadge(i) {
-      const low = +i.stock <= +i.reorder_level;
-      if (!low) return UI.badge('In Stock', 'ok');
+      if (!isLow(i)) return UI.badge('In Stock', 'ok');
       return UI.badge('Low Stock', +i.stock === 0 ? 'bad' : 'warn');
     }
 
-    const columns = [
-      { key: 'name', label: 'Item' },
-      { key: 'category', label: 'Category', render: i => UI.badge(i.category, 'info') },
-      { key: 'unit', label: 'Unit' },
-      { key: 'stock', label: 'Stock', render: i => (+i.stock).toLocaleString() },
-      { key: 'reorder_level', label: 'Reorder Level', render: i => (+i.reorder_level).toLocaleString() },
-      { label: 'Stock Status', render: stockBadge },
-    ];
-    if (canEdit) {
-      columns.push({
-        label: 'Actions',
-        render: i => UI.h('div', { class: 'row-actions' }, [
-          UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openItemForm(i) }, 'Edit'),
-          UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeItem(i) }, 'Delete'),
-        ]),
-      });
+    function buildColumns() {
+      const columns = [
+        { key: 'name', label: 'Item' },
+        { key: 'category', label: 'Category', render: i => UI.badge(i.category, 'info') },
+        { key: 'unit', label: 'Unit' },
+        { key: 'stock', label: 'Stock', render: i => (+i.stock).toLocaleString() },
+        { key: 'reorder_level', label: 'Reorder Level', render: i => (+i.reorder_level).toLocaleString() },
+        { label: 'Stock Status', render: stockBadge },
+      ];
+      if (canEdit) {
+        columns.push({
+          label: 'Actions',
+          render: i => UI.h('div', { class: 'row-actions' }, [
+            UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openItemForm(i) }, 'Edit'),
+            UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeItem(i) }, 'Delete'),
+          ]),
+        });
+      }
+      return columns;
     }
 
-    if (canEdit) {
-      root.append(UI.h('div', { class: 'toolbar' }, [
-        UI.h('button', { class: 'btn btn-primary', onclick: () => openItemForm(null) }, '+ Add Item'),
-      ]));
-    }
-
-    root.append(UI.table(columns, items, canEdit
-      ? 'No inventory items yet — add the first one.'
-      : 'No inventory items registered yet.'));
+    root.append(UI.h('div', { class: 'toolbar' }, [
+      UI.h('input', {
+        type: 'search', placeholder: 'Search items by name…',
+        oninput: e => { query = e.target.value; refresh(); },
+      }),
+      UI.h('select', {
+        onchange: e => { category = e.target.value; refresh(); },
+      }, ['All', ...CATEGORIES].map(c =>
+        UI.h('option', { value: c }, c === 'All' ? 'All categories' : c))),
+      canEdit ? UI.h('button', { class: 'btn btn-primary', onclick: () => openItemForm(null) }, '+ Add Item') : null,
+      countNote,
+    ]));
+    root.append(tableBox);
+    refresh();
 
     return root;
   },
