@@ -24,6 +24,14 @@ import sys
 
 import numpy as np
 
+try:  # plots are optional, the report works without them
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    HAS_MPL = True
+except Exception:  # pragma: no cover
+    HAS_MPL = False
+
 # ----------------------------------------------------------------------------
 # issue numbers, these drive everything
 # ----------------------------------------------------------------------------
@@ -624,6 +632,111 @@ def robust_demo(data, baseline):
     return results
 
 
+PLOTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
+
+
+def crowd_confusion_matrix(data, baseline):
+    """P(crowd label | true class) estimated over every crowd-annotated
+    ticket (45k train crowd + 5k noisy test)."""
+    mat = np.zeros((K, K))
+    crowd = data["train_tier"] > 0
+    for t, l in zip(data["train_true"][crowd], baseline["train_noisy"][crowd]):
+        mat[t, l] += 1
+    for t, l in zip(data["test_true"], baseline["test_noisy"]):
+        mat[t, l] += 1
+    return mat / mat.sum(axis=1, keepdims=True)
+
+
+def make_plots(data, baseline, robust):
+    """(a) crowd confusion heatmap, (b) noise rate by tier, (c) baseline vs
+    robust methods. saved as pngs next to this script in plots/."""
+    section("8. PLOTS")
+    if not HAS_MPL:
+        print("  matplotlib not available - skipping plots, report above is complete")
+        return []
+    os.makedirs(PLOTS_DIR, exist_ok=True)
+    written = []
+
+    # ---- (a) crowd confusion heatmap --------------------------------------
+    mat = crowd_confusion_matrix(data, baseline)
+    fig, ax = plt.subplots(figsize=(7.5, 6.5))
+    im = ax.imshow(mat, cmap="Blues", vmin=0.0, vmax=1.0)
+    for i in range(K):
+        for j in range(K):
+            ax.text(j, i, f"{mat[i, j] * 100:.1f}", ha="center", va="center",
+                    color="white" if mat[i, j] > 0.55 else "black", fontsize=9)
+    ax.set_xticks(range(K), CLASSES, rotation=30, ha="right", fontsize=8)
+    ax.set_yticks(range(K), CLASSES, fontsize=8)
+    ax.set_xlabel("crowd label")
+    ax.set_ylabel("true class")
+    ax.set_title("crowd annotation confusion (rows sum to 100%)\n"
+                 "Billing<->Refund heaviest, then Technical<->Account Access, Shipping<->Other")
+    fig.colorbar(im, ax=ax, shrink=0.8)
+    fig.tight_layout()
+    p = os.path.join(PLOTS_DIR, "crowd_confusion.png")
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
+    written.append(p)
+
+    # ---- (b) realized noise rate by tier vs the audit ---------------------
+    tier = data["train_tier"]
+    crowd = tier > 0
+    rates = [
+        (data["train_noisy"][tier == 0] != data["train_true"][tier == 0]).mean(),
+        (data["train_noisy"][tier == 1] != data["train_true"][tier == 1]).mean(),
+        (data["train_noisy"][tier == 2] != data["train_true"][tier == 2]).mean(),
+        (data["train_noisy"][crowd] != data["train_true"][crowd]).mean(),
+    ]
+    audit = [0.0, ERR_A, ERR_B, 60 / 400]
+    labels = ["expert\n(5k)", "tier A\n(20k)", "tier B\n(25k)", "crowd\noverall"]
+    fig, ax = plt.subplots(figsize=(7, 5))
+    xs = np.arange(4)
+    ax.bar(xs, [r * 100 for r in rates], width=0.55, color="#4878CF", label="simulated")
+    ax.scatter(xs, [a * 100 for a in audit], color="crimson", marker="D", zorder=3,
+               label="issue audit (12/180, 48/220, 60/400)")
+    for x, r in zip(xs, rates):
+        ax.text(x, r * 100 + 0.4, f"{r * 100:.2f}%", ha="center", fontsize=9)
+    ax.set_xticks(xs, labels)
+    ax.set_ylabel("label error rate (%)")
+    ax.set_title("HelpDeskNet-50K label noise by annotator tier")
+    ax.legend()
+    fig.tight_layout()
+    p = os.path.join(PLOTS_DIR, "noise_by_tier.png")
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
+    written.append(p)
+
+    # ---- (c) baseline vs robust methods ------------------------------------
+    methods = ["baseline\n(noisy labels)", "label smoothing\nk=0.1", "small-loss\ndrop x=15%"]
+    keys = ["baseline", "label_smoothing", "small_loss"]
+    noisy = [robust[k][0] * 100 for k in keys]
+    gold = [robust[k][1] * 100 for k in keys]
+    xs = np.arange(3)
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.bar(xs - 0.18, noisy, width=0.36, color="#D65F5F", label="noisy test set (crowd labels)")
+    ax.bar(xs + 0.18, gold, width=0.36, color="#6ACC65", label="gold test set (expert labels)")
+    for x, v in zip(xs - 0.18, noisy):
+        ax.text(x, v + 0.5, f"{v:.2f}", ha="center", fontsize=9)
+    for x, v in zip(xs + 0.18, gold):
+        ax.text(x, v + 0.5, f"{v:.2f}", ha="center", fontsize=9)
+    ax.axhline(TARGET_NOISY_ACC * 100, color="gray", ls="--", lw=1,
+               label="82% plateau from the issue")
+    ax.set_xticks(xs, methods)
+    ax.set_ylim(70, 100)
+    ax.set_ylabel("accuracy (%)")
+    ax.set_title("same naive bayes, same noisy data: observed vs true accuracy")
+    ax.legend(loc="lower center", fontsize=8)
+    fig.tight_layout()
+    p = os.path.join(PLOTS_DIR, "robust_accuracy.png")
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
+    written.append(p)
+
+    for p in written:
+        print(f"  wrote {os.path.relpath(p, os.path.dirname(PLOTS_DIR))}")
+    return written
+
+
 def main():
     data = generate()
     dataset_report(data)
@@ -637,7 +750,11 @@ def main():
 
     plateau_report(data, baseline["train_noisy"], baseline["test_noisy"])
     ceiling_report(baseline, data)
-    robust_demo(data, baseline)
+    robust = robust_demo(data, baseline)
+    make_plots(data, baseline, robust)
+
+    print("\nsimulation finished - the 82% plateau is a measurement artifact,")
+    print("true accuracy is ~96%, and small-loss filtering recovers part of the gap")
     return 0
 
 
