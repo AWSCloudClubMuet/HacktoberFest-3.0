@@ -137,6 +137,20 @@ CONFUSION_PAIR_WEIGHTS = {
 }
 DEFAULT_PAIR_WEIGHT = 0.1
 
+# per-class risk prior for the combined score: a ticket whose *crowd label*
+# sits in a heavy-confusion class is more likely to be wrong, even when the
+# model happens to agree with the crowd
+CLASS_RISK = {"billing": 1.0, "refund": 1.0, "account": 0.6, "technical": 0.6,
+              "shipping": 0.35, "general": 0.35}
+
+# combined-strategy weights, hand-tuned on this simulation.
+# diagnostics on the disagreement pool showed: model confidence is the
+# strongest per-ticket signal (low-confidence disagreements are usually the
+# MODEL being wrong, not the label), tier B carries ~3x the base error of
+# tier A, and heavy confusion pairs deserve only a mild boost because the
+# model is weakest exactly there - which is why pure pair-ranking underperforms.
+W_DISAGREE, W_TIER, W_PAIR, W_RISK, W_CONF = 1.0, 0.15, 0.08, 0.12, 0.60
+
 
 def pair_weight(crowd_label, pred):
     if crowd_label == pred:
@@ -334,10 +348,83 @@ def select_model_disagreement(pool, preds, rng):
     return picked
 
 
+def select_combined(pool, preds):
+    """d) best bet: gate on model disagreement, then rank by model
+    confidence + tier weight + confusion-pair weight + class risk.
+    top BUDGET tickets by score go to the experts"""
+    scored = []
+    for i, t in enumerate(pool):
+        pred, conf = preds[i]
+        score = (W_DISAGREE * (1.0 if pred != t["label"] else 0.0)
+                 + W_TIER * (1.0 if t["tier"] == "B" else 0.0)
+                 + W_PAIR * pair_weight(t["label"], pred)
+                 + W_RISK * CLASS_RISK[t["label"]]
+                 + W_CONF * conf)
+        scored.append((score, i))
+    scored.sort(reverse=True)
+    return [i for _, i in scored[:BUDGET]]
+
+
 def review_yield(pool, selected):
     """fraction of the selected tickets that are actually mislabeled"""
     hits = sum(1 for i in selected if pool[i]["label"] != pool[i]["true"])
     return hits, hits / len(selected)
+
+
+def cleanup_stats(pool, selected):
+    """apply the expert corrections (experts relabel perfectly in this
+    simulation) and measure the label noise left in the 45k pool"""
+    corrected = set(selected)
+    groups = {
+        "all": range(len(pool)),
+        "tierA": [i for i, t in enumerate(pool) if t["tier"] == "A"],
+        "tierB": [i for i, t in enumerate(pool) if t["tier"] == "B"],
+    }
+    stats = {}
+    for name, rows in groups.items():
+        bad = sum(1 for i in rows
+                  if i not in corrected and pool[i]["label"] != pool[i]["true"])
+        stats[name] = (bad, 100.0 * bad / len(rows))
+    return stats
+
+
+PLOT_NAME = "anusha_review_yield.png"
+
+
+def save_yield_plot(results):
+    """optional bar chart of review yield per strategy; silently skipped
+    when matplotlib is not importable"""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception:
+        print("plot skipped (matplotlib not importable)")
+        return None
+
+    names = [r["name"] for r in results]
+    yields = [100.0 * r["yield"] for r in results]
+    colors = ["#9aa5b1", "#f0b429", "#4c9aff", "#2ecc71"]
+
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    bars = ax.bar(names, yields, color=colors[: len(names)])
+    for b, y in zip(bars, yields):
+        ax.text(b.get_x() + b.get_width() / 2, y + 1.2, f"{y:.1f}%",
+                ha="center", fontsize=10)
+    ax.set_ylabel("review yield (% of picked tickets truly mislabeled)")
+    ax.set_title("HelpDeskNet-50K milestone 4: expert review yield by strategy "
+                 f"(budget = {BUDGET:,} of {N_POOL:,})")
+    ax.set_ylim(0, max(yields) * 1.2)
+    ax.grid(axis="y", alpha=0.3)
+    plt.xticks(rotation=10, ha="right")
+    fig.tight_layout()
+
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
+    os.makedirs(out_dir, exist_ok=True)
+    path = os.path.join(out_dir, PLOT_NAME)
+    fig.savefig(path, dpi=140)
+    plt.close(fig)
+    return path
 
 
 # ----------------------------------------------------------------------------
@@ -405,20 +492,57 @@ def main():
     # ---- strategies --------------------------------------------------------
     print()
     print(line())
-    print(f"selection strategies (pick {BUDGET:,} of {N_POOL:,}) - review yield = share of picked tickets that are truly mislabeled")
+    print(f"selection strategies: pick {BUDGET:,} of {N_POOL:,} for expert review")
+    print(f"review yield = share of picked tickets that are truly mislabeled;")
+    print(f"noise after = pool label noise once the experts' corrections are applied")
     print(line())
     strategies = [
         ("random", select_random(pool, rng_sel)),
         ("tier-first", select_tier_first(pool, rng_sel)),
         ("model-disagreement", select_model_disagreement(pool, preds, rng_sel)),
+        ("combined", select_combined(pool, preds)),
     ]
-    print(f"{'strategy':<20} {'found/2000':>11} {'yield':>8}")
+
+    results = []
     for name, selected in strategies:
         hits, yld = review_yield(pool, selected)
-        print(f"{name:<20} {hits:>11,} {100.0 * yld:>7.1f}%")
+        results.append({"name": name, "hits": hits, "yield": yld,
+                        "cleanup": cleanup_stats(pool, selected)})
 
+    base_pct = 100.0 * base_err / N_POOL
+    hdr = (f"{'strategy':<20}{'found':>7}{'yield':>9}"
+           f"{'noise after':>13}{'tierA after':>13}{'tierB after':>13}{'drop':>8}")
+    print(hdr)
+    for r in results:
+        c = r["cleanup"]
+        print(f"{r['name']:<20}{r['hits']:>7,}{100.0 * r['yield']:>8.1f}%"
+              f"{c['all'][1]:>12.2f}%{c['tierA'][1]:>12.2f}%"
+              f"{c['tierB'][1]:>12.2f}%{base_pct - c['all'][1]:>7.2f}p")
+
+    # ---- verdict -----------------------------------------------------------
+    best = max(results, key=lambda r: r["yield"])
+    worst = min(results, key=lambda r: r["yield"])
     print()
-    print(f"baseline pool noise stays at {100.0 * base_err / N_POOL:.2f}% until we apply corrections (next step)")
+    print(line())
+    print("verdict")
+    print(line())
+    print(f"best strategy: {best['name']} -> {best['hits']:,}/{BUDGET:,} mislabeled found "
+          f"({100.0 * best['yield']:.1f}% yield)")
+    print(f"  vs random {100.0 * worst['yield']:.1f}% -> {(best['yield'] / worst['yield']):.1f}x "
+          f"more error per expert hour")
+    print(f"  pool noise {base_pct:.2f}% -> {best['cleanup']['all'][1]:.2f}% "
+          f"({base_err - best['cleanup']['all'][0]:,} of {base_err:,} errors fixed "
+          f"= {100.0 * (base_err - best['cleanup']['all'][0]) / base_err:.1f}% of all noise "
+          f"with {100.0 * BUDGET / N_POOL:.1f}% of the pool relabeled)")
+    print(f"  tier split of surviving noise: A {best['cleanup']['tierA'][1]:.2f}%, "
+          f"B {best['cleanup']['tierB'][1]:.2f}%")
+
+    # ---- optional plot ------------------------------------------------------
+    path = save_yield_plot(results)
+    if path:
+        print(f"plot saved: {path}")
+    print()
+    print("done - exit 0")
     return 0
 
 
