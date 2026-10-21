@@ -1,0 +1,214 @@
+/* ===========================
+   Explore Gigs Page
+   =========================== */
+.explore-page {}
+
+.filters-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.filters-top {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.search-input-wrap {
+  flex: 1;
+  position: relative;
+}
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  font-size: 1rem;
+  pointer-events: none;
+}
+.search-input-wrap .form-input {
+  padding-left: 2.4rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.filters-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filters-count {
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+.filters-count strong { color: var(--text); }
+
+.budget-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.gigs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.1rem;
+}
+
+/* ===========================
+   Gig Card
+   =========================== */
+.gig-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+}
+.gig-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: #c4c4c7;
+}
+
+.gig-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.gig-card-title {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gig-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gig-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.gig-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+.gig-meta-row .meta-label { font-weight: 500; }
+.gig-meta-row .meta-value {
+  color: var(--text-2);
+  font-weight: 500;
+  text-align: right;
+}
+.gig-meta-row .meta-value.budget {
+  color: var(--success);
+  font-weight: 700;
+}
+.gig-meta-row .meta-value.expired-date { color: var(--danger); }
+
+/* ===========================
+   Gig Detail Modal
+   =========================== */
+.gig-detail-body {}
+.gig-detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.gig-detail-desc {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.gig-detail-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1.5rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.detail-item {}
+.detail-item .detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+.detail-item .detail-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.detail-item .detail-value.budget { color: var(--success); font-weight: 700; }
+
+.apply-section {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.apply-section h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
+
+.already-applied {
+  padding: 0.75rem 1rem;
+  background: var(--info-light);
+  color: var(--info);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .filters-grid { grid-template-columns: 1fr 1fr; }
+  .gig-detail-info { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .filters-grid { grid-template-columns: 1fr; }
+}
+

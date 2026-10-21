@@ -1,0 +1,8 @@
+tunewave\SongBSTTest.class
+tunewave\AudioEngineTest.class
+tunewave\PlaybackManagerTest.class
+tunewave\PlaylistTest.class
+tunewave\TuneWaveGUITest.class
+tunewave\TuneWaveServiceTest.class
+tunewave\ArtistGraphTest.class
+tunewave\SongTest.class
