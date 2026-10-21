@@ -1,12 +1,12 @@
-# Issue #9 — Noisy Labels: HelpDeskNet-50K
+# Issue 9: Noisy Labels
 
-**Team loop · Owner: Laksh.** Completed with AI assistance on Moksh's laptop after Laksh's laptop became unavailable. The configured Git identity records who performed the commit; it does not imply Laksh personally executed these calculations.
+Laksh's part of Team loop's submission. Completed on Moksh's laptop with AI assistance.
 
-All five milestones are addressed in [REPORT.md](REPORT.md), with reproducible standard-library calculations. This is a fictional aggregate-data analysis. No model training, ticket downloads, real relabeling or accuracy improvement is claimed.
+We used the audit figures in [TASK.md](TASK.md) to study label noise in HelpDeskNet-50K. The dataset is fictional, so this project contains calculations and a review plan rather than a trained model. [REPORT.md](REPORT.md) covers all five assignment sections, including the formulas, assumptions and references.
 
 ## Run
 
-Python 3.11+; no third-party packages are required for this issue. From this folder:
+Use Python 3.11 or later. No extra packages are needed. From this folder:
 
 ```powershell
 python calculations.py
@@ -14,53 +14,29 @@ python calculations.py --json
 python verify.py
 ```
 
-If Python is not on PATH, use the existing team environment:
+You can also use the team's existing Python environment:
 
 ```powershell
 & '..\.venv\Scripts\python.exe' calculations.py
 & '..\.venv\Scripts\python.exe' verify.py
 ```
 
-From the repository root:
-
-```powershell
-& '.\submission\team-loop\.venv\Scripts\python.exe' '.\submission\team-loop\issue-09-noisy-labels\verify.py'
-```
-
-To run tests directly or deliberately refresh the recorded calculation/test output after reviewing changes:
+To run the tests separately:
 
 ```powershell
 python -m unittest discover -s . -p 'test_*.py' -v
-python verify.py --write-results
 ```
 
-## Results
+## Main results
 
-| Calculation | Result |
-| --- | --- |
-| Crowd/expert disagreement | 60/400 = **15.00%** |
-| Wilson 95% confidence interval | **11.83%–18.83%** |
-| Tier A / Tier B | **6.67% / 21.82%** |
-| Tier B minus A | **15.15 percentage points** |
-| Two-sided pooled z test | z = **-4.222003**, p = **0.0000242141** |
-| Two-sided Fisher exact cross-check | p = **0.0000183007** |
-| Naive six-class true accuracy | **96.34%**, conditional on independent symmetric flips |
-| Proposed extra review allocation | **2,000 unique tickets: 800 evaluation, 1,200 training** |
+The audit found 60 disagreements out of 400 tickets: **15%**, with a Wilson 95% confidence interval of **11.83% to 18.83%**. Tier A had **6.67%** disagreement and Tier B had **21.82%**, a difference of **15.15 percentage points**. The two-sided z test gives p = **0.0000242141**; the Fisher exact check gives p = **0.0000183007**.
 
-`verify.py` runs **16 tests** and checks that recorded results match a fresh calculation. [VERIFICATION.txt](VERIFICATION.txt) records the actual successful run. Tests include score-interval inversion, a Pearson chi-square cross-check, exact Fisher fixtures and exhaustive small-table enumeration, accuracy-model edge cases and budget consistency. This validates calculations; it does not validate assumptions about unavailable ticket data.
+The question's uniform-noise assumption gives an estimated true accuracy of **96.34%**. This is a calculation under assumptions, not a measured model score. The report explains why systematic errors could make it unreliable.
 
-## Files and milestone map
+Our proposed 2,000-ticket review budget reserves 800 tickets for evaluation and 1,200 for training review. It includes random sampling, targeted corrections, two training methods and an independent expert evaluation plan.
 
-| File | Purpose |
-| --- | --- |
-| [TASK.md](TASK.md) | Supplied official problem snapshot |
-| [REPORT.md](REPORT.md) | All five milestones, formulas, sources, assumptions and requirement checklist |
-| [calculations.py](calculations.py) | Reproducible statistics, exact-test cross-check and budget totals |
-| [test_calculations.py](test_calculations.py) | Numerical tests |
-| [verify.py](verify.py) | Single verification command, independent of the caller's working directory |
-| [CALCULATIONS.json](CALCULATIONS.json) | Full-precision generated numerical record |
-| [VERIFICATION.txt](VERIFICATION.txt) | Actual successful test output |
-| [DEMO-GUIDE.md](DEMO-GUIDE.md) | One-minute explanation and likely questions |
-| [HANDOFF.md](HANDOFF.md) | Integration notes and remaining team responsibilities |
+## Verification
 
-The audit estimates disagreement in the crowd subset. Experts may also be wrong; worker clustering can invalidate ticket-independent uncertainty; asymmetric noise undermines the naive 96.34% estimate. Actual selection yield and model improvements require data and experiments beyond this fictional task. See the report for the proposed methods and their limits.
+`verify.py` runs **16 tests** and compares the saved numbers with fresh calculations. [VERIFICATION.txt](VERIFICATION.txt) contains the test output, and [CALCULATIONS.json](CALCULATIONS.json) contains the full results. Use `python verify.py --write-results` to refresh both after checking a change.
+
+The tests check the maths and code. They cannot establish the true error rate, worker-level effects or model improvements without actual ticket data. Crowd/expert disagreement is only an error estimate if the expert labels are reliable.

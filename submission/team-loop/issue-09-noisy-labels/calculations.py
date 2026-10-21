@@ -1,14 +1,7 @@
-"""Reproduce issue #9 aggregate calculations using only Python's standard library.
-
-Disagreement is treated as label error only conditionally on adjudicated experts
-being correct. No ticket-level data or trained classifier is available.
-"""
-
 import argparse
 import json
 import math
 from statistics import NormalDist
-
 
 TRANSITIONS = {
     "Billing -> Refund": 14,
@@ -29,15 +22,12 @@ REVIEW_BUDGET = {
     "targeted_training_diversity": 100,
 }
 
-
 def _counts(errors, total):
     if (type(errors) is not int or type(total) is not int
             or total <= 0 or not 0 <= errors <= total):
         raise ValueError("Require integer counts with 0 <= errors <= total and total > 0")
 
-
 def wilson_interval(errors, total, confidence=0.95):
-    """Two-sided Wilson score interval, without a finite-population correction."""
     _counts(errors, total)
     if not math.isfinite(confidence) or not 0 < confidence < 1:
         raise ValueError("Confidence must be finite and between 0 and 1")
@@ -48,25 +38,16 @@ def wilson_interval(errors, total, confidence=0.95):
     half = z * math.sqrt(p * (1 - p) / total + z * z / (4 * total**2)) / denominator
     return max(0.0, center - half), min(1.0, center + half)
 
-
 def proportion_z_test(errors_a, total_a, errors_b, total_b):
-    """Pooled two-sided z test for H0: p_A = p_B; sign is A minus B."""
     _counts(errors_a, total_a)
     _counts(errors_b, total_b)
     pooled = (errors_a + errors_b) / (total_a + total_b)
     se = math.sqrt(pooled * (1 - pooled) * (1 / total_a + 1 / total_b))
-    # At the degenerate margins both observed proportions are equal.
     z = 0.0 if se == 0 else (errors_a / total_a - errors_b / total_b) / se
     return {"pooled_rate": pooled, "null_standard_error": se,
             "z_a_minus_b": z, "two_sided_p": math.erfc(abs(z) / math.sqrt(2))}
 
-
 def fisher_exact_two_sided(errors_a, total_a, errors_b, total_b):
-    """Fixed-margin Fisher test; sum tables no more probable than observed.
-
-    Integer binomial numerators make probability-order comparisons exact.
-    This is an independent small-sample cross-check, not a clustering fix.
-    """
     _counts(errors_a, total_a)
     _counts(errors_b, total_b)
     errors = errors_a + errors_b
@@ -80,15 +61,12 @@ def fisher_exact_two_sided(errors_a, total_a, errors_b, total_b):
             numerator += probability_numerator
     return numerator / math.comb(total, total_a)
 
-
 def noisy_accuracy(true_accuracy, flip_rate, classes=6):
-    """Independent symmetric flips uniformly to OTHER labels only."""
     if type(classes) is not int or classes < 2:
         raise ValueError("At least two integer classes are required")
     if any(not math.isfinite(x) or not 0 <= x <= 1 for x in (true_accuracy, flip_rate)):
         raise ValueError("Accuracy and flip rate must be finite probabilities")
     return true_accuracy * (1 - flip_rate) + (1 - true_accuracy) * flip_rate / (classes - 1)
-
 
 def infer_true_accuracy(observed_accuracy, flip_rate, classes=6):
     intercept = noisy_accuracy(0, flip_rate, classes)
@@ -101,7 +79,6 @@ def infer_true_accuracy(observed_accuracy, flip_rate, classes=6):
     if result < -1e-12 or result > 1 + 1e-12:
         raise ValueError("Observed accuracy is incompatible with the assumed noise model")
     return min(1.0, max(0.0, result))
-
 
 def results():
     overall = 60 / 400
@@ -137,9 +114,8 @@ def results():
         "review_total": sum(REVIEW_BUDGET.values()),
     }
 
-
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description='Calculate the issue 9 audit statistics.')
     parser.add_argument("--json", action="store_true", help="Print full machine-readable results")
     args = parser.parse_args()
     data = results()
@@ -156,7 +132,6 @@ def main():
     print(f"Naive true accuracy: {data['naive_symmetric_flip_model']['true_accuracy']:.4%}")
     print(f"Proposed additional review budget: {data['review_total']} unique tickets")
     print("All projections and significance claims depend on the assumptions in REPORT.md.")
-
 
 if __name__ == "__main__":
     main()

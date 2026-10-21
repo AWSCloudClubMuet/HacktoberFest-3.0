@@ -1,5 +1,3 @@
-"""Run issue #9 tests and verify (or refresh) the recorded aggregate results."""
-
 import argparse
 import json
 from pathlib import Path
@@ -8,9 +6,8 @@ import sys
 
 from calculations import results
 
-
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description='Run tests and check the saved issue 9 calculations.')
     parser.add_argument("--write-results", action="store_true",
                         help="After tests pass, refresh CALCULATIONS.json and VERIFICATION.txt")
     args = parser.parse_args()
@@ -23,22 +20,19 @@ def main():
     print(log, end="")
     if completed.returncode:
         return completed.returncode
-    data = results()
-    serialized = json.dumps(data, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    serialized = json.dumps(results(), indent=2, sort_keys=True, allow_nan=False) + "\n"
     record = folder / "CALCULATIONS.json"
     if args.write_results:
         record.write_text(serialized, encoding="utf-8")
     if not record.exists() or json.loads(record.read_text(encoding="utf-8")) != json.loads(serialized):
         print("FAIL: recorded calculations are missing or stale; review before refreshing.")
         return 1
-    log += "PASS: recorded calculations match freshly computed results.\n"
-    log += "Scope: aggregate-data analysis only; no training or review experiment was run.\n"
+    summary = ("PASS: recorded calculations match freshly computed results.\n"
+               "Scope: aggregate-data analysis only; no training or review experiment was run.\n")
     if args.write_results:
-        (folder / "VERIFICATION.txt").write_text(log, encoding="utf-8")
-    print("PASS: recorded calculations match freshly computed results.")
-    print("Scope: aggregate-data analysis only; no training or review experiment was run.")
+        (folder / "VERIFICATION.txt").write_text(log + summary, encoding="utf-8")
+    print(summary, end="")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -1,5 +1,3 @@
-"""Numerical fixtures, independent small-table checks, and model invariants."""
-
 import itertools
 import math
 import unittest
@@ -9,10 +7,8 @@ from calculations import (TRANSITIONS, REVIEW_BUDGET, fisher_exact_two_sided,
                           infer_true_accuracy, noisy_accuracy, proportion_z_test,
                           results, wilson_interval)
 
-
 class IntervalTests(unittest.TestCase):
     def test_wilson_known_reference(self):
-        # Closed-form Wilson boundary at zero successes: z^2/(n+z^2).
         lo, hi = wilson_interval(0, 10)
         self.assertAlmostEqual(lo, 0)
         self.assertAlmostEqual(hi, 0.2775327998628892, places=12)
@@ -39,15 +35,12 @@ class IntervalTests(unittest.TestCase):
         lo, hi = wilson_interval(60, 400)
         self.assertAlmostEqual(lo, 0.118345, places=6)
         self.assertAlmostEqual(hi, 0.188314, places=6)
-        # Inverting the score test must recover z^2 at both endpoints.
         for bound in (lo, hi):
             self.assertAlmostEqual(400 * (0.15-bound)**2 / (bound*(1-bound)),
                                    3.841458820694124, places=10)
 
-
 class ComparisonTests(unittest.TestCase):
     def test_z_against_independent_chi_square_statistic(self):
-        # Pearson statistic of the full 2x2 table equals pooled z squared.
         observed = ((12, 168), (48, 172))
         row_totals, column_totals = (180, 220), (60, 340)
         chi_square = sum(
@@ -60,12 +53,10 @@ class ComparisonTests(unittest.TestCase):
         self.assertLess(test["two_sided_p"], 0.001)
 
     def test_fisher_known_small_table(self):
-        # [[1,9],[11,3]] standard two-sided Fisher fixture.
         self.assertAlmostEqual(fisher_exact_two_sided(1, 10, 11, 14),
                                0.0027594561852200836, places=14)
 
     def test_fisher_against_exhaustive_assignments(self):
-        # Enumerate every placement of three errors among eight tickets.
         frequencies = {}
         for positions in itertools.combinations(range(8), 3):
             errors_in_a = sum(p < 4 for p in positions)
@@ -89,7 +80,6 @@ class ComparisonTests(unittest.TestCase):
             self.assertEqual(test["z_a_minus_b"], 0)
             self.assertEqual(test["two_sided_p"], 1)
         self.assertEqual(fisher_exact_two_sided(0, 10, 0, 20), 1)
-
 
 class AccuracyTests(unittest.TestCase):
     def test_issue_answer_exact_rational(self):
@@ -117,7 +107,6 @@ class AccuracyTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 noisy_accuracy(a, eta, k)
 
-
 class ScenarioTests(unittest.TestCase):
     def test_source_totals_and_review_budget(self):
         self.assertEqual(sum(TRANSITIONS.values()), 60)
@@ -130,7 +119,6 @@ class ScenarioTests(unittest.TestCase):
         self.assertAlmostEqual(data["sensitivity"]["whole_dataset_rate_if_expert_noise_zero"], 0.135)
         self.assertAlmostEqual(data["sensitivity"]["poststratified_crowd_rate"], 0.15084175084175083)
         self.assertAlmostEqual(data["tier_comparison"]["risk_ratio_b_over_a"], 36/11)
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
