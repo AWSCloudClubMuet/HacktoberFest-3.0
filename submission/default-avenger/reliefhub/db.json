@@ -1,0 +1,689 @@
+{
+  "camps": [
+    {
+      "id": 1,
+      "name": "Govt Boys High School Camp",
+      "district": "Sukkur",
+      "capacity": 400,
+      "families": 320,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Rohri Canal Bank Camp",
+      "district": "Sukkur",
+      "capacity": 250,
+      "families": 250,
+      "status": "Full"
+    },
+    {
+      "id": 3,
+      "name": "Mohenjo Daro Road Camp",
+      "district": "Larkana",
+      "capacity": 500,
+      "families": 410,
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "name": "Ratodero Community Hall",
+      "district": "Larkana",
+      "capacity": 300,
+      "families": 180,
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "name": "Johi Relief Camp",
+      "district": "Dadu",
+      "capacity": 600,
+      "families": 520,
+      "status": "Active"
+    },
+    {
+      "id": 6,
+      "name": "Mehar Girls School Camp",
+      "district": "Dadu",
+      "capacity": 200,
+      "families": 0,
+      "status": "Closed"
+    },
+    {
+      "id": 7,
+      "name": "Station Road Camp",
+      "district": "Jacobabad",
+      "capacity": 350,
+      "families": 290,
+      "status": "Active"
+    },
+    {
+      "id": 8,
+      "name": "Thul Highway Tent Village",
+      "district": "Jacobabad",
+      "capacity": 450,
+      "families": 450,
+      "status": "Full"
+    },
+    {
+      "name": "Test Camp",
+      "district": "Sukkur",
+      "capacity": 10,
+      "families": 5,
+      "status": "Active",
+      "id": 9
+    },
+    {
+      "name": "new camp",
+      "district": "Dadu",
+      "capacity": 10,
+      "families": 8,
+      "status": "Active",
+      "id": 10
+    }
+  ],
+  "inventory": [
+    {
+      "id": 1,
+      "name": "Wheat Flour (20 kg bag)",
+      "category": "Food",
+      "unit": "bag",
+      "stock": 450,
+      "reorder": 300
+    },
+    {
+      "id": 2,
+      "name": "Rice (Basmati)",
+      "category": "Food",
+      "unit": "kg",
+      "stock": 2400,
+      "reorder": 500
+    },
+    {
+      "id": 3,
+      "name": "Cooking Oil",
+      "category": "Food",
+      "unit": "litre",
+      "stock": 600,
+      "reorder": 200
+    },
+    {
+      "id": 4,
+      "name": "Drinking Water (1.5L carton)",
+      "category": "Water",
+      "unit": "carton",
+      "stock": 550,
+      "reorder": 250
+    },
+    {
+      "id": 5,
+      "name": "Water Purification Tablets",
+      "category": "Water",
+      "unit": "box",
+      "stock": 60,
+      "reorder": 150
+    },
+    {
+      "id": 6,
+      "name": "ORS Sachets",
+      "category": "Medical",
+      "unit": "box",
+      "stock": 320,
+      "reorder": 100
+    },
+    {
+      "id": 7,
+      "name": "First Aid Kits",
+      "category": "Medical",
+      "unit": "kit",
+      "stock": 25,
+      "reorder": 40
+    },
+    {
+      "id": 8,
+      "name": "Mosquito Nets",
+      "category": "Shelter",
+      "unit": "piece",
+      "stock": 470,
+      "reorder": 200
+    },
+    {
+      "id": 9,
+      "name": "Family Tents",
+      "category": "Shelter",
+      "unit": "piece",
+      "stock": 140,
+      "reorder": 50
+    },
+    {
+      "id": 10,
+      "name": "Tarpaulin Sheets",
+      "category": "Shelter",
+      "unit": "piece",
+      "stock": 500,
+      "reorder": 150
+    },
+    {
+      "id": 11,
+      "name": "Hygiene Kits",
+      "category": "Hygiene",
+      "unit": "kit",
+      "stock": 420,
+      "reorder": 120
+    },
+    {
+      "id": 12,
+      "name": "Blankets",
+      "category": "Clothing",
+      "unit": "piece",
+      "stock": 750,
+      "reorder": 300
+    }
+  ],
+  "needs": [
+    {
+      "id": 1,
+      "campId": 1,
+      "itemId": 1,
+      "required": 300,
+      "priority": "High",
+      "fulfilled": 200
+    },
+    {
+      "id": 2,
+      "campId": 1,
+      "itemId": 4,
+      "required": 200,
+      "priority": "Medium",
+      "fulfilled": 150
+    },
+    {
+      "id": 3,
+      "campId": 1,
+      "itemId": 6,
+      "required": 150,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 4,
+      "campId": 2,
+      "itemId": 1,
+      "required": 200,
+      "priority": "High",
+      "fulfilled": 150
+    },
+    {
+      "id": 5,
+      "campId": 2,
+      "itemId": 9,
+      "required": 60,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 6,
+      "campId": 3,
+      "itemId": 2,
+      "required": 400,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 7,
+      "campId": 3,
+      "itemId": 5,
+      "required": 100,
+      "priority": "Medium",
+      "fulfilled": 0
+    },
+    {
+      "id": 8,
+      "campId": 3,
+      "itemId": 8,
+      "required": 300,
+      "priority": "Medium",
+      "fulfilled": 200
+    },
+    {
+      "id": 9,
+      "campId": 3,
+      "itemId": 12,
+      "required": 250,
+      "priority": "Low",
+      "fulfilled": 100
+    },
+    {
+      "id": 10,
+      "campId": 4,
+      "itemId": 3,
+      "required": 120,
+      "priority": "Medium",
+      "fulfilled": 0
+    },
+    {
+      "id": 11,
+      "campId": 4,
+      "itemId": 11,
+      "required": 150,
+      "priority": "Low",
+      "fulfilled": 0
+    },
+    {
+      "id": 12,
+      "campId": 5,
+      "itemId": 1,
+      "required": 500,
+      "priority": "High",
+      "fulfilled": 100
+    },
+    {
+      "id": 13,
+      "campId": 5,
+      "itemId": 4,
+      "required": 350,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 14,
+      "campId": 5,
+      "itemId": 7,
+      "required": 40,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 15,
+      "campId": 5,
+      "itemId": 10,
+      "required": 200,
+      "priority": "Medium",
+      "fulfilled": 0
+    },
+    {
+      "id": 16,
+      "campId": 7,
+      "itemId": 2,
+      "required": 300,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 17,
+      "campId": 7,
+      "itemId": 6,
+      "required": 200,
+      "priority": "Medium",
+      "fulfilled": 0
+    },
+    {
+      "id": 18,
+      "campId": 7,
+      "itemId": 9,
+      "required": 80,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "id": 19,
+      "campId": 8,
+      "itemId": 12,
+      "required": 300,
+      "priority": "Medium",
+      "fulfilled": 150
+    },
+    {
+      "id": 20,
+      "campId": 8,
+      "itemId": 4,
+      "required": 300,
+      "priority": "High",
+      "fulfilled": 0
+    },
+    {
+      "campId": 9,
+      "itemId": 8,
+      "required": 50,
+      "priority": "High",
+      "fulfilled": 0,
+      "id": 21
+    }
+  ],
+  "dispatches": [
+    {
+      "id": 1,
+      "campId": 1,
+      "needId": 1,
+      "itemId": 1,
+      "qty": 200,
+      "status": "Delivered",
+      "date": "2026-09-02",
+      "driver": "Truck SKR-4412"
+    },
+    {
+      "id": 2,
+      "campId": 1,
+      "needId": 2,
+      "itemId": 4,
+      "qty": 150,
+      "status": "Delivered",
+      "date": "2026-09-03",
+      "driver": "Suzuki Bolan LEA-210"
+    },
+    {
+      "id": 3,
+      "campId": 2,
+      "needId": 4,
+      "itemId": 1,
+      "qty": 150,
+      "status": "Delivered",
+      "date": "2026-09-03",
+      "driver": "Truck SKR-4412"
+    },
+    {
+      "id": 4,
+      "campId": 3,
+      "needId": 6,
+      "itemId": 2,
+      "qty": 100,
+      "status": "In Transit",
+      "date": "2026-09-10",
+      "driver": "Hino HYD-7781"
+    },
+    {
+      "id": 5,
+      "campId": 3,
+      "needId": 8,
+      "itemId": 8,
+      "qty": 200,
+      "status": "Delivered",
+      "date": "2026-09-05",
+      "driver": "Truck LRK-3320"
+    },
+    {
+      "id": 6,
+      "campId": 5,
+      "needId": 12,
+      "itemId": 1,
+      "qty": 100,
+      "status": "Delivered",
+      "date": "2026-09-06",
+      "driver": "Truck DDU-9005"
+    },
+    {
+      "id": 7,
+      "campId": 5,
+      "needId": 13,
+      "itemId": 4,
+      "qty": 100,
+      "status": "Pending",
+      "date": "2026-09-11",
+      "driver": "Mazda KHI-5543"
+    },
+    {
+      "id": 8,
+      "campId": 7,
+      "needId": 16,
+      "itemId": 2,
+      "qty": 50,
+      "status": "Cancelled",
+      "date": "2026-09-07",
+      "driver": "Truck JBD-1180"
+    },
+    {
+      "id": 9,
+      "campId": 8,
+      "needId": 19,
+      "itemId": 12,
+      "qty": 150,
+      "status": "Delivered",
+      "date": "2026-09-08",
+      "driver": "Hino HYD-7781"
+    },
+    {
+      "id": 10,
+      "campId": 3,
+      "needId": 9,
+      "itemId": 12,
+      "qty": 100,
+      "status": "Delivered",
+      "date": "2026-09-09",
+      "driver": "Truck LRK-3320"
+    },
+    {
+      "campId": 9,
+      "needId": 21,
+      "itemId": 8,
+      "qty": 30,
+      "status": "Pending",
+      "date": "2026-09-10",
+      "driver": "Truck T-1",
+      "id": 11
+    }
+  ],
+  "donations": [
+    {
+      "id": 1,
+      "type": "Cash",
+      "donor": "Al-Khidmat Foundation",
+      "amount": 2500000,
+      "itemId": null,
+      "qty": 0,
+      "category": "Cash",
+      "date": "2026-09-01"
+    },
+    {
+      "id": 2,
+      "type": "Cash",
+      "donor": "HBL Corporate CSR",
+      "amount": 1500000,
+      "itemId": null,
+      "qty": 0,
+      "category": "Cash",
+      "date": "2026-09-02"
+    },
+    {
+      "id": 3,
+      "type": "Cash",
+      "donor": "Karachi Traders Association",
+      "amount": 750000,
+      "itemId": null,
+      "qty": 0,
+      "category": "Cash",
+      "date": "2026-09-04"
+    },
+    {
+      "id": 4,
+      "type": "Cash",
+      "donor": "Anonymous donor",
+      "amount": 100000,
+      "itemId": null,
+      "qty": 0,
+      "category": "Cash",
+      "date": "2026-09-06"
+    },
+    {
+      "id": 5,
+      "type": "Cash",
+      "donor": "Dr. Ayesha Memon",
+      "amount": 50000,
+      "itemId": null,
+      "qty": 0,
+      "category": "Cash",
+      "date": "2026-09-08"
+    },
+    {
+      "id": 6,
+      "type": "In-Kind",
+      "donor": "Edhi Foundation",
+      "amount": 0,
+      "itemId": 1,
+      "qty": 200,
+      "category": "Food",
+      "date": "2026-09-02"
+    },
+    {
+      "id": 7,
+      "type": "In-Kind",
+      "donor": "The Indus Hospital",
+      "amount": 0,
+      "itemId": 6,
+      "qty": 120,
+      "category": "Medical",
+      "date": "2026-09-03"
+    },
+    {
+      "id": 8,
+      "type": "In-Kind",
+      "donor": "Sukkur Chamber of Commerce",
+      "amount": 0,
+      "itemId": 9,
+      "qty": 40,
+      "category": "Shelter",
+      "date": "2026-09-05"
+    },
+    {
+      "id": 9,
+      "type": "In-Kind",
+      "donor": "Hamdard Pakistan",
+      "amount": 0,
+      "itemId": 11,
+      "qty": 100,
+      "category": "Hygiene",
+      "date": "2026-09-07"
+    },
+    {
+      "id": 10,
+      "type": "In-Kind",
+      "donor": "Akhuwat Volunteers",
+      "amount": 0,
+      "itemId": 12,
+      "qty": 300,
+      "category": "Clothing",
+      "date": "2026-09-09"
+    }
+  ],
+  "volunteers": [
+    {
+      "id": 1,
+      "name": "Ali Raza Memon",
+      "skill": "Medical",
+      "phone": "0300-1000000",
+      "campId": 1
+    },
+    {
+      "id": 2,
+      "name": "Sana Khoso",
+      "skill": "Medical",
+      "phone": "0310-1083711",
+      "campId": 5
+    },
+    {
+      "id": 3,
+      "name": "Imran Shaikh",
+      "skill": "Logistics",
+      "phone": "0320-1167422",
+      "campId": 1
+    },
+    {
+      "id": 4,
+      "name": "Farhan Chandio",
+      "skill": "Driving",
+      "phone": "0330-1251133",
+      "campId": 3
+    },
+    {
+      "id": 5,
+      "name": "Zubaida Soomro",
+      "skill": "Counselling",
+      "phone": "0300-1334844",
+      "campId": 3
+    },
+    {
+      "id": 6,
+      "name": "Abdul Qadir Mirani",
+      "skill": "Cooking",
+      "phone": "0310-1418555",
+      "campId": 7
+    },
+    {
+      "id": 7,
+      "name": "Nasreen Bhutto",
+      "skill": "Medical",
+      "phone": "0320-1502266",
+      "campId": 7
+    },
+    {
+      "id": 8,
+      "name": "Kashif Jatoi",
+      "skill": "Driving",
+      "phone": "0330-1585977",
+      "campId": 5
+    },
+    {
+      "id": 9,
+      "name": "Mehwish Abro",
+      "skill": "Counselling",
+      "phone": "0300-1669688",
+      "campId": 2
+    },
+    {
+      "id": 10,
+      "name": "Hassan Lashari",
+      "skill": "Logistics",
+      "phone": "0310-1753399",
+      "campId": 8
+    },
+    {
+      "id": 11,
+      "name": "Rukhsana Panhwar",
+      "skill": "Cooking",
+      "phone": "0320-1837110",
+      "campId": 4
+    },
+    {
+      "id": 12,
+      "name": "Waseem Ansari",
+      "skill": "Driving",
+      "phone": "0330-1920821",
+      "campId": null
+    },
+    {
+      "id": 13,
+      "name": "Shazia Halepoto",
+      "skill": "Medical",
+      "phone": "0300-2004532",
+      "campId": null
+    },
+    {
+      "id": 14,
+      "name": "Bilal Junejo",
+      "skill": "Logistics",
+      "phone": "0310-2088243",
+      "campId": null
+    },
+    {
+      "id": 15,
+      "name": "Tariq Mahar",
+      "skill": "Cooking",
+      "phone": "0320-2171954",
+      "campId": 5
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin123",
+      "name": "Dr. Noor Ahmed Soomro",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "username": "volunteer",
+      "password": "field123",
+      "name": "Ali Raza Memon",
+      "role": "volunteer"
+    }
+  ]
+}
