@@ -18,7 +18,7 @@ import {
   statusTone,
   textLinkClass,
 } from '../components.jsx';
-import { ApplicantCard, ApplyWizard, ConfirmDialog, Tabs } from '../flow.jsx';
+import { ApplicantCard, ApplyWizard, ConfirmDialog, GigStepper, Tabs } from '../flow.jsx';
 
 export function GigDetailPage({ gigId }) {
   const { userId, users, pushToast } = useApp();
@@ -33,6 +33,7 @@ export function GigDetailPage({ gigId }) {
   const [accepting, setAccepting] = useState(null);
   const [rejecting, setRejecting] = useState(null);
   const [rejectNote, setRejectNote] = useState('');
+  const [confirmStatus, setConfirmStatus] = useState('');
   const [reviews, setReviews] = useState([]);
   const [applyOpen, setApplyOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -123,7 +124,6 @@ export function GigDetailPage({ gigId }) {
   }
 
   async function changeStatus(status) {
-    if (status === 'Cancelled' && !window.confirm('Cancel this gig? Pending applications will be rejected.')) return;
     setBusy(status);
     try {
       await api(`/gigs/${encodeURIComponent(gig.id)}`, {
@@ -131,6 +131,7 @@ export function GigDetailPage({ gigId }) {
         body: { status },
       });
       pushToast('success', status === 'Completed' ? 'Gig marked as completed.' : 'Gig cancelled.');
+      setConfirmStatus('');
       await load(false);
     } catch (err) {
       pushToast('error', err.message);
@@ -187,6 +188,7 @@ export function GigDetailPage({ gigId }) {
   return (
     <div className="space-y-5">
       <Link to={gig.type === 'Requesting' ? '/offer' : '/request'} className={`inline-flex min-h-11 items-center text-sm ${textLinkClass}`}>Back to {gig.type === 'Requesting' ? 'requests' : 'offers'}</Link>
+      <GigStepper status={gig.status} />
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="min-w-0 space-y-5">
           <article className={`${cardClass} space-y-4 p-5`}>
@@ -303,13 +305,13 @@ export function GigDetailPage({ gigId }) {
               {gig.status === 'Completed' ? <p className="text-base text-muted">This gig is completed.</p> : null}
               {gig.status === 'Cancelled' ? <p className="text-base text-muted">This gig is cancelled.</p> : null}
               {gig.status === 'In Progress' ? (
-                <button type="button" className={`${buttonClass} w-full`} disabled={Boolean(busy)} onClick={() => changeStatus('Completed')}>
-                  {busy === 'Completed' ? 'Saving…' : 'Mark as completed'}
+                <button type="button" className={`${buttonClass} w-full`} disabled={Boolean(busy)} onClick={() => setConfirmStatus('Completed')}>
+                  Mark as completed
                 </button>
               ) : null}
               {canCancel ? (
-                <button type="button" className={`${dangerButtonClass} w-full`} disabled={Boolean(busy)} onClick={() => changeStatus('Cancelled')}>
-                  {busy === 'Cancelled' ? 'Cancelling…' : 'Cancel gig'}
+                <button type="button" className={`${dangerButtonClass} w-full`} disabled={Boolean(busy)} onClick={() => setConfirmStatus('Cancelled')}>
+                  Cancel gig
                 </button>
               ) : null}
             </section>
@@ -364,6 +366,27 @@ export function GigDetailPage({ gigId }) {
           })()}.
           New applications close.
         </p>
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={confirmStatus === 'Completed'}
+        title="Mark this gig as completed?"
+        confirmLabel="Mark as completed"
+        busy={busy === 'Completed'}
+        onClose={() => setConfirmStatus('')}
+        onConfirm={() => changeStatus('Completed')}
+      >
+        <p className="text-base text-ink">Both of you can leave a review after the gig is completed.</p>
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={confirmStatus === 'Cancelled'}
+        title="Cancel this gig?"
+        confirmLabel="Cancel gig"
+        tone="danger"
+        busy={busy === 'Cancelled'}
+        onClose={() => setConfirmStatus('')}
+        onConfirm={() => changeStatus('Cancelled')}
+      >
+        <p className="text-base text-ink">Pending applications will be rejected. This cannot be reopened.</p>
       </ConfirmDialog>
       <ConfirmDialog
         open={Boolean(rejecting)}

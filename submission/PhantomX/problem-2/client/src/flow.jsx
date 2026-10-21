@@ -431,6 +431,32 @@ export function ApplicantCard({ application, person, gig, gigOpen, busy, onAccep
   );
 }
 
+export function GigStepper({ status }) {
+  if (status === 'Cancelled' || status === 'Expired') {
+    return (
+      <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${status === 'Cancelled' ? 'bg-canvas text-muted' : 'bg-danger-soft text-danger'}`}>
+        This gig is {status}.
+      </p>
+    );
+  }
+  const steps = ['Open', 'In Progress', 'Completed'];
+  const current = Math.max(0, steps.indexOf(status));
+  return (
+    <ol className="flex items-start gap-2" aria-label="Gig progress">
+      {steps.map((label, index) => {
+        const done = index < current || status === 'Completed';
+        const here = index === current;
+        return (
+          <li key={label} className="min-w-0 flex-1">
+            <div className={`mb-2 h-1.5 rounded-full ${done || here ? 'bg-offer' : 'bg-line'}`} />
+            <p className={`text-xs font-semibold sm:text-sm ${here || done ? 'text-ink' : 'text-muted'}`} aria-current={here ? 'step' : undefined}>{label}</p>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function wasAutoRejected(application, gig) {
   if (!application || application.status !== 'Rejected' || application.rejection_note) return false;
   return Boolean(gig?.accepted_applicant_id && gig.accepted_applicant_id !== application.applicant_id);
