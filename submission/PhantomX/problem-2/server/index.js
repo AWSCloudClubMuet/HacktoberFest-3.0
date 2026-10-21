@@ -82,6 +82,44 @@ function requireText(value, field, max) {
   return null;
 }
 
+function optionalText(value, field, max) {
+  if (value == null || value === '') return { value: null };
+  if (typeof value !== 'string') return { error: `${field} must be text` };
+  const trimmed = value.trim();
+  if (trimmed === '') return { value: null };
+  if (trimmed.length > max) return { error: `${field} must be ${max} characters or fewer` };
+  return { value: trimmed };
+}
+
+function optionalUrl(value, field) {
+  const text = optionalText(value, field, 500);
+  if (text.error || text.value == null) return text;
+  let url;
+  try {
+    url = new URL(text.value);
+  } catch {
+    return { error: `${field} must be a valid URL` };
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return { error: `${field} must be an http or https URL` };
+  }
+  return { value: text.value };
+}
+
+function presentApplication(application) {
+  return {
+    id: application.id,
+    gig_id: application.gig_id,
+    applicant_id: application.applicant_id,
+    message: application.message,
+    status: application.status,
+    created_at: application.created_at,
+    availability: application.availability || null,
+    portfolio_link: application.portfolio_link || null,
+    swap_offer: application.swap_offer || null,
+  };
+}
+
 function initStore() {
   if (!fs.existsSync(dataFile())) writeSeed();
   load();
@@ -273,13 +311,14 @@ export function createApp() {
       if (applicantId && application.applicant_id !== applicantId) return false;
       return true;
     });
-    return res.json(applications);
+    return res.json(applications.map(presentApplication));
   });
 
   app.post('/applications', (req, res) => {
     const user = requireUser(req, res);
     if (!user) return undefined;
-    const { gig_id: gigId, message } = req.body || {};
+    const body = req.body || {};
+    const { gig_id: gigId, message } = body;
     if (!gigId) return sendError(res, 400, 'gig_id is required');
     const gig = getDb().gigs.find((item) => item.id === gigId);
     if (!gig) return sendError(res, 404, 'Gig not found');
@@ -298,6 +337,16 @@ export function createApp() {
       return sendError(res, 409, `You can only apply to Open gigs. This gig is ${status}.`);
     }
 
+    const availability = optionalText(body.availability, 'availability', 200);
+    if (availability.error) return sendError(res, 400, availability.error);
+    const portfolio = optionalUrl(body.portfolio_link, 'portfolio_link');
+    if (portfolio.error) return sendError(res, 400, portfolio.error);
+    const swap = optionalText(body.swap_offer, 'swap_offer', 300);
+    if (swap.error) return sendError(res, 400, swap.error);
+    if (swap.value && gig.payment_type !== 'SkillSwap') {
+      return sendError(res, 400, 'swap_offer is only allowed when payment_type is SkillSwap');
+    }
+
     const application = {
       id: nextId(getDb().applications, 'a'),
       gig_id: gig.id,
@@ -305,10 +354,13 @@ export function createApp() {
       message: message.trim(),
       status: 'Pending',
       created_at: new Date().toISOString(),
+      availability: availability.value,
+      portfolio_link: portfolio.value,
+      swap_offer: swap.value,
     };
     getDb().applications.push(application);
     save();
-    return res.status(201).json(application);
+    return res.status(201).json(presentApplication(application));
   });
 
   app.patch('/applications/:id', (req, res) => {
@@ -333,7 +385,7 @@ export function createApp() {
     if (status === 'Rejected') {
       application.status = 'Rejected';
       save();
-      return res.json(application);
+      return res.json(presentApplication(application));
     }
 
     const gigStatus = effectiveStatus(gig);
@@ -350,7 +402,7 @@ export function createApp() {
       }
     }
     save();
-    return res.json(application);
+    return res.json(presentApplication(application));
   });
 
   app.get('/reviews', (req, res) => {

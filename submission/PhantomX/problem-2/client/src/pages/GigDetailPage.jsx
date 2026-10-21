@@ -18,6 +18,7 @@ import {
   statusTone,
   textLinkClass,
 } from '../components.jsx';
+import { ApplyWizard } from '../flow.jsx';
 
 export function GigDetailPage({ gigId }) {
   const { userId, users, pushToast } = useApp();
@@ -27,12 +28,10 @@ export function GigDetailPage({ gigId }) {
   const [application, setApplication] = useState(null);
   const [applicants, setApplicants] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [message, setMessage] = useState('');
+  const [applyOpen, setApplyOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
-  const [fieldError, setFieldError] = useState('');
-  const [formError, setFormError] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
@@ -80,39 +79,6 @@ export function GigDetailPage({ gigId }) {
 
   function nameOf(id) {
     return users.find((user) => user.id === id)?.name || 'Student';
-  }
-
-  async function onApply(event) {
-    event.preventDefault();
-    const trimmed = message.trim();
-    if (!trimmed) {
-      setFieldError('message is required');
-      setFormError('');
-      return;
-    }
-    if (trimmed.length > 500) {
-      setFieldError('message must be 500 characters or fewer');
-      setFormError('');
-      return;
-    }
-    setBusy('apply');
-    setFieldError('');
-    setFormError('');
-    try {
-      const created = await api('/applications', {
-        method: 'POST',
-        body: { gig_id: gig.id, message: trimmed },
-      });
-      setApplication(created);
-      setMessage('');
-      pushToast('success', `Application sent. Status: ${created.status}.`);
-      await load(false);
-    } catch (err) {
-      setFormError(err.message);
-      pushToast('error', err.message);
-    } finally {
-      setBusy('');
-    }
   }
 
   async function decide(applicationId, status) {
@@ -355,26 +321,19 @@ export function GigDetailPage({ gigId }) {
             <section className={`${cardClass} space-y-3 p-4`}>
               <h2 className="font-display text-base font-semibold text-ink">Apply</h2>
               {application ? (
-                <p className="flex flex-wrap items-center gap-2 text-base text-muted">
-                  Your application is <Badge tone={statusTone(application.status)}>{application.status}</Badge>
-                </p>
-              ) : canApply ? (
-                <form className="space-y-3" noValidate onSubmit={onApply}>
-                  <Alert>{formError}</Alert>
-                  <Field label="Message" error={fieldError}>
-                    <textarea
-                      className={inputClass}
-                      rows="4"
-                      maxLength={500}
-                      value={message}
-                      onChange={(event) => setMessage(event.target.value)}
-                      placeholder="Say how you can help"
-                    />
-                  </Field>
-                  <button className={`${buttonClass} w-full ${gig.type === 'Offering' ? 'fill-request' : ''}`} type="submit" disabled={Boolean(busy)}>
-                    {busy === 'apply' ? 'Sending…' : (gig.type === 'Requesting' ? 'Offer your help' : 'Request this service')}
+                <div className="space-y-2">
+                  <p className="flex flex-wrap items-center gap-2 text-base text-ink">
+                    Applied
+                    <Badge tone={statusTone(application.status)}>{application.status === 'Pending' ? 'Under review' : application.status}</Badge>
+                  </p>
+                  <button type="button" className={`${buttonClass} w-full`} disabled>
+                    Applied
                   </button>
-                </form>
+                </div>
+              ) : canApply ? (
+                <button type="button" className={`${buttonClass} w-full ${gig.type === 'Offering' ? 'fill-request' : ''}`} onClick={() => setApplyOpen(true)}>
+                  {gig.type === 'Requesting' ? 'Offer your help' : 'Request this service'}
+                </button>
               ) : (
                 <p className="text-base text-muted">This gig is {gig.status}, so new applications are closed.</p>
               )}
@@ -382,6 +341,17 @@ export function GigDetailPage({ gigId }) {
           )}
         </aside>
       </div>
+      <ApplyWizard
+        gig={gig}
+        poster={poster}
+        open={applyOpen}
+        onClose={() => setApplyOpen(false)}
+        onSubmitted={async (created) => {
+          setApplication(created);
+          pushToast('success', 'Application sent.');
+          await load(false);
+        }}
+      />
     </div>
   );
 }

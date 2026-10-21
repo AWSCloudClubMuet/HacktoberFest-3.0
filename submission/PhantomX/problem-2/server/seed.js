@@ -126,6 +126,9 @@ const applications = applicationRows.map(([id, gig_id, applicant_id, message, st
   message,
   status,
   created_at: createdAfter(gig_id, 1),
+  availability: id === 'a12' ? 'Weekday evenings after 6' : null,
+  portfolio_link: id === 'a12' ? 'https://campus.example/logo-sketches' : null,
+  swap_offer: id === 'a12' ? 'A simple logo sketch in exchange for the deck critique.' : null,
 }));
 
 const reviewRows = [

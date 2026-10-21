@@ -239,6 +239,44 @@ try {
   });
   check(late.status === 409, 'accepted gig is closed to new applications', late);
 
+  const swapGig = openGigs.find((item) => item.id !== gig.id && item.payment_type === 'SkillSwap');
+  const outsiders = swapGig
+    ? users.filter((user) => (
+      user.id !== swapGig.user_id
+      && !existingApps.some((application) => application.gig_id === swapGig.id && application.applicant_id === user.id)
+    ))
+    : [];
+  check(outsiders.length >= 2, 'found a SkillSwap gig with two students who have not applied');
+  if (swapGig && outsiders.length >= 2) {
+    const detailed = await api('POST', '/applications', {
+      user: outsiders[0].id,
+      body: {
+        gig_id: swapGig.id,
+        message: 'I can take this skill swap next week.',
+        availability: 'Friday afternoon',
+        portfolio_link: 'https://example.com/work',
+        swap_offer: 'An hour of grammar coaching',
+      },
+    });
+    check(
+      detailed.status === 201
+      && detailed.data.availability === 'Friday afternoon'
+      && detailed.data.portfolio_link === 'https://example.com/work'
+      && detailed.data.swap_offer === 'An hour of grammar coaching',
+      'optional application fields are stored and returned',
+      detailed,
+    );
+    const badUrl = await api('POST', '/applications', {
+      user: outsiders[1].id,
+      body: {
+        gig_id: swapGig.id,
+        message: 'Checking the portfolio link rules.',
+        portfolio_link: 'not a url',
+      },
+    });
+    check(badUrl.status === 400, 'portfolio_link must be a valid URL', badUrl);
+  }
+
   const otherOpen = openGigs.find((item) => item.id !== gig.id);
   const completedEarly = await api('PATCH', `/gigs/${otherOpen.id}`, {
     user: otherOpen.user_id,
