@@ -372,7 +372,7 @@ export function AuthBanner({ tone = 'offer', headline, subtitle }) {
       <div className="pointer-events-none absolute -left-10 -top-12 h-36 w-36 rounded-full bg-on-night/15 blur-2xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-16 right-4 h-44 w-44 rounded-full bg-coral-bright/25 blur-2xl" aria-hidden="true" />
       <div className="relative flex min-h-44 flex-col justify-center px-5 py-4 sm:min-h-48 lg:min-h-[34rem] lg:justify-between lg:px-8 lg:py-8">
-        <div className="max-w-md">
+        <div className="max-w-md lg:max-w-[15rem]">
           <div className="flex items-center gap-3">
             <img src={logoUrl} alt="" width="48" height="48" className="h-9 w-9 lg:h-12 lg:w-12" />
             <p className="font-display text-lg font-bold leading-tight text-on-night lg:text-xl">
@@ -396,7 +396,7 @@ export function AuthBanner({ tone = 'offer', headline, subtitle }) {
             })}
           </ul>
         </div>
-        <dl className="mt-8 hidden gap-6 lg:flex">
+        <dl className="mt-8 hidden max-w-[15rem] gap-4 lg:flex">
           <div>
             <dt className="font-display text-2xl font-bold text-on-night">12</dt>
             <dd className="text-sm text-on-night-muted">students</dd>
@@ -410,13 +410,13 @@ export function AuthBanner({ tone = 'offer', headline, subtitle }) {
             <dd className="text-sm text-on-night-muted">average rating</dd>
           </div>
         </dl>
-        <div className="pointer-events-none absolute bottom-24 right-6 hidden w-48 flex-col gap-3 lg:flex" aria-hidden="true">
+        <div className="pointer-events-none absolute bottom-16 right-3 hidden w-40 flex-col gap-3 lg:flex" aria-hidden="true">
           <div className="float-card rounded-2xl border border-line bg-surface p-3 text-ink shadow-pop">
             <p className="text-xs font-semibold uppercase tracking-wide text-offer">Tutoring</p>
             <p className="mt-1 text-sm font-bold">Calculus walkthrough</p>
             <p className="text-xs text-muted">Paid · Open</p>
           </div>
-          <div className="float-card float-card-late ml-8 rounded-2xl border border-line bg-surface p-3 text-ink shadow-pop">
+          <div className="float-card float-card-late rounded-2xl border border-line bg-surface p-3 text-ink shadow-pop">
             <p className="text-xs font-semibold uppercase tracking-wide text-request">Design</p>
             <p className="mt-1 text-sm font-bold">Fest poster</p>
             <p className="text-xs text-muted">SkillSwap</p>

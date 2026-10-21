@@ -159,7 +159,7 @@
 .header-search { grid-area: search; justify-self: end; min-width: 0; }
 .header-menu { grid-area: menu; }
 .header-tabs { grid-area: tabs; }
-.header-post { grid-area: post; }
+.header-post { grid-area: post; display: none; }
 .header-account { grid-area: account; }
 
 @media (min-width: 1024px) {
@@ -170,6 +170,7 @@
   }
 
   .header-search { justify-self: stretch; }
+  .header-post { display: inline-flex; }
 }
 
 .toast-stack {
