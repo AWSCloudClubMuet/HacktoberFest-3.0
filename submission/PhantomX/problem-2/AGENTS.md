@@ -47,7 +47,7 @@ Computed on read, never stored or patched:
 
 **Gigs:** `id`, `user_id`, `title`, `description`, `type` (`Offering` | `Requesting`), `category` (`Programming` | `Design` | `Writing` | `Tutoring`), `payment_type` (`Paid` | `SkillSwap` | `Free`), `budget` (number or `null`), `deadline` (ISO date), `status` (`Open` | `In Progress` | `Completed` | `Expired` | `Cancelled`), `accepted_applicant_id` (nullable), `created_at`.
 
-**Applications:** `id`, `gig_id`, `applicant_id`, `message`, `status` (`Pending` | `Accepted` | `Rejected`), `created_at`.
+**Applications:** `id`, `gig_id`, `applicant_id`, `message`, `status` (`Pending` | `Accepted` | `Rejected`), `created_at`. Optional: `availability` (text, max 200), `portfolio_link` (http or https URL, max 500), `swap_offer` (text, max 300, only when the gig is SkillSwap), `rejection_note` (text, max 200, set by the owner when rejecting). Missing optionals are returned as `null`.
 
 **Reviews:** `id`, `gig_id`, `reviewer_id`, `reviewee_id`, `rating` (integer 1–5), `comment`.
 
@@ -84,7 +84,8 @@ Discovery (`GET /gigs`):
 
 Applications:
 
-- Applicant is the authenticated user. `message` required, 1–500 characters.
+- Applicant is the authenticated user. `message` required, 1–500 characters. The apply wizard asks for at least 20 characters; the API still accepts any non-empty message up to 500.
+- `availability`, `portfolio_link`, and `swap_offer` are optional. A bad URL, an over-long value, or `swap_offer` on a gig that is not SkillSwap is `400`. `rejection_note` is optional on reject and is `400` past 200 characters.
 - Reject apply to your own gig, a second application to the same gig (any status), or a gig that is not effectively `Open`.
 - New applications start `Pending`.
 - Only the gig owner may `PATCH` an application.
@@ -161,16 +162,20 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 
 Logged-in browsing is two sections of the existing gig `type`. Login and signup stay outside them and do not show the switcher.
 
-| Section | Path | Gig type | Landing copy |
-| --- | --- | --- | --- |
-| Offer a service | `/offer` | `Offering` | "Find a student with the skill you need". Cards say "Offered by". Apply button: "Request this service". |
-| Request a service | `/request` | `Requesting` | "Help a fellow student and earn". Cards say "Requested by". Apply button: "Offer your help". |
+Each section is what the visitor wants to do, so the catalogue shows the opposite gig type. A student's own gigs are hidden from the catalogue and live under My gigs.
+
+| Section | Path | Catalogue shows | Post button creates | Landing copy |
+| --- | --- | --- | --- | --- |
+| Offer a service | `/offer` | `Requesting` | `Offering` | "Requests from students". Cards say "Requested by". Apply button: "Offer your help". |
+| Request a service | `/request` | `Offering` | `Requesting` | "Services offered by students". Cards say "Offered by". Apply button: "Request this service". |
 
 - The switcher sits under the navbar on every logged-in page, including profile. It is a tablist (`role="tablist"`, arrow keys, `aria-selected`). Choosing a tab opens that section's catalogue.
 - The last section is stored in `localStorage` as `campus-section`. After login, and when a logged-in user opens `/`, the app goes to that section. The default is `/offer`.
-- A section catalogue shows only that type. Expired and Cancelled gigs stay out of the catalogue. My Gigs and My Applications filter to the current section and keep sub-tabs (Offered / Requested, To offers / To requests) so the other side is one click away.
-- "Post a gig" inside a section opens `/gigs/new?type=Offering` or `/gigs/new?type=Requesting`. The form shows which type is being created.
-- The navbar search opens a filter panel. API filters stay `category`, `payment_type`, `min`, `max`, and `q`, combined with the section's `type`. `status`, `sort`, and `group` (`unpaid` or `closing`) are applied in the browser because `GET /gigs` has no status or sort query. The panel writes those keys to the URL. Clearing them returns to the catalogue.
+- A section catalogue, its search results, category chips, and See all rows show only that browse type, excluding the current user's gigs. Expired and Cancelled gigs stay out of the catalogue.
+- My gigs lists everything the user posted, with sub-tabs "Offered by me" and "Requested by me". My applications lists every application, with counts for All, Under review, Accepted, and Rejected. Pending is shown as Under review.
+- "Post a gig" inside Offer a service opens `/gigs/new?type=Offering`. Inside Request a service it opens `/gigs/new?type=Requesting`. The type control on the form stays editable. After a successful post the app opens the new gig and tells the student it is under My gigs.
+- Applying is a 3-step dialog (`ApplyWizard`): review the gig, write a proposal, then review and submit. Shared pieces live in `client/src/flow.jsx`: `Stepper`, `StatusTracker`, `ApplyWizard`, `ApplicantCard`, `ConfirmDialog`, `Tabs`, and `GigStepper`.
+- The navbar search opens a filter panel. API filters stay `category`, `payment_type`, `min`, `max`, and `q`, combined with the section's browse type. `status`, `sort`, and `group` (`unpaid` or `closing`) are applied in the browser because `GET /gigs` has no status or sort query. The panel writes those keys to the URL. Clearing them returns to the catalogue.
 
 ## Visual design
 

@@ -33,15 +33,16 @@ Log out from the name in the header when you want to switch students.
 
 ## Suggested 5-minute walkthrough
 
-1. Log in as **Zainab** and post a gig. Choose **Paid** and submit with the budget empty, then fix it and post.
-2. Log out. Log in as **Bilal** and apply to that gig. Apply again and confirm the duplicate is blocked.
-3. Log in as **Zainab**, open the same gig, and confirm she cannot apply to her own gig.
-4. Log in as **Sara** and apply.
-5. Log in as **Zainab**, accept **Bilal**. Sara's application becomes Rejected and the gig moves to **In Progress**.
-6. Click **Mark as completed**.
-7. As Zainab, leave a review. Log in as Bilal and leave one too. The form disappears after each review.
-8. Open both profiles and confirm the average rating and completed-gig count changed.
-9. Browse gigs and open **Logo sketch session**. It is stored as Open with a past deadline, so the page shows **Expired** and new applications are closed.
+1. Log in as **Zainab**. **Offer a service** lists other students' requests. **Request a service** lists services they are offering. Her own posts never appear in either catalogue.
+2. From **Offer a service**, post a gig. The form starts as **Offering**. Choose **Paid** and submit with the budget empty, then fix it and post. The new gig opens, with a note that it is under **My gigs**.
+3. Log out. Log in as **Bilal**, open that gig from **Request a service** (it is an Offering), and choose **Request this service**. Confirm the requirements, write at least 20 characters, then submit. The button changes to **Applied**.
+4. Log in as **Zainab**, open the same gig, and confirm she cannot apply to her own gig.
+5. Log in as **Sara** and apply through the same wizard.
+6. Log in as **Zainab**, open **Applicants**, and accept **Bilal**. The confirm dialog says Sara will be rejected automatically. The gig moves to **In Progress**. Sara's application says another applicant was selected.
+7. Confirm **Mark as completed**.
+8. As Zainab, leave a review. Log in as Bilal and leave one too. The form disappears after each review.
+9. Open both profiles and confirm the average rating and completed-gig count changed.
+10. Browse gigs and open **Logo sketch session**. It is stored as Open with a past deadline, so the page shows **Expired** and new applications are closed. It is an Offering, so it is reached from **Request a service** once status includes Expired.
 
 ## Rules worth testing
 
