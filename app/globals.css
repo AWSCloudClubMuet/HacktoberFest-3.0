@@ -4,8 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root { --background: #f8f8f6; --foreground: #242321; --card: #fff; --card-foreground: #242321; --primary: #ef654f; --primary-foreground: #fff; --muted: #f1f0ed; --muted-foreground: #77736d; --border: #e8e5df; --radius: .75rem; }
-@theme inline { --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif; --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card); --color-card-foreground: var(--card-foreground); --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground); --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground); --color-border: var(--border); --radius-lg: var(--radius); }
+:root { --background: #f8f8f6; --foreground: #242321; --card: #fff; --card-foreground: #242321; --primary: #ef654f; --primary-foreground: #fff; --muted: #f1f0ed; --muted-foreground: #77736d; --border: #e8e5df; --popover: #fff; --popover-foreground: #242321; --accent: #f1f0ed; --accent-foreground: #242321; --input: #ddd9d0; --ring: #ef654f; --radius: .75rem; }
+@theme inline { --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif; --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card); --color-card-foreground: var(--card-foreground); --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground); --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground); --color-border: var(--border); --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground); --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground); --color-input: var(--input); --color-ring: var(--ring); --radius-lg: var(--radius); }
 * { box-sizing: border-box; border-color: var(--border); }
 body { margin: 0; background: var(--background); color: var(--foreground); font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif; }
 button, input, select, textarea { font: inherit; } button { cursor: pointer; }
