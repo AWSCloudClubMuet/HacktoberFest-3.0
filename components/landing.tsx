@@ -1,11 +1,33 @@
 'use client'
 
 // One-screen landing page shown at / to signed-out visitors.
-// Built like a noticeboard: the pitch on the left, real open gigs
-// pinned on the right. Signed-in users never see it.
-import { useEffect, useState } from 'react'
+// Built like a noticeboard: the pitch on the left, two example gigs
+// pinned on the right (hardcoded — the board is illustrative; the real
+// board is behind sign-in). Signed-in users never see it.
 import Link from 'next/link'
-import { api, type Gig } from '@/lib/api'
+import type { Gig } from '@/lib/api'
+
+// The two pinned example gigs.
+const BOARD_GIGS: Gig[] = [
+  {
+    id: 18, user_id: 4,
+    title: 'Resume and cover letter writing',
+    description: 'Offering resume rewrites for internship applications, with two revision rounds.',
+    type: 'Offering', category: 'Writing', payment_type: 'Paid', budget: 30,
+    deadline: '2026-11-03', status: 'Open', display_status: 'Open',
+    accepted_applicant_id: null, created_at: '2026-10-21',
+    owner_name: 'Sam Rivera', owner_major: 'Sociology', applications_count: 0,
+  },
+  {
+    id: 19, user_id: 3,
+    title: 'Landing page for my design portfolio',
+    description: 'I have the Figma file ready — need a developer to build a responsive one-page site from it.',
+    type: 'Requesting', category: 'Programming', payment_type: 'Paid', budget: 200,
+    deadline: '2026-11-05', status: 'Open', display_status: 'Open',
+    accepted_applicant_id: null, created_at: '2026-10-21',
+    owner_name: 'Jordan Lee', owner_major: 'Design', applications_count: 1,
+  },
+]
 
 const TILTS = ['-1.3deg', '1deg', '-0.6deg']
 const PINS = ['#e96955', '#0d6e63', '#e9a13b']
@@ -26,11 +48,7 @@ function initials(name: string) {
 }
 
 export default function LandingPage() {
-  const [gigs, setGigs] = useState<Gig[]>([])
-
-  useEffect(() => {
-    api.gigs({ status: 'Open' }).then((all) => setGigs(all.slice(0, 2))).catch(() => {})
-  }, [])
+  const gigs = BOARD_GIGS
 
   return (
     <div className="landing">
