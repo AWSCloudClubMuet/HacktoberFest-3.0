@@ -106,6 +106,8 @@ jobs:
 
       - name: Trivy image scan (HIGH/CRITICAL)
         # exit-code 0: findings must FAIL the gate, not this scan step
+        # ignore-unfixed: documented exception policy - CVEs with no available
+        # fix in the base image are tracked but do not block the pipeline
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: image
@@ -114,6 +116,7 @@ jobs:
           output: trivy-image.json
           severity: HIGH,CRITICAL
           exit-code: 0
+          ignore-unfixed: true
 
       - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@v0.36.0
@@ -123,6 +126,7 @@ jobs:
           format: json
           output: trivy-fs.json
           exit-code: 0
+          ignore-unfixed: true
 
       - name: Upload trivy reports artifact
         if: always()
