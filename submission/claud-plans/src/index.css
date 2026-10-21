@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#F7F9F6] text-slate-800 font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom smooth transitions & mobile optimizations */
+input[type="range"] {
+  accent-color: #15803d;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f3ed;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd4c0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a386;
+}
