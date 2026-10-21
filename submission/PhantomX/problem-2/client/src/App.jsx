@@ -81,7 +81,7 @@ const nav = [
 ];
 
 function navClass(active) {
-  return `flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold transition duration-150 ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-canvas'}`;
+  return `flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold transition duration-150 ${active ? 'bg-white/15 text-on-night' : 'text-on-night-muted hover:bg-white/10 hover:text-on-night'}`;
 }
 
 export function App() {
@@ -197,10 +197,10 @@ export function App() {
     <AuthContext.Provider value={{ user, login, signup, logout }}>
     <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
       <div className="min-h-screen">
-        <header className="site-header sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
+        <header className="site-header sticky top-0 z-40 border-b border-white/10">
           <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6">
-            <Link to={user ? `/${section}` : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm text-white" aria-hidden="true">CG</span>
+            <Link to={user ? `/${section}` : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-on-night">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl fill-offer text-sm text-white" aria-hidden="true">CG</span>
               <span className="truncate">Campus Gig</span>
             </Link>
             {user && !isPublic ? (
@@ -241,13 +241,13 @@ export function App() {
             )}
             {user ? (
               <div className="ml-auto hidden min-w-0 items-center gap-3 lg:flex">
-                <span className="max-w-40 truncate text-sm font-semibold text-ink">{user.name}</span>
+                <span className="max-w-40 truncate text-sm font-semibold text-on-night">{user.name}</span>
                 <button type="button" className={secondaryButtonClass} onClick={logout}>Log out</button>
               </div>
             ) : null}
             <button
               type="button"
-              className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-line text-ink lg:hidden"
+              className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night lg:hidden"
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               onClick={() => setMenuOpen((open) => !open)}
@@ -278,8 +278,8 @@ export function App() {
                   </>
                 )}
                 {user ? (
-                  <div className="mt-2 flex flex-col gap-2 border-t border-line pt-3">
-                    <p className="truncate px-3 text-sm font-semibold text-ink">{user.name}</p>
+                  <div className="mt-2 flex flex-col gap-2 border-t border-white/15 pt-3">
+                    <p className="truncate px-3 text-sm font-semibold text-on-night">{user.name}</p>
                     <button type="button" className={`${secondaryButtonClass} w-full`} onClick={logout}>Log out</button>
                   </div>
                 ) : null}

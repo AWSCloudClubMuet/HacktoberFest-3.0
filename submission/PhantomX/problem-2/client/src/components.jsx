@@ -2,16 +2,16 @@ import { useEffect } from 'react';
 import { useApp } from './context.js';
 
 const tones = {
-  open: 'bg-offer-soft text-offer ring-offer/20',
+  open: 'bg-open-soft text-open ring-open-line',
   expired: 'bg-danger-soft text-danger ring-danger-line',
   progress: 'bg-progress-soft text-progress ring-progress-line',
   completed: 'bg-success-soft text-success ring-success-line',
-  cancelled: 'bg-canvas text-muted ring-line-strong',
+  cancelled: 'bg-band text-muted ring-line-strong',
   offering: 'bg-offer-soft text-offer ring-offer/25',
   requesting: 'bg-request-soft text-request ring-request/20',
   paid: 'bg-warning-soft text-warning ring-warning-line',
   swap: 'bg-request-soft text-request ring-request/20',
-  free: 'bg-offer-soft text-offer ring-offer/20',
+  free: 'bg-free-soft text-free ring-free-line',
   pending: 'bg-warning-soft text-warning ring-warning-line',
   accepted: 'bg-success-soft text-success ring-success-line',
   rejected: 'bg-danger-soft text-danger ring-danger-line',

@@ -4,44 +4,57 @@
   --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   --font-display: "Outfit", "Plus Jakarta Sans", sans-serif;
 
-  --color-canvas: #f4f1ea;
+  --color-canvas: #eef1fb;
+  --color-band: #e3e8f8;
   --color-surface: #ffffff;
-  --color-ink: #1b2430;
-  --color-secondary: #3e4a55;
-  --color-muted: #4a5560;
-  --color-faint: #6b6258;
-  --color-line: #e7e1d6;
-  --color-line-strong: #d4cbbc;
+  --color-ink: #14182b;
+  --color-secondary: #3c4462;
+  --color-muted: #4e5672;
+  --color-faint: #6a718c;
+  --color-line: #d5daf0;
+  --color-line-strong: #bfc6e4;
+  --color-night: #12163a;
+  --color-night-deep: #0b0f24;
+  --color-night-mid: #2a3178;
+  --color-on-night: #f4f6ff;
+  --color-on-night-muted: #c5cbe8;
 
-  --color-primary: #0a6b5c;
-  --color-primary-hover: #075248;
-  --color-offer: #0a6b5c;
-  --color-offer-deep: #075248;
-  --color-offer-bright: #12a58c;
-  --color-offer-soft: #e5f5f1;
-  --color-request: #5b3df5;
-  --color-request-deep: #4328c9;
-  --color-request-soft: #f0ebff;
-  --color-coral: #c2413a;
-  --color-coral-bright: #e36a4f;
-  --color-coral-soft: #ffede8;
+  --color-primary: #5b21b6;
+  --color-primary-hover: #4318a8;
+  --color-offer: #0b6b5a;
+  --color-offer-deep: #064e45;
+  --color-offer-bright: #12957f;
+  --color-offer-soft: #d7f6ee;
+  --color-request: #5b21b6;
+  --color-request-deep: #4318a8;
+  --color-request-bright: #7c3aed;
+  --color-request-soft: #ede7ff;
+  --color-coral: #c23b42;
+  --color-coral-bright: #e15a4a;
+  --color-coral-soft: #ffe6e2;
+  --color-open: #0e7490;
+  --color-open-soft: #d5f4f8;
+  --color-open-line: #a5dce6;
+  --color-free: #047857;
+  --color-free-soft: #d1fae5;
+  --color-free-line: #a7e8c9;
 
-  --color-success: #146b45;
-  --color-success-soft: #e7f6ee;
-  --color-success-line: #b7e0cb;
+  --color-success: #0f6b45;
+  --color-success-soft: #ddf6ea;
+  --color-success-line: #a8dcc4;
   --color-warning: #8a4b08;
-  --color-warning-soft: #fff3e0;
-  --color-warning-line: #f0d7b0;
+  --color-warning-soft: #fff3d6;
+  --color-warning-line: #f0d09a;
   --color-danger: #b42318;
-  --color-danger-soft: #fdecec;
-  --color-danger-line: #f3c7c3;
-  --color-progress: #1e4b86;
-  --color-progress-soft: #e7f0fa;
-  --color-progress-line: #c5d6ef;
-  --color-star: #b86e09;
+  --color-danger-soft: #fdecea;
+  --color-danger-line: #f4c4be;
+  --color-progress: #1d4ed8;
+  --color-progress-soft: #e0e9ff;
+  --color-progress-line: #c5d4f8;
+  --color-star: #9a5b08;
 
-  --shadow-card: 0 1px 2px rgb(27 36 48 / 0.04), 0 14px 34px rgb(27 36 48 / 0.07);
-  --shadow-pop: 0 18px 44px rgb(27 36 48 / 0.14);
+  --shadow-card: 0 1px 2px rgb(18 22 58 / 0.06), 0 10px 24px rgb(18 22 58 / 0.08);
+  --shadow-pop: 0 16px 40px rgb(18 22 58 / 0.18);
 }
 
 @layer base {
@@ -52,8 +65,8 @@
   body {
     min-height: 100vh;
     background:
-      radial-gradient(1200px 420px at 10% -10%, rgb(18 165 140 / 0.14), transparent 55%),
-      radial-gradient(900px 380px at 110% 0%, rgb(227 106 79 / 0.12), transparent 50%),
+      radial-gradient(900px 280px at 0% -10%, rgb(91 33 182 / 0.16), transparent 55%),
+      radial-gradient(800px 260px at 100% 0%, rgb(18 149 127 / 0.14), transparent 50%),
       var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
@@ -92,25 +105,38 @@
 }
 
 @utility hero-offer {
-  background: linear-gradient(135deg, #e5f5f1 0%, #f7f4ee 52%, #fff1ea 100%);
+  background-image: linear-gradient(125deg, var(--color-night-deep) 0%, var(--color-night) 48%, var(--color-offer-deep) 100%);
+  color: var(--color-on-night);
 }
 
 @utility hero-request {
-  background: linear-gradient(135deg, #f0ebff 0%, #f7f4ee 48%, #ffede8 100%);
+  background-image: linear-gradient(125deg, var(--color-night-deep) 0%, var(--color-night) 42%, var(--color-request-deep) 100%);
+  color: var(--color-on-night);
 }
 
 @utility fill-offer {
-  background-image: linear-gradient(135deg, #075248 0%, #0a6b5c 45%, #12a58c 100%);
+  background-image: linear-gradient(135deg, var(--color-offer-deep) 0%, var(--color-offer) 100%);
 }
 
 @utility fill-request {
-  background-image: linear-gradient(135deg, #4328c9 0%, #5b3df5 62%, #7a5cff 100%);
+  background-image: linear-gradient(135deg, var(--color-request-deep) 0%, var(--color-request) 100%);
+}
+
+.hero-offer :is(.text-ink, h1, h2),
+.hero-request :is(.text-ink, h1, h2) {
+  color: var(--color-on-night);
+}
+
+.hero-offer .text-muted,
+.hero-request .text-muted {
+  color: var(--color-on-night-muted);
 }
 
 .site-header {
   padding-top: env(safe-area-inset-top);
-  background: rgb(255 255 255 / 0.78);
-  backdrop-filter: blur(18px);
+  background-image: linear-gradient(90deg, var(--color-night-deep) 0%, var(--color-night) 55%, var(--color-night-mid) 100%);
+  color: var(--color-on-night);
+  border-color: transparent;
 }
 
 .toast-stack {
