@@ -10,6 +10,21 @@ import {
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
+function getCropFallback(cropName) {
+  const name = (cropName || '').toLowerCase();
+  if (name.includes('wheat')) return '/images/crops/wheat.jpg';
+  if (name.includes('rice')) return '/images/crops/rice.jpg';
+  if (name.includes('cotton')) return '/images/crops/cotton.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('tomato')) return '/images/crops/tomato.jpg';
+  if (name.includes('onion')) return '/images/crops/onion.jpg';
+  if (name.includes('potato')) return '/images/crops/potato.jpg';
+  if (name.includes('chili')) return '/images/crops/chilies.jpg';
+  if (name.includes('mango')) return '/images/crops/mango.jpg';
+  if (name.includes('banana')) return '/images/crops/banana.jpg';
+  return '/images/crops/wheat.jpg';
+}
+
 const GRADES = ['A', 'B', 'C'];
 
 function normalizePhone(phone) {
@@ -536,7 +551,7 @@ export default function MarketplaceScreen({ currentUser }) {
         const avg = avgMap[listing.cropId];
         const label = calcPriceLabel(listing.askingPrice, avg);
         const isOwner = currentUser && listing.sellerId === currentUser.id;
-        const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+        const displayImg = listing.imageUrl || cropObj?.imageUrl || getCropFallback(cropName);
         const hasSellerPhoto = Boolean(listing.imageUrl);
 
         return (
@@ -547,7 +562,7 @@ export default function MarketplaceScreen({ currentUser }) {
                 alt={cropName}
                 className="listing-img"
                 loading="lazy"
-                onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+                onError={(e) => { e.currentTarget.src = getCropFallback(cropName); }}
               />
               {hasSellerPhoto ? (
                 <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>

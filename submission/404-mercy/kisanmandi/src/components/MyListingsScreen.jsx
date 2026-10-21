@@ -7,6 +7,21 @@ import { uploadListingImage } from '../services/supabase';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
+function getCropFallback(cropName) {
+  const name = (cropName || '').toLowerCase();
+  if (name.includes('wheat')) return '/images/crops/wheat.jpg';
+  if (name.includes('rice')) return '/images/crops/rice.jpg';
+  if (name.includes('cotton')) return '/images/crops/cotton.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('tomato')) return '/images/crops/tomato.jpg';
+  if (name.includes('onion')) return '/images/crops/onion.jpg';
+  if (name.includes('potato')) return '/images/crops/potato.jpg';
+  if (name.includes('chili')) return '/images/crops/chilies.jpg';
+  if (name.includes('mango')) return '/images/crops/mango.jpg';
+  if (name.includes('banana')) return '/images/crops/banana.jpg';
+  return '/images/crops/wheat.jpg';
+}
+
 const GRADES = ['A', 'B', 'C'];
 const DISTRICTS = [
   'Hyderabad','Sukkur','Larkana','Mirpurkhas','Nawabshah',
@@ -335,17 +350,18 @@ export default function MyListingsScreen({ currentUser }) {
           <h3 className="section-title">Active ({active.length})</h3>
           {active.map(listing => {
             const cropObj = crops.find(c => c.id === listing.cropId);
-            const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+            const cropName = cropObj?.name || listing.cropId;
+            const displayImg = listing.imageUrl || cropObj?.imageUrl || getCropFallback(cropName);
             const hasSellerPhoto = Boolean(listing.imageUrl);
             return (
               <div key={listing.id} className="listing-card" role="article">
                 <div className="listing-img-wrap">
                   <img
                     src={displayImg}
-                    alt={getCropName(listing.cropId)}
+                    alt={cropName}
                     className="listing-img"
                     loading="lazy"
-                    onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+                    onError={(e) => { e.currentTarget.src = getCropFallback(cropName); }}
                   />
                   {hasSellerPhoto ? (
                     <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>
@@ -385,17 +401,18 @@ export default function MyListingsScreen({ currentUser }) {
           <h3 className="section-title" style={{ marginTop: '1rem' }}>Sold ({sold.length})</h3>
           {sold.map(listing => {
             const cropObj = crops.find(c => c.id === listing.cropId);
-            const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+            const cropName = cropObj?.name || listing.cropId;
+            const displayImg = listing.imageUrl || cropObj?.imageUrl || getCropFallback(cropName);
             const hasSellerPhoto = Boolean(listing.imageUrl);
             return (
               <div key={listing.id} className="listing-card" style={{ opacity: .7 }} role="article">
                 <div className="listing-img-wrap">
                   <img
                     src={displayImg}
-                    alt={getCropName(listing.cropId)}
+                    alt={cropName}
                     className="listing-img"
                     loading="lazy"
-                    onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+                    onError={(e) => { e.currentTarget.src = getCropFallback(cropName); }}
                   />
                   {hasSellerPhoto ? (
                     <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>

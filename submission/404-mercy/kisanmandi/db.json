@@ -41,14 +41,6 @@
       "phone": "03556789012",
       "district": "Hyderabad",
       "role": "buyer"
-    },
-    {
-      "name": "Hyder",
-      "email": "hyderbux@gmail.com",
-      "phone": "03033532363",
-      "district": "Nawabshah",
-      "role": "farmer",
-      "id": "S_DHtaHY2k8"
     }
   ],
   "crops": [
