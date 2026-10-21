@@ -1,97 +1,208 @@
-# ReliefHub — Team Omnitrix
+# ReliefHub 🌊
 
-A local flood-relief coordination dashboard for [HacktoberFest issue #10](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/10).
+### Flood Relief Coordination & Resource Management System
 
-Manage camps, camp needs, warehouse supplies, dispatches, donations and volunteers across Sindh. The overview highlights urgent gaps and resource coverage.
+**Team Omnitrix | HacktoberFest 3.0**
 
-## Run in VS Code
+ReliefHub is a web-based dashboard designed to make flood-relief coordination easier and more organized. It brings relief camps, supply inventories, urgent needs, deliveries, donations, and volunteers into one workspace, helping coordinators see where assistance is needed and track how resources are used.
 
-Requires Python 3.10 or newer. In the VS Code terminal:
+The current application is a **working local Flask + SQLite demo**, built around flood-relief operations in Sindh, Pakistan.
 
-```powershell
-cd D:\Hacktober\Team_Omnitrix\submission\omnitrix\reliefhub
+![ReliefHub dashboard preview](preview.jpg)
+
+## Key Features
+
+| Module | What it does |
+| --- | --- |
+| **Overview Dashboard** | Displays active camps, sheltered families, fulfilment progress, low-stock items, deployed volunteers, recent dispatches, and critical supply gaps. |
+| **Relief Camps** | Create, update, search, and manage camps, capacities, family counts, districts, and statuses. |
+| **Warehouse & Inventory** | Track available supplies by item, category, and unit; identify low-stock items; search, sort, and export records to CSV. |
+| **Camp Needs** | Record requested supplies, set High/Medium/Low priorities, and monitor fulfilled and outstanding quantities. |
+| **Dispatch Management** | Reserve available stock, track deliveries through their statuses, and restore stock when pending deliveries are cancelled. |
+| **Donations** | Record monetary and in-kind donations; automatically add received physical supplies to inventory. |
+| **Volunteer Management** | Register volunteers, filter by skill, and assign or unassign them from relief camps. |
+
+### Highlights
+
+- Responsive dashboard with an olive-and-earth-tone visual style.
+- Search, filters, sortable warehouse records, and CSV export.
+- Alerts for **high-priority needs below 40% fulfilment**.
+- Low-stock identification based on each item's reorder level.
+- Validation to prevent dispatching more stock than is available or required.
+- Transaction-based updates to protect stock and fulfilment calculations.
+- Demo role permissions for a **Relief Coordinator (Admin)** and a **Field Volunteer**.
+
+## Technology Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | HTML5, CSS3, vanilla JavaScript |
+| Backend | Python, Flask 3.0.3 |
+| Database | SQLite3 |
+| API | Flask REST-style JSON endpoints |
+| Testing | Python `unittest` |
+
+There is no Node.js build process or external API requirement for local use.
+
+## Getting Started
+
+### Requirements
+
+- Python **3.10 or newer**
+- Git (for cloning the repository)
+- A modern web browser
+
+### 1. Clone the repository
+
+```bash
+git clone --branch omnitrix https://github.com/his012/Team_Omnitrix.git
+cd Team_Omnitrix/submission/omnitrix/reliefhub
+```
+
+If the repository is already downloaded, simply open its `submission/omnitrix/reliefhub` folder in a terminal.
+
+### 2. Install dependencies
+
+```bash
 python -m pip install -r requirements.txt
+```
+
+> **Windows users:** Gunicorn may appear in `requirements.txt` for Linux hosting, but you do **not** need to run Gunicorn locally.
+
+### 3. Start ReliefHub
+
+```bash
 python app.py
 ```
 
-Open **http://127.0.0.1:5050**. The first launch creates and seeds the database automatically. Later launches preserve changes. If port 5050 is occupied, run `python app.py --port 5051`.
+Visit **http://127.0.0.1:5050** in your browser.
 
-No Node installation, build step, cloud account, API key, payment card or external asset service is required. Flask is the only application dependency; SQLite ships with Python. Once Flask is installed, the app works offline. Local app operation incurs no cloud or API charges; AI-tool subscriptions are separate.
+On the first launch, the application creates `reliefhub.db` and loads demonstration records. Later runs reuse the existing database so your local changes are preserved.
 
-## Team
+If port `5050` is unavailable:
 
-- Farhan — [his012](https://github.com/his012)
-- Zain Arshad — [zain-arshad-arain](https://github.com/zain-arshad-arain)
-- Huzaifa Abbasi — [HuzaifaAbbasi6901](https://github.com/HuzaifaAbbasi6901)
+```bash
+python app.py --port 5051
+```
 
-Member work allocation is not asserted; record actual contributions before submission.
+Then open `http://127.0.0.1:5051`.
 
-## Implemented milestones
+## Project Structure
 
-The interface uses an olive and earth-toned palette, system serif headings, square controls and responsive record tables. Warehouse includes stock tabs, name/stock sorting, resettable search and CSV export of the current results. Destructive actions use a confirmation dialog. Initial loading has a skeleton state. Workspace guide, demo terms and privacy policy are available from the footer. No external fonts, icon libraries, gradients, shadows or hover animations are used.
+```text
+reliefhub/
+├── app.py               # Flask application, APIs, and business rules
+├── schema.sql           # SQLite table definitions
+├── seed.py              # Initial demo records
+├── requirements.txt     # Python dependencies
+├── test_app.py          # Automated tests
+├── preview.jpg          # Dashboard preview
+├── static/
+│   ├── index.html       # Page structure
+│   ├── styles.css       # Responsive styling
+│   └── app.js           # Dashboard logic and API requests
+└── reliefhub.db         # Created locally; not committed to Git
+```
 
-1. **Camps:** create, edit, delete, validated capacity/family counts, district/name search, status filters and automatic Full status. Closed stays Closed until explicitly reopened.
-2. **Needs and warehouse:** need CRUD, priority and fulfilment, available inventory CRUD, low stock at or below reorder level.
-3. **Dispatches:** camp/need selection, immediate stock reservation, available-stock and unreserved-need validation, status filters, in-transit, delivery and cancellation actions.
-4. **Donations and volunteers:** Cash and In-Kind contributions, automatic stock receipt, cash totals and category/unit totals, volunteer registration, skill/search filters, assignment and unassignment.
-5. **Dashboard:** five KPIs, a category fulfilment bar chart, recent dispatches, ordered critical gaps linking to camps.
-6. **Mock API:** all browser data reads and writes use same-origin HTTP requests to the six required collections. SQLite persists data on disk.
+## Demo Dataset
 
-## Roles
+The included starter data covers:
 
-Use the sidebar role selector. Relief Coordinator (Admin) manages all operations. Field Volunteer can view all sections, update camp family counts, and create/edit camp needs. Server-side permission checks reject other volunteer mutations.
+| Record type | Sample records |
+| --- | ---: |
+| Relief camps | 8 |
+| Inventory items | 12 |
+| Camp needs | 20 |
+| Dispatches | 10 |
+| Donations | 10 |
+| Volunteers | 15 |
 
-This is a **local demo role switcher, not identity authentication**. Anyone using the demo can choose Admin. Do not deploy it as a public operational service without real authentication, authorization policies and a production server. The development server binds to loopback only.
+The data includes different camp statuses, low-stock items, and urgent requests so the dashboard can be demonstrated immediately.
 
-## Data and business rules
+**Resetting demo data:** Stop the app, back up or move `reliefhub.db`, and run `python app.py` again. The seeding script will not overwrite an existing database.
 
-- `inventory.stock` is **available** stock, excluding reservations. Creating a dispatch subtracts stock once. Delivery increments fulfilment without another stock deduction. Cancelling Pending/In Transit adds stock back exactly once.
-- Remaining unreserved need = required − fulfilled − Pending/In Transit quantities.
-- Dispatch transitions: Pending → In Transit/Delivered/Cancelled; In Transit → Delivered/Cancelled. Delivered and Cancelled are terminal. Repeating the same status has no second effect.
-- SQLite `BEGIN IMMEDIATE` takes a write lock before stock/reservation checks. Dispatch, donation and status changes commit atomically, including under concurrent requests.
-- A need cannot be reduced below fulfilled + reserved quantities or moved to another camp/item. Fulfilment changes only through delivery.
-- Referenced inventory and needs cannot be deleted. Camps require removal of their needs and volunteer assignments before deletion; dispatch history is protected. Unassign volunteers and resolve outstanding dispatches before closing a camp.
-- Units cannot change while an item has needs or donation history. In-kind donations use positive whole units; cash permits two decimals. Donation records are append-only so receipt history is retained.
-- Active-camp KPI includes Active and Full camps; family KPI excludes Closed camps. Overall and category fulfilment use the **arithmetic mean of individual need percentages**, avoiding sums across incompatible units. Critical gaps include High needs strictly below 40%, sorted by lowest fulfilment.
-- Donation category summaries keep cash (PKR) and physical units separate; kilograms are never added to litres.
+## API Endpoints
 
-## Seed data
+The frontend communicates with the Flask backend through same-origin JSON requests.
 
-The initial dataset includes exactly 8 camps across 6 districts, including a Full and a Closed camp; 12 inventory items including 2 Low Stock; 20 needs including 3 Critical Gaps; 10 dispatches; 10 donations; and 15 volunteers.
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/camps` | List camps |
+| `GET` | `/api/inventory` | List warehouse items |
+| `GET` | `/api/needs` | List camp needs |
+| `GET` | `/api/dispatches` | List dispatches |
+| `GET` | `/api/donations` | List donations |
+| `GET` | `/api/volunteers` | List volunteers |
+| `GET` | `/api/<collection>/<id>` | Retrieve a single record |
+| `POST` | `/api/<collection>` | Create a record where supported |
+| `PUT` | `/api/<collection>/<id>` | Update a record where supported |
+| `DELETE` | `/api/<collection>/<id>` | Delete eligible records |
+| `GET`, `POST` | `/api/session` | View or switch the demo role |
 
-Seed stock is an opening snapshot of **available stock after historical receipts and reservations**. Fulfilled quantities include historical deliveries beyond the ten displayed example dispatches. Seeded donations and dispatches are history and are not reapplied at startup.
+Some operations are intentionally restricted. For example, dispatch and donation history is retained rather than deleted.
 
-`seed.py` refuses to overwrite an existing database. To start a fresh demo, stop the server, move `reliefhub.db` to a backup location, then start again. Database files and Python caches are ignored by Git.
+### Dispatch Workflow
 
-## API
+```text
+Pending → In Transit → Delivered
+    │           │
+    └───────────┴──────→ Cancelled
+```
 
-Collections: `/api/camps`, `/api/inventory`, `/api/needs`, `/api/dispatches`, `/api/donations`, `/api/volunteers`.
+- Creating a dispatch immediately reserves stock.
+- Marking it **Delivered** increases the fulfilled quantity of the associated need.
+- Cancelling an undelivered dispatch returns its reserved stock.
+- Delivered and Cancelled dispatches are final; repeated status updates do not double-count quantities.
 
-- `GET /api/<collection>` lists records; `GET /api/<collection>/<id>` reads one.
-- `POST /api/<collection>` creates a record.
-- `PUT /api/<collection>/<id>` updates camps, inventory, needs, dispatch status or volunteers.
-- `DELETE /api/<collection>/<id>` deletes unreferenced camps, inventory, needs or volunteers.
-- `POST /api/session` selects `Admin` or `Field Volunteer`; `GET /api/session` reads the demo role.
-- Mutations require JSON and a role session. Responses use 400 for validation, 401/403 for permissions, 404 for missing records and 409 for protected history/transitions.
+## Demo Roles
 
-## Verification
+**Relief Coordinator (Admin)** can manage relief operations across the application.
 
-```powershell
+**Field Volunteer** can view information, update camp family counts, and create or edit camp needs, subject to server-side restrictions.
+
+> **Security note:** The role selector is designed for demonstration and is **not real user authentication**. Do not use this version for sensitive relief records or a public production service without implementing proper login, access control, and secure persistent storage.
+
+## Run Tests
+
+From the `reliefhub` directory, run:
+
+```bash
 python -m unittest -v test_app
 ```
 
-The suite tests seed invariants, camp/inventory/need operations, delivery and cancellation idempotency, concurrent reservations, donation stock changes, invalid inputs, single volunteer assignments, closed-camp restrictions, role enforcement and database persistence. Tests use isolated temporary databases and never touch your demo data.
+The test suite covers validation, role restrictions, stock reservation, dispatch status changes, donations, volunteer assignment, database persistence, and concurrent operations. Tests use separate temporary databases.
 
-## Demo walkthrough
+## Suggested Demo Walkthrough
 
-1. Open Overview and inspect the three Critical Gaps.
-2. Open Sehwan Base Camp and inspect its antibiotic need.
-3. Create a dispatch for that need: initially 80 boxes are available and 200 remain unreserved. Quantities above 80 are rejected.
-4. Mark it In Transit, then Delivered; review the need's progress and dashboard.
-5. Record an In-Kind donation and verify available inventory rises.
-6. Assign an available volunteer to an open camp; unassign before moving to another.
-7. Switch to Field Volunteer and demonstrate the restricted edit controls.
+1. Open **Overview** and review the critical relief gaps.
+2. Open a camp and inspect its current supply needs.
+3. Create a dispatch within the available warehouse stock.
+4. Move the dispatch to **In Transit**, then **Delivered**.
+5. Check how the fulfilment percentage changes.
+6. Record an in-kind donation and confirm the inventory update.
+7. Assign a volunteer to an available camp.
+8. Switch to **Field Volunteer** to demonstrate restricted operations.
 
-## Location
+## Deployment Status
 
-Project: `submission/omnitrix/reliefhub` on branch `omnitrix`. The existing AWS autoscaling submission and earlier `submission/reliefhub` draft are separate and were preserved.
+- **Supported today:** Local Flask application with persistent SQLite storage on the local machine.
+- **Netlify:** The frontend files can be hosted there, but a frontend-only upload will **not** run the Flask API.
+- **Supabase:** A PostgreSQL/Edge Functions migration was discussed but is **not part of the current working application**.
+- **Public deployment:** Requires a compatible backend runtime, a persistent database, and real authentication/authorization before operational use.
+
+This README intentionally describes implemented features rather than claiming a cloud deployment that has not been verified.
+
+## Team Omnitrix
+
+| Member | GitHub |
+| --- | --- |
+| Farhan | [@his012](https://github.com/his012) |
+| Zain Arshad | [@zain-arshad-arain](https://github.com/zain-arshad-arain) |
+| Huzaifa Abbasi | [@HuzaifaAbbasi6901](https://github.com/HuzaifaAbbasi6901) |
+
+**Repository:** [his012/Team_Omnitrix](https://github.com/his012/Team_Omnitrix/tree/omnitrix/submission/omnitrix/reliefhub)  
+**HacktoberFest reference:** [Issue #10](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/10)
+
+---
+
+**ReliefHub — Coordinating resources where they matter most.**
