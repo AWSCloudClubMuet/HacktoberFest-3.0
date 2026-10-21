@@ -1,0 +1,74 @@
+name: DevOps Challenge - Security Pipeline
+
+on:
+  push:
+    paths:
+      - "submission/nerd_heads/DevOps_challenge/**"
+      - ".github/workflows/devops-challenge.yml"
+  pull_request:
+    paths:
+      - "submission/nerd_heads/DevOps_challenge/**"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: "submission/nerd_heads/DevOps_challenge"
+
+env:
+  APP_DIR: "submission/nerd_heads/DevOps_challenge"
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Static code analysis (Semgrep)
+        run: |
+          pip install semgrep
+          semgrep scan --config p/python --config p/flask --json --output semgrep.json .
+
+      - name: Secret detection (Gitleaks - only our folder's history)
+        run: |
+          touch .gitleaksignore
+          docker run --rm -v "${{ github.workspace }}:/repo" -w /repo zricethezav/gitleaks:latest detect \
+            --source /repo --log-opts="-- ${APP_DIR}" \
+            --gitleaks-ignore-path "/repo/${APP_DIR}/.gitleaksignore" \
+            --report-format json --report-path "/repo/${APP_DIR}/gitleaks.json" --exit-code 0
+
+      - name: Dependency scan (Trivy filesystem)
+        run: |
+          docker run --rm -v "$PWD:/src" aquasec/trivy:latest fs /src \
+            --scanners vuln --ignorefile /src/.trivyignore \
+            --format json --output /src/trivy-deps.json
+
+      - name: Build Docker image
+        run: docker build -t devsecops-app:${{ github.sha }} .
+
+      - name: Container image scan (Trivy)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/src" aquasec/trivy:latest image \
+            --ignore-unfixed --ignorefile /src/.trivyignore \
+            --format json --output /src/trivy-image.json \
+            devsecops-app:${{ github.sha }}
+
+      - name: Security report and gate
+        run: python3 scripts/report.py
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devops-challenge-security-reports
+          path: |
+            ${{ env.APP_DIR }}/*.json
+            ${{ env.APP_DIR }}/report.md
