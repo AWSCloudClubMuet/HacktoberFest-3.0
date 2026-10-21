@@ -224,7 +224,6 @@ def collect_reports(reports_dir):
     for name, path, parser in sources:
         data = load_json(path)
         found, status = parser(data)
-        # dedupe identical trivy CVEs that show up in both image and fs scans
         findings.extend(found)
         statuses[name] = status
     return findings, statuses
