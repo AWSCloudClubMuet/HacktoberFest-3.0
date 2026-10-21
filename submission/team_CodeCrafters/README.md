@@ -4,10 +4,21 @@ Welcome to the **Team CodeCrafters** project workspace for **HacktoberFest-Hacka
 
 ---
 
-## 🏆 Project Challenge: Challenge #2
+## 🏆 Project Submissions
 
-### **Automated Security Vulnerability Scanning in a CI/CD Pipeline**
+### 1. ReliefHub — ReliefGrid Operations Console (Sindh Flood Response)
+- **Primary Deliverables Directory:** [`./ReliefHub`](./ReliefHub)
+- **Project Type:** AI-Assisted Humanitarian Logistics Platform & Operations Console
+- **Key Capabilities:**
+  - Multi-tier supply tracking: Strict mathematical distinction between **Delivered** (physically received), **Committed** (reserved in-transit/pending), and **Unallocated** needs.
+  - Multi-Agent AI Intelligence Layer (4 specialized agents: Needs Analysis, Supply Planning, Dispatch Monitoring, Operations Summary).
+  - Human-in-the-Loop Safe Governance with interactive Allocation Preview modal.
+  - Art-directed *Estuary at Dawn* design system with responsive layouts across mobile, tablet, and desktop.
+  - Full documentation, test suite, and judge demonstration script: [ReliefHub Documentation](./ReliefHub/README.md)
 
+---
+
+### 2. Automated Security Vulnerability Scanning in a CI/CD Pipeline
 - **Live Repository:** [https://github.com/Isha-Bajwa/automated-security-pipeline](https://github.com/Isha-Bajwa/automated-security-pipeline)
 - **Primary Deliverables Directory:** [`./Automated_Security_Vulnerability_Scanning_in_a_CI`](./Automated_Security_Vulnerability_Scanning_in_a_CI)
 - **CI/CD Workflow:** [`.github/workflows/security-pipeline.yml`](./Automated_Security_Vulnerability_Scanning_in_a_CI/.github/workflows/security-pipeline.yml)
@@ -15,7 +26,7 @@ Welcome to the **Team CodeCrafters** project workspace for **HacktoberFest-Hacka
 
 ---
 
-## 📊 Summary of Implemented Milestones
+## 📊 Summary of Implemented Milestones (Security Pipeline)
 
 | Milestone | Security Tool | Status | Deliverable Link |
 |---|---|:---:|---|
@@ -35,3 +46,4 @@ Welcome to the **Team CodeCrafters** project workspace for **HacktoberFest-Hacka
 The CI/CD pipeline has been executed and verified live on GitHub Actions:
 - **Verified Run URL:** [https://github.com/Isha-Bajwa/automated-security-pipeline/actions](https://github.com/Isha-Bajwa/automated-security-pipeline/actions)
 - **Outcome:** **`✅ PASSED`** (0 Critical, 0 High, 0 Secrets, 55 Fixed vs. Baseline).
+
