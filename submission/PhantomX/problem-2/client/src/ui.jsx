@@ -204,7 +204,7 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative min-w-0 flex-1">
+    <div ref={rootRef} className="relative min-w-0 md:flex-1">
       <button
         type="button"
         className="hidden h-11 w-full items-center gap-2 rounded-full border border-line bg-surface px-4 text-left text-sm text-muted shadow-sm md:inline-flex"

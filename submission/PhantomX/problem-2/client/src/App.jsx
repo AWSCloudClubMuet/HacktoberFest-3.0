@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { api, getToken, setToken } from './api.js';
-import { Link, secondaryButtonClass } from './components.jsx';
+import { Link, buttonClass, secondaryButtonClass } from './components.jsx';
 import { AppContext, AuthContext } from './context.js';
-import { readSection, sectionFromPath, writeSection } from './section.js';
-import { SectionTabs } from './ui.jsx';
+import { SECTIONS, parseSearch, readSection, sectionFromPath, toQuery, writeSection } from './section.js';
+import { SearchDock, SectionTabs } from './ui.jsx';
 import { GigsPage } from './pages/GigsPage.jsx';
 import { GigDetailPage } from './pages/GigDetailPage.jsx';
 import { CreateGigPage } from './pages/CreateGigPage.jsx';
@@ -88,6 +88,7 @@ export function App() {
   const [booting, setBooting] = useState(true);
   const [toasts, setToasts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [section, setSection] = useState(() => sectionFromPath(normalize(window.location.pathname)) || readSection());
   const userId = user?.id || '';
 
@@ -157,7 +158,8 @@ export function App() {
 
   useEffect(() => {
     setMenuOpen(false);
-  }, [path]);
+    setSearchOpen(false);
+  }, [path, query]);
 
   useEffect(() => {
     const fromPath = sectionFromPath(path);
@@ -182,7 +184,7 @@ export function App() {
   else if (route.name === 'signup') page = <SignupPage />;
   else if (!user) page = <p className="text-sm text-muted">Redirecting to login…</p>;
   else if (route.name === 'gigs') page = <GigsPage key={userId} />;
-  else if (route.name === 'create') page = <CreateGigPage key={userId} />;
+  else if (route.name === 'create') page = <CreateGigPage key={`${userId}-${section}-${query}`} />;
   else if (route.name === 'gig') page = <GigDetailPage key={`${userId}-${route.id}`} gigId={route.id} />;
   else if (route.name === 'applications') page = <ApplicationsPage key={userId} />;
   else if (route.name === 'my-gigs') page = <MyGigsPage key={userId} />;
@@ -198,6 +200,28 @@ export function App() {
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm text-white" aria-hidden="true">CG</span>
               <span className="truncate">Campus Gig</span>
             </Link>
+            {user && !isPublic ? (
+              <SearchDock
+                section={section}
+                filters={parseSearch(query)}
+                open={searchOpen}
+                onOpen={() => setSearchOpen(true)}
+                onClose={() => setSearchOpen(false)}
+                onApply={(draft) => {
+                  setSearchOpen(false);
+                  navigate(`/${section}${toQuery({ ...draft, group: '' })}`);
+                }}
+                onClear={() => {
+                  setSearchOpen(false);
+                  navigate(`/${section}`);
+                }}
+              />
+            ) : null}
+            {user && !isPublic ? (
+              <Link to={`/gigs/new?type=${SECTIONS[section].type}`} className={`${buttonClass} hidden px-4 sm:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
+                {SECTIONS[section].post}
+              </Link>
+            ) : null}
             {user ? (
               <nav className="ml-3 hidden items-center gap-1 lg:flex" aria-label="Primary">
                 {nav.map((item) => (
