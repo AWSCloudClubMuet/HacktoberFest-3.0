@@ -184,7 +184,7 @@
       "name": "Oral Rehydration Salts (ORS)",
       "category": "Medical Supplies",
       "unit": "boxes",
-      "stock": 650,
+      "stock": 750,
       "reorder_level": 200
     }
   ],
@@ -499,6 +499,16 @@
   ],
   "donations": [
     {
+      "id": "don-1792573916867",
+      "type": "In-Kind",
+      "amount_or_quantity": 100,
+      "item_id": "item-13",
+      "category": "Medical Supplies",
+      "donor_name": "shukat khanum organization",
+      "date": "2026-10-21T09:11:56.867Z",
+      "notes": ""
+    },
+    {
       "id": "don-1",
       "type": "Cash",
       "amount_or_quantity": 750000,
@@ -719,9 +729,35 @@
       "camp_id": null,
       "phone": "+92 322 7182930",
       "joined_date": "2026-10-12"
+    },
+    {
+      "id": "vol-1792570675017",
+      "name": "sabra",
+      "skill": "Medical",
+      "camp_id": "camp-4",
+      "phone": "03192087657",
+      "joined_date": "2026-10-21"
     }
   ],
   "audit_logs": [
+    {
+      "id": "audit-1792573916867",
+      "timestamp": "2026-10-21T09:11:56.867Z",
+      "action": "DONATION_IN_KIND_RECEIVED",
+      "entity_type": "inventory",
+      "entity_id": "item-13",
+      "description": "In-Kind donation of 100 boxes of \"Oral Rehydration Salts (ORS)\" from shukat khanum organization. Warehouse stock: 650 -> 750.",
+      "actor": "Operations Coordinator"
+    },
+    {
+      "id": "audit-1792570675017",
+      "timestamp": "2026-10-21T08:17:55.017Z",
+      "action": "VOLUNTEER_REGISTERED",
+      "entity_type": "volunteer",
+      "entity_id": "vol-1792570675017",
+      "description": "Registered volunteer \"sabra\" (Medical).",
+      "actor": "Operations Coordinator"
+    },
     {
       "id": "audit-1",
       "timestamp": "2026-10-14T09:40:00Z",

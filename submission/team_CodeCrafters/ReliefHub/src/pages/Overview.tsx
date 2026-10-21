@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { NeedWithDetails, SystemStats } from '../types';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   Tent,
   Users,
@@ -244,13 +245,25 @@ export const Overview: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => navigate('/camps')}
-            className="text-xs font-semibold text-copper hover:text-copper-hover flex items-center gap-1 transition"
-          >
-            <span>View all camps</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <ContextualAIPill
+              prompt="Summarize the high-priority needs currently below 40% delivered fulfilment."
+              label="Explain Gaps"
+              agentType="needs_analysis"
+            />
+            <ContextualAIPill
+              prompt="What supplies can we allocate from available warehouse stock right now?"
+              label="Plan Allocations"
+              agentType="supply_planning"
+            />
+            <button
+              onClick={() => navigate('/camps')}
+              className="text-xs font-semibold text-copper hover:text-copper-hover flex items-center gap-1 transition"
+            >
+              <span>View all camps</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Table / Records View */}

@@ -1071,6 +1071,62 @@ app.get('/api/audit-logs', (req, res) => {
   res.json(db.audit_logs.slice(0, limit));
 });
 
+// ---------------------------------------------------------------------
+// AI INTELLIGENCE LAYER
+// ---------------------------------------------------------------------
+import { REGISTERED_AGENTS, processAIQuery } from './ai/orchestrator.js';
+
+app.get('/api/ai/agents', (req, res) => {
+  res.json({
+    agents: REGISTERED_AGENTS,
+    provider: process.env.GEMINI_API_KEY
+      ? 'gemini_api'
+      : process.env.OPENAI_API_KEY
+      ? 'openai_api'
+      : 'deterministic_engine',
+    mode:
+      process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY
+        ? 'llm_augmented'
+        : 'deterministic_rules_engine',
+  });
+});
+
+app.post('/api/ai/query', async (req, res) => {
+  try {
+    const { query, district, agentType, context } = req.body;
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({ error: 'Query string is required.' });
+    }
+    const response = await processAIQuery({
+      query,
+      district,
+      agentType,
+      context,
+    });
+    res.json(response);
+  } catch (err: any) {
+    console.error('AI Processing Error:', err);
+    res.status(500).json({ error: err.message || 'AI processing encountered an unexpected issue.' });
+  }
+});
+
+app.post('/api/ai/agent/:agentId/run', async (req, res) => {
+  try {
+    const agentId = req.params.agentId;
+    const { district, context } = req.body;
+    const response = await processAIQuery({
+      query: `Run specialized agent: ${agentId}`,
+      district,
+      agentType: agentId as any,
+      context,
+    });
+    res.json(response);
+  } catch (err: any) {
+    console.error('Agent Execution Error:', err);
+    res.status(500).json({ error: err.message || 'Agent execution failed.' });
+  }
+});
+
 // START SERVER
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

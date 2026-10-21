@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { Camp, CampStatus } from '../types';
-import { ResponseGapStrip } from '../components/ResponseGapStrip';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   Tent,
   Search,
@@ -219,7 +219,12 @@ export const Camps: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <ContextualAIPill
+            prompt="Summarize camp capacities, current occupancy, and high-vulnerability camps."
+            label="Summarize Camps Status"
+            agentType="operations_summary"
+          />
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-2 bg-surface hover:bg-canvas border border-border rounded-md text-xs font-semibold text-ink transition shadow-sm"
@@ -361,14 +366,23 @@ export const Camps: React.FC = () => {
                 </div>
 
                 {/* Card Action Footer */}
-                <div className="pt-4 mt-4 border-t border-border flex items-center justify-between">
-                  <button
-                    onClick={() => inspectCampNeed(camp)}
-                    className="text-xs font-semibold text-copper hover:text-copper-hover flex items-center gap-1"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Inspect Needs</span>
-                  </button>
+                <div className="pt-4 mt-4 border-t border-border flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => inspectCampNeed(camp)}
+                      className="text-xs font-semibold text-copper hover:text-copper-hover flex items-center gap-1"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Inspect Needs</span>
+                    </button>
+                    <ContextualAIPill
+                      prompt={`Explain ${camp.name}'s outstanding supply needs, response gaps, and allocation opportunities.`}
+                      label="AI Insights"
+                      size="sm"
+                      agentType="needs_analysis"
+                      context={{ recordId: camp.id }}
+                    />
+                  </div>
 
                   {userRole === 'Operations Coordinator' && (
                     <div className="flex items-center gap-1.5">

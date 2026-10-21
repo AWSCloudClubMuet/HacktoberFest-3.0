@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { InventoryItem, InventoryCategory } from '../types';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   Warehouse as WarehouseIcon,
   Search,
@@ -206,7 +207,17 @@ export const Warehouse: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <ContextualAIPill
+            prompt="Find items that cannot cover current unallocated camp needs and calculate allocation feasibility."
+            label="Stock Gap Analysis"
+            agentType="supply_planning"
+          />
+          <ContextualAIPill
+            prompt="Review replenishment requirements for all low-stock items in the central warehouse."
+            label="Replenishment Audit"
+            agentType="supply_planning"
+          />
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-2 bg-surface hover:bg-canvas border border-border rounded-md text-xs font-semibold text-ink transition shadow-sm"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { DonationWithDetails, DonationType, InventoryItem } from '../types';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   HeartHandshake,
   Search,
@@ -161,7 +162,17 @@ export const Donations: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <ContextualAIPill
+            prompt="Summarize cash contributions and category breakdowns while maintaining strict separation of physical units."
+            label="Cash Aid Summary"
+            agentType="operations_summary"
+          />
+          <ContextualAIPill
+            prompt="Show all in-kind consignments and how they directly replenished warehouse inventory stock."
+            label="In-Kind Stock Impact"
+            agentType="supply_planning"
+          />
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-2 bg-surface hover:bg-canvas border border-border rounded-md text-xs font-semibold text-ink transition shadow-sm"

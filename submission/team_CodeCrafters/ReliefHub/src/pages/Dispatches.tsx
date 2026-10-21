@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { DispatchWithDetails, DispatchStatus, NeedWithDetails } from '../types';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   Truck,
   Search,
@@ -138,7 +139,17 @@ export const Dispatches: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <ContextualAIPill
+            prompt="Review all pending dispatches that are currently committed at the depot but not yet In Transit."
+            label="Review Pending Dispatches"
+            agentType="dispatch_monitoring"
+          />
+          <ContextualAIPill
+            prompt="Show committed supplies that have not been delivered across all Sindh routes."
+            label="Pipeline Integrity"
+            agentType="dispatch_monitoring"
+          />
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-2 bg-surface hover:bg-canvas border border-border rounded-md text-xs font-semibold text-ink transition shadow-sm"

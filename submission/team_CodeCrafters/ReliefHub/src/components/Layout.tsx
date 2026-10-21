@@ -6,6 +6,9 @@ import { RightDrawer } from './RightDrawer';
 import { AllocationPreviewModal } from './AllocationPreviewModal';
 import { WalkthroughModal } from './WalkthroughModal';
 import { ToastContainer } from './ToastContainer';
+import { AssistantLauncher } from './ai/AssistantLauncher';
+import { AssistantDrawer } from './ai/AssistantDrawer';
+import { AgentActivityPanel } from './ai/AgentActivityPanel';
 
 interface LayoutProps {
   children: ReactNode;
@@ -41,6 +44,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Guided Walkthrough Modal */}
       <WalkthroughModal />
+
+      {/* AI Intelligence Drawer */}
+      <AssistantDrawer />
+
+      {/* Floating AI Launcher */}
+      <AssistantLauncher />
+
+      {/* Specialized Agents Activity Panel */}
+      <AgentActivityPanel />
 
       {/* Toast Notification Stack */}
       <ToastContainer />

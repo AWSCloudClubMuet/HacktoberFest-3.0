@@ -1,17 +1,18 @@
 # ReliefHub — ReliefGrid Operations Console
-### Sindh Flood Response Operations | Hackathon Implementation
+### Sindh Flood Response Operations | AI-Assisted Humanitarian Logistics Platform
 
 [![React 18](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4.17-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Express API](https://img.shields.io/badge/Mock_API-Express_4.21-black?logo=express&logoColor=white)](https://expressjs.com/)
+[![AI Intelligence](https://img.shields.io/badge/AI_Layer-4_Specialized_Agents-A6533D?logo=openai&logoColor=white)](https://github.com/)
 
 ---
 
 ## 1. Executive Summary & Product Thesis
 
-**ReliefHub** is a mobile-first, high-density humanitarian logistics application built to coordinate flood-relief camps across upper and lower Sindh, Pakistan.
+**ReliefHub** is a mobile-first, high-density humanitarian logistics application built to coordinate flood-relief camps across upper and lower Sindh, Pakistan, augmented by **ReliefHub Intelligence** — an explainable, multi-agent AI system.
 
 ### Non-Negotiable Core Principle
 > **“A camp is not helped just because a delivery has been assigned.”**
@@ -41,141 +42,133 @@ Inspired by a contemporary humanitarian field atlas, ReliefHub avoids generic co
 
 ---
 
-## 3. Architecture & Tech Stack
+## 3. Architecture & Multi-Agent Intelligence Layer
 
 ```mermaid
-flowchart LR
-    subgraph Client ["Frontend (Vite + React 18 + TS)"]
-        UI["Tailwind CSS + Estuary at Dawn Theme"]
-        Router["React Router v6 Navigation"]
-        Context["Global AppContext (Filters, Role, State)"]
-        Services["API Client Service Layer (src/services/api.ts)"]
+flowchart TD
+    UserQuery["Coordinator Question / Contextual Action"] --> AIController["AI Assistant Controller (src/context/AIContext)"]
+    AIController --> Intent["Intent Identification & Context Binding"]
+    Intent --> Orchestrator["Server Agent Orchestrator (server/ai/orchestrator.ts)"]
+    
+    subgraph Agents ["4 Specialized AI Agents"]
+        AgentA["Agent A: Needs Analysis Agent\n(Vulnerability & Shortages)"]
+        AgentB["Agent B: Supply Planning Agent\n(Stock Allocation & Reorder Warnings)"]
+        AgentC["Agent C: Dispatch Monitoring Agent\n(Convoys & Pipeline Integrity)"]
+        AgentD["Agent D: Operations Summary Agent\n(Cross-Sector Evidence Briefings)"]
     end
-
-    subgraph Server ["Mock REST API Server (Express + TS)"]
-        Routes["REST Endpoints (/api/camps, /api/inventory, ...)"]
-        Validation["Business Rule & Stock Reservation Engine"]
-        Storage["Persistent File Store (server/data/db.json)"]
-    end
-
-    UI --> Context
-    Router --> UI
-    Context --> Services
-    Services -- "HTTP REST via /api proxy" --> Routes
-    Routes --> Validation
-    Validation <--> Storage
+    
+    Orchestrator --> Agents
+    Agents <--> SafeTools["Safe Authoritative Read Tools (server/ai/tools.ts)"]
+    SafeTools <--> DB[(Persistent Store: server/data/db.json)]
+    
+    Agents --> StructuredOutput["Structured Response: Conclusion + Evidence + Sources + Action Proposal"]
+    StructuredOutput --> HumanInTheLoop{"Requires State Change?"}
+    HumanInTheLoop -- "Yes" --> AllocationPreview["Allocation Preview Modal\n(Explicit Human Confirmation)"]
+    HumanInTheLoop -- "No" --> Display["Display Explainable Output in Drawer"]
+    AllocationPreview -- "Confirmed by Coordinator" --> APIWrite["Authoritative HTTP Write (/api/dispatches)"]
 ```
-
-- **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React icons, Recharts.
-- **Backend API:** Dedicated Express HTTP server with JSON file persistence (`server/data/db.json`). State is preserved across page refreshes.
-- **Seed Dataset:** Seeded with 9 verified camps across 5 Sindh districts (Sukkur, Khairpur, Ghotki, SBA, Dadu), 13 inventory items with low-stock states, 21 camp needs, 12 dispatches, 10 donations (cash vs in-kind), and 15 volunteers.
 
 ---
 
-## 4. Local Installation & Startup Commands
+## 4. The 4 Specialized AI Agents
 
-### Prerequisites
-- Node.js (v18+ or v20+)
-- npm (v9+)
+### Agent A: Needs Analysis Agent
+- **Purpose:** Identifies underserved camps and explains outstanding critical gaps.
+- **Operational Rules:**
+  - Evaluates High-priority needs where delivered fulfilment is strictly under 40%.
+  - Ranks results by lowest delivered fulfilment first.
+  - Explains the exact evidence: camp, district, required, delivered, committed, and remaining gap.
+  - Generates actionable next steps (e.g. *“Basti Noor Shah has a high-priority water need with 30% delivered fulfilment, 20 units committed, and 50 units unallocated. Review available water stock before creating a reservation.”*).
 
-### Installation
+### Agent B: Supply Planning Agent
+- **Purpose:** Assesses warehouse depot stock against field demand to formulate safe reservations.
+- **Operational Rules:**
+  - Identifies items below or at reorder thresholds.
+  - Enforces: $\text{maximum\_dispatch} = \min(\text{available\_stock}, \text{unallocated\_need})$.
+  - Detects stockouts and partial allocation feasibility.
+  - Surfaces competing demands from other camps as contextual intelligence.
+  - Prepares allocation proposals with Before $\to$ After impacts for coordinator review.
+
+### Agent C: Dispatch Monitoring Agent
+- **Purpose:** Investigates committed but undelivered supplies to protect logistics velocity.
+- **Operational Rules:**
+  - Summarizes Pending and In Transit convoys.
+  - Verifies that committed supplies remain isolated from delivered totals.
+  - Flags dispatches awaiting convoy movement without inventing fake ETAs, tracking coordinates, or driver details.
+
+### Agent D: Operations Summary Agent
+- **Purpose:** Prepares multi-sector operational briefings for specific districts or province-wide.
+- **Operational Rules:**
+  - Synthesizes camp shelter densities, depot inventory, active dispatches, and volunteer staffing.
+  - **Strict Separation of Units:** Monetary contributions (PKR) and physical consignments (litres, tents, packs) are never added together into a misleading total.
+
+---
+
+## 5. Safe Tool Use & Human-in-the-Loop Governance
+
+1. **Read-Only Autonomy:** Agents execute read tools automatically to retrieve authoritative facts.
+2. **Prohibited Autonomous Actions:** Agents **never** autonomously create, confirm, cancel, or modify dispatches, inventory, camps, donations, or volunteer assignments.
+3. **Action Proposals:** When an agent formulates an allocation recommendation, it generates an `ActionProposal` payload. The coordinator clicks **“Preview Allocation”**, inspecting the live Before $\to$ After matrix before confirming the reservation through the authoritative HTTP API.
+
+---
+
+## 6. Contextual AI Entry Points Across All Pages
+
+Coordinators can access specialized intelligence directly within existing operational workflows:
+
+| Page | Contextual AI Action Pills | Specialized Agent |
+| :--- | :--- | :--- |
+| **Overview** | `Explain Priority Gaps`, `Plan Allocations` | Needs Analysis & Supply Planning |
+| **Camps** | `Summarize Camps Status`, `AI Insights (Per Camp)` | Operations Summary & Needs Analysis |
+| **Warehouse** | `Stock Gap Analysis`, `Replenishment Audit` | Supply Planning Agent |
+| **Dispatches** | `Review Pending Dispatches`, `Pipeline Integrity` | Dispatch Monitoring Agent |
+| **Donations** | `Cash Aid Summary`, `In-Kind Stock Impact` | Operations Summary & Supply Planning |
+| **Volunteers** | `Staffing Availability`, `Roster Audit` | Operations Summary Agent |
+
+---
+
+## 7. Local Installation & Startup Commands
+
 ```powershell
 # Navigate to the project directory
 cd "c:\Users\EURO COMPUTERS\Desktop\hackathon project\Team-CodeCrafters\submission\team_CodeCrafters\ReliefHub"
 
-# Install dependencies (already executed)
-npm install
-```
-
-### Starting the Application
-To run both the Mock API Server (Port 3001) and Vite Frontend (Port 5173) concurrently:
-```powershell
+# Run both Mock API (Port 3001) and Frontend (Port 5173) concurrently
 npm run dev
 ```
 
-Alternatively, run in separate terminals:
-```powershell
-# Terminal 1: Backend API (Port 3001)
-npm run server
-
-# Terminal 2: Vite Frontend (Port 5173)
-npm run vite
-```
-
 ### Verified Live Endpoints
-- **Frontend Console:** [http://localhost:5173](http://localhost:5173)
-- **API Server & Health:** [http://localhost:3001/api/health](http://localhost:3001/api/health)
-- **Aggregated Stats:** [http://localhost:3001/api/stats](http://localhost:3001/api/stats)
+- **Frontend Operations Console:** [http://localhost:5173/](http://localhost:5173/)
+- **Backend Mock REST API:** [http://localhost:3001/](http://localhost:3001/)
+- **AI Agents Manifest:** [http://localhost:3001/api/ai/agents](http://localhost:3001/api/ai/agents)
+- **AI Query Pipeline:** [http://localhost:3001/api/ai/query](http://localhost:3001/api/ai/query)
 
 ---
 
-## 5. Signature Features & Differentiators
+## 8. Judge & Evaluator Walkthrough Script (5-Minute Tour)
 
-### 1. Response Gap Strip
-A multi-segment proportional progress bar providing physical unit clarity across water ($L$), tents, food packs, and medical kits. It cleanly depicts Delivered (Teal), Committed (Saffron), and Unallocated (Neutral/Critical).
-
-### 2. Allocation Preview & Double-Allocation Prevention
-Before confirming any warehouse reservation, coordinators review a real-time **Before $\to$ After** matrix:
-- Warehouse Stock: $120 \to 80$
-- Committed to this need: $10 \to 50$
-- Unallocated need: $70 \to 30$
-- Delivered fulfilment: **Unchanged**
-- Advisory warnings if stock drops below reorder levels.
-- Contextual competing camp demand inspection.
-
-### 3. Priority Action Queue
-Filters High-priority needs with delivered fulfilment below 40%, automatically sorting them from lowest fulfilment first, coupled with explainable recommended actions:
-- *“Dispatch from warehouse”* when stock exists.
-- *“Reserve stock”* for partial coverage.
-- *“Follow up on dispatch”* when committed supplies are awaiting transit.
-- *“Source with suppliers”* when warehouse stock is exhausted.
-
-### 4. Right Inspection Drawer
-Clicking any camp or need smoothly opens a slide-over drawer featuring:
-- Live Response Gap Strip.
-- Four contextual tabs: **Needs**, **Supplies**, **Dispatches**, **Volunteers**.
-- Chronological confirmed activity log.
-- Quick reservation actions.
-
-### 5. Verified Data Integrity Lifecycle
-- **Dispatch Creation:** Deducts warehouse stock immediately and records committed quantity. Delivered fulfilment remains unchanged.
-- **In Transit:** Status moves without double-deducting stock.
-- **Delivery Confirmation:** Fulfilled quantity increases once. Warehouse stock is **not** subtracted again.
-- **Cancellation:** Undelivered stock is restored to warehouse inventory exactly once. Terminal statuses (Delivered/Cancelled) are protected against invalid transitions.
-- **In-Kind Donations:** Automatically replenish the associated inventory item stock upon recording.
-
-### 6. CSV Data Export
-One-click CSV exports available on Camps, Warehouse, Dispatches, Donations, and Volunteers tables.
-
----
-
-## 6. Judge & Evaluator Walkthrough Script (5-Minute Demo)
-
-1. **Open the Operations Console:** Navigate to [http://localhost:5173](http://localhost:5173).
-2. **Review the Estuary at Dawn Theme & KPI Band:**
-   - Observe the 5 compact cards: Active camps, Families sheltered, Avg. need fulfilment, Low-stock items, Volunteers deployed.
-   - Click the question mark next to **Avg. need fulfilment** to inspect the mathematical integrity tooltip.
-3. **Inspect the Priority Action Queue:**
-   - Notice *Basti Noor Shah* (Water containers, 30% delivered, 20% committed, 50% unallocated gap).
-   - Click the row to open the **Right Inspection Drawer**.
-   - Review the **Response Gap Strip**, **Need Details**, and **Recent Activity**.
-4. **Demonstrate Allocation Preview & Reservation:**
-   - Click **“Create dispatch request”** or **“Reserve stock”**.
-   - Notice the **Allocation Preview Modal** displaying the Before $\to$ After matrix.
-   - Try entering a quantity greater than available warehouse stock or unallocated gap — notice strict client and server validation.
-   - Click **“Confirm reservation”**.
-   - Notice the warehouse stock decreases, committed increases, and a success toast appears.
-5. **Demonstrate Dispatch Lifecycle & Cancellation Stock Restoration:**
-   - Navigate to **Dispatches** (`/dispatches`).
-   - Locate the newly created Pending dispatch. Click **“Mark In Transit”** $\to$ status updates smoothly.
-   - Click **“Cancel”** $\to$ observe that the stock is instantly restored to the warehouse.
-6. **Demonstrate In-Kind Aid Replenishment:**
-   - Navigate to **Donations** (`/donations`).
-   - Notice the total cash received (PKR) is strictly separated from physical consignments.
-   - Click **“Record Contribution”**, select **In-Kind**, choose an item, and submit $\to$ verify warehouse stock increases.
-7. **Demonstrate Volunteer Deployment Rules:**
-   - Navigate to **Volunteers** (`/volunteers`).
-   - Assign an available volunteer to an active camp.
-   - Notice closed camps (e.g., *Mehar High Camp*) are blocked from receiving deployments.
-8. **Reset to Clean Seed Dataset:**
-   - Click the **Demo Guide** button in the header or the reset button $\to$ choose **“Reset to Clean Demo State”** to return the database to initial seed conditions.
+1. **Open Console:** Navigate to [http://localhost:5173/](http://localhost:5173/).
+2. **Trigger ReliefHub Intelligence:**
+   - Click the **ReliefHub Intelligence** launcher in the lower right.
+   - Click the suggested question: *“Which high-priority needs are below 40% delivered fulfilment?”*
+   - Observe the structured response: key insight, evidence bullet points with exact figures, and reference sources.
+3. **Inspect Clickable Evidence Sources:**
+   - Click the reference chip for *Basti Noor Shah*. Notice the **Right Inspection Drawer** opens with the live Response Gap Strip!
+4. **Test Human-in-the-Loop Supply Allocation:**
+   - In the assistant drawer, click the suggested prompt: *“What could we allocate with the available stock?”*
+   - Notice the **Supply Planning Agent** identifies a feasible reservation for *Basti Noor Shah* and renders the **“Open Allocation Preview”** button.
+   - Click **“Open Allocation Preview”** $\to$ observe the modal displays the Before $\to$ After matrix:
+     - Warehouse Stock: $45 \to 0$
+     - Committed: $20 \to 65$
+     - Unallocated: $50 \to 5$
+     - Delivered: **Unchanged (30 units)**
+   - Click **“Confirm reservation”** $\to$ verify the dispatch is recorded and stock is deducted at the HTTP boundary!
+5. **Inspect the Unified Agent Activity Panel:**
+   - Click the activity icon in the assistant header to open the **Specialized AI Agents Console**.
+   - Review live statuses for all 4 agents and trigger any agent directly.
+6. **Test Contextual AI Entry Points:**
+   - Navigate to **Warehouse** (`/warehouse`) and click **“Stock Gap Analysis”**.
+   - Navigate to **Dispatches** (`/dispatches`) and click **“Review Pending Dispatches”**.
+   - Navigate to **Volunteers** (`/volunteers`) and click **“Staffing Availability”**.
+7. **Reset to Clean State:**
+   - In the top header, click **Demo Guide** $\to$ **“Reset to Clean Demo State”** to restore the database to verified seed conditions.

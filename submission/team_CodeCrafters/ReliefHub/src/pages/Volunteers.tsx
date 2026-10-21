@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
 import { VolunteerWithDetails, VolunteerSkill, Camp } from '../types';
+import { ContextualAIPill } from '../components/ai/ContextualAIPill';
 import {
   Users,
   Search,
@@ -261,7 +262,17 @@ export const Volunteers: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <ContextualAIPill
+            prompt="Show all unassigned volunteers grouped by skill and assess staffing availability for medical and logistics needs."
+            label="Staffing Availability"
+            agentType="operations_summary"
+          />
+          <ContextualAIPill
+            prompt="Review active volunteer deployments across camps and check for unassigned relief cadres."
+            label="Roster Audit"
+            agentType="operations_summary"
+          />
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-2 bg-surface hover:bg-canvas border border-border rounded-md text-xs font-semibold text-ink transition shadow-sm"
