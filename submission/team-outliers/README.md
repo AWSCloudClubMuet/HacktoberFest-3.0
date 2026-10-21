@@ -382,3 +382,40 @@ collecting more data.
 - The notebook contents are preserved as submitted. The notes above identify
   limitations in the examples so readers can distinguish proposed methods,
   demonstrated results, and work that remains to be validated.
+
+--- 
+
+# ReliefHub — Flood Relief Coordination Dashboard
+
+## Team Member 1
+ 
+ReliefHub is a local web dashboard for coordinating flood-relief operations in
+Sindh. It helps relief coordinators and field volunteers manage camps, track
+warehouse inventory and camp needs, coordinate dispatches, record donations,
+and organize volunteer assignments from one application.
+
+### Key capabilities
+
+- View operational summaries, including camp capacity, inventory levels,
+  fulfillment progress, and critical resource gaps.
+- Manage relief camps and their resource requests.
+- Track warehouse stock, low-stock alerts, donations, and dispatch status.
+- Register volunteers, record their skills, and manage camp assignments.
+- Apply operational safeguards, including stock reservation and restoration
+  when dispatches are cancelled, camp-capacity handling, and restrictions on
+  assigning volunteers to closed camps.
+
+### Architecture and technology
+
+The application is built with Python and Streamlit. Its presentation layer is
+organized into views, while service modules implement the operational rules.
+Services communicate with a local mock REST API backed by JSON data. The API
+can run with the embedded Python server, with optional `json-server` support.
+Seed data and service tests are included for local development.
+
+### Run locally on Windows
+
+Open the ReliefHub folder and double-click `run_app.bat` to launch the API and
+dashboard. Alternatively, follow the setup and manual launch instructions in
+the [ReliefHub README](ReliefHub/README.md). The dashboard opens in a browser
+after startup.
