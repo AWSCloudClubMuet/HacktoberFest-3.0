@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TuneWave | Music Player</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2 class="logo">♪ TuneWave</h2>
+      <p class="tagline">Your music. Your mood.</p>
+
+      <nav>
+        <a href="#home" class="nav-link active">⌂ &nbsp; Home</a>
+        <a href="#playlist" class="nav-link">♫ &nbsp; My Playlist</a>
+        <a href="#queue" class="nav-link">☷ &nbsp; Up Next</a>
+      </nav>
+
+      <div class="sidebar-note">
+        <span>♪</span>
+        <p>Discover your rhythm.</p>
+      </div>
+    </aside>
+
+    <main class="main-content" id="home">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">YOUR PERSONAL MUSIC SPACE</p>
+          <h1>Good music, good mood.</h1>
+        </div>
+        <span class="status"><span class="status-dot"></span> TuneWave Player</span>
+      </header>
+
+      <section class="hero">
+        <div class="hero-text">
+          <p class="eyebrow">WELCOME TO TUNEWAVE</p>
+          <h2>Feel every<br>beat.</h2>
+          <p>Your favorite tracks, all in one place.</p>
+          <a href="#playlist" class="hero-button">Explore playlist ↓</a>
+        </div>
+        <div class="album-art" aria-label="Abstract music artwork">
+          <div class="art-circle circle-one"></div>
+          <div class="art-circle circle-two"></div>
+          <div class="art-note">♫</div>
+          <span class="art-caption">MUSIC<br>IS LIFE</span>
+        </div>
+      </section>
+
+      <section class="playlist-section" id="playlist">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR COLLECTION</p>
+            <h2>My Playlist</h2>
+          </div>
+          <span id="song-count" class="song-count">0 songs</span>
+        </div>
+
+        <div class="search-box">
+          <span>⌕</span>
+          <input id="search-input" type="search"
+            placeholder="Search songs by title..."
+            aria-label="Search songs by title">
+        </div>
+
+         <div class="song-management">
+  <h3>Manage Your Songs</h3>
+
+  <div class="add-song-form">
+    <input
+      id="add-song-id"
+      type="text"
+      placeholder="Song ID (e.g. s6)"
+      aria-label="Song ID"
+    >
+
+    <input
+      id="add-song-title"
+      type="text"
+      placeholder="Song title"
+      aria-label="Song title"
+    >
+
+    <input
+      id="add-song-artist"
+      type="text"
+      placeholder="Artist name"
+      aria-label="Artist name"
+    >
+
+    <button id="add-song-btn" type="button">+ Add Song</button>
+  </div>
+
+  <div class="remove-song-form">
+    <input
+      id="remove-song-id"
+      type="text"
+      placeholder="Enter Song ID to remove (e.g. s6)"
+      aria-label="Song ID to remove"
+    >
+
+    <button id="remove-song-btn" type="button">Remove Song</button>
+  </div>
+</div>
+
+
+        <div class="song-table">
+          <div class="song-header">
+            <span>#</span>
+            <span>SONG TITLE</span>
+            <span>ARTIST</span>
+            <span>ACTION</span>
+          </div>
+          <div id="song-list">
+            <p class="empty-message">Loading your playlist...</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="queue-section" id="queue">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">COMING UP</p>
+            <h2>Up Next</h2>
+          </div>
+        </div>
+        <div id="queue-list" class="queue-list">
+          <p class="empty-message">Your queue is empty.</p>
+        </div>
+      </section>
+
+      <section class="recommendation-section">
+        <p class="eyebrow">EXPLORE CONNECTIONS</p>
+        <h2>Related Artists</h2>
+        <div id="recommendations" class="recommendations">
+          <p class="empty-message">Artist recommendations will appear here.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="player-bar">
+    <div class="now-playing">
+      <div class="mini-art">♫</div>
+      <div>
+        <strong id="current-title">No song selected</strong>
+        <span id="current-artist">Choose a song from your playlist</span>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <div class="control-buttons">
+        <button id="previous-btn" class="control-button" title="Previous song" aria-label="Previous song">⏮</button>
+        <button id="play-btn" class="play-button" title="Play or pause" aria-label="Play or pause">▶</button>
+        <button id="next-btn" class="control-button" title="Next song" aria-label="Next song">⏭</button>
+        <button id="repeat-btn" class="control-button" title="Toggle repeat" aria-label="Toggle repeat">↻</button>
+      </div>
+    </div>
+
+    <div class="player-label">
+      <span class="equalizer">▮ ▮ ▮</span>
+      <span>YOUR SOUND, YOUR WORLD</span>
+    </div>
+  </footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+
+
+
+  <div class="music-circle">
+  MUSIC IS LIFE
+</div>
+</body>
+</html>
