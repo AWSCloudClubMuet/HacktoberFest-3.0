@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TuneWave</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">TW</span>
+        <div>
+          <p class="brand-name">TuneWave</p>
+          <p class="brand-tag">DSA music player</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <button type="button" class="nav-item is-active" data-view="library">
+          <span class="nav-kicker">Milestone 1</span>
+          Library
+        </button>
+        <button type="button" class="nav-item" data-view="queue">
+          <span class="nav-kicker">Milestone 2</span>
+          Queue
+        </button>
+        <button type="button" class="nav-item" data-view="search">
+          <span class="nav-kicker">Milestone 3</span>
+          Search
+        </button>
+        <button type="button" class="nav-item" data-view="artists">
+          <span class="nav-kicker">Milestone 3</span>
+          Artists
+        </button>
+      </nav>
+
+      <div class="sidebar-legend">
+        <p><span class="swatch playing"></span> Now playing</p>
+        <p><span class="swatch current"></span> Playlist cursor</p>
+        <p class="sidebar-note">They differ when Up Next or history is playing. Playlist next/prev still move the cursor only.</p>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-copy">
+          <p class="kicker" id="view-kicker">Milestone 1 · Playlist</p>
+          <h1 id="view-title">Library</h1>
+          <p class="lede" id="view-lede">Doubly linked list in play order. Hash map lookup by song ID.</p>
+        </div>
+        <div class="topbar-status">
+          <span class="pill" id="repeat-pill">Repeat off</span>
+          <span class="pill quiet" id="queue-pill">Queue 0</span>
+          <span class="pill quiet" id="history-pill">History 0 / 10</span>
+        </div>
+      </header>
+
+      <main class="content" id="content">
+        <section class="view is-active" id="view-library" data-view="library">
+          <form class="panel form-row" id="add-song-form" autocomplete="off">
+            <div class="field">
+              <label for="song-title">Song title</label>
+              <input id="song-title" name="title" type="text" placeholder="Imagine" required>
+            </div>
+            <div class="field">
+              <label for="song-artist">Artist</label>
+              <input id="song-artist" name="artist" type="text" placeholder="John Lennon">
+            </div>
+            <button type="submit" class="btn primary">Add song</button>
+          </form>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Playlist</h2>
+                <p class="hint">Add and remove songs. Next / Prev move this list’s cursor.</p>
+              </div>
+              <span class="meta" id="playlist-count">0 tracks</span>
+            </div>
+            <div id="playlist-list" class="list"></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-search" data-view="search" hidden>
+          <div class="panel">
+            <form class="form-row" id="search-form" autocomplete="off">
+              <div class="field grow">
+                <label for="search-query">Title or prefix</label>
+                <input id="search-query" name="query" type="search" placeholder="Bl or Billie Jean" aria-describedby="search-hint">
+              </div>
+              <button type="submit" class="btn primary">Search</button>
+            </form>
+            <p class="hint" id="search-hint">Exact title uses the BST. Prefix returns matching titles in alphabetical order. Leave blank to list every title.</p>
+            <div id="search-results" class="list">
+              <p class="empty">Try “Billie Jean” for an exact match, or “Bl” for a prefix.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-queue" data-view="queue" hidden>
+          <div class="stack split">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Up Next</h2>
+                  <p class="hint">FIFO queue. Play next drains this before the playlist.</p>
+                </div>
+                <span class="meta" id="queue-page-count">0 waiting</span>
+              </div>
+              <div id="queue-list" class="list"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>History</h2>
+                  <p class="hint">Bounded stack, max 10. Back restores the newest entry.</p>
+                </div>
+                <span class="meta" id="history-page-count">0 / 10</span>
+              </div>
+              <div id="history-list" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-artists" data-view="artists" hidden>
+          <div class="stack">
+            <form class="panel form-row" id="relation-form" autocomplete="off">
+              <div class="field">
+                <label for="artist-a">Artist A</label>
+                <input id="artist-a" name="artistA" type="text" placeholder="The Weeknd" required>
+              </div>
+              <div class="field">
+                <label for="artist-b">Artist B</label>
+                <input id="artist-b" name="artistB" type="text" placeholder="Daft Punk" required>
+              </div>
+              <button type="submit" class="btn primary">Add relation</button>
+            </form>
+
+            <form class="panel" id="recommend-form" autocomplete="off">
+              <div class="form-row">
+                <div class="field grow">
+                  <label for="recommend-artist">Recommend from artist</label>
+                  <input id="recommend-artist" name="artist" type="text" placeholder="The Weeknd" required>
+                </div>
+                <button type="submit" class="btn primary">Recommend</button>
+              </div>
+              <p class="hint">Artists exactly two undirected links away. Direct neighbors and the source artist are excluded.</p>
+              <div id="recommend-results" class="chips">
+                <p class="empty">Try “The Weeknd” — seeded graph includes Daft Punk → Justice.</p>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rail" aria-label="Queue and history">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Up Next</h2>
+            <span class="meta" id="queue-count">0</span>
+          </div>
+          <div id="rail-queue" class="list compact"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>History</h2>
+            <span class="meta" id="history-count">0 / 10</span>
+          </div>
+          <div id="rail-history" class="list compact"></div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="player" aria-label="Now playing">
+      <div class="now">
+        <div class="cover" id="now-cover" aria-hidden="true">TW</div>
+        <div class="now-copy">
+          <p class="now-kicker" id="playing-source">Playlist</p>
+          <p class="now-title" id="now-title">Nothing playing</p>
+          <p class="now-artist" id="now-artist">Add a song or press Play next</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="ctrl" id="btn-back" title="Replay the newest history song">
+          Back
+          <span>History</span>
+        </button>
+        <button type="button" class="ctrl" id="btn-prev" title="Move the playlist cursor backward">
+          Prev
+          <span>Playlist</span>
+        </button>
+        <button type="button" class="ctrl play" id="btn-play-next" title="Play the next queued song, or continue the playlist">
+          Play next
+          <span>Queue, then list</span>
+        </button>
+        <button type="button" class="ctrl" id="btn-next" title="Move the playlist cursor forward">
+          Next
+          <span>Playlist</span>
+        </button>
+        <button type="button" class="ctrl" id="btn-repeat" aria-pressed="false" title="Toggle playlist repeat">
+          Repeat
+          <span>Loop list</span>
+        </button>
+      </div>
+
+      <div class="player-meta">
+        <p class="cursor-label">Playlist cursor</p>
+        <p class="cursor-value" id="cursor-label">—</p>
+        <p class="cursor-label" id="playlist-position">—</p>
+      </div>
+    </footer>
+  </div>
+
+  <div class="nav-scrim" id="nav-scrim" hidden></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
