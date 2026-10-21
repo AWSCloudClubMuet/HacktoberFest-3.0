@@ -138,7 +138,7 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 ## Coding conventions
 
 - Small, focused changes. Edit existing files instead of rewriting them.
-- Do not add dependencies beyond Express, Vite, React, the Vite React plugin, Tailwind, bcryptjs, and jsonwebtoken unless asked.
+- Do not add dependencies beyond Express, Vite, React, the Vite React plugin, Tailwind, bcryptjs, jsonwebtoken, and lucide-react unless asked.
 - Keep business rules in the API. The UI may hide invalid actions; it is not the source of truth.
 - IDs are strings. Dates are ISO-8601.
 
@@ -157,30 +157,46 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 - [x] M4 Two-way reviews and computed reputation.
 - [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.
 
+## App sections
+
+Logged-in browsing is two sections of the existing gig `type`. Login and signup stay outside them and do not show the switcher.
+
+| Section | Path | Gig type | Landing copy |
+| --- | --- | --- | --- |
+| Offer a service | `/offer` | `Offering` | "Find a student with the skill you need". Cards say "Offered by". Apply button: "Request this service". |
+| Request a service | `/request` | `Requesting` | "Help a fellow student and earn". Cards say "Requested by". Apply button: "Offer your help". |
+
+- The switcher sits under the navbar on every logged-in page, including profile. It is a tablist (`role="tablist"`, arrow keys, `aria-selected`). Choosing a tab opens that section's catalogue.
+- The last section is stored in `localStorage` as `campus-section`. After login, and when a logged-in user opens `/`, the app goes to that section. The default is `/offer`.
+- A section catalogue shows only that type. Expired and Cancelled gigs stay out of the catalogue. My Gigs and My Applications filter to the current section and keep sub-tabs (Offered / Requested, To offers / To requests) so the other side is one click away.
+- "Post a gig" inside a section opens `/gigs/new?type=Offering` or `/gigs/new?type=Requesting`. The form shows which type is being created.
+- The navbar search opens a filter panel. API filters stay `category`, `payment_type`, `min`, `max`, and `q`, combined with the section's `type`. `status`, `sort`, and `group` (`unpaid` or `closing`) are applied in the browser because `GET /gigs` has no status or sort query. The panel writes those keys to the URL. Clearing them returns to the catalogue.
+
 ## Visual design
 
 Colors live in `client/src/index.css` as Tailwind theme tokens. Components use those utilities instead of hard-coded hex values.
 
-Sampled from the Gray swatch, with the card's title color for text:
-
 | Role | Hex |
 | --- | --- |
-| Primary | `#414359` |
-| Secondary | `#484F69` |
-| Accent | `#51587B` |
-| Faint band | `#6C738F` |
-| Text | `#35306D` |
-| Canvas | `#F3F4F8` |
+| Canvas | `#F4F1EA` |
 | Surface | `#FFFFFF` |
-| Border | `#D5D7E3` |
+| Ink | `#1B2430` |
+| Secondary / muted | `#3E4A55` / `#4A5560` |
+| Line | `#E7E1D6` |
+| Offer (primary) | `#0A6B5C` |
+| Offer deep / bright / soft | `#075248` / `#12A58C` / `#E5F5F1` |
+| Request | `#5B3DF5` |
+| Request deep / soft | `#4328C9` / `#F0EBFF` |
+| Coral accent | `#C2413A` |
+| Coral bright / soft | `#E36A4F` / `#FFEDE8` |
 | Success | `#146B45` |
-| Warning | `#8A5A10` |
-| Danger | `#9B2F3C` |
+| Warning (Paid) | `#8A4B08` |
+| Danger | `#B42318` |
 | In progress | `#1E4B86` |
-| Skill swap | `#5B4688` |
+| Star | `#B86E09` |
 
-Success, warning, danger, in-progress, and skill-swap colors are derived so each status and payment badge stays distinct and meets WCAG AA on its tinted background.
+Offer uses the teal family for the active tab, hero, and buttons. Request uses violet for those same roles so white labels stay WCAG AA. Coral is the warm accent (deadline hints and the request hero wash). Payment and status badges use the success, warning, danger, progress, offer, and request tokens on tinted backgrounds.
 
-Fonts: Outfit for headings, Source Sans 3 for body and form text. Headings use `clamp()` so they shrink on small screens. Inputs stay at 16px.
+Fonts: Outfit for headings, Plus Jakarta Sans for body and form text. Headings use `clamp()` and tight tracking. Body line height is 1.6. Inputs stay at 16px.
 
-Breakpoints are mobile-first Tailwind defaults. Gig cards are 1 column below 768px, 2 from `md` (768px), and 3 from `lg` (1024px). The navbar collapses into a hamburger below `lg`. Page content stops at `max-w-6xl` (72rem). Checked at 320, 375, 768, 1024, and 1440px, plus a short landscape width, with no horizontal overflow.
+Breakpoints are mobile-first Tailwind defaults. Catalogue blocks scroll sideways inside the page. Gig cards are 1 column below 768px, 2 from `md` (768px), and 3 from `lg` (1024px). The navbar search is an icon below `md` and a bar from `md`. The navbar links collapse into a hamburger below `lg`. Page content stops at `max-w-6xl` (72rem). Gig detail is one column below `lg` and two columns from `lg`, with the action panel sticky on desktop. Checked at 320, 375, 768, 1024, and 1440px, plus a short landscape width, with no horizontal overflow.

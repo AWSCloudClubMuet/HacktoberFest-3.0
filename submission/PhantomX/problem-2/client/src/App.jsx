@@ -244,7 +244,7 @@ export function App() {
             ) : null}
             <button
               type="button"
-              className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-xl border border-line text-ink lg:hidden"
+              className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-line text-ink lg:hidden"
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               onClick={() => setMenuOpen((open) => !open)}

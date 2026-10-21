@@ -358,8 +358,7 @@ export function GigDetailPage({ gigId }) {
                 <p className="flex flex-wrap items-center gap-2 text-base text-muted">
                   Your application is <Badge tone={statusTone(application.status)}>{application.status}</Badge>
                 </p>
-              ) : null}
-              {canApply ? (
+              ) : canApply ? (
                 <form className="space-y-3" noValidate onSubmit={onApply}>
                   <Alert>{formError}</Alert>
                   <Field label="Message" error={fieldError}>

@@ -102,7 +102,7 @@ export function GigCard({ gig, posterName, section = 'offer' }) {
       </p>
       <p className="text-sm text-muted">
         {formatWhen(gig.deadline)}
-        {closesIn(gig.deadline) ? <span className="mt-0.5 block text-xs font-semibold uppercase tracking-wide text-coral">{closesIn(gig.deadline)}</span> : null}
+        {(gig.status === 'Open' || gig.status === 'In Progress') && closesIn(gig.deadline) ? <span className="mt-0.5 block text-xs font-semibold uppercase tracking-wide text-coral">{closesIn(gig.deadline)}</span> : null}
       </p>
       <div className="mt-auto flex min-w-0 items-center gap-2 pt-1">
         <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${section === 'request' ? 'bg-request' : 'bg-offer'}`} aria-hidden="true">
@@ -123,7 +123,7 @@ export function GigRow({ title, gigs, users, section, seeAllTo }) {
       <div className="flex items-end justify-between gap-3">
         <h2 className="font-display text-xl font-semibold text-ink">{title}</h2>
         {seeAllTo ? (
-          <Link to={seeAllTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-offer underline-offset-2 hover:underline">
+          <Link to={seeAllTo} className={`inline-flex min-h-11 items-center text-sm font-semibold underline-offset-2 hover:underline ${section === 'request' ? 'text-request' : 'text-offer'}`}>
             See all
           </Link>
         ) : null}
@@ -217,7 +217,7 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
       </button>
       <button
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface text-ink md:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink md:hidden"
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={`Search gigs in ${copy.short}`}
