@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
-import { Alert, Field, Link, buttonClass, inputClass, secondaryButtonClass } from '../components.jsx';
+import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
 
 const DEMOS = [
   { name: 'Aisha Khan', email: 'aisha.khan@campus.edu', note: 'Poster with applicants' },
@@ -54,37 +54,50 @@ export function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md space-y-5">
-      <div>
-        <h1 className="text-2xl font-semibold text-stone-900">Log in</h1>
-        <p className="mt-1 text-sm text-stone-600">Use a demo account or one you created.</p>
+    <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+      <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
+        <div className="flex h-1.5" aria-hidden="true">
+          <span className="flex-1 bg-primary" />
+          <span className="flex-1 bg-secondary" />
+          <span className="flex-1 bg-accent" />
+          <span className="flex-1 bg-faint" />
+        </div>
+        <form className="space-y-4 p-5 sm:p-6" noValidate onSubmit={onSubmit}>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>
+            <h1 className="page-title mt-1 text-ink">Log in</h1>
+            <p className="mt-2 text-base text-muted">Use a demo account or one you created.</p>
+          </div>
+          <Alert>{formError}</Alert>
+          <Field label="Email" error={errors.email}>
+            <input className={inputClass} type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} />
+          </Field>
+          <Field label="Password" error={errors.password}>
+            <input className={inputClass} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          </Field>
+          <button className={`${buttonClass} w-full`} type="submit" disabled={saving}>
+            {saving ? 'Logging in…' : 'Log in'}
+          </button>
+          <p className="text-base text-muted">
+            New here? <Link to="/signup" className={textLinkClass}>Create an account</Link>
+          </p>
+        </form>
       </div>
-      <form className="space-y-4 rounded-xl border border-stone-200 bg-white p-5" noValidate onSubmit={onSubmit}>
-        <Alert>{formError}</Alert>
-        <Field label="Email" error={errors.email}>
-          <input className={inputClass} type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} />
-        </Field>
-        <Field label="Password" error={errors.password}>
-          <input className={inputClass} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} />
-        </Field>
-        <button className={buttonClass} type="submit" disabled={saving}>
-          {saving ? 'Logging in…' : 'Log in'}
-        </button>
-        <p className="text-sm text-stone-600">
-          New here? <Link to="/signup" className="font-medium text-teal-800 hover:underline">Create an account</Link>
-        </p>
-      </form>
-      <section className="space-y-3 rounded-xl border border-stone-200 bg-white p-5">
-        <h2 className="text-sm font-semibold text-stone-900">Demo accounts</h2>
-        <p className="text-sm text-stone-600">
-          Password for every account: <span className="font-medium text-stone-800">{DEMO_PASSWORD}</span>
+      <section className="space-y-3 rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6">
+        <h2 className="font-display text-lg font-semibold text-ink">Demo accounts</h2>
+        <p className="text-base text-muted">
+          Password for every account: <span className="font-semibold text-ink">{DEMO_PASSWORD}</span>
         </p>
         <ul className="space-y-2">
           {DEMOS.map((demo) => (
             <li key={demo.email}>
-              <button type="button" className={`${secondaryButtonClass} w-full text-left`} onClick={() => fillDemo(demo)}>
-                <span className="block">{demo.name}</span>
-                <span className="block text-xs font-normal text-stone-500">{demo.email} · {demo.note}</span>
+              <button
+                type="button"
+                className="flex min-h-11 w-full flex-col items-start justify-center gap-0.5 rounded-xl border border-line bg-canvas px-4 py-3 text-left transition duration-150 hover:border-primary"
+                onClick={() => fillDemo(demo)}
+              >
+                <span className="text-base font-semibold text-ink">{demo.name}</span>
+                <span className="break-all text-sm font-normal text-muted">{demo.email} · {demo.note}</span>
               </button>
             </li>
           ))}

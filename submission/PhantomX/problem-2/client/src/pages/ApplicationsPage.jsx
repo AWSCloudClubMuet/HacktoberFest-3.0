@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { formatWhen } from '../format.js';
-import { Alert, Badge, Empty, Link, Loading, statusTone } from '../components.jsx';
+import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
 
 export function ApplicationsPage() {
   const { userId } = useApp();
@@ -42,29 +42,29 @@ export function ApplicationsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-stone-900">My applications</h1>
-        <p className="mt-1 text-sm text-stone-600">Gigs you have applied to.</p>
+        <h1 className="page-title text-ink">My applications</h1>
+        <p className="mt-2 text-base text-muted">Gigs you have applied to.</p>
       </div>
       <Alert>{error}</Alert>
       {rows === null && !error ? <Loading>Loading applications…</Loading> : null}
       {rows && rows.length === 0 && !error ? (
         <Empty>
           You have not applied to any gigs yet.{' '}
-          <Link to="/" className="font-medium text-teal-800 hover:underline">Browse gigs</Link>
+          <Link to="/" className={textLinkClass}>Browse gigs</Link>
         </Empty>
       ) : null}
       {rows && rows.length > 0 ? (
         <ul className="space-y-3">
           {rows.map((application) => (
-            <li key={application.id} className="rounded-xl border border-stone-200 bg-white p-4">
+            <li key={application.id} className="min-w-0 rounded-2xl border border-line bg-surface p-4 shadow-card">
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <Link to={`/gigs/${application.gig_id}`} className="font-medium text-teal-900 hover:underline">
+                <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} min-w-0 break-words font-display text-lg`}>
                   {application.gigTitle}
                 </Link>
                 <Badge tone={statusTone(application.status)}>{application.status}</Badge>
               </div>
-              <p className="mt-2 text-sm text-stone-700">{application.message}</p>
-              <p className="mt-2 text-xs text-stone-500">Applied {formatWhen(application.created_at)}</p>
+              <p className="mt-2 break-words text-base text-secondary">{application.message}</p>
+              <p className="mt-2 text-sm text-muted">Applied {formatWhen(application.created_at)}</p>
             </li>
           ))}
         </ul>

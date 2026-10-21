@@ -3,7 +3,7 @@ import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { paymentLabel } from '../constants.js';
 import { formatMoney } from '../format.js';
-import { Alert, Badge, Empty, Link, Loading, statusTone } from '../components.jsx';
+import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
 
 export function MyGigsPage() {
   const { userId } = useApp();
@@ -40,31 +40,31 @@ export function MyGigsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-stone-900">My gigs</h1>
-        <p className="mt-1 text-sm text-stone-600">Gigs you posted, with their status and applicant count.</p>
+        <h1 className="page-title text-ink">My gigs</h1>
+        <p className="mt-2 text-base text-muted">Gigs you posted, with their status and applicant count.</p>
       </div>
       <Alert>{error}</Alert>
       {rows === null && !error ? <Loading>Loading your gigs…</Loading> : null}
       {rows && rows.length === 0 && !error ? (
         <Empty>
           You have not posted a gig yet.{' '}
-          <Link to="/gigs/new" className="font-medium text-teal-800 hover:underline">Post one</Link>
+          <Link to="/gigs/new" className={textLinkClass}>Post one</Link>
         </Empty>
       ) : null}
       {rows && rows.length > 0 ? (
         <ul className="space-y-3">
           {rows.map((gig) => (
             <li key={gig.id}>
-              <Link to={`/gigs/${gig.id}`} className="block rounded-xl border border-stone-200 bg-white p-4 hover:border-teal-700">
+              <Link to={`/gigs/${gig.id}`} className="block min-w-0 rounded-2xl border border-line bg-surface p-4 shadow-card transition duration-150 hover:-translate-y-0.5 hover:border-primary">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h2 className="font-medium text-stone-900">{gig.title}</h2>
+                  <h2 className="min-w-0 break-words font-display text-lg font-semibold text-ink">{gig.title}</h2>
                   <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
                 </div>
-                <p className="mt-2 text-sm text-stone-600">
+                <p className="mt-2 break-words text-sm text-muted">
                   {gig.category} · {gig.type} · {paymentLabel(gig.payment_type)}
                   {gig.payment_type === 'Paid' && gig.budget != null ? ` · ${formatMoney(gig.budget)}` : ''}
                 </p>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="mt-1 text-sm text-muted">
                   {gig.applicantCount} {gig.applicantCount === 1 ? 'applicant' : 'applicants'}
                 </p>
               </Link>

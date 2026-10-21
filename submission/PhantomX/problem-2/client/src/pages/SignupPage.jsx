@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
-import { Alert, Field, Link, buttonClass, inputClass } from '../components.jsx';
+import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
 
 const empty = {
   name: '',
@@ -69,12 +69,19 @@ export function SignupPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md space-y-5">
-      <div>
-        <h1 className="text-2xl font-semibold text-stone-900">Create an account</h1>
-        <p className="mt-1 text-sm text-stone-600">No email verification. You can post and apply right away.</p>
-      </div>
-      <form className="space-y-4 rounded-xl border border-stone-200 bg-white p-5" noValidate onSubmit={onSubmit}>
+    <div className="mx-auto w-full max-w-md">
+      <form className="space-y-4 overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6" noValidate onSubmit={onSubmit}>
+        <div className="-mx-5 -mt-5 flex h-1.5 sm:-mx-6 sm:-mt-6" aria-hidden="true">
+          <span className="flex-1 bg-primary" />
+          <span className="flex-1 bg-secondary" />
+          <span className="flex-1 bg-accent" />
+          <span className="flex-1 bg-faint" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>
+          <h1 className="page-title mt-1 text-ink">Create an account</h1>
+          <p className="mt-2 text-base text-muted">No email verification. You can post and apply right away.</p>
+        </div>
         <Alert>{formError}</Alert>
         <Field label="Name" error={errors.name}>
           <input className={inputClass} value={form.name} onChange={(event) => update('name', event.target.value)} />
@@ -99,11 +106,11 @@ export function SignupPage() {
         <Field label="Skills">
           <input className={inputClass} value={form.skills} onChange={(event) => update('skills', event.target.value)} placeholder="Optional, separated by commas" />
         </Field>
-        <button className={buttonClass} type="submit" disabled={saving}>
+        <button className={`${buttonClass} w-full`} type="submit" disabled={saving}>
           {saving ? 'Creating account…' : 'Sign up'}
         </button>
-        <p className="text-sm text-stone-600">
-          Already have an account? <Link to="/login" className="font-medium text-teal-800 hover:underline">Log in</Link>
+        <p className="text-base text-muted">
+          Already have an account? <Link to="/login" className={textLinkClass}>Log in</Link>
         </p>
       </form>
     </div>

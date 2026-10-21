@@ -81,10 +81,10 @@ export function CreateGigPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-stone-900">Post a gig</h1>
-        <p className="mt-1 text-sm text-stone-600">Offer a skill or ask for short-term help.</p>
+        <h1 className="page-title text-ink">Post a gig</h1>
+        <p className="mt-2 text-base text-muted">Offer a skill or ask for short-term help.</p>
       </div>
-      <form className="space-y-4 rounded-xl border border-stone-200 bg-white p-5" noValidate onSubmit={onSubmit}>
+      <form className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-card" noValidate onSubmit={onSubmit}>
         <Alert>{apiError}</Alert>
         <Field label="Title" error={errors.title}>
           <input className={inputClass} value={form.title} maxLength={140} onChange={(event) => update('title', event.target.value)} />
@@ -114,12 +114,12 @@ export function CreateGigPage() {
             <input className={inputClass} type="number" min="0" step="any" value={form.budget} onChange={(event) => update('budget', event.target.value)} />
           </Field>
         ) : (
-          <p className="text-sm text-stone-600">Skill Swap and Free gigs do not take a budget.</p>
+          <p className="text-base text-muted">Skill Swap and Free gigs do not take a budget.</p>
         )}
         <Field label="Deadline" error={errors.deadline}>
           <input className={inputClass} type="datetime-local" value={form.deadline} onChange={(event) => update('deadline', event.target.value)} />
         </Field>
-        <button className={buttonClass} type="submit" disabled={saving}>
+        <button className={`${buttonClass} w-full sm:w-auto`} type="submit" disabled={saving}>
           {saving ? 'Posting…' : 'Post gig'}
         </button>
       </form>

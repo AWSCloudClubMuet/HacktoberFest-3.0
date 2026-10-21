@@ -11,10 +11,12 @@ import {
   Loading,
   Stars,
   buttonClass,
+  cardClass,
   dangerButtonClass,
   inputClass,
-  secondaryButtonClass,
+  paymentTone,
   statusTone,
+  textLinkClass,
 } from '../components.jsx';
 
 export function GigDetailPage({ gigId }) {
@@ -198,52 +200,53 @@ export function GigDetailPage({ gigId }) {
 
   return (
     <div className="space-y-5">
-      <Link to="/" className="text-sm font-medium text-teal-800 hover:underline">Back to gigs</Link>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="space-y-5">
-          <article className="space-y-4 rounded-xl border border-stone-200 bg-white p-5">
+      <Link to="/" className={`inline-flex min-h-11 items-center text-sm ${textLinkClass}`}>Back to gigs</Link>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0 space-y-5">
+          <article className={`${cardClass} space-y-4 p-5`}>
             <div className="flex flex-wrap gap-2">
               <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
               <Badge tone={gig.type === 'Offering' ? 'offering' : 'requesting'}>{gig.type}</Badge>
+              <Badge tone={paymentTone(gig.payment_type)}>{paymentLabel(gig.payment_type)}</Badge>
               <Badge tone="neutral">{gig.category}</Badge>
             </div>
-            <h1 className="text-2xl font-semibold text-stone-900">{gig.title}</h1>
-            <p className="whitespace-pre-wrap text-sm leading-6 text-stone-700">{gig.description}</p>
-            <dl className="grid gap-3 text-sm sm:grid-cols-2">
-              <div>
-                <dt className="text-stone-500">Payment</dt>
-                <dd className="font-medium">
+            <h1 className="page-title break-words text-ink">{gig.title}</h1>
+            <p className="whitespace-pre-wrap break-words text-base leading-7 text-secondary">{gig.description}</p>
+            <dl className="grid gap-3 text-base sm:grid-cols-2">
+              <div className="min-w-0">
+                <dt className="text-sm text-muted">Payment</dt>
+                <dd className="break-words font-semibold text-ink">
                   {paymentLabel(gig.payment_type)}
                   {gig.payment_type === 'Paid' && gig.budget != null ? ` · ${formatMoney(gig.budget)}` : ''}
                 </dd>
               </div>
-              <div>
-                <dt className="text-stone-500">Deadline</dt>
-                <dd className="font-medium">{formatWhen(gig.deadline)}</dd>
+              <div className="min-w-0">
+                <dt className="text-sm text-muted">Deadline</dt>
+                <dd className="break-words font-semibold text-ink">{formatWhen(gig.deadline)}</dd>
               </div>
             </dl>
           </article>
 
           {isOwner ? (
-            <section className="space-y-3 rounded-xl border border-stone-200 bg-white p-5">
-              <h2 className="text-base font-semibold text-stone-900">Applicants</h2>
-              {applicants.length === 0 ? <p className="text-sm text-stone-600">No one has applied yet.</p> : null}
+            <section className={`${cardClass} space-y-3 p-5`}>
+              <h2 className="font-display text-lg font-semibold text-ink">Applicants</h2>
+              {applicants.length === 0 ? <p className="text-base text-muted">No one has applied yet.</p> : null}
               <ul className="space-y-3">
                 {applicants.map((item) => (
-                  <li key={item.id} className="rounded-lg border border-stone-200 p-3">
+                  <li key={item.id} className="min-w-0 rounded-xl border border-line p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <Link to={`/users/${item.applicant_id}`} className="font-medium text-teal-800 hover:underline">
+                      <Link to={`/users/${item.applicant_id}`} className={`${textLinkClass} min-w-0 break-words`}>
                         {nameOf(item.applicant_id)}
                       </Link>
                       <Badge tone={statusTone(item.status)}>{item.status}</Badge>
                     </div>
-                    <p className="mt-2 text-sm text-stone-700">{item.message}</p>
+                    <p className="mt-2 break-words text-base text-secondary">{item.message}</p>
                     {item.status === 'Pending' ? (
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                         {gig.status === 'Open' ? (
                           <button
                             type="button"
-                            className={buttonClass}
+                            className={`${buttonClass} w-full sm:w-auto`}
                             disabled={Boolean(busy)}
                             onClick={() => decide(item.id, 'Accepted')}
                           >
@@ -252,7 +255,7 @@ export function GigDetailPage({ gigId }) {
                         ) : null}
                         <button
                           type="button"
-                          className={secondaryButtonClass}
+                          className={`${dangerButtonClass} w-full sm:w-auto`}
                           disabled={Boolean(busy)}
                           onClick={() => decide(item.id, 'Rejected')}
                         >
@@ -267,35 +270,36 @@ export function GigDetailPage({ gigId }) {
           ) : null}
 
           {gig.status === 'Completed' ? (
-            <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-5">
-              <h2 className="text-base font-semibold text-stone-900">Reviews</h2>
-              {reviews.length === 0 ? <p className="text-sm text-stone-600">No reviews yet.</p> : null}
+            <section className={`${cardClass} space-y-4 p-5`}>
+              <h2 className="font-display text-lg font-semibold text-ink">Reviews</h2>
+              {reviews.length === 0 ? <p className="text-base text-muted">No reviews yet.</p> : null}
               <ul className="space-y-3">
                 {reviews.map((review) => (
-                  <li key={review.id} className="rounded-lg border border-stone-200 p-3">
+                  <li key={review.id} className="min-w-0 rounded-xl border border-line p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-sm font-medium text-stone-900">
+                      <p className="min-w-0 break-words text-base font-semibold text-ink">
                         {nameOf(review.reviewer_id)} reviewed {nameOf(review.reviewee_id)}
                       </p>
                       <Stars value={review.rating} />
                     </div>
-                    <p className="mt-2 text-sm text-stone-700">{review.comment}</p>
+                    <p className="mt-2 break-words text-base text-secondary">{review.comment}</p>
                   </li>
                 ))}
               </ul>
               {isParty && gig.accepted_applicant_id && !myReview ? (
-                <form className="space-y-3 border-t border-stone-200 pt-4" noValidate onSubmit={onReview}>
-                  <h3 className="text-sm font-semibold text-stone-900">Review {nameOf(revieweeId)}</h3>
+                <form className="space-y-3 border-t border-line pt-4" noValidate onSubmit={onReview}>
+                  <h3 className="font-display text-base font-semibold text-ink">Review {nameOf(revieweeId)}</h3>
                   <div>
-                    <p className="mb-1 text-sm font-medium text-stone-700">Rating</p>
-                    <div className="flex gap-1" role="radiogroup" aria-label="Rating">
+                    <p className="mb-1 text-sm font-semibold text-ink">Rating</p>
+                    <div className="flex flex-wrap gap-1" role="radiogroup" aria-label="Rating">
                       {[1, 2, 3, 4, 5].map((value) => (
                         <button
                           key={value}
                           type="button"
                           role="radio"
                           aria-checked={rating === value}
-                          className={`rounded-md px-2 py-1 text-xl ${value <= rating ? 'text-amber-500' : 'text-stone-300'} hover:text-amber-500`}
+                          aria-label={`${value} star${value === 1 ? '' : 's'}`}
+                          className={`inline-flex h-11 w-11 items-center justify-center rounded-xl text-2xl transition duration-150 ${value <= rating ? 'text-star' : 'text-line-strong'} hover:text-star`}
                           onClick={() => setRating(value)}
                         >
                           ★
@@ -314,28 +318,28 @@ export function GigDetailPage({ gigId }) {
                     />
                   </Field>
                   <Alert>{reviewError}</Alert>
-                  <button className={buttonClass} type="submit" disabled={Boolean(busy)}>
+                  <button className={`${buttonClass} w-full sm:w-auto`} type="submit" disabled={Boolean(busy)}>
                     {busy === 'review' ? 'Saving…' : 'Submit review'}
                   </button>
                 </form>
               ) : null}
-              {isParty && myReview ? <p className="text-sm text-stone-600">You already reviewed this gig.</p> : null}
+              {isParty && myReview ? <p className="text-base text-muted">You already reviewed this gig.</p> : null}
             </section>
           ) : null}
         </div>
 
-        <aside className="space-y-4">
+        <aside className="min-w-0 space-y-4">
           <PersonCard title="Posted by" person={poster} />
           {applicantUser ? <PersonCard title="Accepted student" person={applicantUser} /> : null}
 
           {isOwner ? (
-            <section className="space-y-3 rounded-xl border border-stone-200 bg-white p-4">
-              <h2 className="text-sm font-semibold text-stone-900">Owner actions</h2>
+            <section className={`${cardClass} space-y-3 p-4`}>
+              <h2 className="font-display text-base font-semibold text-ink">Owner actions</h2>
               {(gig.status === 'Open' || gig.status === 'Expired') ? (
-                <p className="text-sm text-stone-600">You cannot apply to your own gig.</p>
+                <p className="text-base text-muted">You cannot apply to your own gig.</p>
               ) : null}
-              {gig.status === 'Completed' ? <p className="text-sm text-stone-600">This gig is completed.</p> : null}
-              {gig.status === 'Cancelled' ? <p className="text-sm text-stone-600">This gig is cancelled.</p> : null}
+              {gig.status === 'Completed' ? <p className="text-base text-muted">This gig is completed.</p> : null}
+              {gig.status === 'Cancelled' ? <p className="text-base text-muted">This gig is cancelled.</p> : null}
               {gig.status === 'In Progress' ? (
                 <button type="button" className={`${buttonClass} w-full`} disabled={Boolean(busy)} onClick={() => changeStatus('Completed')}>
                   {busy === 'Completed' ? 'Saving…' : 'Mark as completed'}
@@ -348,10 +352,10 @@ export function GigDetailPage({ gigId }) {
               ) : null}
             </section>
           ) : (
-            <section className="space-y-3 rounded-xl border border-stone-200 bg-white p-4">
-              <h2 className="text-sm font-semibold text-stone-900">Apply</h2>
+            <section className={`${cardClass} space-y-3 p-4`}>
+              <h2 className="font-display text-base font-semibold text-ink">Apply</h2>
               {application ? (
-                <p className="text-sm text-stone-600">
+                <p className="flex flex-wrap items-center gap-2 text-base text-muted">
                   Your application is <Badge tone={statusTone(application.status)}>{application.status}</Badge>
                 </p>
               ) : null}
@@ -368,12 +372,12 @@ export function GigDetailPage({ gigId }) {
                       placeholder="Say how you can help"
                     />
                   </Field>
-                  <button className={buttonClass} type="submit" disabled={Boolean(busy)}>
+                  <button className={`${buttonClass} w-full`} type="submit" disabled={Boolean(busy)}>
                     {busy === 'apply' ? 'Sending…' : 'Apply'}
                   </button>
                 </form>
               ) : (
-                <p className="text-sm text-stone-600">This gig is {gig.status}, so new applications are closed.</p>
+                <p className="text-base text-muted">This gig is {gig.status}, so new applications are closed.</p>
               )}
             </section>
           )}
@@ -386,16 +390,16 @@ export function GigDetailPage({ gigId }) {
 function PersonCard({ title, person }) {
   if (!person) return null;
   return (
-    <section className="rounded-xl border border-stone-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-stone-900">{title}</h2>
-      <div className="mt-2 space-y-2 text-sm">
-        <Link to={`/users/${person.id}`} className="font-medium text-teal-800 hover:underline">{person.name}</Link>
-        <p className="text-stone-600">{person.major} · Semester {person.semester}</p>
-        <p className="text-stone-600">{person.bio}</p>
+    <section className={`${cardClass} p-4`}>
+      <h2 className="font-display text-base font-semibold text-ink">{title}</h2>
+      <div className="mt-2 space-y-2 text-base">
+        <Link to={`/users/${person.id}`} className={`${textLinkClass} break-words`}>{person.name}</Link>
+        <p className="break-words text-muted">{person.major} · Semester {person.semester}</p>
+        <p className="break-words text-secondary">{person.bio}</p>
         <div className="flex flex-wrap gap-1">
           {person.skills.map((skill) => <Badge key={skill} tone="neutral">{skill}</Badge>)}
         </div>
-        <p className="text-stone-500">
+        <p className="text-sm text-muted">
           {person.gigs_posted} posted · {person.gigs_completed} completed · {person.average_rating == null ? 'No reviews yet' : `${person.average_rating} average`}
         </p>
       </div>

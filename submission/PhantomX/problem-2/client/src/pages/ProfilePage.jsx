@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
-import { Alert, Badge, Empty, Loading, Stars } from '../components.jsx';
+import { Alert, Badge, Empty, Loading, Stars, cardClass } from '../components.jsx';
 
 export function ProfilePage({ profileId }) {
   const { userId, users } = useApp();
@@ -39,42 +39,48 @@ export function ProfilePage({ profileId }) {
   if (!profile) return <Alert>User not found</Alert>;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
-      <div>
-        {profile.id === userId ? <p className="text-sm font-medium text-teal-800">Your profile</p> : null}
-        <h1 className="text-2xl font-semibold text-stone-900">{profile.name}</h1>
-        <p className="mt-1 text-sm text-stone-600">{profile.major} · Semester {profile.semester}</p>
+    <div className="mx-auto w-full max-w-3xl space-y-5">
+      <div className={`${cardClass} flex flex-col gap-4 p-5 sm:flex-row sm:items-center`}>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary font-display text-xl font-semibold text-white" aria-hidden="true">
+          {initials(profile.name)}
+        </div>
+        <div className="min-w-0">
+          {profile.id === userId ? <p className="text-sm font-semibold text-primary">Your profile</p> : null}
+          <h1 className="page-title break-words text-ink">{profile.name}</h1>
+          <p className="mt-1 text-base text-muted">{profile.major} · Semester {profile.semester}</p>
+        </div>
       </div>
-      <section className="rounded-xl border border-stone-200 bg-white p-5">
-        <p className="text-sm leading-6 text-stone-700">{profile.bio}</p>
+      <section className={`${cardClass} p-5`}>
+        <p className="break-words text-base leading-7 text-secondary">{profile.bio}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {profile.skills.length > 0
             ? profile.skills.map((skill) => <Badge key={skill} tone="neutral">{skill}</Badge>)
-            : <span className="text-sm text-stone-500">No skills listed</span>}
+            : <span className="text-sm text-muted">No skills listed</span>}
         </div>
       </section>
-      <dl className="grid gap-3 sm:grid-cols-3">
+      <dl className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <Stat label="Gigs posted" value={profile.gigs_posted} />
         <Stat label="Gigs completed" value={profile.gigs_completed} />
         <Stat
           label="Average rating"
           value={profile.average_rating == null ? '—' : profile.average_rating}
           hint={profile.average_rating == null ? 'No reviews yet' : 'From stored reviews'}
+          stars={profile.average_rating}
         />
       </dl>
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-stone-900">Reviews</h2>
+        <h2 className="font-display text-xl font-semibold text-ink">Reviews</h2>
         {reviews.length === 0 ? <Empty>No reviews yet.</Empty> : null}
         <ul className="space-y-3">
           {reviews.map((review) => {
             const reviewer = users.find((user) => user.id === review.reviewer_id);
             return (
-              <li key={review.id} className="rounded-xl border border-stone-200 bg-white p-4">
+              <li key={review.id} className={`${cardClass} p-4`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-stone-900">{reviewer?.name || 'Student'}</p>
+                  <p className="min-w-0 break-words text-base font-semibold text-ink">{reviewer?.name || 'Student'}</p>
                   <Stars value={review.rating} />
                 </div>
-                <p className="mt-2 text-sm text-stone-700">{review.comment}</p>
+                <p className="mt-2 break-words text-base text-secondary">{review.comment}</p>
               </li>
             );
           })}
@@ -84,12 +90,19 @@ export function ProfilePage({ profileId }) {
   );
 }
 
-function Stat({ label, value, hint }) {
+function initials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  return parts.slice(0, 2).map((part) => part[0].toUpperCase()).join('');
+}
+
+function Stat({ label, value, hint, stars }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-4">
-      <dt className="text-sm text-stone-500">{label}</dt>
-      <dd className="mt-1 text-2xl font-semibold text-stone-900">{value}</dd>
-      {hint ? <p className="mt-1 text-xs text-stone-500">{hint}</p> : null}
+    <div className={`${cardClass} p-4`}>
+      <dt className="text-sm font-medium text-muted">{label}</dt>
+      <dd className="mt-1 font-display text-3xl font-semibold text-ink">{value}</dd>
+      {stars != null ? <div className="mt-1"><Stars value={stars} /></div> : null}
+      {hint ? <p className="mt-1 text-sm text-muted">{hint}</p> : null}
     </div>
   );
 }

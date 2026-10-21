@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../api.js';
 import { CATEGORIES, GIG_TYPES, PAYMENTS, paymentLabel } from '../constants.js';
 import { formatMoney, formatWhen } from '../format.js';
-import { Alert, Badge, Empty, Link, Loading, inputClass, statusTone } from '../components.jsx';
+import { Alert, Badge, Empty, Link, Loading, inputClass, paymentTone, secondaryButtonClass, statusTone } from '../components.jsx';
 
 const initialFilters = {
   category: '',
@@ -18,6 +18,7 @@ export function GigsPage() {
   const [search, setSearch] = useState('');
   const [gigs, setGigs] = useState(null);
   const [error, setError] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setSearch(searchInput.trim()), 300);
@@ -60,42 +61,51 @@ export function GigsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-stone-900">Gigs</h1>
-        <p className="mt-1 text-sm text-stone-600">Find short campus help, or offer a skill of your own.</p>
+        <h1 className="page-title text-ink">Gigs</h1>
+        <p className="mt-2 text-base text-muted">Find short campus help, or offer a skill of your own.</p>
       </div>
 
-      <form className="grid gap-3 rounded-xl border border-stone-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-3" onSubmit={(event) => event.preventDefault()}>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Category</span>
+      <button
+        type="button"
+        className={`${secondaryButtonClass} w-full md:hidden`}
+        aria-expanded={filtersOpen}
+        onClick={() => setFiltersOpen((open) => !open)}
+      >
+        {filtersOpen ? 'Hide filters' : 'Show filters'}
+      </button>
+
+      <form className={`${filtersOpen ? 'grid' : 'hidden'} gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card md:grid sm:grid-cols-2 lg:grid-cols-3`} onSubmit={(event) => event.preventDefault()}>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Category</span>
           <select className={inputClass} value={filters.category} onChange={(event) => update('category', event.target.value)}>
             <option value="">All categories</option>
             {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
           </select>
         </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Type</span>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Type</span>
           <select className={inputClass} value={filters.type} onChange={(event) => update('type', event.target.value)}>
             <option value="">Offering and requesting</option>
             {GIG_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
         </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Payment</span>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Payment</span>
           <select className={inputClass} value={filters.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
             <option value="">Any payment</option>
             {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
           </select>
         </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Min budget</span>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Min budget</span>
           <input className={inputClass} type="number" min="0" step="1" value={filters.min} onChange={(event) => update('min', event.target.value)} />
         </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Max budget</span>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Max budget</span>
           <input className={inputClass} type="number" min="0" step="1" value={filters.max} onChange={(event) => update('max', event.target.value)} />
         </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-stone-700">Search</span>
+        <label className="block min-w-0 text-base">
+          <span className="mb-1.5 block text-sm font-semibold text-ink">Search</span>
           <input
             className={inputClass}
             type="search"
@@ -108,7 +118,7 @@ export function GigsPage() {
           <div className="sm:col-span-2 lg:col-span-3">
             <button
               type="button"
-              className="text-sm font-medium text-teal-800 hover:underline"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-2 hover:underline"
               onClick={() => {
                 setFilters(initialFilters);
                 setSearchInput('');
@@ -117,7 +127,7 @@ export function GigsPage() {
             >
               Clear filters
             </button>
-            <p className="mt-1 text-xs text-stone-500">A budget range only matches paid gigs.</p>
+            <p className="mt-1 text-sm text-muted">A budget range only matches paid gigs.</p>
           </div>
         ) : null}
       </form>
@@ -127,22 +137,22 @@ export function GigsPage() {
       {gigs && gigs.length === 0 && !error ? <Empty>No gigs match these filters.</Empty> : null}
       {gigs && gigs.length > 0 ? (
         <>
-          <p className="text-sm text-stone-500">{gigs.length} {gigs.length === 1 ? 'gig' : 'gigs'}</p>
-          <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <p className="text-sm text-muted">{gigs.length} {gigs.length === 1 ? 'gig' : 'gigs'}</p>
+          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {gigs.map((gig) => (
-              <li key={gig.id}>
-                <Link to={`/gigs/${gig.id}`} className="flex h-full flex-col gap-3 rounded-xl border border-stone-200 bg-white p-4 shadow-sm hover:border-teal-700">
+              <li key={gig.id} className="min-w-0">
+                <Link to={`/gigs/${gig.id}`} className="flex h-full min-w-0 flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card transition duration-150 hover:-translate-y-0.5 hover:border-primary">
                   <div className="flex flex-wrap gap-2">
                     <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
                     <Badge tone={gig.type === 'Offering' ? 'offering' : 'requesting'}>{gig.type}</Badge>
+                    <Badge tone={paymentTone(gig.payment_type)}>{paymentLabel(gig.payment_type)}</Badge>
                   </div>
-                  <h2 className="text-base font-semibold text-stone-900">{gig.title}</h2>
-                  <p className="text-sm text-stone-500">{gig.category}</p>
-                  <p className="text-sm text-stone-700">
-                    {paymentLabel(gig.payment_type)}
-                    {gig.payment_type === 'Paid' && gig.budget != null ? ` · ${formatMoney(gig.budget)}` : ''}
+                  <h2 className="break-words font-display text-lg font-semibold leading-snug text-ink">{gig.title}</h2>
+                  <p className="text-sm text-muted">{gig.category}</p>
+                  <p className="text-sm font-semibold text-secondary">
+                    {gig.payment_type === 'Paid' && gig.budget != null ? formatMoney(gig.budget) : 'No budget'}
                   </p>
-                  <p className="mt-auto text-sm text-stone-500">Deadline {formatWhen(gig.deadline)}</p>
+                  <p className="mt-auto text-sm text-muted">Deadline {formatWhen(gig.deadline)}</p>
                 </Link>
               </li>
             ))}
