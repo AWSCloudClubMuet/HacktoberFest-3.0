@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getPrices } from '../services/api';
 import { evaluateUserAlerts } from '../services/alertService';
+import { isSupabaseConfigured } from '../services/supabase';
 import PricesScreen from './PricesScreen';
 import MarketplaceScreen from './MarketplaceScreen';
 import AlertsScreen from './AlertsScreen';
 import MyListingsScreen from './MyListingsScreen';
 import ProfitCalculator from './ProfitCalculator';
+import AccountModal from './AccountModal';
 
 const FARMER_TABS = [
   { id: 'prices',      label: 'Prices',     icon: '📊' },
@@ -20,34 +22,35 @@ const BUYER_TABS = [
   { id: 'marketplace', label: 'Market',     icon: '🏪' },
 ];
 
-export default function AppShell({ currentUser, allUsers, onSwitchUser }) {
-  const [tab, setTab]             = useState('prices');
-  const [showUserModal, setShowUserModal] = useState(false);
+export default function AppShell({ currentUser, onLogout }) {
+  const [tab, setTab] = useState('prices');
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const [triggeredCount, setTriggeredCount] = useState(0);
 
-  const tabs = currentUser.role === 'farmer' ? FARMER_TABS : BUYER_TABS;
+  const isFarmer = currentUser?.role === 'farmer';
+  const tabs = isFarmer ? FARMER_TABS : BUYER_TABS;
 
   // Handle price refresh to re-evaluate active alerts
   const handlePricesRefreshed = useCallback(async (currentPrices) => {
-    if (currentUser.role === 'farmer') {
+    if (isFarmer && currentUser?.id) {
       const count = await evaluateUserAlerts(currentUser.id, currentPrices);
       setTriggeredCount(count);
     }
-  }, [currentUser]);
+  }, [currentUser, isFarmer]);
 
   // Initial alert count check for farmer
   useEffect(() => {
-    if (currentUser.role === 'farmer') {
+    if (isFarmer && currentUser?.id) {
       getPrices().then(p => handlePricesRefreshed(p)).catch(() => {});
     } else {
       setTriggeredCount(0);
     }
-  }, [currentUser, handlePricesRefreshed]);
+  }, [currentUser, isFarmer, handlePricesRefreshed]);
 
   // Ensure active tab is valid for this role
   useEffect(() => {
     if (!tabs.find(t => t.id === tab)) setTab('prices');
-  }, [currentUser.role, tabs, tab]);
+  }, [currentUser?.role, tabs, tab]);
 
   return (
     <div className="app-wrapper">
@@ -58,8 +61,22 @@ export default function AppShell({ currentUser, allUsers, onSwitchUser }) {
           <span>Sindh Produce Marketplace</span>
         </div>
         <div className="top-bar-right">
-          <button className="demo-user-btn" onClick={() => setShowUserModal(true)} title="Switch demo user">
-            👤 {currentUser.name.split(' ')[0]} ({currentUser.role === 'farmer' ? 'Farmer' : 'Buyer'})
+          <button
+            className="demo-user-btn"
+            onClick={() => setShowAccountModal(true)}
+            title="View account profile"
+            aria-label="Account details"
+          >
+            👤 {(currentUser?.name || 'User').split(' ')[0]} ({isFarmer ? 'Farmer' : 'Buyer'})
+          </button>
+          <button
+            className="btn-icon"
+            onClick={onLogout}
+            title="Sign out"
+            aria-label="Sign out"
+            style={{ color: 'var(--white)', borderColor: 'rgba(255,255,255,0.3)', padding: '.3rem .5rem', fontSize: '.9rem' }}
+          >
+            🚪
           </button>
         </div>
       </header>
@@ -73,16 +90,16 @@ export default function AppShell({ currentUser, allUsers, onSwitchUser }) {
           />
         )}
         {tab === 'marketplace' && <MarketplaceScreen currentUser={currentUser} />}
-        {tab === 'alerts'      && currentUser.role === 'farmer' && (
+        {tab === 'alerts'      && isFarmer && (
           <AlertsScreen
             currentUser={currentUser}
             onTriggeredCountChange={setTriggeredCount}
           />
         )}
-        {tab === 'mylistings'  && currentUser.role === 'farmer' && (
+        {tab === 'mylistings'  && isFarmer && (
           <MyListingsScreen currentUser={currentUser} />
         )}
-        {tab === 'calculator'  && currentUser.role === 'farmer' && (
+        {tab === 'calculator'  && isFarmer && (
           <ProfitCalculator currentUser={currentUser} />
         )}
       </main>
@@ -108,40 +125,16 @@ export default function AppShell({ currentUser, allUsers, onSwitchUser }) {
         ))}
       </nav>
 
-      {/* Demo User Switcher Modal */}
-      {showUserModal && (
-        <div className="modal-overlay" onClick={() => setShowUserModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">Switch Demo User</h2>
-            <p style={{ fontSize: '.8rem', color: 'var(--gray-500)', marginBottom: '.75rem' }}>
-              ⚠️ Demo user switching only. Real production would use authenticated sessions. Active user is kept in React memory.
-            </p>
-            {allUsers.map(u => (
-              <div
-                key={u.id}
-                className={`user-option ${u.id === currentUser.id ? 'active' : ''}`}
-                onClick={() => { onSwitchUser(u); setShowUserModal(false); }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && (onSwitchUser(u), setShowUserModal(false))}
-              >
-                <div className="user-avatar">{u.name[0]}</div>
-                <div className="user-info">
-                  <div className="user-name">{u.name}</div>
-                  <div className="user-meta">{u.district} · {u.role === 'farmer' ? '👨‍🌾 Farmer' : '🛒 Buyer'}</div>
-                </div>
-                {u.id === currentUser.id && (
-                  <span style={{ marginLeft: 'auto', color: 'var(--green)', fontSize: '.75rem', fontWeight: 700 }}>
-                    ACTIVE
-                  </span>
-                )}
-              </div>
-            ))}
-            <div className="modal-footer">
-              <button className="btn btn-secondary btn-sm" onClick={() => setShowUserModal(false)}>Close</button>
-            </div>
-          </div>
-        </div>
+      {/* Profile & Account Details Modal */}
+      {showAccountModal && (
+        <AccountModal
+          user={currentUser}
+          onClose={() => setShowAccountModal(false)}
+          onLogout={() => {
+            setShowAccountModal(false);
+            onLogout();
+          }}
+        />
       )}
     </div>
   );

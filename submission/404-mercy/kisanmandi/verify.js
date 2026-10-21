@@ -241,6 +241,35 @@ async function runVerification() {
   // Clean up test user
   await req(`/users/${newUser.id}`, { method: 'DELETE' }).catch(() => {});
 
+  // 42-47: Supabase Schema, Security & Migration Verification
+  const fs = await import('fs');
+  const schemaPath = 'supabase/migrations/20261021_init_schema.sql';
+  assert(fs.existsSync(schemaPath), 'Supabase schema migration file exists (supabase/migrations/20261021_init_schema.sql)');
+  if (fs.existsSync(schemaPath)) {
+    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+    const hasAllTables = ['profiles', 'crops', 'markets', 'prices', 'listings', 'alerts']
+      .every(t => schemaSql.includes(`CREATE TABLE IF NOT EXISTS public.${t}`));
+    assert(hasAllTables, 'Schema migration defines all 6 required tables (profiles, crops, markets, prices, listings, alerts)');
+
+    const hasRLS = ['profiles', 'crops', 'markets', 'prices', 'listings', 'alerts']
+      .every(t => schemaSql.includes(`ALTER TABLE public.${t} ENABLE ROW LEVEL SECURITY;`));
+    assert(hasRLS, 'Row Level Security (RLS) is explicitly enabled on all 6 tables');
+
+    const hasRealtime = schemaSql.includes('ALTER PUBLICATION supabase_realtime ADD TABLE public.listings');
+    assert(hasRealtime, 'Supabase Realtime publication includes public.listings');
+
+    const hasTrigger = schemaSql.includes('handle_new_user');
+    assert(hasTrigger, 'Automatic profile creation trigger (handle_new_user) on auth.users is present');
+  }
+
+  const seedPath = 'supabase/seed.sql';
+  assert(fs.existsSync(seedPath), 'Supabase seed SQL file exists (supabase/seed.sql)');
+  if (fs.existsSync(seedPath)) {
+    const seedSql = fs.readFileSync(seedPath, 'utf8');
+    assert(seedSql.includes("INSERT INTO public.crops") && seedSql.includes("INSERT INTO public.markets"),
+      'Seed SQL populates crops and markets tables');
+  }
+
   console.log('\n====================================================');
   console.log(`Verification Complete: ${passed}/${total} checks passed (${Math.round(passed/total*100)}%)`);
   console.log('====================================================\n');
@@ -256,3 +285,4 @@ runVerification().catch(err => {
   console.error('Verification failed with unexpected error:', err);
   process.exit(1);
 });
+

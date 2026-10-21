@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   getCrops, getMarkets, getActiveListings, getPrices,
   createListing, updateListing, deleteListing, getListing
 } from '../services/api';
+import { isSupabaseConfigured, subscribeToListings, unsubscribeChannel } from '../services/supabase';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
 const GRADES = ['A', 'B', 'C'];
 
 function normalizePhone(phone) {
-  const digits = phone.replace(/\D/g, '');
+  const digits = (phone || '').replace(/\D/g, '');
   if (digits.startsWith('0')) return '92' + digits.slice(1);
   if (digits.startsWith('92')) return digits;
   return '92' + digits;
@@ -24,7 +25,7 @@ function calcPriceLabel(askingPrice, avgMarketPrice) {
 }
 
 function todayStr() {
-  const d = new Date(); d.setHours(0,0,0,0);
+  const d = new Date(); d.setHours(0, 0, 0, 0);
   return d.toISOString().split('T')[0];
 }
 
@@ -55,6 +56,7 @@ export default function MarketplaceScreen({ currentUser }) {
   const [prices, setPrices]       = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
+  const [liveToast, setLiveToast] = useState('');
 
   const [search, setSearch]       = useState('');
   const [filterCrop, setFilterCrop]   = useState('');
@@ -65,8 +67,8 @@ export default function MarketplaceScreen({ currentUser }) {
   const [showForm, setShowForm]   = useState(false);
   const [editId, setEditId]       = useState(null);
   const [form, setForm]           = useState({
-    cropId: '', quantity: '', askingPrice: '', district: '',
-    grade: '', availableFrom: todayStr(), contactPhone: currentUser.phone || '',
+    cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
+    grade: 'A', availableFrom: todayStr(), contactPhone: currentUser?.phone || '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving]       = useState(false);
@@ -87,15 +89,68 @@ export default function MarketplaceScreen({ currentUser }) {
     }
   }, []);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    loadData();
 
-  // Build avg market price per crop (across all markets, latest date)
+    // ── Supabase Realtime Subscription ───────────────────────────────
+    const channel = subscribeToListings({
+      onInsert: (raw) => {
+        const item = {
+          id: raw.id,
+          sellerId: raw.seller_id ?? raw.sellerId,
+          cropId: raw.crop_id ?? raw.cropId,
+          district: raw.district,
+          quantity: Number(raw.quantity),
+          askingPrice: Number(raw.asking_price ?? raw.askingPrice),
+          grade: raw.grade,
+          availableFrom: raw.available_from ?? raw.availableFrom,
+          contactPhone: raw.contact_phone ?? raw.contactPhone,
+          status: raw.status,
+          createdAt: raw.created_at ?? raw.createdAt,
+        };
+        if (item.status === 'active') {
+          setListings((prev) => [item, ...prev.filter((l) => l.id !== item.id)]);
+          setLiveToast('⚡ New produce listing posted in realtime!');
+          setTimeout(() => setLiveToast(''), 4500);
+        }
+      },
+      onUpdate: (raw) => {
+        const item = {
+          id: raw.id,
+          sellerId: raw.seller_id ?? raw.sellerId,
+          cropId: raw.crop_id ?? raw.cropId,
+          district: raw.district,
+          quantity: Number(raw.quantity),
+          askingPrice: Number(raw.asking_price ?? raw.askingPrice),
+          grade: raw.grade,
+          availableFrom: raw.available_from ?? raw.availableFrom,
+          contactPhone: raw.contact_phone ?? raw.contactPhone,
+          status: raw.status,
+          createdAt: raw.created_at ?? raw.createdAt,
+        };
+        setListings((prev) => {
+          if (item.status !== 'active') {
+            return prev.filter((l) => l.id !== item.id);
+          }
+          return prev.map((l) => (l.id === item.id ? item : l));
+        });
+      },
+      onDelete: (raw) => {
+        setListings((prev) => prev.filter((l) => l.id !== raw.id));
+      },
+    });
+
+    return () => {
+      if (channel) unsubscribeChannel(channel);
+    };
+  }, [loadData]);
+
+  // Average market price per crop
   const avgMarketPrices = useCallback(() => {
     const map = {};
     crops.forEach(crop => {
       const cropPrices = prices.filter(p => p.cropId === crop.id);
       if (!cropPrices.length) { map[crop.id] = null; return; }
-      // Get latest date per market
       const byMarket = {};
       cropPrices.forEach(p => {
         if (!byMarket[p.marketId] || p.date > byMarket[p.marketId].date) byMarket[p.marketId] = p;
@@ -121,13 +176,16 @@ export default function MarketplaceScreen({ currentUser }) {
   });
 
   if (sortMode === 'newest') {
-    filtered = [...filtered].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    filtered = [...filtered].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
   } else {
     filtered = [...filtered].sort((a, b) => a.askingPrice - b.askingPrice);
   }
 
   const resetForm = () => {
-    setForm({ cropId: '', quantity: '', askingPrice: '', district: '', grade: '', availableFrom: todayStr(), contactPhone: currentUser.phone || '' });
+    setForm({
+      cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
+      grade: 'A', availableFrom: todayStr(), contactPhone: currentUser?.phone || ''
+    });
     setFormErrors({});
     setFormApiError('');
     setEditId(null);
@@ -153,6 +211,10 @@ export default function MarketplaceScreen({ currentUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (currentUser?.role !== 'farmer') {
+      alert('Only registered farmers can list produce.');
+      return;
+    }
     const errs = validateListing(form);
     setFormErrors(errs);
     if (Object.keys(errs).length) return;
@@ -160,9 +222,9 @@ export default function MarketplaceScreen({ currentUser }) {
     setFormApiError('');
     try {
       if (editId) {
-        // Revalidate ownership before write
+        // Revalidate ownership
         const existing = await getListing(editId);
-        if (existing.sellerId !== currentUser.id) throw new Error('You do not own this listing.');
+        if (existing.sellerId !== currentUser.id) throw new Error('Unauthorized: You do not own this listing.');
         await updateListing(editId, {
           cropId: form.cropId,
           quantity: Number(form.quantity),
@@ -197,10 +259,10 @@ export default function MarketplaceScreen({ currentUser }) {
   };
 
   const handleSold = async (id) => {
-    if (!window.confirm('Mark this listing as Sold?')) return;
+    if (!window.confirm('Mark this listing as Sold? It will be removed from the active marketplace.')) return;
     try {
       const existing = await getListing(id);
-      if (existing.sellerId !== currentUser.id) { alert('You do not own this listing.'); return; }
+      if (existing.sellerId !== currentUser.id) { alert('Unauthorized: You do not own this listing.'); return; }
       await updateListing(id, { status: 'sold' });
       await loadData();
     } catch (err) { alert(err.message); }
@@ -210,18 +272,28 @@ export default function MarketplaceScreen({ currentUser }) {
     if (!window.confirm('Delete this listing? This cannot be undone.')) return;
     try {
       const existing = await getListing(id);
-      if (existing.sellerId !== currentUser.id) { alert('You do not own this listing.'); return; }
+      if (existing.sellerId !== currentUser.id) { alert('Unauthorized: You do not own this listing.'); return; }
       await deleteListing(id);
       await loadData();
     } catch (err) { alert(err.message); }
   };
 
-  const isFarmer = currentUser.role === 'farmer';
+  const isFarmer = currentUser?.role === 'farmer';
 
   return (
     <div className="screen">
       <div className="section-header">
-        <h2 className="screen-title" style={{ marginBottom: 0 }}>Marketplace</h2>
+        <div>
+          <h2 className="screen-title" style={{ marginBottom: 0 }}>Produce Marketplace</h2>
+          <div style={{ display: 'flex', gap: '.4rem', alignItems: 'center', marginTop: '.2rem' }}>
+            <span className={`pill ${isSupabaseConfigured() ? 'pill-green' : 'pill-amber'}`} style={{ fontSize: '.68rem' }}>
+              {isSupabaseConfigured() ? '🟢 Live Realtime' : '🟡 Polling Mode'}
+            </span>
+            <span style={{ fontSize: '.72rem', color: 'var(--gray-500)' }}>
+              {filtered.length} active offer{filtered.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
         {isFarmer && (
           <button className="btn btn-primary btn-sm" onClick={openCreate} aria-label="List produce">
             + List Produce
@@ -229,14 +301,24 @@ export default function MarketplaceScreen({ currentUser }) {
         )}
       </div>
 
+      {liveToast && (
+        <div style={{
+          background: 'var(--green-pale)', border: '1px solid var(--green)', borderRadius: 'var(--radius-sm)',
+          padding: '.5rem .75rem', fontSize: '.82rem', color: 'var(--green-dark)', marginBottom: '.75rem',
+          display: 'flex', alignItems: 'center', gap: '.5rem', animation: 'fadeIn .2s ease-in'
+        }}>
+          <span>{liveToast}</span>
+        </div>
+      )}
+
       {/* Listing Form Modal */}
       {showForm && isFarmer && (
         <div className="modal-overlay" onClick={() => { setShowForm(false); resetForm(); }}>
           <div className="modal" style={{ maxWidth: 460, maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">{editId ? 'Edit Listing' : 'List Produce'}</h2>
+            <h2 className="modal-title">{editId ? 'Edit Produce Listing' : 'List Produce for Buyers'}</h2>
             <form onSubmit={handleSubmit} noValidate>
               <div className="form-group">
-                <label className="form-label" htmlFor="lc-crop">Crop</label>
+                <label className="form-label" htmlFor="lc-crop">Select Crop</label>
                 <select id="lc-crop" className={`form-control ${formErrors.cropId ? 'error' : ''}`}
                   value={form.cropId} onChange={e => setForm(f => ({ ...f, cropId: e.target.value }))}>
                   <option value="">Select crop…</option>
@@ -263,7 +345,7 @@ export default function MarketplaceScreen({ currentUser }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="lc-dist">District</label>
+                <label className="form-label" htmlFor="lc-dist">District / Mandi Location</label>
                 <select id="lc-dist" className={`form-control ${formErrors.district ? 'error' : ''}`}
                   value={form.district} onChange={e => setForm(f => ({ ...f, district: e.target.value }))}>
                   <option value="">Select district…</option>
@@ -274,7 +356,7 @@ export default function MarketplaceScreen({ currentUser }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.6rem' }}>
                 <div className="form-group">
-                  <label className="form-label" htmlFor="lc-grade">Grade</label>
+                  <label className="form-label" htmlFor="lc-grade">Grade / Quality</label>
                   <select id="lc-grade" className={`form-control ${formErrors.grade ? 'error' : ''}`}
                     value={form.grade} onChange={e => setForm(f => ({ ...f, grade: e.target.value }))}>
                     <option value="">Grade…</option>
@@ -292,7 +374,7 @@ export default function MarketplaceScreen({ currentUser }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="lc-phone">Contact Phone</label>
+                <label className="form-label" htmlFor="lc-phone">Contact Mobile Number</label>
                 <input id="lc-phone" className={`form-control ${formErrors.contactPhone ? 'error' : ''}`}
                   type="tel" placeholder="03001234567"
                   value={form.contactPhone} onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} />
@@ -308,7 +390,7 @@ export default function MarketplaceScreen({ currentUser }) {
               <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); resetForm(); }}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Saving…' : editId ? 'Update Listing' : 'Submit Listing'}
+                  {saving ? 'Publishing…' : editId ? 'Update Listing' : 'Publish Listing'}
                 </button>
               </div>
             </form>
@@ -316,16 +398,17 @@ export default function MarketplaceScreen({ currentUser }) {
         </div>
       )}
 
-      {/* Filters */}
+      {/* Filters Row */}
       <div className="filter-row">
         <div className="search-input" style={{ flex: 2, minWidth: 130 }}>
-          <input className="form-control" type="text" placeholder="Search crop…" value={search} onChange={e => setSearch(e.target.value)} aria-label="Search listings" />
+          <input className="form-control" type="text" placeholder="Search produce…" value={search} onChange={e => setSearch(e.target.value)} aria-label="Search listings" />
         </div>
         <select className="form-control" value={filterCrop} onChange={e => setFilterCrop(e.target.value)} aria-label="Filter by crop">
           <option value="">All crops</option>
           {crops.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </div>
+
       <div className="filter-row">
         <select className="form-control" value={filterDist} onChange={e => setFilterDist(e.target.value)} aria-label="Filter by district">
           <option value="">All districts</option>
@@ -337,12 +420,12 @@ export default function MarketplaceScreen({ currentUser }) {
         </select>
         <select className="form-control" value={sortMode} onChange={e => setSortMode(e.target.value)} aria-label="Sort listings">
           <option value="newest">Newest first</option>
-          <option value="price">Price ↑</option>
+          <option value="price">Price (lowest first)</option>
         </select>
       </div>
 
       {loading && (
-        <div className="state-box"><div className="spinner" /><p className="state-text">Loading listings…</p></div>
+        <div className="state-box"><div className="spinner" /><p className="state-text">Loading marketplace…</p></div>
       )}
       {error && !loading && (
         <div className="state-box">
@@ -354,7 +437,7 @@ export default function MarketplaceScreen({ currentUser }) {
       {!loading && !error && filtered.length === 0 && (
         <div className="state-box">
           <span className="state-icon">🛒</span>
-          <p className="state-text">No active listings found.</p>
+          <p className="state-text">No active produce listings found matching your filters.</p>
         </div>
       )}
 
@@ -363,14 +446,14 @@ export default function MarketplaceScreen({ currentUser }) {
         const cropUnit = getCropUnit(listing.cropId);
         const avg = avgMap[listing.cropId];
         const label = calcPriceLabel(listing.askingPrice, avg);
-        const isOwner = listing.sellerId === currentUser.id;
+        const isOwner = currentUser && listing.sellerId === currentUser.id;
 
         return (
           <div key={listing.id} className="listing-card" role="article" aria-label={`Listing: ${cropName}`}>
             <div className="listing-card-header">
               <div>
                 <div className="listing-crop">{cropName}</div>
-                <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', marginTop: '.2rem' }}>
+                <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', marginTop: '.25rem' }}>
                   <span className="pill pill-green">Grade {listing.grade}</span>
                   <span className={`pill pill-${label.cls}`}>{label.label}</span>
                 </div>
@@ -384,7 +467,7 @@ export default function MarketplaceScreen({ currentUser }) {
             <div className="listing-meta">
               <span className="listing-meta-item">📍 {listing.district}</span>
               <span className="listing-meta-item">📦 {fmt(listing.quantity)} {cropUnit}</span>
-              <span className="listing-meta-item">📅 From {listing.availableFrom}</span>
+              <span className="listing-meta-item">📅 Available: {listing.availableFrom}</span>
               <span className="listing-meta-item">📞 {listing.contactPhone}</span>
             </div>
 
@@ -403,7 +486,7 @@ export default function MarketplaceScreen({ currentUser }) {
               {isFarmer && isOwner && (
                 <>
                   <button className="btn btn-secondary btn-sm" onClick={() => openEdit(listing)} aria-label="Edit listing">✏️ Edit</button>
-                  <button className="btn btn-secondary btn-sm" onClick={() => handleSold(listing.id)} aria-label="Mark as sold">✅ Sold</button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleSold(listing.id)} aria-label="Mark as sold">✅ Mark Sold</button>
                   <button className="btn btn-danger btn-sm" onClick={() => handleDelete(listing.id)} aria-label="Delete listing">🗑️ Delete</button>
                 </>
               )}
@@ -414,4 +497,3 @@ export default function MarketplaceScreen({ currentUser }) {
     </div>
   );
 }
-

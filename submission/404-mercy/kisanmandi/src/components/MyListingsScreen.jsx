@@ -41,14 +41,15 @@ export default function MyListingsScreen({ currentUser }) {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId]     = useState(null);
   const [form, setForm]         = useState({
-    cropId: '', quantity: '', askingPrice: '', district: currentUser.district || '',
-    grade: '', availableFrom: todayStr(), contactPhone: currentUser.phone || '',
+    cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
+    grade: '', availableFrom: todayStr(), contactPhone: currentUser?.phone || '',
   });
   const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving]     = useState(false);
   const [formApiError, setFormApiError] = useState('');
 
   const loadData = useCallback(async () => {
+    if (!currentUser?.id) return;
     setLoading(true);
     setError('');
     try {
@@ -61,7 +62,7 @@ export default function MyListingsScreen({ currentUser }) {
     } finally {
       setLoading(false);
     }
-  }, [currentUser.id]);
+  }, [currentUser?.id]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -69,7 +70,7 @@ export default function MyListingsScreen({ currentUser }) {
   const getCropUnit = id => crops.find(c => c.id === id)?.unit || '';
 
   const resetForm = () => {
-    setForm({ cropId: '', quantity: '', askingPrice: '', district: currentUser.district || '', grade: '', availableFrom: todayStr(), contactPhone: currentUser.phone || '' });
+    setForm({ cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '', grade: '', availableFrom: todayStr(), contactPhone: currentUser?.phone || '' });
     setFormErrors({}); setFormApiError(''); setEditId(null);
   };
 
