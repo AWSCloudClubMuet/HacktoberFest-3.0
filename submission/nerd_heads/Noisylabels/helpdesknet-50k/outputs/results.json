@@ -1,0 +1,24 @@
+{
+  "source": "https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/9",
+  "data_type": "fictional scenario; aggregate-only analysis",
+  "audit_noise_rate": 0.15,
+  "audit_wilson_95_ci": [
+    0.11834499530337544,
+    0.18831361073063213
+  ],
+  "population_weighted_noise_rate": 0.15084175084175083,
+  "stratified_approx_95_ci": [
+    0.11653786517791842,
+    0.18514563650558324
+  ],
+  "tier_comparison": {
+    "tier_a_rate": 0.06666666666666667,
+    "tier_b_rate": 0.21818181818181817,
+    "z_statistic": -4.222003309207491,
+    "two_sided_p": 2.421405540527715e-05
+  },
+  "most_common_bidirectional_pair": "Billing / Refund",
+  "most_common_pair_count": 26,
+  "noise_model_accuracy_estimate": 0.9634146341463414,
+  "accuracy_assumption": "15% independent uniform flips to one of five wrong classes"
+}
