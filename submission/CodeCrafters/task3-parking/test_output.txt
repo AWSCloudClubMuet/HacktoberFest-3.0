@@ -1,0 +1,204 @@
+================================================================
+                  SMART PARKING FEE CALCULATOR
+          CRESTVIEW UNIVERSITY - CAMPUS PARKING SYSTEM
+================================================================
+  [INFO]    Educational prototype: it CALCULATES parking charges only.
+  [INFO]    No payment is taken and staff status is not verified.
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): -1
+  [ERROR]   Invalid choice. Please enter 1, 2, 3 or 4.
+  Enter your choice (1-4): 5
+  [ERROR]   Invalid choice. Please enter 1, 2, 3 or 4.
+  Enter your choice (1-4): 1
+
+----------------------------------------------------------------
+ NEW PARKING FEE CALCULATION
+----------------------------------------------------------------
+  Registration number (e.g. ABC-123): CCC-777
+
+  Vehicle types and hourly rates:
+    Bike  - Rs. 30.00 per billed hour
+    Car   - Rs. 50.00 per billed hour
+    Van   - Rs. 80.00 per billed hour
+
+  Vehicle type (Bike / Car / Van): Bike
+  Parking duration in hours (e.g. 2 or 6.5; max 8760): 2
+  Is the customer university staff? (Y/N, self-declared): y
+
+----------------------------------------------------------------
+ CALCULATION SUMMARY
+----------------------------------------------------------------
+  Vehicle                 : Bike
+  Billed duration         : 2 hours
+  Hourly rate             : Rs. 30.00
+  Original fee            : 2 x Rs. 30.00 = Rs. 60.00
+  Discount percentage     : 0% standard + 5% staff = 5%
+  Discount amount         : 5% of Rs. 60.00 = Rs. 3.00
+  Final amount            : Rs. 60.00 - Rs. 3.00 = Rs. 57.00
+
+================================================================
+          CRESTVIEW UNIVERSITY - CAMPUS PARKING SYSTEM
+                PARKING FEE RECEIPT (CALCULATED)
+================================================================
+  Receipt number          : PKG-0001
+  Vehicle registration    : CCC-777
+  Vehicle type            : Bike
+  Actual parking duration : 2 hours
+  Billed parking duration : 2 hours
+  Hourly rate             : Rs. 30.00
+  Original fee            : Rs. 60.00
+  Customer category       : University Staff (self-declared)
+  Standard discount       : 0%
+  Staff discount          : +5%
+  Total discount          : 5%
+  Discount amount         : Rs. 3.00
+----------------------------------------------------------------
+  FINAL PAYABLE AMOUNT    : Rs. 57.00
+  Payment status          : CALCULATED - NOT PAID
+================================================================
+  [INFO]    This is a fee calculation only. No payment has been made.
+  [INFO]    Staff status was self-declared and has not been verified.
+  [OK]      Calculation complete. Choose an option below to continue.
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): 1
+
+----------------------------------------------------------------
+ NEW PARKING FEE CALCULATION
+----------------------------------------------------------------
+  Registration number (e.g. ABC-123): DDD-888
+
+  Vehicle types and hourly rates:
+    Bike  - Rs. 30.00 per billed hour
+    Car   - Rs. 50.00 per billed hour
+    Van   - Rs. 80.00 per billed hour
+
+  Vehicle type (Bike / Car / Van): Van
+  Parking duration in hours (e.g. 2 or 6.5; max 8760): 5
+  Is the customer university staff? (Y/N, self-declared): n
+
+----------------------------------------------------------------
+ CALCULATION SUMMARY
+----------------------------------------------------------------
+  Vehicle                 : Van
+  Billed duration         : 5 hours
+  Hourly rate             : Rs. 80.00
+  Original fee            : 5 x Rs. 80.00 = Rs. 400.00
+  Discount percentage     : 0% standard = 0%
+  Discount amount         : 0% of Rs. 400.00 = Rs. 0.00
+  Final amount            : Rs. 400.00 - Rs. 0.00 = Rs. 400.00
+
+================================================================
+          CRESTVIEW UNIVERSITY - CAMPUS PARKING SYSTEM
+                PARKING FEE RECEIPT (CALCULATED)
+================================================================
+  Receipt number          : PKG-0002
+  Vehicle registration    : DDD-888
+  Vehicle type            : Van
+  Actual parking duration : 5 hours
+  Billed parking duration : 5 hours
+  Hourly rate             : Rs. 80.00
+  Original fee            : Rs. 400.00
+  Customer category       : Student / Visitor
+  Standard discount       : 0%
+  Staff discount          : Not applicable
+  Total discount          : 0%
+  Discount amount         : Rs. 0.00
+----------------------------------------------------------------
+  FINAL PAYABLE AMOUNT    : Rs. 400.00
+  Payment status          : CALCULATED - NOT PAID
+================================================================
+  [INFO]    This is a fee calculation only. No payment has been made.
+  [OK]      Calculation complete. Choose an option below to continue.
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): 2
+
+----------------------------------------------------------------
+ SESSION HISTORY
+----------------------------------------------------------------
+  [INFO]    History is temporary: it is cleared when the program exits.
+
+  Amounts are in Rs.
+Receipt  Registration    Vehicle Billed      Original   Discount      Final
+----------------------------------------------------------------
+PKG-0001 CCC-777         Bike    2 h            60.00       3.00      57.00
+PKG-0002 DDD-888         Van     5 h           400.00       0.00     400.00
+----------------------------------------------------------------
+  [INFO]    2 calculation(s) in this session.
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): 3
+
+----------------------------------------------------------------
+ SEARCH HISTORY
+----------------------------------------------------------------
+  Registration number to search: CCC-777
+
+  Amounts are in Rs.
+Receipt  Registration    Vehicle Billed      Original   Discount      Final
+----------------------------------------------------------------
+PKG-0001 CCC-777         Bike    2 h            60.00       3.00      57.00
+----------------------------------------------------------------
+  [OK]      1 match(es) found for 'CCC-777'.
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): 3
+
+----------------------------------------------------------------
+ SEARCH HISTORY
+----------------------------------------------------------------
+  Registration number to search: ccc-888
+  [WARNING] No calculation found for 'CCC-888' in this session.
+  [INFO]    Check the spelling, or calculate a fee first (search covers this session only).
+
+  MAIN MENU
+    1. Calculate a parking fee
+    2. View session history
+    3. Search history by registration number
+    4. Exit and show session summary
+
+  Enter your choice (1-4): 4
+
+----------------------------------------------------------------
+ SESSION SUMMARY
+----------------------------------------------------------------
+  Calculations completed  : 2
+  Bikes processed         : 1
+  Cars processed          : 0
+  Vans processed          : 1
+  Total original fees     : Rs. 460.00
+  Total discounts granted : Rs. 3.00
+  Total final charges     : Rs. 457.00
+  [INFO]    These are CALCULATED charges, not collected revenue.
+
+================================================================
+     Thank you for using the Smart Parking Fee Calculator.
+              Drive safe and park smart. Goodbye!
+================================================================
