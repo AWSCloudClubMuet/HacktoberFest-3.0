@@ -14,3 +14,10 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+# API server (embedded Postgres data)
+server/.data/
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Local API env (contains DATABASE_URL + auth secret)
+server/.env
