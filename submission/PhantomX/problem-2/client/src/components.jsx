@@ -2,20 +2,20 @@ import { useEffect } from 'react';
 import { useApp } from './context.js';
 
 const tones = {
-  open: 'bg-progress-soft text-progress ring-progress-line',
+  open: 'bg-offer-soft text-offer ring-offer/20',
   expired: 'bg-danger-soft text-danger ring-danger-line',
-  progress: 'bg-warning-soft text-warning ring-warning-line',
+  progress: 'bg-progress-soft text-progress ring-progress-line',
   completed: 'bg-success-soft text-success ring-success-line',
-  cancelled: 'bg-canvas text-primary ring-line-strong',
-  offering: 'bg-primary text-white ring-primary',
-  requesting: 'bg-secondary text-white ring-secondary',
-  paid: 'bg-ink text-white ring-ink',
-  swap: 'bg-swap-soft text-swap ring-swap-line',
-  free: 'bg-success-soft text-success ring-success-line',
+  cancelled: 'bg-canvas text-muted ring-line-strong',
+  offering: 'bg-offer-soft text-offer ring-offer/25',
+  requesting: 'bg-request-soft text-request ring-request/20',
+  paid: 'bg-warning-soft text-warning ring-warning-line',
+  swap: 'bg-request-soft text-request ring-request/20',
+  free: 'bg-offer-soft text-offer ring-offer/20',
   pending: 'bg-warning-soft text-warning ring-warning-line',
   accepted: 'bg-success-soft text-success ring-success-line',
   rejected: 'bg-danger-soft text-danger ring-danger-line',
-  neutral: 'bg-canvas text-primary ring-line',
+  neutral: 'bg-canvas text-ink ring-line',
 };
 
 export function statusTone(status) {
@@ -45,17 +45,17 @@ export function Badge({ children, tone = 'neutral' }) {
   );
 }
 
-const control = 'min-h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 py-2.5 text-base text-ink shadow-sm transition duration-150 focus:border-primary focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60';
+const control = 'min-h-11 w-full min-w-0 rounded-2xl border border-line bg-surface px-3 py-2.5 text-base text-ink shadow-sm transition duration-150 focus:border-offer focus:ring-2 focus:ring-offer/25 disabled:cursor-not-allowed disabled:opacity-60';
 
 export const inputClass = control;
 
-export const buttonClass = 'inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white transition duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60';
+export const buttonClass = 'inline-flex min-h-11 items-center justify-center rounded-full fill-offer px-4 py-2.5 text-base font-semibold text-white shadow-card transition duration-150 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60';
 
-export const secondaryButtonClass = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-line-strong bg-surface px-4 py-2.5 text-base font-semibold text-ink transition duration-150 hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-60';
+export const secondaryButtonClass = 'inline-flex min-h-11 items-center justify-center rounded-full border border-line-strong bg-surface px-4 py-2.5 text-base font-semibold text-ink transition duration-150 hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-60';
 
-export const dangerButtonClass = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-danger-line bg-danger-soft px-4 py-2.5 text-base font-semibold text-danger transition duration-150 hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-60';
+export const dangerButtonClass = 'inline-flex min-h-11 items-center justify-center rounded-full border border-danger-line bg-danger-soft px-4 py-2.5 text-base font-semibold text-danger transition duration-150 hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-60';
 
-export const cardClass = 'min-w-0 rounded-2xl border border-line bg-surface shadow-card';
+export const cardClass = 'min-w-0 rounded-3xl border border-line/80 bg-surface shadow-card';
 
 export const textLinkClass = 'font-semibold text-primary underline-offset-2 hover:underline';
 
