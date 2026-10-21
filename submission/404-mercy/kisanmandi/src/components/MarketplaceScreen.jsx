@@ -3,7 +3,10 @@ import {
   getCrops, getMarkets, getActiveListings, getPrices,
   createListing, updateListing, deleteListing, getListing
 } from '../services/api';
-import { isSupabaseConfigured, subscribeToListings, unsubscribeChannel } from '../services/supabase';
+import {
+  isSupabaseConfigured, subscribeToListings, unsubscribeChannel,
+  uploadListingImage, deleteListingImage
+} from '../services/supabase';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
@@ -70,8 +73,12 @@ export default function MarketplaceScreen({ currentUser }) {
     cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
     grade: 'A', availableFrom: todayStr(), contactPhone: currentUser?.phone || '',
   });
-  const [formErrors, setFormErrors] = useState({});
-  const [saving, setSaving]       = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl]     = useState(null);
+  const [photoError, setPhotoError]     = useState('');
+  const [uploading, setUploading]       = useState(false);
+  const [formErrors, setFormErrors]     = useState({});
+  const [saving, setSaving]             = useState(false);
   const [formApiError, setFormApiError] = useState('');
 
   const loadData = useCallback(async () => {
@@ -106,6 +113,7 @@ export default function MarketplaceScreen({ currentUser }) {
           availableFrom: raw.available_from ?? raw.availableFrom,
           contactPhone: raw.contact_phone ?? raw.contactPhone,
           status: raw.status,
+          imageUrl: raw.image_url ?? raw.imageUrl ?? null,
           createdAt: raw.created_at ?? raw.createdAt,
         };
         if (item.status === 'active') {
@@ -126,6 +134,7 @@ export default function MarketplaceScreen({ currentUser }) {
           availableFrom: raw.available_from ?? raw.availableFrom,
           contactPhone: raw.contact_phone ?? raw.contactPhone,
           status: raw.status,
+          imageUrl: raw.image_url ?? raw.imageUrl ?? null,
           createdAt: raw.created_at ?? raw.createdAt,
         };
         setListings((prev) => {
@@ -186,12 +195,18 @@ export default function MarketplaceScreen({ currentUser }) {
       cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
       grade: 'A', availableFrom: todayStr(), contactPhone: currentUser?.phone || ''
     });
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setPhotoError('');
     setFormErrors({});
     setFormApiError('');
     setEditId(null);
   };
 
-  const openCreate = () => { resetForm(); setShowForm(true); };
+  const openCreate = () => {
+    resetForm();
+    setShowForm(true);
+  };
 
   const openEdit = (listing) => {
     setForm({
@@ -203,10 +218,36 @@ export default function MarketplaceScreen({ currentUser }) {
       availableFrom: listing.availableFrom,
       contactPhone: listing.contactPhone,
     });
+    setSelectedFile(null);
+    setPreviewUrl(listing.imageUrl || null);
+    setPhotoError('');
     setFormErrors({});
     setFormApiError('');
     setEditId(listing.id);
     setShowForm(true);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    setPhotoError('');
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setPhotoError('Only JPG, PNG, and WebP images are allowed.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Image file size must be less than 5MB.');
+      return;
+    }
+    setSelectedFile(file);
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+  };
+
+  const handleRemovePhoto = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setPhotoError('');
   };
 
   const handleSubmit = async (e) => {
@@ -221,6 +262,22 @@ export default function MarketplaceScreen({ currentUser }) {
     setSaving(true);
     setFormApiError('');
     try {
+      let finalImageUrl = previewUrl;
+      if (selectedFile) {
+        setUploading(true);
+        try {
+          const uploadRes = await uploadListingImage(selectedFile, currentUser.id);
+          finalImageUrl = typeof uploadRes === 'string' ? uploadRes : uploadRes?.url || previewUrl;
+        } catch (uploadErr) {
+          setPhotoError(uploadErr.message || 'Failed to upload photo.');
+          setSaving(false);
+          setUploading(false);
+          return;
+        } finally {
+          setUploading(false);
+        }
+      }
+
       if (editId) {
         // Revalidate ownership
         const existing = await getListing(editId);
@@ -233,6 +290,7 @@ export default function MarketplaceScreen({ currentUser }) {
           grade: form.grade,
           availableFrom: form.availableFrom,
           contactPhone: form.contactPhone.trim(),
+          imageUrl: finalImageUrl,
         });
       } else {
         await createListing({
@@ -244,6 +302,7 @@ export default function MarketplaceScreen({ currentUser }) {
           grade: form.grade,
           availableFrom: form.availableFrom,
           contactPhone: form.contactPhone.trim(),
+          imageUrl: finalImageUrl,
           status: 'active',
           createdAt: new Date().toISOString(),
         });
@@ -381,6 +440,35 @@ export default function MarketplaceScreen({ currentUser }) {
                 {formErrors.contactPhone && <p className="form-error">{formErrors.contactPhone}</p>}
               </div>
 
+              <div className="form-group">
+                <label className="form-label">Produce Photo (Optional)</label>
+                {previewUrl ? (
+                  <div className="image-preview-wrap">
+                    <img src={previewUrl} alt="Listing preview" className="image-preview-img" />
+                    <button type="button" className="image-preview-remove" onClick={handleRemovePhoto} title="Remove image">
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <label className="image-upload-dropzone">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
+                    <span style={{ fontSize: '1.4rem' }}>📷</span>
+                    <span style={{ fontSize: '.85rem', fontWeight: 600, color: 'var(--green-dark)' }}>
+                      Upload photo of your actual produce
+                    </span>
+                    <span style={{ fontSize: '.72rem', color: 'var(--gray-500)' }}>
+                      JPG, PNG or WebP up to 5MB
+                    </span>
+                  </label>
+                )}
+                {photoError && <p className="form-error">{photoError}</p>}
+              </div>
+
               {formApiError && (
                 <div style={{ background: 'var(--red-pale)', border: '1px solid #fca5a5', borderRadius: 'var(--radius-sm)', padding: '.5rem .75rem', fontSize: '.8rem', color: 'var(--red)', marginBottom: '.75rem' }}>
                   ⚠️ {formApiError}
@@ -389,8 +477,8 @@ export default function MarketplaceScreen({ currentUser }) {
 
               <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); resetForm(); }}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Publishing…' : editId ? 'Update Listing' : 'Publish Listing'}
+                <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                  {uploading ? 'Uploading Photo…' : saving ? 'Publishing…' : editId ? 'Update Listing' : 'Publish Listing'}
                 </button>
               </div>
             </form>
@@ -442,14 +530,32 @@ export default function MarketplaceScreen({ currentUser }) {
       )}
 
       {!loading && !error && filtered.map(listing => {
-        const cropName = getCropName(listing.cropId);
-        const cropUnit = getCropUnit(listing.cropId);
+        const cropObj = crops.find(c => c.id === listing.cropId);
+        const cropName = cropObj?.name || listing.cropId;
+        const cropUnit = cropObj?.unit || '';
         const avg = avgMap[listing.cropId];
         const label = calcPriceLabel(listing.askingPrice, avg);
         const isOwner = currentUser && listing.sellerId === currentUser.id;
+        const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+        const hasSellerPhoto = Boolean(listing.imageUrl);
 
         return (
           <div key={listing.id} className="listing-card" role="article" aria-label={`Listing: ${cropName}`}>
+            <div className="listing-img-wrap">
+              <img
+                src={displayImg}
+                alt={cropName}
+                className="listing-img"
+                loading="lazy"
+                onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+              />
+              {hasSellerPhoto ? (
+                <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>
+              ) : (
+                <span className="listing-img-badge badge-reference-photo">🌾 Crop Reference Photo</span>
+              )}
+            </div>
+
             <div className="listing-card-header">
               <div>
                 <div className="listing-crop">{cropName}</div>

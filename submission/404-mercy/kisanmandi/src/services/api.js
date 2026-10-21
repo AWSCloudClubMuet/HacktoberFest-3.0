@@ -70,9 +70,20 @@ export async function getCrops() {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase.from('crops').select('*').order('name');
     if (error) throw error;
-    return data || [];
+    return (data || []).map(c => ({
+      id: c.id,
+      name: c.name,
+      category: c.category,
+      unit: c.unit,
+      icon: c.icon,
+      imageUrl: c.image_url ?? c.imageUrl ?? `/images/crops/${c.name.toLowerCase()}.jpg`,
+    }));
   }
-  return http('/crops');
+  const localCrops = await http('/crops');
+  return (localCrops || []).map(c => ({
+    ...c,
+    imageUrl: c.imageUrl || `/images/crops/${c.name.toLowerCase()}.jpg`,
+  }));
 }
 
 // ── MARKETS ──────────────────────────────────────────────────────────────────
@@ -157,6 +168,7 @@ function mapListingFromDb(l) {
     availableFrom: l.available_from ?? l.availableFrom,
     contactPhone: l.contact_phone ?? l.contactPhone,
     status: l.status,
+    imageUrl: l.image_url ?? l.imageUrl ?? null,
     createdAt: l.created_at ?? l.createdAt,
   };
 }
@@ -212,6 +224,7 @@ export async function createListing(data) {
       available_from: data.availableFrom,
       contact_phone: data.contactPhone,
       status: data.status || 'active',
+      image_url: data.imageUrl || null,
     };
     const { data: created, error } = await supabase
       .from('listings')
@@ -235,6 +248,7 @@ export async function updateListing(id, updates) {
     if (updates.availableFrom !== undefined) payload.available_from = updates.availableFrom;
     if (updates.contactPhone !== undefined) payload.contact_phone = updates.contactPhone;
     if (updates.status !== undefined) payload.status = updates.status;
+    if (updates.imageUrl !== undefined) payload.image_url = updates.imageUrl;
     payload.updated_at = new Date().toISOString();
 
     const { data: updated, error } = await supabase

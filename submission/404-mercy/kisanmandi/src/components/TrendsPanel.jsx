@@ -6,6 +6,22 @@ import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
+function getCropImage(crop) {
+  if (crop?.imageUrl) return crop.imageUrl;
+  const name = (crop?.name || '').toLowerCase();
+  if (name.includes('wheat')) return '/images/crops/wheat.jpg';
+  if (name.includes('rice')) return '/images/crops/rice.jpg';
+  if (name.includes('cotton')) return '/images/crops/cotton.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('tomato')) return '/images/crops/tomato.jpg';
+  if (name.includes('onion')) return '/images/crops/onion.jpg';
+  if (name.includes('potato')) return '/images/crops/potato.jpg';
+  if (name.includes('chili')) return '/images/crops/chilies.jpg';
+  if (name.includes('mango')) return '/images/crops/mango.jpg';
+  if (name.includes('banana')) return '/images/crops/banana.jpg';
+  return '/images/crops/wheat.jpg';
+}
+
 export default function TrendsPanel({ crop, market, markets, prices, onBack }) {
   // Filter 14-day history for selected crop+market (chronological)
   const history = useMemo(() => {
@@ -44,6 +60,13 @@ export default function TrendsPanel({ crop, market, markets, prices, onBack }) {
       <div className="section-header" style={{ marginBottom: '.75rem' }}>
         <button className="btn btn-secondary btn-sm" onClick={onBack} aria-label="Back to prices">← Back to Prices</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <img
+            src={getCropImage(crop)}
+            alt={`${crop.name} reference`}
+            style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--gray-200)', flexShrink: 0 }}
+            loading="lazy"
+            onError={(e) => { e.currentTarget.src = '/images/crops/wheat.jpg'; }}
+          />
           <span style={{ fontSize: '.9rem', fontWeight: 700, color: 'var(--green-dark)' }}>
             {crop.name} — {market.name}
           </span>

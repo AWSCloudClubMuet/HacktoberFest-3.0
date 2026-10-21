@@ -3,6 +3,7 @@ import {
   getListingsBySeller, getCrops, getMarkets, getPrices,
   updateListing, deleteListing, getListing, createListing
 } from '../services/api';
+import { uploadListingImage } from '../services/supabase';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
@@ -44,8 +45,12 @@ export default function MyListingsScreen({ currentUser }) {
     cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '',
     grade: '', availableFrom: todayStr(), contactPhone: currentUser?.phone || '',
   });
-  const [formErrors, setFormErrors] = useState({});
-  const [saving, setSaving]     = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl]     = useState(null);
+  const [photoError, setPhotoError]     = useState('');
+  const [uploading, setUploading]       = useState(false);
+  const [formErrors, setFormErrors]     = useState({});
+  const [saving, setSaving]             = useState(false);
   const [formApiError, setFormApiError] = useState('');
 
   const loadData = useCallback(async () => {
@@ -71,7 +76,17 @@ export default function MyListingsScreen({ currentUser }) {
 
   const resetForm = () => {
     setForm({ cropId: '', quantity: '', askingPrice: '', district: currentUser?.district || '', grade: '', availableFrom: todayStr(), contactPhone: currentUser?.phone || '' });
-    setFormErrors({}); setFormApiError(''); setEditId(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setPhotoError('');
+    setFormErrors({});
+    setFormApiError('');
+    setEditId(null);
+  };
+
+  const openCreate = () => {
+    resetForm();
+    setShowForm(true);
   };
 
   const openEdit = (listing) => {
@@ -79,8 +94,36 @@ export default function MyListingsScreen({ currentUser }) {
       cropId: listing.cropId, quantity: String(listing.quantity), askingPrice: String(listing.askingPrice),
       district: listing.district, grade: listing.grade, availableFrom: listing.availableFrom, contactPhone: listing.contactPhone,
     });
-    setFormErrors({}); setFormApiError(''); setEditId(listing.id);
+    setSelectedFile(null);
+    setPreviewUrl(listing.imageUrl || null);
+    setPhotoError('');
+    setFormErrors({});
+    setFormApiError('');
+    setEditId(listing.id);
     setShowForm(true);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    setPhotoError('');
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setPhotoError('Only JPG, PNG, and WebP images are allowed.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Image file size must be less than 5MB.');
+      return;
+    }
+    setSelectedFile(file);
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+  };
+
+  const handleRemovePhoto = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setPhotoError('');
   };
 
   const handleSubmit = async (e) => {
@@ -91,18 +134,36 @@ export default function MyListingsScreen({ currentUser }) {
     setSaving(true);
     setFormApiError('');
     try {
+      let finalImageUrl = previewUrl;
+      if (selectedFile) {
+        setUploading(true);
+        try {
+          const uploadRes = await uploadListingImage(selectedFile, currentUser.id);
+          finalImageUrl = typeof uploadRes === 'string' ? uploadRes : uploadRes?.url || previewUrl;
+        } catch (uploadErr) {
+          setPhotoError(uploadErr.message || 'Failed to upload photo.');
+          setSaving(false);
+          setUploading(false);
+          return;
+        } finally {
+          setUploading(false);
+        }
+      }
+
       if (editId) {
         const existing = await getListing(editId);
         if (existing.sellerId !== currentUser.id) throw new Error('You do not own this listing.');
         await updateListing(editId, {
           cropId: form.cropId, quantity: Number(form.quantity), askingPrice: Number(form.askingPrice),
-          district: form.district.trim(), grade: form.grade, availableFrom: form.availableFrom, contactPhone: form.contactPhone.trim(),
+          district: form.district.trim(), grade: form.grade, availableFrom: form.availableFrom,
+          contactPhone: form.contactPhone.trim(), imageUrl: finalImageUrl,
         });
       } else {
         await createListing({
           sellerId: currentUser.id, cropId: form.cropId, quantity: Number(form.quantity),
           askingPrice: Number(form.askingPrice), district: form.district.trim(), grade: form.grade,
           availableFrom: form.availableFrom, contactPhone: form.contactPhone.trim(),
+          imageUrl: finalImageUrl,
           status: 'active', createdAt: new Date().toISOString(),
         });
       }
@@ -207,6 +268,36 @@ export default function MyListingsScreen({ currentUser }) {
                   onChange={e => setForm(f => ({ ...f, contactPhone: e.target.value }))} />
                 {formErrors.contactPhone && <p className="form-error">{formErrors.contactPhone}</p>}
               </div>
+
+              <div className="form-group">
+                <label className="form-label">Produce Photo (Optional)</label>
+                {previewUrl ? (
+                  <div className="image-preview-wrap">
+                    <img src={previewUrl} alt="Listing preview" className="image-preview-img" />
+                    <button type="button" className="image-preview-remove" onClick={handleRemovePhoto} title="Remove image">
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <label className="image-upload-dropzone">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
+                    <span style={{ fontSize: '1.4rem' }}>📷</span>
+                    <span style={{ fontSize: '.85rem', fontWeight: 600, color: 'var(--green-dark)' }}>
+                      Upload photo of your actual produce
+                    </span>
+                    <span style={{ fontSize: '.72rem', color: 'var(--gray-500)' }}>
+                      JPG, PNG or WebP up to 5MB
+                    </span>
+                  </label>
+                )}
+                {photoError && <p className="form-error">{photoError}</p>}
+              </div>
+
               {formApiError && (
                 <div style={{ background: 'var(--red-pale)', border: '1px solid #fca5a5', borderRadius: 'var(--radius-sm)', padding: '.5rem .75rem', fontSize: '.8rem', color: 'var(--red)', marginBottom: '.6rem' }}>
                   ⚠️ {formApiError}
@@ -214,8 +305,8 @@ export default function MyListingsScreen({ currentUser }) {
               )}
               <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); resetForm(); }}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Saving…' : editId ? 'Update' : 'Create Listing'}
+                <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                  {uploading ? 'Uploading Photo…' : saving ? 'Saving…' : editId ? 'Update Listing' : 'Create Listing'}
                 </button>
               </div>
             </form>
@@ -242,56 +333,96 @@ export default function MyListingsScreen({ currentUser }) {
       {!loading && !error && active.length > 0 && (
         <>
           <h3 className="section-title">Active ({active.length})</h3>
-          {active.map(listing => (
-            <div key={listing.id} className="listing-card" role="article">
-              <div className="listing-card-header">
-                <div>
-                  <div className="listing-crop">{getCropName(listing.cropId)}</div>
-                  <span className="pill pill-green">Grade {listing.grade}</span>
+          {active.map(listing => {
+            const cropObj = crops.find(c => c.id === listing.cropId);
+            const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+            const hasSellerPhoto = Boolean(listing.imageUrl);
+            return (
+              <div key={listing.id} className="listing-card" role="article">
+                <div className="listing-img-wrap">
+                  <img
+                    src={displayImg}
+                    alt={getCropName(listing.cropId)}
+                    className="listing-img"
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+                  />
+                  {hasSellerPhoto ? (
+                    <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>
+                  ) : (
+                    <span className="listing-img-badge badge-reference-photo">🌾 Crop Reference Photo</span>
+                  )}
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div className="listing-price">₨{fmt(listing.askingPrice)}</div>
-                  <div style={{ fontSize: '.72rem', color: 'var(--gray-500)' }}>/{getCropUnit(listing.cropId)}</div>
+
+                <div className="listing-card-header">
+                  <div>
+                    <div className="listing-crop">{getCropName(listing.cropId)}</div>
+                    <span className="pill pill-green">Grade {listing.grade}</span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className="listing-price">₨{fmt(listing.askingPrice)}</div>
+                    <div style={{ fontSize: '.72rem', color: 'var(--gray-500)' }}>/{getCropUnit(listing.cropId)}</div>
+                  </div>
+                </div>
+                <div className="listing-meta">
+                  <span className="listing-meta-item">📍 {listing.district}</span>
+                  <span className="listing-meta-item">📦 {fmt(listing.quantity)} {getCropUnit(listing.cropId)}</span>
+                  <span className="listing-meta-item">📅 From {listing.availableFrom}</span>
+                </div>
+                <div className="listing-actions">
+                  <button className="btn btn-secondary btn-sm" onClick={() => openEdit(listing)}>✏️ Edit</button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleSold(listing.id)}>✅ Mark Sold</button>
+                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(listing.id)}>🗑️ Delete</button>
                 </div>
               </div>
-              <div className="listing-meta">
-                <span className="listing-meta-item">📍 {listing.district}</span>
-                <span className="listing-meta-item">📦 {fmt(listing.quantity)} {getCropUnit(listing.cropId)}</span>
-                <span className="listing-meta-item">📅 From {listing.availableFrom}</span>
-              </div>
-              <div className="listing-actions">
-                <button className="btn btn-secondary btn-sm" onClick={() => openEdit(listing)}>✏️ Edit</button>
-                <button className="btn btn-secondary btn-sm" onClick={() => handleSold(listing.id)}>✅ Mark Sold</button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(listing.id)}>🗑️ Delete</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </>
       )}
 
       {!loading && !error && sold.length > 0 && (
         <>
           <h3 className="section-title" style={{ marginTop: '1rem' }}>Sold ({sold.length})</h3>
-          {sold.map(listing => (
-            <div key={listing.id} className="listing-card" style={{ opacity: .7 }} role="article">
-              <div className="listing-card-header">
-                <div>
-                  <div className="listing-crop">{getCropName(listing.cropId)}</div>
-                  <span className="pill pill-gray">Sold</span>
+          {sold.map(listing => {
+            const cropObj = crops.find(c => c.id === listing.cropId);
+            const displayImg = listing.imageUrl || cropObj?.imageUrl || `/images/crops/${listing.cropId}.jpg`;
+            const hasSellerPhoto = Boolean(listing.imageUrl);
+            return (
+              <div key={listing.id} className="listing-card" style={{ opacity: .7 }} role="article">
+                <div className="listing-img-wrap">
+                  <img
+                    src={displayImg}
+                    alt={getCropName(listing.cropId)}
+                    className="listing-img"
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.src = `/images/crops/${listing.cropId}.jpg`; }}
+                  />
+                  {hasSellerPhoto ? (
+                    <span className="listing-img-badge badge-seller-photo">📷 Verified Seller Photo</span>
+                  ) : (
+                    <span className="listing-img-badge badge-reference-photo">🌾 Crop Reference Photo</span>
+                  )}
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--gray-500)' }}>₨{fmt(listing.askingPrice)}</div>
+
+                <div className="listing-card-header">
+                  <div>
+                    <div className="listing-crop">{getCropName(listing.cropId)}</div>
+                    <span className="pill pill-gray">Sold</span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--gray-500)' }}>₨{fmt(listing.askingPrice)}</div>
+                  </div>
+                </div>
+                <div className="listing-meta">
+                  <span className="listing-meta-item">📦 {fmt(listing.quantity)} {getCropUnit(listing.cropId)}</span>
+                  <span className="listing-meta-item">Grade {listing.grade}</span>
+                </div>
+                <div className="listing-actions">
+                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(listing.id)}>🗑️ Delete</button>
                 </div>
               </div>
-              <div className="listing-meta">
-                <span className="listing-meta-item">📦 {fmt(listing.quantity)} {getCropUnit(listing.cropId)}</span>
-                <span className="listing-meta-item">Grade {listing.grade}</span>
-              </div>
-              <div className="listing-actions">
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(listing.id)}>🗑️ Delete</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </>
       )}
     </div>

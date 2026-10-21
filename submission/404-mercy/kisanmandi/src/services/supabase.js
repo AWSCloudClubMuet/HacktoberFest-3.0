@@ -204,3 +204,73 @@ export function unsubscribeChannel(channel) {
   });
 }
 
+// ── SUPABASE STORAGE IMAGE UPLOAD ──────────────────────────────────────────
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+/**
+ * Upload actual seller produce photo to Supabase Storage bucket 'product-images'.
+ * Stores under folder `${userId}/${timestamp}-${sanitizedName}`.
+ * Returns public URL.
+ */
+export async function uploadListingImage(file, userId) {
+  if (!file) throw new Error('No file selected.');
+
+  // Validate file type
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error('Invalid file format. Only JPEG, PNG, and WebP images are permitted.');
+  }
+
+  // Validate file size
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    throw new Error('Image size exceeds 5MB limit. Please choose a smaller photo.');
+  }
+
+  if (isSupabaseConfigured() && supabase) {
+    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filePath = `${userId || 'anonymous'}/${Date.now()}-${cleanFileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    const { data: publicData } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(data.path);
+
+    return {
+      url: publicData.publicUrl,
+      path: data.path,
+    };
+  }
+
+  // Local fallback: Convert to data URL for mock preview & persistence
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({ url: reader.result, path: `local-${file.name}` });
+    reader.onerror = () => reject(new Error('Failed to read image file locally.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Remove an uploaded listing image from Supabase Storage.
+ */
+export async function deleteListingImage(filePath) {
+  if (!isSupabaseConfigured() || !supabase || !filePath || filePath.startsWith('data:') || filePath.startsWith('/')) {
+    return;
+  }
+  try {
+    await supabase.storage.from('product-images').remove([filePath]);
+  } catch (err) {
+    console.warn('[Storage] Could not delete image:', err.message);
+  }
+}
+
+

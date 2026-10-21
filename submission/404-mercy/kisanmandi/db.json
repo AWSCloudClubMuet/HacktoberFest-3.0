@@ -43,12 +43,12 @@
       "role": "buyer"
     },
     {
-      "name": "Ali",
-      "email": "ali@gmail.com",
+      "name": "Hyder",
+      "email": "hyderbux@gmail.com",
       "phone": "03033532363",
       "district": "Nawabshah",
       "role": "farmer",
-      "id": "TG8j3VKDCy8"
+      "id": "S_DHtaHY2k8"
     }
   ],
   "crops": [
@@ -56,49 +56,57 @@
       "id": "c1",
       "name": "Wheat",
       "category": "Grains",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/wheat.jpg"
     },
     {
       "id": "c2",
       "name": "Rice",
       "category": "Grains",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/rice.jpg"
     },
     {
       "id": "c3",
       "name": "Cotton",
       "category": "Cash Crops",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/cotton.jpg"
     },
     {
       "id": "c4",
       "name": "Sugarcane",
       "category": "Cash Crops",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/sugarcane.jpg"
     },
     {
       "id": "c5",
       "name": "Onion",
       "category": "Vegetables",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/onion.jpg"
     },
     {
       "id": "c6",
       "name": "Tomato",
       "category": "Vegetables",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/tomato.jpg"
     },
     {
       "id": "c7",
       "name": "Mango",
       "category": "Fruits",
-      "unit": "maund"
+      "unit": "maund",
+      "imageUrl": "/images/crops/mango.jpg"
     },
     {
       "id": "c8",
       "name": "Banana",
       "category": "Fruits",
-      "unit": "dozen"
+      "unit": "dozen",
+      "imageUrl": "/images/crops/banana.jpg"
     }
   ],
   "markets": [
@@ -2484,6 +2492,7 @@
       "availableFrom": "2026-10-21",
       "contactPhone": "03001234567",
       "status": "active",
+      "imageUrl": "/images/crops/wheat.jpg",
       "createdAt": "2026-10-19T08:00:00.000Z"
     },
     {
@@ -2497,6 +2506,7 @@
       "availableFrom": "2026-10-23",
       "contactPhone": "03001234567",
       "status": "active",
+      "imageUrl": null,
       "createdAt": "2026-10-20T08:00:00.000Z"
     },
     {
@@ -2510,6 +2520,7 @@
       "availableFrom": "2026-10-22",
       "contactPhone": "03112345678",
       "status": "active",
+      "imageUrl": "/images/crops/rice.jpg",
       "createdAt": "2026-10-18T08:00:00.000Z"
     },
     {
@@ -2523,6 +2534,7 @@
       "availableFrom": "2026-10-21",
       "contactPhone": "03112345678",
       "status": "active",
+      "imageUrl": "/images/crops/cotton.jpg",
       "createdAt": "2026-10-21T08:00:00.000Z"
     },
     {
@@ -2536,6 +2548,7 @@
       "availableFrom": "2026-10-24",
       "contactPhone": "03213456789",
       "status": "active",
+      "imageUrl": null,
       "createdAt": "2026-10-20T08:00:00.000Z"
     },
     {
@@ -2549,6 +2562,7 @@
       "availableFrom": "2026-10-21",
       "contactPhone": "03213456789",
       "status": "active",
+      "imageUrl": null,
       "createdAt": "2026-10-16T08:00:00.000Z"
     },
     {
@@ -2562,6 +2576,7 @@
       "availableFrom": "2026-10-26",
       "contactPhone": "03445678901",
       "status": "active",
+      "imageUrl": "/images/crops/sugarcane.jpg",
       "createdAt": "2026-10-21T08:00:00.000Z"
     },
     {
@@ -2575,6 +2590,7 @@
       "availableFrom": "2026-10-22",
       "contactPhone": "03445678901",
       "status": "active",
+      "imageUrl": "/images/crops/tomato.jpg",
       "createdAt": "2026-10-19T08:00:00.000Z"
     },
     {
@@ -2588,6 +2604,7 @@
       "availableFrom": "2026-10-21",
       "contactPhone": "03001234567",
       "status": "active",
+      "imageUrl": null,
       "createdAt": "2026-10-17T08:00:00.000Z"
     },
     {
@@ -2601,6 +2618,7 @@
       "availableFrom": "2026-10-23",
       "contactPhone": "03213456789",
       "status": "active",
+      "imageUrl": "/images/crops/onion.jpg",
       "createdAt": "2026-10-20T08:00:00.000Z"
     },
     {
@@ -2614,6 +2632,7 @@
       "availableFrom": "2026-10-21",
       "contactPhone": "03112345678",
       "status": "sold",
+      "imageUrl": "/images/crops/mango.jpg",
       "createdAt": "2026-10-14T08:00:00.000Z"
     },
     {
@@ -2627,6 +2646,7 @@
       "availableFrom": "2026-10-25",
       "contactPhone": "03445678901",
       "status": "active",
+      "imageUrl": null,
       "createdAt": "2026-10-18T08:00:00.000Z"
     }
   ],

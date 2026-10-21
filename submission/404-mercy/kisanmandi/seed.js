@@ -26,14 +26,14 @@ const users = [
 
 // ── CROPS ─────────────────────────────────────────────────────────────────────
 const crops = [
-  { id: 'c1', name: 'Wheat',      category: 'Grains',      unit: 'maund' },
-  { id: 'c2', name: 'Rice',       category: 'Grains',      unit: 'maund' },
-  { id: 'c3', name: 'Cotton',     category: 'Cash Crops',  unit: 'maund' },
-  { id: 'c4', name: 'Sugarcane',  category: 'Cash Crops',  unit: 'maund' },
-  { id: 'c5', name: 'Onion',      category: 'Vegetables',  unit: 'maund' },
-  { id: 'c6', name: 'Tomato',     category: 'Vegetables',  unit: 'maund' },
-  { id: 'c7', name: 'Mango',      category: 'Fruits',      unit: 'maund' },
-  { id: 'c8', name: 'Banana',     category: 'Fruits',      unit: 'dozen' },
+  { id: 'c1', name: 'Wheat',      category: 'Grains',      unit: 'maund', imageUrl: '/images/crops/wheat.jpg' },
+  { id: 'c2', name: 'Rice',       category: 'Grains',      unit: 'maund', imageUrl: '/images/crops/rice.jpg' },
+  { id: 'c3', name: 'Cotton',     category: 'Cash Crops',  unit: 'maund', imageUrl: '/images/crops/cotton.jpg' },
+  { id: 'c4', name: 'Sugarcane',  category: 'Cash Crops',  unit: 'maund', imageUrl: '/images/crops/sugarcane.jpg' },
+  { id: 'c5', name: 'Onion',      category: 'Vegetables',  unit: 'maund', imageUrl: '/images/crops/onion.jpg' },
+  { id: 'c6', name: 'Tomato',     category: 'Vegetables',  unit: 'maund', imageUrl: '/images/crops/tomato.jpg' },
+  { id: 'c7', name: 'Mango',      category: 'Fruits',      unit: 'maund', imageUrl: '/images/crops/mango.jpg' },
+  { id: 'c8', name: 'Banana',     category: 'Fruits',      unit: 'dozen', imageUrl: '/images/crops/banana.jpg' },
 ];
 
 // ── MARKETS ───────────────────────────────────────────────────────────────────
@@ -92,18 +92,18 @@ function futureDate(daysFromNow) {
 }
 
 const listings = [
-  { id: 'l1',  sellerId: 'u1', cropId: 'c1', district: 'Hyderabad',  quantity: 500,  askingPrice: 1850, grade: 'A', availableFrom: futureDate(0), contactPhone: '03001234567', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*2).toISOString() },
-  { id: 'l2',  sellerId: 'u1', cropId: 'c5', district: 'Hyderabad',  quantity: 200,  askingPrice: 1100, grade: 'B', availableFrom: futureDate(2), contactPhone: '03001234567', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
-  { id: 'l3',  sellerId: 'u2', cropId: 'c2', district: 'Sukkur',     quantity: 300,  askingPrice: 2900, grade: 'A', availableFrom: futureDate(1), contactPhone: '03112345678', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*3).toISOString() },
-  { id: 'l4',  sellerId: 'u2', cropId: 'c3', district: 'Sukkur',     quantity: 150,  askingPrice: 8800, grade: 'A', availableFrom: futureDate(0), contactPhone: '03112345678', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*0).toISOString() },
-  { id: 'l5',  sellerId: 'u3', cropId: 'c7', district: 'Larkana',    quantity: 100,  askingPrice: 3000, grade: 'B', availableFrom: futureDate(3), contactPhone: '03213456789', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
-  { id: 'l6',  sellerId: 'u3', cropId: 'c8', district: 'Larkana',    quantity: 400,  askingPrice:  520, grade: 'C', availableFrom: futureDate(0), contactPhone: '03213456789', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*5).toISOString() },
-  { id: 'l7',  sellerId: 'u5', cropId: 'c4', district: 'Nawabshah',  quantity: 1000, askingPrice:  440, grade: 'A', availableFrom: futureDate(5), contactPhone: '03445678901', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*0).toISOString() },
-  { id: 'l8',  sellerId: 'u5', cropId: 'c6', district: 'Nawabshah',  quantity: 250,  askingPrice:  920, grade: 'B', availableFrom: futureDate(1), contactPhone: '03445678901', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*2).toISOString() },
-  { id: 'l9',  sellerId: 'u1', cropId: 'c2', district: 'Hyderabad',  quantity: 200,  askingPrice: 2750, grade: 'C', availableFrom: futureDate(0), contactPhone: '03001234567', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*4).toISOString() },
-  { id: 'l10', sellerId: 'u3', cropId: 'c5', district: 'Larkana',    quantity: 180,  askingPrice: 1180, grade: 'A', availableFrom: futureDate(2), contactPhone: '03213456789', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
-  { id: 'l11', sellerId: 'u2', cropId: 'c7', district: 'Sukkur',     quantity: 80,   askingPrice: 3250, grade: 'A', availableFrom: futureDate(0), contactPhone: '03112345678', status: 'sold',    createdAt: new Date(TODAY.getTime() - 86400000*7).toISOString() },
-  { id: 'l12', sellerId: 'u5', cropId: 'c1', district: 'Nawabshah',  quantity: 600,  askingPrice: 1780, grade: 'B', availableFrom: futureDate(4), contactPhone: '03445678901', status: 'active',  createdAt: new Date(TODAY.getTime() - 86400000*3).toISOString() },
+  { id: 'l1',  sellerId: 'u1', cropId: 'c1', district: 'Hyderabad',  quantity: 500,  askingPrice: 1850, grade: 'A', availableFrom: futureDate(0), contactPhone: '03001234567', status: 'active',  imageUrl: '/images/crops/wheat.jpg', createdAt: new Date(TODAY.getTime() - 86400000*2).toISOString() },
+  { id: 'l2',  sellerId: 'u1', cropId: 'c5', district: 'Hyderabad',  quantity: 200,  askingPrice: 1100, grade: 'B', availableFrom: futureDate(2), contactPhone: '03001234567', status: 'active',  imageUrl: null, createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
+  { id: 'l3',  sellerId: 'u2', cropId: 'c2', district: 'Sukkur',     quantity: 300,  askingPrice: 2900, grade: 'A', availableFrom: futureDate(1), contactPhone: '03112345678', status: 'active',  imageUrl: '/images/crops/rice.jpg', createdAt: new Date(TODAY.getTime() - 86400000*3).toISOString() },
+  { id: 'l4',  sellerId: 'u2', cropId: 'c3', district: 'Sukkur',     quantity: 150,  askingPrice: 8800, grade: 'A', availableFrom: futureDate(0), contactPhone: '03112345678', status: 'active',  imageUrl: '/images/crops/cotton.jpg', createdAt: new Date(TODAY.getTime() - 86400000*0).toISOString() },
+  { id: 'l5',  sellerId: 'u3', cropId: 'c7', district: 'Larkana',    quantity: 100,  askingPrice: 3000, grade: 'B', availableFrom: futureDate(3), contactPhone: '03213456789', status: 'active',  imageUrl: null, createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
+  { id: 'l6',  sellerId: 'u3', cropId: 'c8', district: 'Larkana',    quantity: 400,  askingPrice:  520, grade: 'C', availableFrom: futureDate(0), contactPhone: '03213456789', status: 'active',  imageUrl: null, createdAt: new Date(TODAY.getTime() - 86400000*5).toISOString() },
+  { id: 'l7',  sellerId: 'u5', cropId: 'c4', district: 'Nawabshah',  quantity: 1000, askingPrice:  440, grade: 'A', availableFrom: futureDate(5), contactPhone: '03445678901', status: 'active',  imageUrl: '/images/crops/sugarcane.jpg', createdAt: new Date(TODAY.getTime() - 86400000*0).toISOString() },
+  { id: 'l8',  sellerId: 'u5', cropId: 'c6', district: 'Nawabshah',  quantity: 250,  askingPrice:  920, grade: 'B', availableFrom: futureDate(1), contactPhone: '03445678901', status: 'active',  imageUrl: '/images/crops/tomato.jpg', createdAt: new Date(TODAY.getTime() - 86400000*2).toISOString() },
+  { id: 'l9',  sellerId: 'u1', cropId: 'c2', district: 'Hyderabad',  quantity: 200,  askingPrice: 2750, grade: 'C', availableFrom: futureDate(0), contactPhone: '03001234567', status: 'active',  imageUrl: null, createdAt: new Date(TODAY.getTime() - 86400000*4).toISOString() },
+  { id: 'l10', sellerId: 'u3', cropId: 'c5', district: 'Larkana',    quantity: 180,  askingPrice: 1180, grade: 'A', availableFrom: futureDate(2), contactPhone: '03213456789', status: 'active',  imageUrl: '/images/crops/onion.jpg', createdAt: new Date(TODAY.getTime() - 86400000*1).toISOString() },
+  { id: 'l11', sellerId: 'u2', cropId: 'c7', district: 'Sukkur',     quantity: 80,   askingPrice: 3250, grade: 'A', availableFrom: futureDate(0), contactPhone: '03112345678', status: 'sold',    imageUrl: '/images/crops/mango.jpg', createdAt: new Date(TODAY.getTime() - 86400000*7).toISOString() },
+  { id: 'l12', sellerId: 'u5', cropId: 'c1', district: 'Nawabshah',  quantity: 600,  askingPrice: 1780, grade: 'B', availableFrom: futureDate(4), contactPhone: '03445678901', status: 'active',  imageUrl: null, createdAt: new Date(TODAY.getTime() - 86400000*3).toISOString() },
 ];
 
 // ── ALERTS ────────────────────────────────────────────────────────────────────

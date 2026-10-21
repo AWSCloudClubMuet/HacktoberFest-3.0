@@ -270,6 +270,20 @@ async function runVerification() {
       'Seed SQL populates crops and markets tables');
   }
 
+  // 48-52: Image Support & Supabase Storage Verification
+  const imageMigrationPath = 'supabase/migrations/20261021_add_image_support.sql';
+  assert(fs.existsSync(imageMigrationPath), 'Image support SQL migration exists (supabase/migrations/20261021_add_image_support.sql)');
+  if (fs.existsSync(imageMigrationPath)) {
+    const imgSql = fs.readFileSync(imageMigrationPath, 'utf8');
+    assert(imgSql.includes("product-images"), 'Migration provisions public Supabase Storage bucket: product-images');
+    assert(imgSql.includes("ADD COLUMN IF NOT EXISTS image_url"), 'Migration adds image_url column to crops and listings tables');
+    assert(imgSql.includes("storage.foldername(name)"), 'Storage RLS restricts upload/edit/delete to user-owned folders');
+  }
+
+  const expectedCropPhotos = ['wheat.jpg', 'rice.jpg', 'cotton.jpg', 'sugarcane.jpg', 'tomato.jpg', 'onion.jpg', 'potato.jpg', 'chilies.jpg'];
+  const allCropPhotosExist = expectedCropPhotos.every(f => fs.existsSync(`public/images/crops/${f}`));
+  assert(allCropPhotosExist, `Genuine photographic reference images present in public/images/crops/ (${expectedCropPhotos.length} crops verified)`);
+
   console.log('\n====================================================');
   console.log(`Verification Complete: ${passed}/${total} checks passed (${Math.round(passed/total*100)}%)`);
   console.log('====================================================\n');

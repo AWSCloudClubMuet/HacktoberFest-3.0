@@ -5,6 +5,22 @@ import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
+function getCropImage(crop) {
+  if (crop?.imageUrl) return crop.imageUrl;
+  const name = (crop?.name || '').toLowerCase();
+  if (name.includes('wheat')) return '/images/crops/wheat.jpg';
+  if (name.includes('rice')) return '/images/crops/rice.jpg';
+  if (name.includes('cotton')) return '/images/crops/cotton.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('tomato')) return '/images/crops/tomato.jpg';
+  if (name.includes('onion')) return '/images/crops/onion.jpg';
+  if (name.includes('potato')) return '/images/crops/potato.jpg';
+  if (name.includes('chili')) return '/images/crops/chilies.jpg';
+  if (name.includes('mango')) return '/images/crops/mango.jpg';
+  if (name.includes('banana')) return '/images/crops/banana.jpg';
+  return '/images/crops/wheat.jpg';
+}
+
 function calcChange(todayPrice, ydayPrice) {
   if (todayPrice == null) return null;
   if (ydayPrice == null || ydayPrice === 0) {
@@ -165,9 +181,18 @@ export default function PricesScreen({ currentUser, onPricesRefreshed }) {
         return (
           <div key={crop.id} className="price-card" role="article" aria-label={`${crop.name} price`}>
             <div className="price-card-header">
-              <div>
-                <div className="crop-name">{crop.name}</div>
-                <div className="crop-category">{crop.category}</div>
+              <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center' }}>
+                <img
+                  src={getCropImage(crop)}
+                  alt={`${crop.name} reference`}
+                  className="crop-thumb"
+                  loading="lazy"
+                  onError={(e) => { e.currentTarget.src = '/images/crops/wheat.jpg'; }}
+                />
+                <div>
+                  <div className="crop-name">{crop.name}</div>
+                  <div className="crop-category">{crop.category}</div>
+                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 {todayPrice != null ? (
