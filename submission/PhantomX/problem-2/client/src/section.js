@@ -66,6 +66,7 @@ export function emptyFilters() {
     max: '',
     status: 'Open',
     sort: 'newest',
+    group: '',
   };
 }
 
@@ -79,18 +80,19 @@ export function parseSearch(search) {
     max: params.get('max') || '',
     status: params.get('status') || '',
     sort: params.get('sort') || '',
+    group: params.get('group') || '',
   };
 }
 
 export function isResultsView(filters) {
   return Boolean(
-    filters.q || filters.category || filters.payment_type || filters.min || filters.max || filters.status || filters.sort,
+    filters.q || filters.category || filters.payment_type || filters.min || filters.max || filters.status || filters.sort || filters.group,
   );
 }
 
 export function toQuery(filters) {
   const params = new URLSearchParams();
-  for (const key of ['q', 'category', 'payment_type', 'min', 'max', 'status', 'sort']) {
+  for (const key of ['q', 'category', 'payment_type', 'min', 'max', 'status', 'sort', 'group']) {
     if (filters[key]) params.set(key, filters[key]);
   }
   const text = params.toString();
@@ -99,6 +101,8 @@ export function toQuery(filters) {
 
 export function presentGigs(gigs, filters) {
   let rows = gigs.slice();
+  if (filters.group === 'unpaid') rows = rows.filter((gig) => gig.payment_type !== 'Paid');
+  if (filters.group === 'closing') rows = rows.filter((gig) => gig.status === 'Open');
   if (filters.status) rows = rows.filter((gig) => gig.status === filters.status);
   else if (!isResultsView(filters)) rows = rows.filter((gig) => gig.status !== 'Expired' && gig.status !== 'Cancelled');
   else rows = rows.filter((gig) => gig.status !== 'Expired' && gig.status !== 'Cancelled');

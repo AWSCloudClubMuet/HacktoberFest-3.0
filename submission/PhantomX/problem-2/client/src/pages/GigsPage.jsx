@@ -1,46 +1,31 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
 import { useApp } from '../context.js';
-import { CATEGORIES, PAYMENTS, paymentLabel } from '../constants.js';
-import { SECTIONS } from '../section.js';
-import { formatMoney, formatWhen } from '../format.js';
-import { Alert, Badge, Empty, Link, Loading, inputClass, paymentTone, secondaryButtonClass, statusTone } from '../components.jsx';
-
-const initialFilters = {
-  category: '',
-  type: '',
-  payment_type: '',
-  min: '',
-  max: '',
-};
+import { CATEGORIES } from '../constants.js';
+import { Alert, Empty, Link, buttonClass } from '../components.jsx';
+import { CatalogueSkeleton, GigCard, GigRow, PageHeader } from '../ui.jsx';
+import { SECTIONS, isResultsView, parseSearch, presentGigs, toQuery } from '../section.js';
 
 export function GigsPage() {
-  const { section } = useApp();
-  const [filters, setFilters] = useState(initialFilters);
-  const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch] = useState('');
+  const { section, query, navigate, users } = useApp();
+  const filters = parseSearch(query);
+  const copy = SECTIONS[section] || SECTIONS.offer;
   const [gigs, setGigs] = useState(null);
   const [error, setError] = useState('');
-  const [filtersOpen, setFiltersOpen] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput.trim()), 300);
-    return () => clearTimeout(timer);
-  }, [searchInput]);
 
   useEffect(() => {
     const params = new URLSearchParams();
+    params.set('type', copy.type);
     if (filters.category) params.set('category', filters.category);
-    params.set('type', SECTIONS[section]?.type || 'Offering');
     if (filters.payment_type) params.set('payment_type', filters.payment_type);
     if (filters.min.trim() !== '' && Number.isFinite(Number(filters.min))) params.set('min', filters.min.trim());
     if (filters.max.trim() !== '' && Number.isFinite(Number(filters.max))) params.set('max', filters.max.trim());
-    if (search) params.set('q', search);
-    const query = params.toString();
+    if (filters.q) params.set('q', filters.q);
 
     let cancelled = false;
     setError('');
-    api(query ? `/gigs?${query}` : '/gigs')
+    setGigs(null);
+    api(`/gigs?${params.toString()}`)
       .then((data) => {
         if (!cancelled) setGigs(data);
       })
@@ -53,108 +38,116 @@ export function GigsPage() {
     return () => {
       cancelled = true;
     };
-  }, [filters, search, section]);
+  }, [copy.type, filters.category, filters.payment_type, filters.min, filters.max, filters.q]);
 
-  function update(field, value) {
-    setFilters((current) => ({ ...current, [field]: value }));
+  function go(next) {
+    navigate(`/${section}${toQuery(next)}`);
   }
 
-  const filtering = Boolean(filters.category || filters.type || filters.payment_type || filters.min || filters.max || searchInput);
+  function removeFilter(key) {
+    go({ ...filters, [key]: '' });
+  }
+
+  const results = isResultsView(filters);
+  const rows = gigs ? presentGigs(gigs, filters) : [];
+  const catalogue = gigs ? presentGigs(gigs, {}) : [];
+  const newest = [...catalogue].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 8);
+  const paid = catalogue.filter((gig) => gig.payment_type === 'Paid').slice(0, 8);
+  const swapFree = catalogue.filter((gig) => gig.payment_type !== 'Paid').slice(0, 8);
+  const closing = catalogue
+    .filter((gig) => gig.status === 'Open')
+    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+    .slice(0, 8);
+
+  const post = (
+    <Link to={`/gigs/new?type=${copy.type}`} className={`${buttonClass} ${section === 'request' ? 'fill-request' : ''}`}>
+      {copy.post}
+    </Link>
+  );
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="page-title text-ink">Gigs</h1>
-        <p className="mt-2 text-base text-muted">Find short campus help, or offer a skill of your own.</p>
+    <div id={section === 'request' ? 'panel-request' : 'panel-offer'} role="tabpanel" aria-labelledby={section === 'request' ? 'tab-request' : 'tab-offer'} className="space-y-6">
+      <section className={`rounded-3xl border border-line/80 p-5 shadow-card sm:p-7 ${section === 'request' ? 'hero-request' : 'hero-offer'}`}>
+        <PageHeader eyebrow={copy.label} title={copy.headline} subtitle={copy.subtitle} actions={post} />
+      </section>
+
+      <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Categories">
+        {CATEGORIES.map((category) => (
+          <button
+            key={category}
+            type="button"
+            className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-semibold ${filters.category === category ? 'border-transparent text-white ' + (section === 'request' ? 'fill-request' : 'fill-offer') : 'border-line bg-surface text-ink'}`}
+            onClick={() => go({ ...filters, category: filters.category === category ? '' : category, status: filters.category === category ? filters.status : 'Open' })}
+          >
+            {category}
+          </button>
+        ))}
       </div>
 
-      <button
-        type="button"
-        className={`${secondaryButtonClass} w-full md:hidden`}
-        aria-expanded={filtersOpen}
-        onClick={() => setFiltersOpen((open) => !open)}
-      >
-        {filtersOpen ? 'Hide filters' : 'Show filters'}
-      </button>
-
-      <form className={`${filtersOpen ? 'grid' : 'hidden'} gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card md:grid sm:grid-cols-2 lg:grid-cols-3`} onSubmit={(event) => event.preventDefault()}>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Category</span>
-          <select className={inputClass} value={filters.category} onChange={(event) => update('category', event.target.value)}>
-            <option value="">All categories</option>
-            {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
-          </select>
-        </label>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Payment</span>
-          <select className={inputClass} value={filters.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
-            <option value="">Any payment</option>
-            {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
-          </select>
-        </label>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Min budget</span>
-          <input className={inputClass} type="number" min="0" step="1" value={filters.min} onChange={(event) => update('min', event.target.value)} />
-        </label>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Max budget</span>
-          <input className={inputClass} type="number" min="0" step="1" value={filters.max} onChange={(event) => update('max', event.target.value)} />
-        </label>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Search</span>
-          <input
-            className={inputClass}
-            type="search"
-            placeholder="Title or description"
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-          />
-        </label>
-        {filtering ? (
-          <div className="sm:col-span-2 lg:col-span-3">
-            <button
-              type="button"
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-2 hover:underline"
-              onClick={() => {
-                setFilters(initialFilters);
-                setSearchInput('');
-                setSearch('');
-              }}
-            >
-              Clear filters
-            </button>
-            <p className="mt-1 text-sm text-muted">A budget range only matches paid gigs.</p>
-          </div>
-        ) : null}
-      </form>
-
       <Alert>{error}</Alert>
-      {gigs === null && !error ? <Loading>Loading gigs…</Loading> : null}
-      {gigs && gigs.length === 0 && !error ? <Empty>No gigs match these filters.</Empty> : null}
-      {gigs && gigs.length > 0 ? (
-        <>
-          <p className="text-sm text-muted">{gigs.length} {gigs.length === 1 ? 'gig' : 'gigs'}</p>
-          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {gigs.map((gig) => (
-              <li key={gig.id} className="min-w-0">
-                <Link to={`/gigs/${gig.id}`} className="flex h-full min-w-0 flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-card transition duration-150 hover:-translate-y-0.5 hover:border-primary">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
-                    <Badge tone={gig.type === 'Offering' ? 'offering' : 'requesting'}>{gig.type}</Badge>
-                    <Badge tone={paymentTone(gig.payment_type)}>{paymentLabel(gig.payment_type)}</Badge>
-                  </div>
-                  <h2 className="break-words font-display text-lg font-semibold leading-snug text-ink">{gig.title}</h2>
-                  <p className="text-sm text-muted">{gig.category}</p>
-                  <p className="text-sm font-semibold text-secondary">
-                    {gig.payment_type === 'Paid' && gig.budget != null ? formatMoney(gig.budget) : 'No budget'}
-                  </p>
-                  <p className="mt-auto text-sm text-muted">Deadline {formatWhen(gig.deadline)}</p>
-                </Link>
-              </li>
+      {gigs === null && !error ? <CatalogueSkeleton /> : null}
+
+      {results ? (
+        <section className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-semibold text-ink">{rows.length} {rows.length === 1 ? 'result' : 'results'}</p>
+            {chipList(filters).map((chip) => (
+              <button key={chip.key} type="button" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-3 text-sm font-semibold text-ink shadow-card" onClick={() => removeFilter(chip.key)}>
+                {chip.label}
+                <span aria-hidden="true">×</span>
+                <span className="sr-only">Remove {chip.label}</span>
+              </button>
             ))}
-          </ul>
-        </>
+            <button type="button" className="inline-flex min-h-11 items-center text-sm font-semibold text-offer" onClick={() => navigate(`/${section}`)}>
+              Clear all
+            </button>
+          </div>
+          {rows.length === 0 && !error ? (
+            <Empty>
+              Nothing matches these filters.{' '}
+              <button type="button" className="font-semibold text-offer underline-offset-2 hover:underline" onClick={() => navigate(`/${section}`)}>Back to the catalogue</button>
+            </Empty>
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {rows.map((gig) => (
+                <li key={gig.id} className="min-w-0">
+                  <GigCard gig={gig} section={section} posterName={users.find((user) => user.id === gig.user_id)?.name} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
+
+      {!results && gigs && catalogue.length === 0 && !error ? (
+        <Empty>
+          No open {copy.short} yet.{' '}
+          <Link to={`/gigs/new?type=${copy.type}`} className="font-semibold text-offer underline-offset-2 hover:underline">{copy.post}</Link>
+        </Empty>
+      ) : null}
+
+      {!results && catalogue.length > 0 ? (
+        <div className="space-y-8">
+          <GigRow title="Newest gigs" gigs={newest} users={users} section={section} seeAllTo={`/${section}?sort=newest`} />
+          <GigRow title="Paid gigs" gigs={paid} users={users} section={section} seeAllTo={`/${section}?payment_type=Paid`} />
+          <GigRow title="SkillSwap & Free" gigs={swapFree} users={users} section={section} seeAllTo={`/${section}?group=unpaid`} />
+          <GigRow title="Closing soon" gigs={closing} users={users} section={section} seeAllTo={`/${section}?group=closing&sort=deadline`} />
+        </div>
       ) : null}
     </div>
   );
+}
+
+function chipList(filters) {
+  const chips = [];
+  if (filters.q) chips.push({ key: 'q', label: `“${filters.q}”` });
+  if (filters.category) chips.push({ key: 'category', label: filters.category });
+  if (filters.payment_type) chips.push({ key: 'payment_type', label: filters.payment_type === 'SkillSwap' ? 'Skill Swap' : filters.payment_type });
+  if (filters.min) chips.push({ key: 'min', label: `Min $${filters.min}` });
+  if (filters.max) chips.push({ key: 'max', label: `Max $${filters.max}` });
+  if (filters.status) chips.push({ key: 'status', label: filters.status });
+  if (filters.sort) chips.push({ key: 'sort', label: filters.sort });
+  if (filters.group === 'unpaid') chips.push({ key: 'group', label: 'SkillSwap & Free' });
+  if (filters.group === 'closing') chips.push({ key: 'group', label: 'Closing soon' });
+  return chips;
 }
