@@ -261,3 +261,17 @@ if __name__ == '__main__':
     if not (ROOT / 'reliefhub.db').exists():
         seed()
     create_app().run(host='127.0.0.1', port=args.port, debug=False)
+
+def _vercel_app():
+    if os.environ.get("VERCEL"):
+        import tempfile
+        import uuid
+        from seed import main as seed_database
+
+        demo_db = Path(tempfile.gettempdir()) / f"reliefhub-{uuid.uuid4().hex}.db"
+        seed_database(str(demo_db))
+        return create_app(database=str(demo_db))
+
+    return create_app()
+
+app = _vercel_app()
