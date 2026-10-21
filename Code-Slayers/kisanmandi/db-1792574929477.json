@@ -1,0 +1,2652 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Ali Bux",
+      "phone": "03001110001",
+      "district": "Hyderabad",
+      "role": "Farmer"
+    },
+    {
+      "id": "2",
+      "name": "Ghulam Rasool",
+      "phone": "03001110002",
+      "district": "Sukkur",
+      "role": "Farmer"
+    },
+    {
+      "id": "3",
+      "name": "Sajida Bibi",
+      "phone": "03001110003",
+      "district": "Mirpurkhas",
+      "role": "Farmer"
+    },
+    {
+      "id": "4",
+      "name": "Imran Traders",
+      "phone": "03001110004",
+      "district": "Hyderabad",
+      "role": "Buyer"
+    },
+    {
+      "id": "5",
+      "name": "Noor Agro",
+      "phone": "03001110005",
+      "district": "Sukkur",
+      "role": "Buyer"
+    },
+    {
+      "id": "6",
+      "name": "Kamran Foods",
+      "phone": "03001110006",
+      "district": "Karachi",
+      "role": "Buyer"
+    }
+  ],
+  "crops": [
+    {
+      "id": "1",
+      "name": "Wheat",
+      "category": "Grains"
+    },
+    {
+      "id": "2",
+      "name": "Rice",
+      "category": "Grains"
+    },
+    {
+      "id": "3",
+      "name": "Cotton",
+      "category": "Cash Crops"
+    },
+    {
+      "id": "4",
+      "name": "Sugarcane",
+      "category": "Cash Crops"
+    },
+    {
+      "id": "5",
+      "name": "Tomato",
+      "category": "Vegetables"
+    },
+    {
+      "id": "6",
+      "name": "Onion",
+      "category": "Vegetables"
+    },
+    {
+      "id": "7",
+      "name": "Mango",
+      "category": "Fruits"
+    },
+    {
+      "id": "8",
+      "name": "Banana",
+      "category": "Fruits"
+    }
+  ],
+  "markets": [
+    {
+      "id": "1",
+      "name": "Hyderabad Mandi",
+      "district": "Hyderabad"
+    },
+    {
+      "id": "2",
+      "name": "Sukkur Grain Market",
+      "district": "Sukkur"
+    },
+    {
+      "id": "3",
+      "name": "Mirpurkhas Sabzi Mandi",
+      "district": "Mirpurkhas"
+    }
+  ],
+  "prices": [
+    {
+      "id": "1",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 3971
+    },
+    {
+      "id": "2",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 4032
+    },
+    {
+      "id": "3",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 3895
+    },
+    {
+      "id": "4",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 3917
+    },
+    {
+      "id": "5",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 3882
+    },
+    {
+      "id": "6",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 3746
+    },
+    {
+      "id": "7",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 3757
+    },
+    {
+      "id": "8",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 3619
+    },
+    {
+      "id": "9",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 3608
+    },
+    {
+      "id": "10",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 3485
+    },
+    {
+      "id": "11",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 3372
+    },
+    {
+      "id": "12",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 3359
+    },
+    {
+      "id": "13",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 3461
+    },
+    {
+      "id": "14",
+      "crop_id": "1",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 3359
+    },
+    {
+      "id": "15",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 4068
+    },
+    {
+      "id": "16",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 4232
+    },
+    {
+      "id": "17",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 4271
+    },
+    {
+      "id": "18",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 4244
+    },
+    {
+      "id": "19",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 4426
+    },
+    {
+      "id": "20",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 4267
+    },
+    {
+      "id": "21",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 4408
+    },
+    {
+      "id": "22",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 4340
+    },
+    {
+      "id": "23",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 4219
+    },
+    {
+      "id": "24",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 4093
+    },
+    {
+      "id": "25",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 4036
+    },
+    {
+      "id": "26",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 4155
+    },
+    {
+      "id": "27",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 4053
+    },
+    {
+      "id": "28",
+      "crop_id": "1",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 4091
+    },
+    {
+      "id": "29",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 4258
+    },
+    {
+      "id": "30",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 4285
+    },
+    {
+      "id": "31",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 4137
+    },
+    {
+      "id": "32",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 3992
+    },
+    {
+      "id": "33",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 3903
+    },
+    {
+      "id": "34",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 3972
+    },
+    {
+      "id": "35",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 3958
+    },
+    {
+      "id": "36",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 3905
+    },
+    {
+      "id": "37",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 3943
+    },
+    {
+      "id": "38",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 3937
+    },
+    {
+      "id": "39",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 3880
+    },
+    {
+      "id": "40",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 3987
+    },
+    {
+      "id": "41",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 4064
+    },
+    {
+      "id": "42",
+      "crop_id": "1",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 3986
+    },
+    {
+      "id": "43",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 5286
+    },
+    {
+      "id": "44",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 5468
+    },
+    {
+      "id": "45",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 5588
+    },
+    {
+      "id": "46",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 5502
+    },
+    {
+      "id": "47",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 5740
+    },
+    {
+      "id": "48",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 5568
+    },
+    {
+      "id": "49",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 5543
+    },
+    {
+      "id": "50",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 5678
+    },
+    {
+      "id": "51",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 5524
+    },
+    {
+      "id": "52",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 5533
+    },
+    {
+      "id": "53",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 5330
+    },
+    {
+      "id": "54",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 5420
+    },
+    {
+      "id": "55",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 5555
+    },
+    {
+      "id": "56",
+      "crop_id": "2",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 5603
+    },
+    {
+      "id": "57",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 5439
+    },
+    {
+      "id": "58",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 5543
+    },
+    {
+      "id": "59",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 5601
+    },
+    {
+      "id": "60",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 5653
+    },
+    {
+      "id": "61",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 5646
+    },
+    {
+      "id": "62",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 5824
+    },
+    {
+      "id": "63",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 6058
+    },
+    {
+      "id": "64",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 6060
+    },
+    {
+      "id": "65",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 6160
+    },
+    {
+      "id": "66",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 5945
+    },
+    {
+      "id": "67",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 6062
+    },
+    {
+      "id": "68",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 6153
+    },
+    {
+      "id": "69",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 6426
+    },
+    {
+      "id": "70",
+      "crop_id": "2",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 6618
+    },
+    {
+      "id": "71",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 4985
+    },
+    {
+      "id": "72",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 5069
+    },
+    {
+      "id": "73",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 4875
+    },
+    {
+      "id": "74",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 4872
+    },
+    {
+      "id": "75",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 4747
+    },
+    {
+      "id": "76",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 4604
+    },
+    {
+      "id": "77",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 4443
+    },
+    {
+      "id": "78",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 4555
+    },
+    {
+      "id": "79",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 4423
+    },
+    {
+      "id": "80",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 4339
+    },
+    {
+      "id": "81",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 4310
+    },
+    {
+      "id": "82",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 4457
+    },
+    {
+      "id": "83",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 4309
+    },
+    {
+      "id": "84",
+      "crop_id": "2",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 4301
+    },
+    {
+      "id": "85",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 8868
+    },
+    {
+      "id": "86",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 9131
+    },
+    {
+      "id": "87",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 9436
+    },
+    {
+      "id": "88",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 9282
+    },
+    {
+      "id": "89",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 9238
+    },
+    {
+      "id": "90",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 9150
+    },
+    {
+      "id": "91",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 9472
+    },
+    {
+      "id": "92",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 9864
+    },
+    {
+      "id": "93",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 9596
+    },
+    {
+      "id": "94",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 9356
+    },
+    {
+      "id": "95",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 9166
+    },
+    {
+      "id": "96",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 8982
+    },
+    {
+      "id": "97",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 8993
+    },
+    {
+      "id": "98",
+      "crop_id": "3",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 9083
+    },
+    {
+      "id": "99",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 7853
+    },
+    {
+      "id": "100",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 7819
+    },
+    {
+      "id": "101",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 7751
+    },
+    {
+      "id": "102",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 7814
+    },
+    {
+      "id": "103",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 8135
+    },
+    {
+      "id": "104",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 8287
+    },
+    {
+      "id": "105",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 8319
+    },
+    {
+      "id": "106",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 8422
+    },
+    {
+      "id": "107",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 8570
+    },
+    {
+      "id": "108",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 8266
+    },
+    {
+      "id": "109",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 8568
+    },
+    {
+      "id": "110",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 8793
+    },
+    {
+      "id": "111",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 9095
+    },
+    {
+      "id": "112",
+      "crop_id": "3",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 9348
+    },
+    {
+      "id": "113",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 8303
+    },
+    {
+      "id": "114",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 8044
+    },
+    {
+      "id": "115",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 8156
+    },
+    {
+      "id": "116",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 7873
+    },
+    {
+      "id": "117",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 7603
+    },
+    {
+      "id": "118",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 7434
+    },
+    {
+      "id": "119",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 7239
+    },
+    {
+      "id": "120",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 7158
+    },
+    {
+      "id": "121",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 6904
+    },
+    {
+      "id": "122",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 6628
+    },
+    {
+      "id": "123",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 6448
+    },
+    {
+      "id": "124",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 6375
+    },
+    {
+      "id": "125",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 6375
+    },
+    {
+      "id": "126",
+      "crop_id": "3",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 6375
+    },
+    {
+      "id": "127",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 483
+    },
+    {
+      "id": "128",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 470
+    },
+    {
+      "id": "129",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 461
+    },
+    {
+      "id": "130",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 456
+    },
+    {
+      "id": "131",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 452
+    },
+    {
+      "id": "132",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 439
+    },
+    {
+      "id": "133",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 453
+    },
+    {
+      "id": "134",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 473
+    },
+    {
+      "id": "135",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 473
+    },
+    {
+      "id": "136",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 473
+    },
+    {
+      "id": "137",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 458
+    },
+    {
+      "id": "138",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 443
+    },
+    {
+      "id": "139",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 438
+    },
+    {
+      "id": "140",
+      "crop_id": "4",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 431
+    },
+    {
+      "id": "141",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 461
+    },
+    {
+      "id": "142",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 444
+    },
+    {
+      "id": "143",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 462
+    },
+    {
+      "id": "144",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 464
+    },
+    {
+      "id": "145",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 451
+    },
+    {
+      "id": "146",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 454
+    },
+    {
+      "id": "147",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 437
+    },
+    {
+      "id": "148",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 439
+    },
+    {
+      "id": "149",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 458
+    },
+    {
+      "id": "150",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 473
+    },
+    {
+      "id": "151",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 482
+    },
+    {
+      "id": "152",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 474
+    },
+    {
+      "id": "153",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 470
+    },
+    {
+      "id": "154",
+      "crop_id": "4",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 458
+    },
+    {
+      "id": "155",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 472
+    },
+    {
+      "id": "156",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 484
+    },
+    {
+      "id": "157",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 479
+    },
+    {
+      "id": "158",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 469
+    },
+    {
+      "id": "159",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 482
+    },
+    {
+      "id": "160",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 503
+    },
+    {
+      "id": "161",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 520
+    },
+    {
+      "id": "162",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 534
+    },
+    {
+      "id": "163",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 550
+    },
+    {
+      "id": "164",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 563
+    },
+    {
+      "id": "165",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 551
+    },
+    {
+      "id": "166",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 553
+    },
+    {
+      "id": "167",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 548
+    },
+    {
+      "id": "168",
+      "crop_id": "4",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 527
+    },
+    {
+      "id": "169",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 2183
+    },
+    {
+      "id": "170",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 2143
+    },
+    {
+      "id": "171",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 2184
+    },
+    {
+      "id": "172",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 2274
+    },
+    {
+      "id": "173",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 2270
+    },
+    {
+      "id": "174",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 2360
+    },
+    {
+      "id": "175",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 2463
+    },
+    {
+      "id": "176",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 2565
+    },
+    {
+      "id": "177",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 2542
+    },
+    {
+      "id": "178",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 2488
+    },
+    {
+      "id": "179",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 2436
+    },
+    {
+      "id": "180",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 2379
+    },
+    {
+      "id": "181",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 2326
+    },
+    {
+      "id": "182",
+      "crop_id": "5",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 2356
+    },
+    {
+      "id": "183",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 2634
+    },
+    {
+      "id": "184",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 2636
+    },
+    {
+      "id": "185",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 2677
+    },
+    {
+      "id": "186",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 2752
+    },
+    {
+      "id": "187",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 2661
+    },
+    {
+      "id": "188",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 2704
+    },
+    {
+      "id": "189",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 2805
+    },
+    {
+      "id": "190",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 2880
+    },
+    {
+      "id": "191",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 2948
+    },
+    {
+      "id": "192",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 2950
+    },
+    {
+      "id": "193",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 2877
+    },
+    {
+      "id": "194",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 2955
+    },
+    {
+      "id": "195",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 2920
+    },
+    {
+      "id": "196",
+      "crop_id": "5",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 3002
+    },
+    {
+      "id": "197",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 2565
+    },
+    {
+      "id": "198",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 2550
+    },
+    {
+      "id": "199",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 2653
+    },
+    {
+      "id": "200",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 2710
+    },
+    {
+      "id": "201",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 2641
+    },
+    {
+      "id": "202",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 2564
+    },
+    {
+      "id": "203",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 2494
+    },
+    {
+      "id": "204",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 2586
+    },
+    {
+      "id": "205",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 2660
+    },
+    {
+      "id": "206",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 2587
+    },
+    {
+      "id": "207",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 2665
+    },
+    {
+      "id": "208",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 2780
+    },
+    {
+      "id": "209",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 2825
+    },
+    {
+      "id": "210",
+      "crop_id": "5",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 2796
+    },
+    {
+      "id": "211",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 2936
+    },
+    {
+      "id": "212",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 2822
+    },
+    {
+      "id": "213",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 2942
+    },
+    {
+      "id": "214",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 2987
+    },
+    {
+      "id": "215",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 3001
+    },
+    {
+      "id": "216",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 3119
+    },
+    {
+      "id": "217",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 3110
+    },
+    {
+      "id": "218",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 3216
+    },
+    {
+      "id": "219",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 3313
+    },
+    {
+      "id": "220",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 3240
+    },
+    {
+      "id": "221",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 3179
+    },
+    {
+      "id": "222",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 3131
+    },
+    {
+      "id": "223",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 3070
+    },
+    {
+      "id": "224",
+      "crop_id": "6",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 3100
+    },
+    {
+      "id": "225",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 2872
+    },
+    {
+      "id": "226",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 2789
+    },
+    {
+      "id": "227",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 2893
+    },
+    {
+      "id": "228",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 2864
+    },
+    {
+      "id": "229",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 2861
+    },
+    {
+      "id": "230",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 2889
+    },
+    {
+      "id": "231",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 2995
+    },
+    {
+      "id": "232",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 2983
+    },
+    {
+      "id": "233",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 3096
+    },
+    {
+      "id": "234",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 3104
+    },
+    {
+      "id": "235",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 3120
+    },
+    {
+      "id": "236",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 3134
+    },
+    {
+      "id": "237",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 3014
+    },
+    {
+      "id": "238",
+      "crop_id": "6",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 3006
+    },
+    {
+      "id": "239",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 2735
+    },
+    {
+      "id": "240",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 2811
+    },
+    {
+      "id": "241",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 2740
+    },
+    {
+      "id": "242",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 2741
+    },
+    {
+      "id": "243",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 2800
+    },
+    {
+      "id": "244",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 2820
+    },
+    {
+      "id": "245",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 2786
+    },
+    {
+      "id": "246",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 2797
+    },
+    {
+      "id": "247",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 2817
+    },
+    {
+      "id": "248",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 2892
+    },
+    {
+      "id": "249",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 2803
+    },
+    {
+      "id": "250",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 2824
+    },
+    {
+      "id": "251",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 2771
+    },
+    {
+      "id": "252",
+      "crop_id": "6",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 2725
+    },
+    {
+      "id": "253",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 6281
+    },
+    {
+      "id": "254",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 6330
+    },
+    {
+      "id": "255",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 6485
+    },
+    {
+      "id": "256",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 6729
+    },
+    {
+      "id": "257",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 6713
+    },
+    {
+      "id": "258",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 6794
+    },
+    {
+      "id": "259",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 6815
+    },
+    {
+      "id": "260",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 6839
+    },
+    {
+      "id": "261",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 6968
+    },
+    {
+      "id": "262",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 6957
+    },
+    {
+      "id": "263",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 6994
+    },
+    {
+      "id": "264",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 6999
+    },
+    {
+      "id": "265",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 7279
+    },
+    {
+      "id": "266",
+      "crop_id": "7",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 7420
+    },
+    {
+      "id": "267",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 6616
+    },
+    {
+      "id": "268",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 6498
+    },
+    {
+      "id": "269",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 6547
+    },
+    {
+      "id": "270",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 6810
+    },
+    {
+      "id": "271",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 7024
+    },
+    {
+      "id": "272",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 6825
+    },
+    {
+      "id": "273",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 6622
+    },
+    {
+      "id": "274",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 6606
+    },
+    {
+      "id": "275",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 6383
+    },
+    {
+      "id": "276",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 6258
+    },
+    {
+      "id": "277",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 6047
+    },
+    {
+      "id": "278",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 6149
+    },
+    {
+      "id": "279",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 6313
+    },
+    {
+      "id": "280",
+      "crop_id": "7",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 6541
+    },
+    {
+      "id": "281",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 5787
+    },
+    {
+      "id": "282",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 5880
+    },
+    {
+      "id": "283",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 5716
+    },
+    {
+      "id": "284",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 5916
+    },
+    {
+      "id": "285",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 6166
+    },
+    {
+      "id": "286",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 6035
+    },
+    {
+      "id": "287",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 6282
+    },
+    {
+      "id": "288",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 6243
+    },
+    {
+      "id": "289",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 6252
+    },
+    {
+      "id": "290",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 6528
+    },
+    {
+      "id": "291",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 6729
+    },
+    {
+      "id": "292",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 6552
+    },
+    {
+      "id": "293",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 6530
+    },
+    {
+      "id": "294",
+      "crop_id": "7",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 6555
+    },
+    {
+      "id": "295",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-08",
+      "price": 2664
+    },
+    {
+      "id": "296",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-09",
+      "price": 2630
+    },
+    {
+      "id": "297",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-10",
+      "price": 2686
+    },
+    {
+      "id": "298",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-11",
+      "price": 2583
+    },
+    {
+      "id": "299",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-12",
+      "price": 2601
+    },
+    {
+      "id": "300",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-13",
+      "price": 2595
+    },
+    {
+      "id": "301",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-14",
+      "price": 2495
+    },
+    {
+      "id": "302",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-15",
+      "price": 2465
+    },
+    {
+      "id": "303",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-16",
+      "price": 2498
+    },
+    {
+      "id": "304",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-17",
+      "price": 2506
+    },
+    {
+      "id": "305",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-18",
+      "price": 2420
+    },
+    {
+      "id": "306",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-19",
+      "price": 2526
+    },
+    {
+      "id": "307",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-20",
+      "price": 2594
+    },
+    {
+      "id": "308",
+      "crop_id": "8",
+      "market_id": "1",
+      "date": "2026-10-21",
+      "price": 2704
+    },
+    {
+      "id": "309",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-08",
+      "price": 2577
+    },
+    {
+      "id": "310",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-09",
+      "price": 2483
+    },
+    {
+      "id": "311",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-10",
+      "price": 2548
+    },
+    {
+      "id": "312",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-11",
+      "price": 2505
+    },
+    {
+      "id": "313",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-12",
+      "price": 2432
+    },
+    {
+      "id": "314",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-13",
+      "price": 2422
+    },
+    {
+      "id": "315",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-14",
+      "price": 2513
+    },
+    {
+      "id": "316",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-15",
+      "price": 2587
+    },
+    {
+      "id": "317",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-16",
+      "price": 2541
+    },
+    {
+      "id": "318",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-17",
+      "price": 2471
+    },
+    {
+      "id": "319",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-18",
+      "price": 2565
+    },
+    {
+      "id": "320",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-19",
+      "price": 2587
+    },
+    {
+      "id": "321",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-20",
+      "price": 2638
+    },
+    {
+      "id": "322",
+      "crop_id": "8",
+      "market_id": "2",
+      "date": "2026-10-21",
+      "price": 2552
+    },
+    {
+      "id": "323",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-08",
+      "price": 2650
+    },
+    {
+      "id": "324",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-09",
+      "price": 2640
+    },
+    {
+      "id": "325",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-10",
+      "price": 2550
+    },
+    {
+      "id": "326",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-11",
+      "price": 2652
+    },
+    {
+      "id": "327",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-12",
+      "price": 2689
+    },
+    {
+      "id": "328",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-13",
+      "price": 2764
+    },
+    {
+      "id": "329",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-14",
+      "price": 2673
+    },
+    {
+      "id": "330",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-15",
+      "price": 2761
+    },
+    {
+      "id": "331",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-16",
+      "price": 2666
+    },
+    {
+      "id": "332",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-17",
+      "price": 2755
+    },
+    {
+      "id": "333",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-18",
+      "price": 2751
+    },
+    {
+      "id": "334",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-19",
+      "price": 2720
+    },
+    {
+      "id": "335",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-20",
+      "price": 2740
+    },
+    {
+      "id": "336",
+      "crop_id": "8",
+      "market_id": "3",
+      "date": "2026-10-21",
+      "price": 2846
+    }
+  ],
+  "listings": [
+    {
+      "id": "1",
+      "user_id": "1",
+      "crop_id": "1",
+      "quantity": 40,
+      "asking_price": 4323,
+      "district": "Hyderabad",
+      "grade": "A",
+      "available_from": "2026-10-21",
+      "status": "Active",
+      "created_at": "2026-10-09"
+    },
+    {
+      "id": "2",
+      "user_id": "2",
+      "crop_id": "2",
+      "quantity": 10,
+      "asking_price": 5234,
+      "district": "Sukkur",
+      "grade": "B",
+      "available_from": "2026-10-22",
+      "status": "Active",
+      "created_at": "2026-10-10"
+    },
+    {
+      "id": "3",
+      "user_id": "3",
+      "crop_id": "3",
+      "quantity": 20,
+      "asking_price": 9394,
+      "district": "Mirpurkhas",
+      "grade": "C",
+      "available_from": "2026-10-23",
+      "status": "Active",
+      "created_at": "2026-10-11"
+    },
+    {
+      "id": "4",
+      "user_id": "1",
+      "crop_id": "4",
+      "quantity": 20,
+      "asking_price": 424,
+      "district": "Hyderabad",
+      "grade": "A",
+      "available_from": "2026-10-24",
+      "status": "Active",
+      "created_at": "2026-10-12"
+    },
+    {
+      "id": "5",
+      "user_id": "2",
+      "crop_id": "5",
+      "quantity": 20,
+      "asking_price": 2228,
+      "district": "Sukkur",
+      "grade": "B",
+      "available_from": "2026-10-25",
+      "status": "Active",
+      "created_at": "2026-10-13"
+    },
+    {
+      "id": "6",
+      "user_id": "3",
+      "crop_id": "6",
+      "quantity": 40,
+      "asking_price": 3093,
+      "district": "Mirpurkhas",
+      "grade": "C",
+      "available_from": "2026-10-21",
+      "status": "Active",
+      "created_at": "2026-10-14"
+    },
+    {
+      "id": "7",
+      "user_id": "1",
+      "crop_id": "7",
+      "quantity": 100,
+      "asking_price": 6374,
+      "district": "Hyderabad",
+      "grade": "A",
+      "available_from": "2026-10-22",
+      "status": "Active",
+      "created_at": "2026-10-15"
+    },
+    {
+      "id": "8",
+      "user_id": "2",
+      "crop_id": "8",
+      "quantity": 40,
+      "asking_price": 2764,
+      "district": "Sukkur",
+      "grade": "B",
+      "available_from": "2026-10-23",
+      "status": "Active",
+      "created_at": "2026-10-16"
+    },
+    {
+      "id": "9",
+      "user_id": "3",
+      "crop_id": "1",
+      "quantity": 20,
+      "asking_price": 3969,
+      "district": "Mirpurkhas",
+      "grade": "C",
+      "available_from": "2026-10-24",
+      "status": "Active",
+      "created_at": "2026-10-17"
+    },
+    {
+      "id": "10",
+      "user_id": "1",
+      "crop_id": "2",
+      "quantity": 10,
+      "asking_price": 5817,
+      "district": "Hyderabad",
+      "grade": "A",
+      "available_from": "2026-10-25",
+      "status": "Active",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": "11",
+      "user_id": "2",
+      "crop_id": "3",
+      "quantity": 10,
+      "asking_price": 7511,
+      "district": "Sukkur",
+      "grade": "B",
+      "available_from": "2026-10-21",
+      "status": "Active",
+      "created_at": "2026-10-19"
+    },
+    {
+      "id": "12",
+      "user_id": "3",
+      "crop_id": "4",
+      "quantity": 100,
+      "asking_price": 456,
+      "district": "Mirpurkhas",
+      "grade": "C",
+      "available_from": "2026-10-22",
+      "status": "Sold",
+      "created_at": "2026-10-20"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "1",
+      "user_id": "1",
+      "crop_id": "1",
+      "market_id": "1",
+      "condition": "Above",
+      "target_price": 4000,
+      "active_status": true
+    },
+    {
+      "id": "2",
+      "user_id": "1",
+      "crop_id": "5",
+      "market_id": "1",
+      "condition": "Below",
+      "target_price": 2000,
+      "active_status": true
+    },
+    {
+      "id": "3",
+      "user_id": "2",
+      "crop_id": "2",
+      "market_id": "2",
+      "condition": "Above",
+      "target_price": 6500,
+      "active_status": true
+    },
+    {
+      "id": "4",
+      "user_id": "3",
+      "crop_id": "6",
+      "market_id": "3",
+      "condition": "Below",
+      "target_price": 3500,
+      "active_status": false
+    },
+    {
+      "id": "5",
+      "user_id": "1",
+      "crop_id": "3",
+      "market_id": "2",
+      "condition": "Above",
+      "target_price": 8000,
+      "active_status": true
+    }
+  ]
+}

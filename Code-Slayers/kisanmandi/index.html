@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KisanMandi</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--g:#1f7a3f;--gl:#e8f5ec;--r:#c0392b;--bg:#f4f6f3;--card:#fff;--tx:#1d2a20;--mu:#6b7a6f}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:70px}
+header{background:var(--g);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+header h1{font-size:18px;margin:0}header small{opacity:.85}
+main{padding:12px}
+.card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px #0001}
+.row{display:flex;gap:8px;align-items:center}.between{justify-content:space-between}
+input,select,button{font:inherit;padding:9px;border-radius:8px;border:1px solid #cfd8d2;width:100%}
+button{background:var(--g);color:#fff;border:0;cursor:pointer;font-weight:600}
+button.sec{background:#fff;color:var(--g);border:1px solid var(--g)}button.red{background:var(--r)}
+.up{color:var(--g)}.down{color:var(--r)}.mu{color:var(--mu);font-size:13px}
+.tag{font-size:12px;padding:2px 8px;border-radius:20px;background:var(--gl);color:var(--g);white-space:nowrap}
+.tag.below{background:#e3f2fd;color:#1565c0}.tag.above{background:#fdecea;color:var(--r)}.tag.best{background:#fff3cd;color:#8a6d00}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;display:flex;border-top:1px solid #ddd}
+nav a{flex:1;text-align:center;padding:10px 2px;font-size:12px;color:var(--mu);text-decoration:none;position:relative;cursor:pointer}
+nav a.on{color:var(--g);font-weight:700}
+.badge{position:absolute;top:4px;right:18%;background:var(--r);color:#fff;border-radius:10px;font-size:10px;padding:1px 6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+h3{margin:4px 0 10px}label{font-size:13px;color:var(--mu);display:block;margin-top:6px}
+.err{color:var(--r);font-size:13px}
+#ptr{text-align:center;color:var(--mu);font-size:13px;height:0;overflow:hidden;transition:.2s}
+.modal{position:fixed;inset:0;background:#0006;display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:16px;max-height:90vh;overflow:auto}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>🌾 KisanMandi</h1><small id="who"></small></div><button class="sec" style="width:auto;padding:6px 10px" onclick="refresh()">⟳</button></header>
+<div id="ptr">Refreshing…</div>
+<main id="main"></main>
+<nav id="nav"></nav>
+</div>
+<div id="modal"></div>
+<script>
+const API = localStorage.getItem('api') || 'http://localhost:3000';
+let D = {users:[],crops:[],markets:[],prices:[],listings:[],alerts:[]};
+let me = null, tab = 'prices', S = {market:'1', q:'', cat:'All', crop:'1', lq:'', lcrop:'', ldist:'', lgrade:'', lsort:'new', pc:{crop:'1',market:'1',qty:10,cost:3000,shift:0}};
+let chart;
+
+const api = {
+  get: c => fetch(`${API}/${c}`).then(r=>r.json()),
+  post:(c,b)=>fetch(`${API}/${c}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json()),
+  patch:(c,id,b)=>fetch(`${API}/${c}/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json()),
+  del:(c,id)=>fetch(`${API}/${c}/${id}`,{method:'DELETE'})
+};
+const $ = s=>document.querySelector(s);
+const crop = id=>D.crops.find(c=>c.id==id)||{}; const mkt = id=>D.markets.find(m=>m.id==id)||{};
+const rs = n=>'Rs '+Math.round(n).toLocaleString();
+const today = ()=>new Date().toISOString().slice(0,10);
+
+function series(c,m){return D.prices.filter(p=>p.crop_id==c&&p.market_id==m).sort((a,b)=>a.date<b.date?-1:1)}
+function latest(c,m){const s=series(c,m);return s.length?s[s.length-1].price:0}
+function change(c,m){const s=series(c,m);if(s.length<2)return{a:0,p:0};const t=s.at(-1).price,y=s.at(-2).price;return{a:t-y,p:(t-y)/y*100}}
+function avgAcross(c){const v=D.markets.map(m=>latest(c,m.id)).filter(Boolean);return v.reduce((a,b)=>a+b,0)/(v.length||1)}
+function triggered(a){if(!a.active_status)return false;const p=latest(a.crop_id,a.market_id);return a.condition==='Above'?p>=a.target_price:p<=a.target_price}
+
+async function refresh(){
+  $('#ptr').style.height='24px';
+  try{
+    const ks=Object.keys(D); const r=await Promise.all(ks.map(api.get)); ks.forEach((k,i)=>D[k]=r[i]);
+  }catch(e){$('#main').innerHTML=`<div class="card err">API not reachable at ${API}. Run: <b>npx json-server@0.17.4 --watch db.json --port 3000</b></div>`;$('#ptr').style.height='0';return}
+  $('#ptr').style.height='0';
+  const id=localStorage.getItem('uid'); me=D.users.find(u=>u.id==id)||null;
+  render();
+}
+
+// pull-to-refresh
+let sy=null;addEventListener('touchstart',e=>{if(scrollY===0)sy=e.touches[0].clientY});
+addEventListener('touchend',e=>{if(sy!==null&&e.changedTouches[0].clientY-sy>80)refresh();sy=null});
+
+function tabs(){return me.role==='Farmer'?['prices','market','alerts','mine','profit']:['prices','market']}
+const LBL={prices:'📈 Prices',market:'🛒 Marketplace',alerts:'🔔 Alerts',mine:'📦 My Listings',profit:'💰 Profit'};
+
+function render(){
+  if(!me) return renderOnboard();
+  $('#who').textContent=`${me.name} · ${me.role} · ${me.district}`;
+  const trig=D.alerts.filter(a=>a.user_id==me.id&&triggered(a)).length;
+  $('#nav').innerHTML=tabs().map(t=>`<a class="${t===tab?'on':''}" onclick="go('${t}')">${LBL[t]}${t==='alerts'&&trig?`<span class="badge">${trig}</span>`:''}</a>`).join('');
+  if(!tabs().includes(tab))tab='prices';
+  ({prices:renderPrices,market:renderMarket,alerts:renderAlerts,mine:renderMine,profit:renderProfit,detail:renderDetail})[tab]();
+}
+function go(t){tab=t;render();scrollTo(0,0)}
+
+function renderOnboard(){
+  $('#nav').innerHTML='';$('#who').textContent='Welcome';
+  $('#main').innerHTML=`<div class="card"><h3>Create your profile</h3>
+  <label>Name</label><input id="on" placeholder="Your name">
+  <label>Phone</label><input id="op" placeholder="03XXXXXXXXX">
+  <label>District</label><select id="od">${['Hyderabad','Sukkur','Mirpurkhas','Larkana','Karachi','Nawabshah'].map(d=>`<option>${d}</option>`).join('')}</select>
+  <label>I am a</label><select id="or"><option>Farmer</option><option>Buyer</option></select>
+  <p class="err" id="oe"></p><button onclick="register()">Continue</button></div>
+  <div class="card"><p class="mu">Demo: login as existing user</p>${D.users.map(u=>`<button class="sec" style="margin:3px 0" onclick="login('${u.id}')">${u.name} (${u.role})</button>`).join('')}</div>`;
+}
+async function register(){
+  const n=$('#on').value.trim(),p=$('#op').value.trim();
+  if(!n||!/^03\d{9}$/.test(p)){$('#oe').textContent='Enter name and valid phone (03XXXXXXXXX)';return}
+  const u=await api.post('users',{name:n,phone:p,district:$('#od').value,role:$('#or').value});
+  localStorage.setItem('uid',u.id);refresh();
+}
+function login(id){localStorage.setItem('uid',id);refresh()}
+function logout(){localStorage.removeItem('uid');me=null;render()}
+
+// ---------- M1 Prices
+function renderPrices(){
+  const cats=['All',...new Set(D.crops.map(c=>c.category))];
+  const list=D.crops.filter(c=>(S.cat==='All'||c.category===S.cat)&&c.name.toLowerCase().includes(S.q.toLowerCase()));
+  $('#main').innerHTML=`<div class="card"><label>Market</label><select onchange="S.market=this.value;render()">${D.markets.map(m=>`<option value="${m.id}" ${m.id==S.market?'selected':''}>${m.name} (${m.district})</option>`).join('')}</select>
+  <div class="grid2"><div><label>Search</label><input value="${S.q}" oninput="S.q=this.value;renderPricesList()" placeholder="Crop…"></div>
+  <div><label>Category</label><select onchange="S.cat=this.value;render()">${cats.map(c=>`<option ${c===S.cat?'selected':''}>${c}</option>`).join('')}</select></div></div></div>
+  <div id="plist"></div><button class="sec" onclick="logout()">Switch user</button>`;
+  renderPricesList();
+}
+function renderPricesList(){
+  const list=D.crops.filter(c=>(S.cat==='All'||c.category===S.cat)&&c.name.toLowerCase().includes(S.q.toLowerCase()));
+  $('#plist').innerHTML=list.map(c=>{const p=latest(c.id,S.market),ch=change(c.id,S.market),cl=ch.a>=0?'up':'down';
+    return `<div class="card row between" style="cursor:pointer" onclick="S.crop='${c.id}';go('detail')"><div><b>${c.name}</b><div class="mu">${c.category} · per 40kg</div></div>
+    <div style="text-align:right"><b>${rs(p)}</b><div class="${cl}">${ch.a>=0?'▲':'▼'} ${rs(Math.abs(ch.a))} (${ch.p.toFixed(1)}%)</div></div></div>`}).join('')||'<p class="mu">No crops found</p>';
+}
+
+// ---------- M2 Detail + comparison
+function renderDetail(){
+  const c=crop(S.crop),s=series(S.crop,S.market).slice(-14),v=s.map(x=>x.price);
+  const mn=Math.min(...v),mx=Math.max(...v),av=v.reduce((a,b)=>a+b,0)/v.length;
+  const cmp=D.markets.map(m=>({m,p:latest(S.crop,m.id)})).sort((a,b)=>b.p-a.p);
+  $('#main').innerHTML=`<button class="sec" onclick="go('prices')">← Back</button>
+  <div class="card"><h3>${c.name} — ${mkt(S.market).name}</h3><canvas id="ch" height="200"></canvas>
+  <div class="grid2" style="grid-template-columns:1fr 1fr 1fr;margin-top:8px;text-align:center">
+  <div><div class="mu">Min</div><b>${rs(mn)}</b></div><div><div class="mu">Avg</div><b>${rs(av)}</b></div><div><div class="mu">Max</div><b>${rs(mx)}</b></div></div></div>
+  <div class="card"><h3>Compare markets (today)</h3>${cmp.map((x,i)=>`<div class="row between" style="padding:6px 0;border-bottom:1px solid #eee"><span>${i+1}. ${x.m.name}<div class="mu">${x.m.district}</div></span><span><b>${rs(x.p)}</b> ${i===0?'<span class="tag best">⭐ Best to sell</span>':''}</span></div>`).join('')}</div>`;
+  if(chart)chart.destroy();
+  chart=new Chart($('#ch'),{type:'line',data:{labels:s.map(x=>x.date.slice(5)),datasets:[{label:c.name,data:v,borderColor:'#1f7a3f',backgroundColor:'#1f7a3f22',fill:true,tension:.3}]},options:{plugins:{legend:{display:false}}}});
+}
+
+// ---------- M3 Alerts
+function renderAlerts(){
+  const mine=D.alerts.filter(a=>a.user_id==me.id);
+  $('#main').innerHTML=`<div class="card"><h3>New price alert</h3>
+  <div class="grid2"><div><label>Crop</label><select id="ac">${D.crops.map(c=>`<option value="${c.id}">${c.name}</option>`)}</select></div>
+  <div><label>Market</label><select id="am">${D.markets.map(m=>`<option value="${m.id}">${m.name}</option>`)}</select></div>
+  <div><label>Condition</label><select id="ad"><option>Above</option><option>Below</option></select></div>
+  <div><label>Target (Rs)</label><input id="at" type="number"></div></div><p class="err" id="ae"></p>
+  <button onclick="addAlert()">Add alert</button></div>
+  ${mine.map(a=>{const t=triggered(a),p=latest(a.crop_id,a.market_id);return `<div class="card" style="${t?'border:2px solid #c0392b':''}">
+  <div class="row between"><b>${crop(a.crop_id).name} @ ${mkt(a.market_id).name}</b>${t?'<span class="tag above">🔔 Triggered</span>':''}</div>
+  <div class="mu">${a.condition} ${rs(a.target_price)} · latest ${rs(p)}</div>
+  <div class="row" style="margin-top:8px"><label style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" ${a.active_status?'checked':''} onchange="toggleAlert('${a.id}',this.checked)"> Active</label>
+  <button class="red" style="width:auto;margin-left:auto" onclick="delAlert('${a.id}')">Delete</button></div></div>`}).join('')||'<p class="mu">No alerts yet</p>'}`;
+}
+async function addAlert(){const t=+$('#at').value;if(!(t>0)){$('#ae').textContent='Target price must be > 0';return}
+  await api.post('alerts',{user_id:me.id,crop_id:$('#ac').value,market_id:$('#am').value,condition:$('#ad').value,target_price:t,active_status:true});refresh()}
+async function toggleAlert(id,v){await api.patch('alerts',id,{active_status:v});refresh()}
+async function delAlert(id){if(confirm('Delete alert?')){await api.del('alerts',id);refresh()}}
+
+// ---------- M4 Marketplace
+function mktLabel(l){const avg=avgAcross(l.crop_id),d=(l.asking_price-avg)/avg;
+  return Math.abs(d)<=.05?'<span class="tag">At market</span>':d<0?'<span class="tag below">Below market</span>':'<span class="tag above">Above market</span>'}
+function listingCard(l,own){const u=D.users.find(x=>x.id==l.user_id)||{};
+  return `<div class="card" style="cursor:pointer" onclick="showListing('${l.id}')"><div class="row between"><b>${crop(l.crop_id).name} · Grade ${l.grade}</b>${l.status==='Sold'?'<span class="tag above">Sold</span>':mktLabel(l)}</div>
+  <div class="mu">${l.quantity} maund · ${l.district} · from ${l.available_from}${own?'':' · '+(u.name||'')}</div><b>${rs(l.asking_price)}</b> <span class="mu">/40kg</span></div>`}
+function renderMarket(){
+  $('#main').innerHTML=`<div class="card"><input placeholder="Search crop…" value="${S.lq}" oninput="S.lq=this.value;renderMList()">
+  <div class="grid2" style="margin-top:6px"><select onchange="S.lcrop=this.value;renderMList()"><option value="">All crops</option>${D.crops.map(c=>`<option value="${c.id}" ${S.lcrop==c.id?'selected':''}>${c.name}</option>`)}</select>
+  <select onchange="S.ldist=this.value;renderMList()"><option value="">All districts</option>${[...new Set(D.listings.map(l=>l.district))].map(d=>`<option ${S.ldist==d?'selected':''}>${d}</option>`)}</select>
+  <select onchange="S.lgrade=this.value;renderMList()"><option value="">All grades</option>${'ABC'.split('').map(g=>`<option ${S.lgrade==g?'selected':''}>${g}</option>`)}</select>
+  <select onchange="S.lsort=this.value;renderMList()"><option value="new">Newest</option><option value="price" ${S.lsort=='price'?'selected':''}>Price ↑</option></select></div></div><div id="mlist"></div>`;
+  renderMList();
+}
+function renderMList(){
+  let L=D.listings.filter(l=>l.status==='Active'&&(!S.lcrop||l.crop_id==S.lcrop)&&(!S.ldist||l.district==S.ldist)&&(!S.lgrade||l.grade==S.lgrade)&&crop(l.crop_id).name?.toLowerCase().includes(S.lq.toLowerCase()));
+  L.sort(S.lsort==='price'?(a,b)=>a.asking_price-b.asking_price:(a,b)=>(b.created_at||'').localeCompare(a.created_at||'')||b.id-a.id);
+  $('#mlist').innerHTML=L.map(l=>listingCard(l)).join('')||'<p class="mu">No listings</p>';
+}
+function showListing(id){const l=D.listings.find(x=>x.id==id),u=D.users.find(x=>x.id==l.user_id)||{},own=me&&l.user_id==me.id,ph=l.phone||u.phone||'';
+  $('#modal').innerHTML=`<div class="modal" onclick="if(event.target===this)closeM()"><div class="sheet"><h3>${crop(l.crop_id).name} · Grade ${l.grade}</h3>${mktLabel(l)}
+  <p>Quantity: <b>${l.quantity} maund</b><br>Asking: <b>${rs(l.asking_price)}</b> /40kg (market avg ${rs(avgAcross(l.crop_id))})<br>District: ${l.district}<br>Available from: ${l.available_from}<br>Seller: ${u.name||'-'} · ${ph}<br>Status: ${l.status}</p>
+  <div class="grid2"><a href="tel:${ph}"><button>📞 Call</button></a><a target="_blank" href="https://wa.me/92${ph.replace(/^0/,'')}?text=${encodeURIComponent('Salam, I am interested in your '+crop(l.crop_id).name+' listing on KisanMandi')}"><button style="background:#25D366">WhatsApp</button></a></div>
+  ${own?`<div class="grid2" style="margin-top:8px"><button class="sec" onclick="listingForm('${l.id}')">Edit</button>${l.status!=='Sold'?`<button class="sec" onclick="markSold('${l.id}')">Mark Sold</button>`:''}<button class="red" onclick="delListing('${l.id}')">Delete</button></div>`:''}
+  <button class="sec" style="margin-top:8px" onclick="closeM()">Close</button></div></div>`}
+function closeM(){$('#modal').innerHTML=''}
+function renderMine(){const L=D.listings.filter(l=>l.user_id==me.id);
+  $('#main').innerHTML=`<button onclick="listingForm()">+ New listing</button><div style="height:10px"></div>${L.map(l=>listingCard(l,true)).join('')||'<p class="mu">No listings yet</p>'}`}
+function listingForm(id){const l=id?D.listings.find(x=>x.id==id):{crop_id:'1',quantity:'',asking_price:'',district:me.district,grade:'A',available_from:today(),phone:me.phone};
+  if(id&&l.user_id!=me.id)return alert('You can only edit your own listings');
+  $('#modal').innerHTML=`<div class="modal"><div class="sheet"><h3>${id?'Edit':'New'} listing</h3>
+  <label>Crop</label><select id="lc">${D.crops.map(c=>`<option value="${c.id}" ${c.id==l.crop_id?'selected':''}>${c.name}</option>`)}</select>
+  <div class="grid2"><div><label>Quantity (maund)</label><input id="lqn" type="number" value="${l.quantity}"></div><div><label>Asking price (Rs/40kg)</label><input id="lp" type="number" value="${l.asking_price}"></div>
+  <div><label>District</label><input id="ld" value="${l.district}"></div><div><label>Grade</label><select id="lg">${'ABC'.split('').map(g=>`<option ${g==l.grade?'selected':''}>${g}</option>`)}</select></div>
+  <div><label>Available from</label><input id="la" type="date" min="${today()}" value="${l.available_from}"></div><div><label>Contact phone</label><input id="lph" value="${l.phone||me.phone}"></div></div>
+  <p class="err" id="le"></p><button onclick="saveListing('${id||''}')">Save</button><button class="sec" style="margin-top:6px" onclick="closeM()">Cancel</button></div></div>`}
+async function saveListing(id){
+  const b={crop_id:$('#lc').value,quantity:+$('#lqn').value,asking_price:+$('#lp').value,district:$('#ld').value.trim(),grade:$('#lg').value,available_from:$('#la').value,phone:$('#lph').value.trim()};
+  const e=[];if(!(b.quantity>0))e.push('Quantity must be > 0');if(!(b.asking_price>0))e.push('Price must be > 0');if(!b.district)e.push('District required');
+  if(!b.available_from||b.available_from<today())e.push('Date cannot be in the past');if(!/^03\d{9}$/.test(b.phone))e.push('Phone must be 03XXXXXXXXX');
+  if(e.length){$('#le').innerHTML=e.join('<br>');return}
+  if(id)await api.patch('listings',id,b);else await api.post('listings',{...b,user_id:me.id,status:'Active',created_at:new Date().toISOString()});
+  closeM();refresh()}
+async function markSold(id){const l=D.listings.find(x=>x.id==id);if(l.user_id!=me.id)return;await api.patch('listings',id,{status:'Sold'});closeM();refresh()}
+async function delListing(id){const l=D.listings.find(x=>x.id==id);if(l.user_id!=me.id)return;if(confirm('Delete listing?')){await api.del('listings',id);closeM();refresh()}}
+
+// ---------- M5 Profit
+function renderProfit(){const P=S.pc,base=latest(P.crop,P.market),price=base*(1+P.shift/100),rev=price*P.qty,cost=P.cost*P.qty,pr=rev-cost,mg=rev?pr/rev*100:0;
+  $('#main').innerHTML=`<div class="card"><h3>Profit calculator</h3>
+  <div class="grid2"><div><label>Crop</label><select onchange="S.pc.crop=this.value;render()">${D.crops.map(c=>`<option value="${c.id}" ${c.id==P.crop?'selected':''}>${c.name}</option>`)}</select></div>
+  <div><label>Market</label><select onchange="S.pc.market=this.value;render()">${D.markets.map(m=>`<option value="${m.id}" ${m.id==P.market?'selected':''}>${m.name}</option>`)}</select></div>
+  <div><label>Quantity (40kg units)</label><input type="number" value="${P.qty}" onchange="S.pc.qty=Math.max(0,+this.value);render()"></div>
+  <div><label>Cost per unit (Rs)</label><input type="number" value="${P.cost}" onchange="S.pc.cost=Math.max(0,+this.value);render()"></div></div>
+  <label>What-if price shift: <b>${P.shift>0?'+':''}${P.shift}%</b></label><input type="range" min="-20" max="20" value="${P.shift}" oninput="S.pc.shift=+this.value;render()"></div>
+  <div class="card"><p class="mu">Market price ${rs(base)} → used ${rs(price)}</p>
+  <div class="grid2"><div>Revenue<br><b>${rs(rev)}</b></div><div>Total cost<br><b>${rs(cost)}</b></div>
+  <div>${pr>=0?'Profit':'Loss'}<br><b class="${pr>=0?'up':'down'}">${rs(Math.abs(pr))}</b></div><div>Margin<br><b class="${pr>=0?'up':'down'}">${mg.toFixed(1)}%</b></div></div></div>`}
+
+refresh();
+</script>
+</body>
+</html>
