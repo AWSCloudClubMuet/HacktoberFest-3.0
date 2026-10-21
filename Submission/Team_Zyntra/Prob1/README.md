@@ -3,7 +3,7 @@
 
 ---
 
-## 👋 Hey everyone!
+##  Hey everyone!
 This is our team submission for **Problem 1 (TuneWave Music Streaming Player)**. We broke down the problem into the three assigned milestones, covering all the required data structures (Doubly Linked List, Hash Map, Queue, Stack, BST, and Undirected Graph).
 
 For each milestone, we've provided:
@@ -62,4 +62,4 @@ Every notebook is completely self-contained and pre-executed with outputs:
 2. Run all cells to see the interactive demos and assertion tests.
 3. Every notebook has a built-in test block at the end that verifies all required rules and edge cases.
 
-Thanks for reviewing our work! — *Team Zyntra*
+Thanks for reviewing our work! — *Syed Fazeel - Team Zyntra*
