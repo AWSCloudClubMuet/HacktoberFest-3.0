@@ -11,9 +11,10 @@
  *  - Projection (pure function, attached to the module object):
  *      hypothetical stock = stock + slider delta
  *      projected fulfilment = min(required, fulfilled + allocated)
- *    where the item's incoming units are handed out to that item's unmet
- *    needs until the pool runs dry. All sliders at 0 must project today
- *    exactly — the pool starts empty, so nothing can move.
+ *    where each item's incoming units are handed out GREEDILY to that item's
+ *    unmet needs — ordered by priority (High > Medium > Low), then by
+ *    remaining units, then id — until the pool runs dry. All sliders at 0
+ *    must project today exactly: the pool starts empty, so nothing moves.
  *  - Scoring is self-contained (no import from the priority module other
  *    teammates are building) — same spirit: urgency High=1 / Medium=0.6 /
  *    Low=0.3, deprivation = 1 − fulfilment%, camp pressure = families /
@@ -132,6 +133,10 @@ function projectScenario(needs, inventory, deltas) {
   const pool = {};
   for (const it of inventory) pool[it.id] = incoming(it.id);
 
+  /* Greedy order: most urgent first (High 1.0 > Medium 0.6 > Low 0.3), then
+   * the biggest remaining gap, then lower id — so the scarce incoming units
+   * land on the loudest needs first and the result never depends on the
+   * order the API happened to return rows in. */
   const rows = needs.map(n => {
     const required = +n.required_quantity || 0;
     const fulfilled = +n.fulfilled_quantity || 0;
@@ -140,7 +145,8 @@ function projectScenario(needs, inventory, deltas) {
       remaining: Math.max(0, required - fulfilled),
       weight: PRIORITY_WEIGHT[n.priority] ?? 0.3,
     };
-  });
+  }).sort((a, b) =>
+    b.weight - a.weight || b.remaining - a.remaining || a.n.id - b.n.id);
 
   const perNeed = [];
   const allocatedByItem = {};
