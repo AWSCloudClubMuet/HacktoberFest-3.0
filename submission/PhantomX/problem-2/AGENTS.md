@@ -18,8 +18,9 @@ A student is a Poster on gigs they create and an Applicant on gigs they apply to
 ## Tech stack and run commands
 
 - API: Node.js 18+ and Express. In-memory store loaded from `data/db.json`. No database.
-- UI: Vite, React, and Tailwind in `client/`. One student switcher; no real auth.
-- Acting user: `client/src/api.js` sends `x-user-id` on every request. `VITE_API_URL` defaults to `http://localhost:3001`.
+- UI: Vite, React, and Tailwind in `client/`. Login and signup. No email verification, password reset, or OAuth.
+- Acting user: a JWT from `POST /auth/login` or `POST /auth/signup`. `client/src/api.js` sends `Authorization: Bearer <token>`. The secret is `JWT_SECRET`, with dev default `campus-gig-dev-secret`. `VITE_API_URL` defaults to `http://localhost:3001`.
+- Demo password for every seeded student is `Demo@1234`. The five judge accounts are in `DEMO_ACCOUNTS.md`.
 
 From `submission/PhantomX/problem-2/`:
 
@@ -36,7 +37,7 @@ npm run test:api   # rule checks against a temporary database
 
 ## Data model
 
-**Users:** `id`, `name`, `major`, `semester`, `bio`, `skills` (string array).
+**Users:** `id`, `name`, `email` (unique, stored lowercase), `password_hash` (bcrypt, never returned), `major`, `semester`, `bio`, `skills` (string array).
 
 Computed on read, never stored or patched:
 
@@ -67,7 +68,7 @@ Allowed transitions:
 
 Gig create (`POST /gigs`):
 
-- `x-user-id` must match an existing user. Missing header is `400`. Unknown user is `404`.
+- A valid bearer token is required. A missing or invalid token is `401`.
 - `title` and `description` required, non-empty, trimmed.
 - `type`, `category`, `payment_type` must be one of the enums above.
 - `Paid`: `budget` required, number, greater than 0. `SkillSwap` and `Free`: `budget` must be `null`.
@@ -83,7 +84,7 @@ Discovery (`GET /gigs`):
 
 Applications:
 
-- Applicant is `x-user-id`. `message` required, 1–500 characters.
+- Applicant is the authenticated user. `message` required, 1–500 characters.
 - Reject apply to your own gig, a second application to the same gig (any status), or a gig that is not effectively `Open`.
 - New applications start `Pending`.
 - Only the gig owner may `PATCH` an application.
@@ -94,7 +95,7 @@ Applications:
 Reviews:
 
 - Gig must be `Completed`.
-- Reviewer is `x-user-id` and must be the owner or the accepted applicant.
+- Reviewer is the authenticated user and must be the owner or the accepted applicant.
 - `reviewee_id` must be the other participant.
 - One review per reviewer per gig.
 - `rating` integer 1–5. `comment` required, non-empty, max 500 characters.
@@ -104,11 +105,14 @@ Reviews:
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| GET | `/users` | List users (for the switcher) |
+| POST | `/auth/signup` | Create an account. Returns `{ token, user }` |
+| POST | `/auth/login` | `{ email, password }`. Returns `{ token, user }` or `401` |
+| GET | `/auth/me` | Current user from the bearer token |
+| GET | `/users` | List users. `password_hash` is omitted |
 | GET | `/users/:id` | Profile plus computed stats |
 | GET | `/gigs` | Search and filter. Query: `category`, `type`, `payment_type`, `min`, `max`, `q` |
 | GET | `/gigs/:id` | Gig detail, effective status |
-| POST | `/gigs` | Create gig as `X-User-Id` |
+| POST | `/gigs` | Create gig as the authenticated user |
 | PATCH | `/gigs/:id` | Owner sets `Completed` or `Cancelled` |
 | GET | `/applications` | Query: `gig_id`, `applicant_id` |
 | POST | `/applications` | Apply to a gig |
@@ -116,11 +120,13 @@ Reviews:
 | GET | `/reviews` | Query: `reviewee_id`. Omit it to return every review |
 | POST | `/reviews` | Review the other party |
 
-Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403` not the owner, applying to your own gig, or reviewing when you are not a participant. `404` unknown user, gig, or application. `409` duplicate application, duplicate review, or an illegal status change.
+Errors use `{ "error": "..." }`. `400` validation. `401` missing or invalid token, or wrong login (`Invalid email or password`). `403` not the owner, applying to your own gig, or reviewing when you are not a participant. `404` unknown user, gig, or application. `409` duplicate email, duplicate application, duplicate review, or an illegal status change.
+
+Every route except `/auth/*` requires a bearer token. `/auth/me` still requires one.
 
 ## Seed data
 
-`npm run seed` writes `data/db.json`. Counts are minimums; relationships must already satisfy the rules above. The current seed is 12 users, 27 gigs, 33 applications, and 9 reviews.
+`npm run seed` writes `data/db.json`. Counts are minimums; relationships must already satisfy the rules above. The current seed is 12 users, 27 gigs, 35 applications, and 9 reviews. Every user has `firstname.lastname@campus.edu` and the bcrypt hash of `Demo@1234`. u01–u05 are Aisha Khan, Bilal Ahmed, Sara Malik, Hamza Raza, and Zainab Tariq. See `DEMO_ACCOUNTS.md`.
 
 - At least 12 users with names, majors, semesters, bios, and skills.
 - At least 25 gigs across Programming, Design, Writing, and Tutoring; both `Offering` and `Requesting`; all three payment types; all five effective statuses.
@@ -132,7 +138,7 @@ Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403
 ## Coding conventions
 
 - Small, focused changes. Edit existing files instead of rewriting them.
-- Do not add dependencies beyond Express, Vite, React, the Vite React plugin, and Tailwind unless asked.
+- Do not add dependencies beyond Express, Vite, React, the Vite React plugin, Tailwind, bcryptjs, and jsonwebtoken unless asked.
 - Keep business rules in the API. The UI may hide invalid actions; it is not the source of truth.
 - IDs are strings. Dates are ISO-8601.
 
@@ -141,6 +147,7 @@ Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403
 - [x] Stage 1 — Express API, seed file, business rules, and `npm run test:api`
 - [x] Stage 2 — Browse, profiles, create gig, apply, and my applications
 - [x] Stage 3 — Owner actions, My Gigs, reviews, and toasts
+- [x] Auth — signup, login, bearer tokens, and demo accounts
 
 ## Milestones
 

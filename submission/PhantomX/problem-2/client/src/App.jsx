@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { api, getCurrentUserId, setCurrentUserId } from './api.js';
-import { Link } from './components.jsx';
-import { AppContext } from './context.js';
+import { api, getToken, setToken } from './api.js';
+import { Link, secondaryButtonClass } from './components.jsx';
+import { AppContext, AuthContext } from './context.js';
 import { GigsPage } from './pages/GigsPage.jsx';
 import { GigDetailPage } from './pages/GigDetailPage.jsx';
 import { CreateGigPage } from './pages/CreateGigPage.jsx';
 import { ProfilePage } from './pages/ProfilePage.jsx';
 import { ApplicationsPage } from './pages/ApplicationsPage.jsx';
 import { MyGigsPage } from './pages/MyGigsPage.jsx';
+import { LoginPage } from './pages/LoginPage.jsx';
+import { SignupPage } from './pages/SignupPage.jsx';
 
 function useRoute() {
   const [path, setPath] = useState(() => normalize(window.location.pathname));
@@ -37,6 +39,8 @@ function normalize(path) {
 
 function matchRoute(path) {
   if (path === '/') return { name: 'gigs' };
+  if (path === '/login') return { name: 'login' };
+  if (path === '/signup') return { name: 'signup' };
   if (path === '/gigs/new') return { name: 'create' };
   if (path === '/applications') return { name: 'applications' };
   if (path === '/my-gigs') return { name: 'my-gigs' };
@@ -59,10 +63,10 @@ const nav = [
 export function App() {
   const { path, navigate } = useRoute();
   const [users, setUsers] = useState([]);
-  const [userId, setUserId] = useState('');
-  const [bootError, setBootError] = useState('');
+  const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
   const [toasts, setToasts] = useState([]);
+  const userId = user?.id || '';
 
   function pushToast(tone, message) {
     const id = `${Date.now()}-${Math.random()}`;
@@ -74,17 +78,22 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    api('/users')
-      .then((list) => {
+    if (!getToken()) {
+      setBooting(false);
+      return undefined;
+    }
+    api('/auth/me')
+      .then(async (me) => {
         if (cancelled) return;
-        const saved = getCurrentUserId();
-        const next = list.some((user) => user.id === saved) ? saved : list[0]?.id || '';
-        setCurrentUserId(next);
-        setUsers(list);
-        setUserId(next);
+        setUser(me);
+        const list = await api('/users');
+        if (!cancelled) setUsers(list);
       })
-      .catch((error) => {
-        if (!cancelled) setBootError(error.message);
+      .catch(() => {
+        if (!cancelled) {
+          setToken('');
+          setUser(null);
+        }
       })
       .finally(() => {
         if (!cancelled) setBooting(false);
@@ -94,16 +103,43 @@ export function App() {
     };
   }, []);
 
-  function selectUser(id) {
-    setCurrentUserId(id);
-    setUserId(id);
+  async function establish(data) {
+    setToken(data.token);
+    setUser(data.user);
+    const list = await api('/users');
+    setUsers(list);
+    return data.user;
+  }
+
+  function login(email, password) {
+    return api('/auth/login', { method: 'POST', body: { email, password } }).then(establish);
+  }
+
+  function signup(payload) {
+    return api('/auth/signup', { method: 'POST', body: payload }).then(establish);
+  }
+
+  function logout() {
+    setToken('');
+    setUser(null);
+    setUsers([]);
+    navigate('/login');
   }
 
   const route = matchRoute(path);
+  const isPublic = route.name === 'login' || route.name === 'signup';
+
+  useEffect(() => {
+    if (booting) return;
+    if (!user && !isPublic) navigate('/login');
+    else if (user && isPublic) navigate('/');
+  }, [booting, user, isPublic, path]);
+
   let page = <p className="text-sm text-stone-600">That page does not exist.</p>;
-  if (booting) page = <p className="text-sm text-stone-500">Loading students…</p>;
-  else if (bootError) page = <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800" role="alert">{bootError}</p>;
-  else if (!userId) page = <p className="text-sm text-stone-600">No students are available.</p>;
+  if (booting) page = <p className="text-sm text-stone-500">Loading…</p>;
+  else if (route.name === 'login') page = <LoginPage />;
+  else if (route.name === 'signup') page = <SignupPage />;
+  else if (!user) page = <p className="text-sm text-stone-500">Redirecting to login…</p>;
   else if (route.name === 'gigs') page = <GigsPage key={userId} />;
   else if (route.name === 'create') page = <CreateGigPage key={userId} />;
   else if (route.name === 'gig') page = <GigDetailPage key={`${userId}-${route.id}`} gigId={route.id} />;
@@ -112,39 +148,38 @@ export function App() {
   else if (route.name === 'profile') page = <ProfilePage key={`${userId}-${route.userId || 'me'}`} profileId={route.userId || userId} />;
 
   return (
-    <AppContext.Provider value={{ path, navigate, userId, users, selectUser, pushToast }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AppContext.Provider value={{ path, navigate, userId, users, pushToast }}>
       <div className="min-h-screen">
         <header className="border-b border-stone-200 bg-white">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
-            <Link to="/" className="text-lg font-semibold tracking-tight text-teal-900">
+            <Link to={user ? '/' : '/login'} className="text-lg font-semibold tracking-tight text-teal-900">
               Campus Gig
             </Link>
-            <nav className="flex flex-wrap gap-1 text-sm">
-              {nav.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`rounded-md px-3 py-1.5 ${path === item.to ? 'bg-teal-800 text-white' : 'text-stone-700 hover:bg-stone-100'}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-            <label className="ml-auto flex items-center gap-2 text-sm text-stone-600">
-              <span className="font-medium">Current student</span>
-              <select
-                className="max-w-[14rem] rounded-md border border-stone-300 bg-white px-2 py-1.5 text-stone-900 sm:max-w-xs"
-                value={userId}
-                disabled={!users.length}
-                onChange={(event) => selectUser(event.target.value)}
-              >
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name} · {user.major}
-                  </option>
+            {user ? (
+              <nav className="flex flex-wrap gap-1 text-sm">
+                {nav.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`rounded-md px-3 py-1.5 ${path === item.to ? 'bg-teal-800 text-white' : 'text-stone-700 hover:bg-stone-100'}`}
+                  >
+                    {item.label}
+                  </Link>
                 ))}
-              </select>
-            </label>
+              </nav>
+            ) : (
+              <nav className="flex flex-wrap gap-1 text-sm">
+                <Link to="/login" className={`rounded-md px-3 py-1.5 ${path === '/login' ? 'bg-teal-800 text-white' : 'text-stone-700 hover:bg-stone-100'}`}>Log in</Link>
+                <Link to="/signup" className={`rounded-md px-3 py-1.5 ${path === '/signup' ? 'bg-teal-800 text-white' : 'text-stone-700 hover:bg-stone-100'}`}>Sign up</Link>
+              </nav>
+            )}
+            {user ? (
+              <div className="ml-auto flex items-center gap-3 text-sm">
+                <span className="font-medium text-stone-800">{user.name}</span>
+                <button type="button" className={secondaryButtonClass} onClick={logout}>Log out</button>
+              </div>
+            ) : null}
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-6">{page}</main>
@@ -161,5 +196,6 @@ export function App() {
         </div>
       </div>
     </AppContext.Provider>
+    </AuthContext.Provider>
   );
 }

@@ -28,12 +28,21 @@ function check(condition, message, extra) {
   failures.push(message);
 }
 
-async function api(method, urlPath, { user, body } = {}) {
+const sessions = new Map();
+let defaultToken = '';
+let usersById = new Map();
+
+async function api(method, urlPath, { user, token, body, anonymous = false } = {}) {
+  let auth;
+  if (!anonymous) {
+    if (user) auth = await tokenFor(user);
+    else auth = token || defaultToken;
+  }
   const response = await fetch(`${base}${urlPath}`, {
     method,
     headers: {
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-      ...(user ? { 'x-user-id': user } : {}),
+      ...(auth ? { Authorization: `Bearer ${auth}` } : {}),
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
@@ -41,7 +50,86 @@ async function api(method, urlPath, { user, body } = {}) {
   return { status: response.status, data: text ? JSON.parse(text) : null };
 }
 
+async function tokenFor(userId) {
+  if (sessions.has(userId)) return sessions.get(userId);
+  const account = usersById.get(userId);
+  const res = await api('POST', '/auth/login', {
+    body: { email: account.email, password: 'Demo@1234' },
+  });
+  if (res.status !== 200) throw new Error(`Could not log in ${account.email}`);
+  sessions.set(userId, res.data.token);
+  return res.data.token;
+}
+
 try {
+  const missingToken = await api('GET', '/gigs');
+  check(missingToken.status === 401, 'a request without a token is rejected', missingToken);
+
+  const missingName = await api('POST', '/auth/signup', {
+    anonymous: true,
+    body: { email: 'new.student@campus.edu', password: 'Demo@1234', major: 'Art', semester: 2 },
+  });
+  check(missingName.status === 400, 'signup requires a name', missingName);
+
+  const badEmail = await api('POST', '/auth/signup', {
+    anonymous: true,
+    body: { name: 'New Student', email: 'not-an-email', password: 'Demo@1234', major: 'Art', semester: 2 },
+  });
+  check(badEmail.status === 400, 'signup rejects an invalid email', badEmail);
+
+  const shortPassword = await api('POST', '/auth/signup', {
+    anonymous: true,
+    body: { name: 'New Student', email: 'new.student@campus.edu', password: 'short', major: 'Art', semester: 2 },
+  });
+  check(shortPassword.status === 400, 'signup rejects a short password', shortPassword);
+
+  const duplicateEmail = await api('POST', '/auth/signup', {
+    anonymous: true,
+    body: { name: 'Aisha Copy', email: 'Aisha.Khan@Campus.edu', password: 'Demo@1234', major: 'Art', semester: 2 },
+  });
+  check(duplicateEmail.status === 409, 'signup rejects a duplicate email', duplicateEmail);
+
+  const wrongPassword = await api('POST', '/auth/login', {
+    anonymous: true,
+    body: { email: 'aisha.khan@campus.edu', password: 'wrong-password' },
+  });
+  check(
+    wrongPassword.status === 401 && wrongPassword.data.error === 'Invalid email or password',
+    'wrong password is rejected',
+    wrongPassword,
+  );
+
+  const login = await api('POST', '/auth/login', {
+    anonymous: true,
+    body: { email: 'aisha.khan@campus.edu', password: 'Demo@1234' },
+  });
+  check(
+    login.status === 200 && login.data.token && login.data.user && login.data.user.password_hash === undefined,
+    'login returns a token and omits password_hash',
+    login.data && login.data.user,
+  );
+  if (login.status !== 200) throw new Error('Cannot continue without a token');
+  defaultToken = login.data.token;
+
+  const me = await api('GET', '/auth/me');
+  check(me.status === 200 && me.data.id === 'u01' && me.data.password_hash === undefined, 'auth me returns the current user', me.data);
+
+  const signedUp = await api('POST', '/auth/signup', {
+    anonymous: true,
+    body: {
+      name: 'New Student',
+      email: 'new.student@campus.edu',
+      password: 'Demo@1234',
+      major: 'Art',
+      semester: 2,
+    },
+  });
+  check(
+    signedUp.status === 201 && signedUp.data.token && signedUp.data.user.email === 'new.student@campus.edu' && signedUp.data.user.password_hash === undefined,
+    'signup creates a user and returns a token',
+    signedUp.data && signedUp.data.user,
+  );
+
   const gigsRes = await api('GET', '/gigs');
   check(gigsRes.status === 200 && Array.isArray(gigsRes.data), 'lists gigs', gigsRes);
   const gigs = gigsRes.data || [];
@@ -72,6 +160,8 @@ try {
   );
 
   const users = (await api('GET', '/users')).data || [];
+  check(users.every((user) => user.password_hash === undefined && user.email), 'user list hides password hashes', users[0]);
+  usersById = new Map(users.map((user) => [user.id, user]));
   const existingApps = (await api('GET', '/applications')).data || [];
   const openGigs = gigs.filter((gig) => gig.status === 'Open');
   let chosen = null;

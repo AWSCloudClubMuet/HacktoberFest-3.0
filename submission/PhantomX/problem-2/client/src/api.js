@@ -1,16 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const STORAGE_KEY = 'campus-user-id';
+const TOKEN_KEY = 'campus-token';
 
-let currentUserId = localStorage.getItem(STORAGE_KEY) || '';
+let token = localStorage.getItem(TOKEN_KEY) || '';
+localStorage.removeItem('campus-user-id');
 
-export function getCurrentUserId() {
-  return currentUserId;
+export function getToken() {
+  return token;
 }
 
-export function setCurrentUserId(id) {
-  currentUserId = id || '';
-  if (currentUserId) localStorage.setItem(STORAGE_KEY, currentUserId);
-  else localStorage.removeItem(STORAGE_KEY);
+export function setToken(value) {
+  token = value || '';
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
 }
 
 export class ApiError extends Error {
@@ -21,7 +22,8 @@ export class ApiError extends Error {
 }
 
 export async function api(path, { method = 'GET', body } = {}) {
-  const headers = { 'x-user-id': currentUserId };
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
   let response;

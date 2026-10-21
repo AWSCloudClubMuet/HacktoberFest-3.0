@@ -1,9 +1,15 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { dataFile, ensureFresh, getDb, load, nextId, save } from './store.js';
 import { writeSeed } from './seed.js';
 import fs from 'fs';
+
+function jwtSecret() {
+  return process.env.JWT_SECRET || 'campus-gig-dev-secret';
+}
 
 const CATEGORIES = ['Programming', 'Design', 'Writing', 'Tutoring'];
 const TYPES = ['Offering', 'Requesting'];
@@ -34,22 +40,40 @@ function withStats(user) {
   };
 }
 
+function publicUser(user) {
+  const safe = withStats(user);
+  delete safe.password_hash;
+  return safe;
+}
+
+function signToken(user) {
+  return jwt.sign({ sub: user.id }, jwtSecret(), { expiresIn: '7d' });
+}
+
+function authenticate(req) {
+  const header = req.get('authorization') || '';
+  const match = /^Bearer\s+(\S+)$/i.exec(header.trim());
+  if (!match) return { status: 401, error: 'Authentication required' };
+  try {
+    const payload = jwt.verify(match[1], jwtSecret());
+    const user = getDb().users.find((item) => item.id === payload.sub);
+    if (!user) return { status: 401, error: 'Authentication required' };
+    return { user };
+  } catch {
+    return { status: 401, error: 'Invalid or expired token' };
+  }
+}
+
 function sendError(res, status, error) {
   return res.status(status).json({ error });
 }
 
 function requireUser(req, res) {
-  const id = req.get('x-user-id');
-  if (!id) {
-    sendError(res, 400, 'x-user-id header is required');
+  if (!req.user) {
+    sendError(res, 401, 'Authentication required');
     return null;
   }
-  const user = getDb().users.find((item) => item.id === id);
-  if (!user) {
-    sendError(res, 404, 'User not found');
-    return null;
-  }
-  return user;
+  return req.user;
 }
 
 function requireText(value, field, max) {
@@ -70,7 +94,7 @@ export function createApp() {
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-user-id');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     return next();
   });
@@ -85,14 +109,56 @@ export function createApp() {
     }
   });
 
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/auth/')) return next();
+    const result = authenticate(req);
+    if (!result.user) return sendError(res, result.status, result.error);
+    req.user = result.user;
+    return next();
+  });
+
+  app.post('/auth/signup', (req, res) => {
+    const result = validateSignup(req.body || {});
+    if (result.error) return sendError(res, result.status, result.error);
+    const { name, email, password, major, semester, bio, skills } = result;
+    const user = {
+      id: nextId(getDb().users, 'u'),
+      name,
+      email,
+      password_hash: bcrypt.hashSync(password, 10),
+      major,
+      semester,
+      bio,
+      skills,
+    };
+    getDb().users.push(user);
+    save();
+    return res.status(201).json({ token: signToken(user), user: publicUser(user) });
+  });
+
+  app.post('/auth/login', (req, res) => {
+    const { email, password } = req.body || {};
+    const user = findByEmail(email);
+    if (!user || typeof password !== 'string' || !bcrypt.compareSync(password, user.password_hash)) {
+      return sendError(res, 401, 'Invalid email or password');
+    }
+    return res.json({ token: signToken(user), user: publicUser(user) });
+  });
+
+  app.get('/auth/me', (req, res) => {
+    const result = authenticate(req);
+    if (!result.user) return sendError(res, result.status, result.error);
+    return res.json(publicUser(result.user));
+  });
+
   app.get('/users', (req, res) => {
-    res.json(getDb().users.map(withStats));
+    res.json(getDb().users.map(publicUser));
   });
 
   app.get('/users/:id', (req, res) => {
     const user = getDb().users.find((item) => item.id === req.params.id);
     if (!user) return sendError(res, 404, 'User not found');
-    return res.json(withStats(user));
+    return res.json(publicUser(user));
   });
 
   app.get('/gigs', (req, res) => {
@@ -349,6 +415,72 @@ export function createApp() {
   });
 
   return app;
+}
+
+function normalizeEmail(value) {
+  if (typeof value !== 'string') return '';
+  return value.trim().toLowerCase();
+}
+
+function isEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function findByEmail(email) {
+  const normal = normalizeEmail(email);
+  if (!normal) return null;
+  return getDb().users.find((user) => user.email === normal) || null;
+}
+
+function validateSignup(body) {
+  const nameError = requireText(body.name, 'name', 80);
+  if (nameError) return { status: 400, error: nameError };
+  const email = normalizeEmail(body.email);
+  if (!email) return { status: 400, error: 'email is required' };
+  if (!isEmail(email)) return { status: 400, error: 'email must be a valid email address' };
+  if (typeof body.password !== 'string' || body.password === '') return { status: 400, error: 'password is required' };
+  if (body.password.length < 8) return { status: 400, error: 'password must be at least 8 characters' };
+  if (body.password.length > 72) return { status: 400, error: 'password must be 72 characters or fewer' };
+  const majorError = requireText(body.major, 'major', 80);
+  if (majorError) return { status: 400, error: majorError };
+  const semester = readSemester(body.semester);
+  if (body.semester === undefined || body.semester === null || body.semester === '') {
+    return { status: 400, error: 'semester is required' };
+  }
+  if (semester === null) return { status: 400, error: 'semester must be an integer from 1 to 12' };
+
+  let bio = '';
+  if (body.bio !== undefined && body.bio !== null && body.bio !== '') {
+    if (typeof body.bio !== 'string') return { status: 400, error: 'bio must be a string' };
+    if (body.bio.trim().length > 500) return { status: 400, error: 'bio must be 500 characters or fewer' };
+    bio = body.bio.trim();
+  }
+
+  let skills = [];
+  if (body.skills !== undefined && body.skills !== null) {
+    if (!Array.isArray(body.skills) || body.skills.some((item) => typeof item !== 'string' || item.trim() === '')) {
+      return { status: 400, error: 'skills must be an array of non-empty strings' };
+    }
+    if (body.skills.length > 12) return { status: 400, error: 'skills must include 12 items or fewer' };
+    skills = body.skills.map((item) => item.trim());
+  }
+
+  if (findByEmail(email)) return { status: 409, error: 'An account with this email already exists' };
+  return {
+    name: body.name.trim(),
+    email,
+    password: body.password,
+    major: body.major.trim(),
+    semester,
+    bio,
+    skills,
+  };
+}
+
+function readSemester(value) {
+  const number = typeof value === 'number' ? value : (typeof value === 'string' && /^\d+$/.test(value.trim()) ? Number(value.trim()) : NaN);
+  if (!Number.isInteger(number) || number < 1 || number > 12) return null;
+  return number;
 }
 
 function emptyToUndefined(value) {
