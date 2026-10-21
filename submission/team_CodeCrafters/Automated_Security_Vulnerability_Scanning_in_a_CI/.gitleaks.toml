@@ -1,0 +1,10 @@
+title = "demo gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "demo-api-key"
+description = "Demo hardcoded API key"
+regex = '''DEMO_API_KEY\s*=\s*["'][A-Za-z0-9]{20,}["']'''
+tags = ["demo"]
