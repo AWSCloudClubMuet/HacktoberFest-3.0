@@ -84,7 +84,7 @@ export default function CampDetail() {
               {t("Camps")}
             </Link>
             <span>/</span>
-            <span className="text-ink">{camp.district}</span>
+            <span className="text-ink">{t(camp.district)}</span>
             {data.criticalGaps > 0 && (
               <Badge tone="danger">
                 {t(data.criticalGaps === 1 ? "{count} critical gap" : "{count} critical gaps", { count: fmt(data.criticalGaps) })}
@@ -274,7 +274,7 @@ function CampCharts({ data }: { data: CampData }) {
         )}
       </ChartCard>
       <Card className="flex flex-col">
-        <CardHeader title={t("Location")} sub={t("{district} district", { district: data.camp.district })} />
+        <CardHeader title={t("Location")} sub={t("{district} district", { district: t(data.camp.district) })} />
         <ReliefMap camps={mapCamp} focusId={data.camp._id} selectedId={data.camp._id} height={Math.max(240, rows.length * 44 + 80)} />
       </Card>
     </div>

@@ -26,7 +26,7 @@ export default function Needs() {
         (priority === "All" || n.priority === priority) &&
         (category === "All" || n.item?.category === category) &&
         (!criticalOnly || n.isCriticalGap) &&
-        (!q || (n.item && t(n.item.name).toLowerCase().includes(q)) || n.item?.name.toLowerCase().includes(q) || n.camp?.name.toLowerCase().includes(q) || n.camp?.district.toLowerCase().includes(q)),
+        (!q || (n.item && t(n.item.name).toLowerCase().includes(q)) || n.item?.name.toLowerCase().includes(q) || n.camp?.name.toLowerCase().includes(q) || n.camp?.district.toLowerCase().includes(q) || (n.camp && t(n.camp.district).toLowerCase().includes(q))),
     );
   }, [needs, priority, category, criticalOnly, search, t]);
 
@@ -86,7 +86,7 @@ export default function Needs() {
                 <Flag tone={n.isCriticalGap ? "alert" : null} />
                 <span className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate text-[15px] font-semibold group-hover:underline">{n.camp?.name}</span>
-                  <span className="text-xs text-muted">{n.camp?.district}</span>
+                  <span className="text-xs text-muted">{n.camp ? t(n.camp.district) : ""}</span>
                 </span>
               </span>
               <span className="flex w-[210px] shrink-0 flex-col gap-0.5">

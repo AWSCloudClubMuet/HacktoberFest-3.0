@@ -78,7 +78,7 @@ function DispatchForm({ initialCamp = "", initialNeed = "", onDone }: { initialC
             <option value="">{t("Choose a camp…")}</option>
             {openCamps.map((c) => (
               <option key={c._id} value={c._id}>
-                {c.name} · {c.district}
+                {c.name} · {t(c.district)}
                 {c.criticalGaps ? t(" · {count} critical", { count: fmt(c.criticalGaps) }) : ""}
               </option>
             ))}

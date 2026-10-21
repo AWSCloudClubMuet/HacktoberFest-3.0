@@ -77,9 +77,9 @@ export default function Camps() {
       (c) =>
         (status === "All" || c.status === status) &&
         (district === "All" || c.district === district) &&
-        (!q || c.name.toLowerCase().includes(q) || c.district.toLowerCase().includes(q)),
+        (!q || c.name.toLowerCase().includes(q) || c.district.toLowerCase().includes(q) || t(c.district).toLowerCase().includes(q)),
     );
-  }, [camps, search, status, district]);
+  }, [camps, search, status, district, t]);
 
   const totalFamilies = (camps ?? []).filter((c) => c.status !== "Closed").reduce((s, c) => s + c.current_families, 0);
 
@@ -123,7 +123,7 @@ export default function Camps() {
               <Select value={district} onChange={(e) => setDistrict(e.target.value)} className="h-[38px] w-44 text-[13px] font-semibold">
                 <option value="All">{t("All districts")}</option>
                 {districts.map((d) => (
-                  <option key={d}>{d}</option>
+                  <option key={d} value={d}>{t(d)}</option>
                 ))}
               </Select>
             </div>
@@ -152,7 +152,7 @@ export default function Camps() {
                     <span className="flex min-w-0 flex-col gap-1">
                       <span className={cx("truncate text-[15px] font-semibold group-hover:underline", closed && "text-faint")}>{c.name}</span>
                       <span className="truncate text-[13px] text-muted">
-                        {c.district} ·{" "}
+                        {t(c.district)} ·{" "}
                         <span className={critical ? "text-alert" : ""}>
                           {critical ? t(c.criticalGaps === 1 ? "{count} critical gap" : "{count} critical gaps", { count: fmt(c.criticalGaps) }) : t("{count} needs", { count: fmt(c.needCount) })}
                           {c.status === "Full" && <> · {t("auto-marked Full")}</>}
@@ -309,7 +309,7 @@ function CampForm({ camp, districts, onDone }: { camp: Doc<"camps"> | null; dist
           <Input list="district-options" value={district} onChange={(e) => setDistrict(e.target.value)} invalid={!!show("district")} placeholder={t("Jamshoro")} />
           <datalist id="district-options">
             {knownDistricts.map((d) => (
-              <option key={d} value={d} />
+              <option key={d} value={d} label={t(d)} />
             ))}
           </datalist>
         </Field>
