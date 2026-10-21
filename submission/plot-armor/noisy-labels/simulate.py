@@ -44,6 +44,11 @@ ERR_B = 48 / 220          # 21.82% from the expert audit
 
 TARGET_NOISY_ACC = 0.82   # the plateau the issue reports on the noisy test set
 
+# robust-training knobs (section 7)
+K_SMOOTH = 0.1            # label smoothing: mix one-hot with uniform, k=0.1
+DROP_FRAC = 0.15          # small-loss: drop the 15% highest-loss per epoch
+SMALL_LOSS_EPOCHS = 3
+
 # ----------------------------------------------------------------------------
 # vocabulary: per-class keyword pools so classes are learnable but confusable.
 # each class has its own distinctive pool, and each confusable pair shares a
@@ -553,6 +558,72 @@ def gold_clean_gap(baseline, data):
     return max(acc - baseline["gold_acc"], 0.0), acc
 
 
+def robust_demo(data, baseline):
+    """two training-time noise-tolerant tricks on the exact same noisy data:
+
+    (i)   label smoothing k=0.1 - mix the one-hot targets with the uniform
+          distribution before counting (naive bayes handles this natively,
+          each ticket just contributes fractional counts to every class)
+    (ii)  small-loss sample selection - each epoch, drop the 15% of training
+          tickets with the highest -log P(label | ticket) under the current
+          model and refit; mislabelled tickets stand out because their words
+          do not match their label
+    """
+    section("7. NOISE-ROBUST TRAINING - SAME DATA, SAME NAIVE BAYES")
+    X, Xt = data["train_counts"], data["test_counts"]
+    tr_noisy, te_noisy = baseline["train_noisy"], baseline["test_noisy"]
+    yt = data["test_true"]
+    V = data["vocab_size"]
+    results = {"baseline": (baseline["noisy_acc"], baseline["gold_acc"])}
+
+    # ---- (i) label smoothing ---------------------------------------------
+    targets = one_hot(tr_noisy) * (1.0 - K_SMOOTH) + K_SMOOTH / K
+    nb_smooth = NaiveBayes(V).fit(X, targets)
+    pred = nb_smooth.predict(Xt)
+    smooth_noisy, smooth_gold = (pred == te_noisy).mean(), (pred == yt).mean()
+    results["label_smoothing"] = (smooth_noisy, smooth_gold)
+
+    # ---- (ii) small-loss selection ---------------------------------------
+    n = len(tr_noisy)
+    all_idx = np.arange(n)
+    mislabelled = tr_noisy != data["train_true"]
+    expert = data["train_tier"] == 0
+    kept = all_idx
+    for epoch in range(1, SMALL_LOSS_EPOCHS + 1):
+        nb_sel = NaiveBayes(V).fit_labels(X[kept], tr_noisy[kept])
+        losses = nb_sel.loss(X, tr_noisy)
+        cutoff = np.quantile(losses, 1.0 - DROP_FRAC)
+        kept = np.where(losses <= cutoff)[0]
+        dropped = np.setdiff1d(all_idx, kept)
+        sel_gold = (nb_sel.predict(Xt) == yt).mean()
+        print(f"  epoch {epoch}: dropped {len(dropped):,} tickets "
+              f"({pct(mislabelled[dropped].mean())} of them truly mislabelled, "
+              f"{int(expert[dropped].sum())} expert tickets lost) "
+              f"-> gold acc so far {pct(sel_gold)}")
+    pred = nb_sel.predict(Xt)
+    sel_noisy, sel_gold = (pred == te_noisy).mean(), (pred == yt).mean()
+    results["small_loss"] = (sel_noisy, sel_gold)
+    caught = int(mislabelled[dropped].sum())
+    print(f"\n  selection caught {caught:,} of the {int(mislabelled.sum()):,} mislabelled "
+          f"tickets ({pct(caught / mislabelled.sum())} recall, "
+          f"{pct(mislabelled[dropped].mean())} precision)")
+
+    # ---- summary table -----------------------------------------------------
+    print(f"\n  {'method':<22}{'noisy test':>12}{'gold test':>12}{'gold delta':>12}")
+    for name, key in [("baseline (noisy labels)", "baseline"),
+                      ("label smoothing k=0.1", "label_smoothing"),
+                      ("small-loss drop x=15%", "small_loss")]:
+        nacc, gacc = results[key]
+        print(f"  {name:<22}{pct(nacc):>12}{pct(gacc):>12}"
+              f"{(gacc - baseline['gold_acc']):>+11.2%}")
+    print("\n  honest read: small-loss selection is the winner - it physically")
+    print("  removes crowd contamination (see precision above). label smoothing")
+    print("  is a wash here: naive bayes is already count-averaged and laplace")
+    print("  regularized, and shrinking sparse classes (Other, Shipping) toward")
+    print("  the uniform target costs about what the noise-robustness gains.")
+    return results
+
+
 def main():
     data = generate()
     dataset_report(data)
@@ -566,6 +637,7 @@ def main():
 
     plateau_report(data, baseline["train_noisy"], baseline["test_noisy"])
     ceiling_report(baseline, data)
+    robust_demo(data, baseline)
     return 0
 
 
