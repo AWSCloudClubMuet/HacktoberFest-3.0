@@ -141,104 +141,119 @@
     /* needs already reported via a Delivered dispatch this tick — don't double-report */
     const touchedNeeds = new Set();
 
-    /* ---- dispatches ---- */
+    /* ---- dispatches: created / rolled out / delivered / cancelled ---- */
     for (const d of next.dispatches) {
       const p = pD[String(d.id)];
       const need = needOf(d);
       const item = itemOf(need);
+      const unit = item.unit || 'units';
       const qty = +d.quantity || 0;
       const iid = need ? String(need.inventory_item_id) : null;
       const camp = campName(nC, d.camp_id);
 
       if (!p) {
-        add('🚚', `dispatch ${d.id} created (${qty} ${item.name || 'supplies'} -> ${camp})`, 'dispatch');
+        add('🚚', `Dispatch created — ${qty} ${plural(unit, qty)} of ${item.name || 'supplies'} reserved for ${camp}`, 'dispatch');
         bumpDriven(iid, -qty);
         continue;
       }
       if (d.status !== p.status) {
-        if (d.status === 'Delivered') {
+        if (p.status === 'Pending' && d.status === 'In Transit') {
+          add('🚚', `Dispatch #${d.id} rolled out toward ${shortCamp(d.camp_id)}`, 'dispatch');
+        } else if (d.status === 'Delivered') {
           touchedNeeds.add(String(d.need_id));
           const req = +((need || {}).required_quantity) || 0;
           const pct = req ? Math.round((qty / req) * 100) : null;
-          add('✅', `dispatch ${d.id} delivered: ${qty} ${item.name || 'supplies'} -> ${shortCamp(d.camp_id)}` +
-            (pct !== null ? ` (+${pct}% fulfilment)` : ''), 'dispatch');
+          add('✅', `${qty} ${plural(unit, qty)} delivered to ${shortCamp(d.camp_id)}` +
+            (pct !== null ? ` — fulfilment up ${pct}%` : ''), 'dispatch');
         } else if (d.status === 'Cancelled') {
-          add('🚫', `dispatch ${d.id} cancelled (${camp})`, 'dispatch');
+          add('🚫', `Dispatch #${d.id} cancelled — stock returned to warehouse`, 'dispatch');
           bumpDriven(iid, qty);
         } else {
-          add('🔄', `dispatch ${d.id} status: ${p.status} -> ${d.status} (${shortCamp(d.camp_id)})`, 'dispatch');
+          add('🔄', `Dispatch #${d.id} at ${camp}: ${p.status} → ${d.status}`, 'dispatch');
         }
       } else if (qty !== +p.quantity) {
-        add('⚠️', `dispatch ${d.id} quantity ${p.quantity} -> ${d.quantity} (${camp})`, 'dispatch');
+        add('⚠️', `Dispatch #${d.id} quantity adjusted ${p.quantity} → ${d.quantity} (${camp})`, 'dispatch');
       }
     }
 
-    /* ---- camps ---- */
+    /* ---- camps: new / families changed / FULL / closed / reopened ---- */
     for (const c of next.camps) {
       const p = pC[String(c.id)];
       if (!p) {
-        add('⛺', `camp ${c.name} added (${c.district || 'new district'})`, 'camp');
+        add('⛺', `New camp registered — ${c.name} (${c.district || 'new district'})`, 'camp');
         continue;
       }
       if (+c.current_families !== +p.current_families) {
-        add('🏕️', `camp ${c.name}: families ${p.current_families} -> ${c.current_families}`, 'camp');
+        add('🏕️', `${c.name} now sheltering ${c.current_families} families`, 'camp');
       }
       if (c.status !== p.status) {
-        add('🔄', `camp ${c.name} status: ${p.status} -> ${c.status}`, 'camp');
+        if (c.status === 'Full') add('🔴', `${c.name} is FULL`, 'camp');
+        else if (c.status === 'Closed') add('⚪', `${c.name} is now closed`, 'camp');
+        else if (p.status === 'Closed') add('🟢', `${c.name} reopened — accepting families again`, 'camp');
+        else add('🔄', `${c.name} status: ${p.status} → ${c.status}`, 'camp');
       }
     }
     for (const c of prev.camps) {
-      if (!nC[String(c.id)]) add('📉', `camp ${c.name} removed`, 'camp');
+      if (!nC[String(c.id)]) add('📉', `${c.name} removed from the camp registry`, 'camp');
     }
 
-    /* ---- needs ---- */
+    /* ---- needs: new / escalated / fulfilment moved outside a delivery ---- */
     for (const n of next.needs) {
       const p = pN[String(n.id)];
       const item = itemOf(n);
       const camp = campName(nC, n.camp_id);
       if (!p) {
-        add('📋', `need ${n.id} added at ${camp}: ${n.required_quantity} ${item.name || 'supplies'}`, 'need');
+        add('📋', `New need at ${camp} — ${n.required_quantity} ${plural(item.unit || 'units', +n.required_quantity)} of ${item.name || 'supplies'}`, 'need');
         continue;
       }
       if (n.priority !== p.priority) {
-        add('⚠️', `need ${n.id} priority: ${p.priority} -> ${n.priority} (${item.name || 'supplies'})`, 'need');
+        add('⚠️', `${item.name || 'Supplies'} need at ${camp} escalated to ${n.priority} priority`, 'need');
       }
-      if (+n.fulfilled_quantity !== +p.fulfilled_quantity && !touchedNeeds.has(String(n.id))) {
-        add('📈', `need ${n.id} fulfilled: ${p.fulfilled_quantity} -> ${n.fulfilled_quantity} (${camp})`, 'need');
+      if (+n.fulfilled_quantity !== +p.fulfilled_quantity) {
+        if (!touchedNeeds.has(String(n.id))) {
+          const req = +n.required_quantity || 0;
+          const pct = req ? Math.round((+n.fulfilled_quantity / req) * 100) : 0;
+          add('📈', `${item.name || 'Supplies'} at ${camp} now ${pct}% fulfilled`, 'need');
+        }
       }
       if (+n.required_quantity !== +p.required_quantity) {
-        add('📋', `need ${n.id} required: ${p.required_quantity} -> ${n.required_quantity} (${camp})`, 'need');
+        add('📋', `${camp} raised its ${item.name || 'supplies'} need to ${n.required_quantity}`, 'need');
       }
     }
 
-    /* ---- inventory: stock moves with no dispatch behind them ---- */
+    /* ---- inventory: donations & corrections = stock moves with no dispatch behind them ---- */
     for (const it of next.inventory) {
       const p = pI[String(it.id)];
       const iid = String(it.id);
       if (!p) {
-        add('🏷️', `inventory ${it.name} added (stock ${it.stock})`, 'stock');
+        add('🏷️', `New supply line — ${it.name} (${it.stock} ${plural(it.unit, +it.stock)} in stock)`, 'stock');
         continue;
       }
       const unexplained = (+it.stock || 0) - (+p.stock || 0) - (driven[iid] || 0);
-      if (unexplained > 0) add('📦', `stock +${unexplained} ${it.name} (no dispatch)`, 'stock');
-      else if (unexplained < 0) add('⚠️', `stock ${unexplained} ${it.name} (unexplained)`, 'stock');
+      if (unexplained > 0) add('📦', `+${unexplained} ${it.name} donated into stock`, 'stock');
+      else if (unexplained < 0) add('⚠️', `${it.name} stock corrected down ${-unexplained} ${plural(it.unit, -unexplained)}`, 'stock');
     }
     for (const it of prev.inventory) {
-      if (!nI[String(it.id)]) add('🗑️', `inventory ${it.name} removed`, 'stock');
+      if (!nI[String(it.id)]) add('🗑️', `${it.name} removed from inventory`, 'stock');
     }
 
-    /* ---- volunteers ---- */
+    /* ---- volunteers: joined / deployed / reassigned / stood down ---- */
     for (const v of next.volunteers) {
       const p = pV[String(v.id)];
       if (!p) {
-        add('🙋', `volunteer ${v.name} added (${v.skill || 'general'})`, 'volunteer');
+        add('🙋', `${v.name} joined the roster — ${v.skill || 'general'} volunteer`, 'volunteer');
         continue;
       }
       if (String(v.camp_id) === String(p.camp_id)) continue;
-      add('🙋', `volunteer ${v.name}: camp ${p.camp_id ?? 'null'} -> ${v.camp_id ?? 'null'}`, 'volunteer');
+      if (v.camp_id != null) {
+        const moved = p.camp_id != null;
+        add('🙋', `${v.name} ${moved ? 'reassigned to' : 'deployed to'} ${campName(nC, v.camp_id)}`, 'volunteer');
+      } else {
+        add('🙋', `${v.name} stood down from ${campName(pC, p.camp_id)} — available again`, 'volunteer');
+      }
     }
     for (const v of prev.volunteers) {
-      if (!nV[String(v.id)]) add('👋', `volunteer ${v.name} removed`, 'volunteer');
+      if (!nV[String(v.id)]) add('👋', `${v.name} left the volunteer roster`, 'volunteer');
     }
 
     return evts;
