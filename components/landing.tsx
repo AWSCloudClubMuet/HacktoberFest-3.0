@@ -82,10 +82,6 @@ export default function LandingPage() {
         </main>
 
         <section className="board" aria-label="Open gigs">
-          <div className="board-head">
-            <h2>On the board right now</h2>
-            <span className="board-live"><span className="live-dot" />Live</span>
-          </div>
           {gigs.map((g, i) => (
             <article key={g.id} className="board-card" style={{ '--tilt': TILTS[i % TILTS.length] } as React.CSSProperties}>
               <span className="board-pin" style={{ background: PINS[i % PINS.length] }} />
