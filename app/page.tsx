@@ -308,7 +308,7 @@ export default function Page() {
               <Textarea value={completeForm.bio} onChange={(e) => setCompleteForm({ ...completeForm, bio: e.target.value })} rows={3} placeholder="What do you study, what are you good at..." />
             </div>
             <Button className="auth-submit" onClick={doCompleteProfile}>Save profile <ArrowRight data-icon="inline-end" /></Button>
-            <Button variant="outline" onClick={doSignOut}>Sign out</Button>
+            <Button variant="outline" className="btn-plain" onClick={doSignOut}>Sign out</Button>
           </div>
         </Card>
         {toast && <div className="toast"><Check />{toast}</div>}
@@ -481,7 +481,7 @@ export default function Page() {
                                   {app.status === 'Pending' && gig.display_status === 'Open' ? (
                                     <span className="applicant-actions">
                                       <Button size="sm" onClick={() => doReviewApplication(app, 'Accepted')}><Check data-icon="inline-start" />Accept</Button>
-                                      <Button size="sm" variant="outline" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
+                                      <Button size="sm" variant="outline" className="btn-danger" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
                                     </span>
                                   ) : <StatusBadge status={app.status} />}
                                 </div>
@@ -490,9 +490,9 @@ export default function Page() {
                           )}
                           <div className="card-actions">
                             {gig.display_status === 'In Progress' && <Button size="sm" onClick={() => doGigStatus(gig, 'Completed')}><Check data-icon="inline-start" />Mark completed</Button>}
-                            {gig.display_status === 'Open' && <Button size="sm" variant="outline" onClick={() => doGigStatus(gig, 'Cancelled')}>Cancel gig</Button>}
+                            {gig.display_status === 'Open' && <Button size="sm" variant="outline" className="btn-danger" onClick={() => doGigStatus(gig, 'Cancelled')}>Cancel gig</Button>}
                             {gig.display_status === 'Completed' && !myReviewFor(gig.id) && gig.accepted_applicant_id && (
-                              <Button size="sm" variant="outline" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
+                              <Button size="sm" variant="outline" className="btn-plain" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
                             )}
                             {gig.display_status === 'Completed' && myReviewFor(gig.id) && <span className="reviewed-note"><Check /> You reviewed this gig</span>}
                           </div>
@@ -632,14 +632,14 @@ export default function Page() {
                       {app.status === 'Pending' && selectedGig.display_status === 'Open' ? (
                         <span className="applicant-actions">
                           <Button size="sm" onClick={() => doReviewApplication(app, 'Accepted')}><Check data-icon="inline-start" />Accept</Button>
-                          <Button size="sm" variant="outline" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
+                          <Button size="sm" variant="outline" className="btn-danger" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
                         </span>
                       ) : <StatusBadge status={app.status} />}
                     </div>
                   ))}
                   <div className="modal-actions">
                     {selectedGig.display_status === 'In Progress' && <Button onClick={() => doGigStatus(selectedGig, 'Completed')}><Check data-icon="inline-start" />Mark completed</Button>}
-                    {selectedGig.display_status === 'Open' && <Button variant="outline" onClick={() => doGigStatus(selectedGig, 'Cancelled')}>Cancel gig</Button>}
+                    {selectedGig.display_status === 'Open' && <Button variant="outline" className="btn-danger" onClick={() => doGigStatus(selectedGig, 'Cancelled')}>Cancel gig</Button>}
                     {selectedGig.display_status === 'Completed' && selectedGig.accepted_applicant_id && !myReviewFor(selectedGig.id) && (
                       <Button onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
                     )}
@@ -658,14 +658,14 @@ export default function Page() {
                         <Textarea id="apply-message" value={applyMessage} onChange={(e) => setApplyMessage(e.target.value)} placeholder="A short note on why you are a good fit..." rows={3} />
                         <div className="modal-actions">
                           <Button onClick={() => doApply(selectedGig)} disabled={!applyMessage.trim()}><Send data-icon="inline-start" />Apply to this gig</Button>
-                          <Button variant="outline" onClick={() => setSelectedGigId(null)}>Maybe later</Button>
+                          <Button variant="outline" className="btn-plain" onClick={() => setSelectedGigId(null)}>Maybe later</Button>
                         </div>
                       </div>
                     )
                   })()}
                   {selectedGig.display_status === 'Completed' && selectedGig.accepted_applicant_id === me.id && !myReviewFor(selectedGig.id) && (
                     <div className="modal-actions">
-                      <Button variant="outline" onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {selectedGig.owner_name.split(' ')[0]}</Button>
+                      <Button variant="outline" className="btn-plain" onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {selectedGig.owner_name.split(' ')[0]}</Button>
                     </div>
                   )}
                 </>
@@ -737,7 +737,7 @@ export default function Page() {
           </div>
           <div className="modal-actions">
             <Button onClick={doPostGig}>Publish gig <ArrowRight data-icon="inline-end" /></Button>
-            <Button variant="outline" onClick={() => setShowPost(false)}>Cancel</Button>
+            <Button variant="outline" className="btn-plain" onClick={() => setShowPost(false)}>Cancel</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -772,7 +772,7 @@ export default function Page() {
               </div>
               <div className="modal-actions">
                 <Button onClick={doReview}><Star data-icon="inline-start" />Submit review</Button>
-                <Button variant="outline" onClick={() => setReviewGig(null)}>Cancel</Button>
+                <Button variant="outline" className="btn-plain" onClick={() => setReviewGig(null)}>Cancel</Button>
               </div>
             </>
           )}
