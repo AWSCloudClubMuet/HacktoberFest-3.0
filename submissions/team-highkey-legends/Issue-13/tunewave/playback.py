@@ -58,12 +58,12 @@ class SongStack:
         return len(self._history)
 
     def get_songs(self) -> list[Song]:
-        """Return history from oldest to newest."""
+        #return oldest to newset song
         return list(self._history)
 
 
 class PlaybackManager:
-    """Coordinates playlist playback, Up Next, and history."""
+    #Coordinates playlist playback, Up Next, and history.
 
     def __init__(self, playlist: Playlist):
         self.playlist = playlist
@@ -74,7 +74,7 @@ class PlaybackManager:
         self.currently_playing = playlist.get_current_song()
 
     def add_to_up_next(self, song_id: str) -> bool:
-        """Queue a song by its ID if it exists in the playlist."""
+        #adding the song in the queue if it exists in the playlist
         node = self.playlist.song_map.get(song_id)
 
         if node is None:

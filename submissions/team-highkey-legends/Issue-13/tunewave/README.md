@@ -49,10 +49,10 @@ flowchart TD
     Node --> Song
     Search --> BST[BST keyed by title]
     BST --> Song
-    Recommendations --> Graph[Undirected artist adjacency sets]
+    Recommendations --> Graph[Undirected artist 2 relations away]
 ```
 
-## Features and APIs
+## Features
 
 ### 1. Playlist — doubly linked list and hash map
 
@@ -74,9 +74,8 @@ maps each song ID to its node.
 
 ### 2. Up Next and history — queue and stack
 
-`SongQueue` is FIFO: songs are enqueued at the back and `dequeue()` returns the
-oldest queued song. `SongStack` is LIFO: `pop()` returns the most recently
-stored song. It retains at most 10 songs, discarding the oldest when full.
+`SongQueue` is FIFO: songs are appended at the back and `dequeue()` returns the oldest added song in the queue. `SongStack` is LIFO: `pop()` returns the most recently
+stored song. It stores 10 songs in the history, removing the oldest when full.
 
 `PlaybackManager` coordinates those structures with a `Playlist`:
 
@@ -114,17 +113,10 @@ ID is rejected.
 
 ## Running the tests
 
-Run these commands from the `tunewave` directory. The test filenames contain
-hyphens, so invoke each test file directly:
+each module was tested with these test files run following commands to run test from tunwave directory:
 
 ```powershell
 py test/test-playlist.py -v
 py test/test-playback.py -v
 py test/test-search-recommendations.py -v
 ```
-
-Each test adds the project root to Python's module search path, so these
-commands work when launched from the `tunewave` directory.
-
-`tunewave.py` is an outdated duplicate facade and should not be used to launch
-the application. Use `main.py` instead.
