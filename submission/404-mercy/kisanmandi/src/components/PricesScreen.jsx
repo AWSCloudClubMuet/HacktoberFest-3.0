@@ -172,73 +172,79 @@ export default function PricesScreen({ currentUser, onPricesRefreshed }) {
         </div>
       )}
 
-      {!loading && !error && filteredCrops.map(crop => {
-        const marketPrices = priceMap[crop.id]?.[selectedMarket] || {};
-        const todayPrice   = marketPrices[latestDate];
-        const ydayPrice    = previousDate ? marketPrices[previousDate] : null;
-        const delta        = calcChange(todayPrice, ydayPrice);
+      {!loading && !error && filteredCrops.length > 0 && (
+        <div className="price-cards-grid" role="region" aria-label="Crop price cards">
+          {filteredCrops.map(crop => {
+            const marketPrices = priceMap[crop.id]?.[selectedMarket] || {};
+            const todayPrice   = marketPrices[latestDate];
+            const ydayPrice    = previousDate ? marketPrices[previousDate] : null;
+            const delta        = calcChange(todayPrice, ydayPrice);
 
-        return (
-          <div key={crop.id} className="price-card" role="article" aria-label={`${crop.name} price`}>
-            <div className="price-card-header">
-              <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center' }}>
-                <img
-                  src={getCropImage(crop)}
-                  alt={`${crop.name} reference`}
-                  className="crop-thumb"
-                  loading="lazy"
-                  onError={(e) => { e.currentTarget.src = '/images/crops/wheat.jpg'; }}
-                />
-                <div>
-                  <div className="crop-name">{crop.name}</div>
-                  <div className="crop-category">{crop.category}</div>
+            return (
+              <div key={crop.id} className="price-card" role="article" aria-label={`${crop.name} price`}>
+                <div className="price-card-body">
+                  <div className="price-card-header">
+                    <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center', minWidth: 0 }}>
+                      <img
+                        src={getCropImage(crop)}
+                        alt={`${crop.name} reference`}
+                        className="crop-thumb"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.src = '/images/crops/wheat.jpg'; }}
+                      />
+                      <div style={{ minWidth: 0 }}>
+                        <div className="crop-name">{crop.name}</div>
+                        <div className="crop-category">{crop.category}</div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: '.5rem' }}>
+                      {todayPrice != null ? (
+                        <>
+                          <span className="price-main">₨{fmt(todayPrice)}</span>
+                          <span className="price-unit">/{crop.unit}</span>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: '.8rem', color: 'var(--gray-400)' }}>No price today</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="price-meta">
+                    <span className="price-meta-item">
+                      Yesterday ({previousDate || 'prior'}): {ydayPrice != null ? `₨${fmt(ydayPrice)}` : '—'}
+                    </span>
+                    {delta && delta.change !== null && (
+                      <>
+                        <span className={`price-meta-item ${delta.change > 0 ? 'change-up' : delta.change < 0 ? 'change-down' : 'change-none'}`}>
+                          {delta.change > 0 ? '▲ +' : delta.change < 0 ? '▼ -' : '='}₨{fmt(Math.abs(delta.change))}
+                        </span>
+                        <span className={`price-meta-item ${delta.pct > 0 ? 'change-up' : delta.pct < 0 ? 'change-down' : 'change-none'}`}>
+                          {delta.pct > 0 ? '+' : ''}{delta.pct.toFixed(1)}%
+                        </span>
+                      </>
+                    )}
+                    {delta && delta.change === null && (
+                      <span className="price-meta-item change-none">Percentage unavailable</span>
+                    )}
+                    {delta === null && todayPrice == null && (
+                      <span className="price-meta-item change-none">No data available</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                {todayPrice != null ? (
-                  <>
-                    <span className="price-main">₨{fmt(todayPrice)}</span>
-                    <span className="price-unit">/{crop.unit}</span>
-                  </>
-                ) : (
-                  <span style={{ fontSize: '.8rem', color: 'var(--gray-400)' }}>No price today</span>
-                )}
-              </div>
-            </div>
 
-            <div className="price-meta">
-              <span className="price-meta-item">
-                Yesterday ({previousDate || 'prior'}): {ydayPrice != null ? `₨${fmt(ydayPrice)}` : '—'}
-              </span>
-              {delta && delta.change !== null && (
-                <>
-                  <span className={`price-meta-item ${delta.change > 0 ? 'change-up' : delta.change < 0 ? 'change-down' : 'change-none'}`}>
-                    {delta.change > 0 ? '▲ +' : delta.change < 0 ? '▼ -' : '='}₨{fmt(Math.abs(delta.change))}
-                  </span>
-                  <span className={`price-meta-item ${delta.pct > 0 ? 'change-up' : delta.pct < 0 ? 'change-down' : 'change-none'}`}>
-                    {delta.pct > 0 ? '+' : ''}{delta.pct.toFixed(1)}%
-                  </span>
-                </>
-              )}
-              {delta && delta.change === null && (
-                <span className="price-meta-item change-none">Percentage unavailable</span>
-              )}
-              {delta === null && todayPrice == null && (
-                <span className="price-meta-item change-none">No data available</span>
-              )}
-            </div>
-
-            <button
-              className="btn btn-secondary btn-sm"
-              style={{ marginTop: '.6rem' }}
-              onClick={() => openTrends(crop)}
-              aria-label={`View 14-day trend for ${crop.name}`}
-            >
-              📈 14-day Trend & Comparison
-            </button>
-          </div>
-        );
-      })}
+                <button
+                  className="btn btn-secondary btn-sm"
+                  style={{ marginTop: '.65rem', width: '100%' }}
+                  onClick={() => openTrends(crop)}
+                  aria-label={`View 14-day trend for ${crop.name}`}
+                >
+                  📈 14-day Trend & Comparison
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
