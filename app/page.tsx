@@ -474,9 +474,6 @@ export default function Page() {
               </section>
 
 
-              <div className="section-heading solo">
-                <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs') }}>View all <ArrowRight /></button>
-              </div>
 
               <div className="filters">
                 <div className="search-wrap"><Search /><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search gigs, skills, or keywords..." aria-label="Search gigs" /></div>
