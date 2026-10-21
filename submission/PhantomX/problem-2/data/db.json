@@ -192,8 +192,8 @@
       "payment_type": "Paid",
       "budget": 80,
       "deadline": "2026-11-11T09:38:15.473Z",
-      "status": "Open",
-      "accepted_applicant_id": null,
+      "status": "In Progress",
+      "accepted_applicant_id": "u01",
       "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
@@ -591,7 +591,7 @@
       "gig_id": "g02",
       "applicant_id": "u01",
       "message": "I have made event posters in Figma.",
-      "status": "Pending",
+      "status": "Accepted",
       "created_at": "2026-10-10T09:38:15.473Z",
       "availability": null,
       "portfolio_link": null,
@@ -603,7 +603,7 @@
       "gig_id": "g02",
       "applicant_id": "u08",
       "message": "I can handle layout if the brief is clear.",
-      "status": "Pending",
+      "status": "Rejected",
       "created_at": "2026-10-10T09:38:15.473Z",
       "availability": null,
       "portfolio_link": null,
@@ -1003,6 +1003,17 @@
       "availability": null,
       "portfolio_link": null,
       "swap_offer": null
+    },
+    {
+      "id": "a38",
+      "gig_id": "g05",
+      "applicant_id": "u01",
+      "message": "main kre ga tera project",
+      "status": "Pending",
+      "created_at": "2026-10-21T10:18:06.393Z",
+      "availability": "all time",
+      "portfolio_link": null,
+      "swap_offer": null
     }
   ],
   "reviews": [
@@ -1183,6 +1194,20 @@
       "sender_id": "u05",
       "text": "Thursday at 6 works. I will send the two problems.",
       "created_at": "2026-10-21T09:45:23.332Z"
+    },
+    {
+      "id": "m12",
+      "gig_id": "g02",
+      "sender_id": "u02",
+      "text": "https://meet.jit.si/campus-gig-g02-2ft5",
+      "created_at": "2026-10-21T10:19:53.461Z"
+    },
+    {
+      "id": "m13",
+      "gig_id": "g02",
+      "sender_id": "u02",
+      "text": "hi janu",
+      "created_at": "2026-10-21T10:20:04.192Z"
     }
   ]
 }
