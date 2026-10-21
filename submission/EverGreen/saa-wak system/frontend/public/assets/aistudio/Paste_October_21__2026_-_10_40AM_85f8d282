@@ -1,0 +1,726 @@
+# MASTER FRONTEND BUILD PROMPT — SAA-WAK (ساوڪ)
+
+## 1. YOUR ROLE AND MISSION
+
+Act as a senior product designer, UX architect, frontend engineer, and design-systems specialist.
+
+Build a complete, polished, responsive frontend for **saa-wak (ساوڪ)** — a Sindh-focused crop-price intelligence and agricultural produce marketplace.
+
+I am providing five project documents:
+1. PRD Document.md
+2. TRD.md
+3. UI UX Design.md
+4. backend schema.md
+5. implementation plan.md
+
+Read and understand ALL five documents before coding. Treat them as the source of truth for the product scope, features, data structure, business rules, user journeys, and technical constraints.
+
+Your task in this phase is **FRONTEND ONLY**. I will use Google Antigravity in a later phase to implement the backend, persistent database, API, validation, and complete system integration.
+
+Do not build a separate backend, create database infrastructure, introduce authentication providers, or spend time on deployment. Focus on delivering an excellent, functional frontend with a clean architecture ready for backend integration.
+
+Do not merely create a landing page or a static dashboard mockup. Build the complete set of required application screens and their frontend interactions.
+
+## 2. PRODUCT IDENTITY AND BRAND
+
+Product name:
+- English brand: **saa-wak**
+- Sindhi brand: **ساوڪ**
+- Preferred display: `saa-wak | ساوڪ`
+
+The Sindhi word ساوڪ evokes greenery, vegetation, cultivation, and flourishing land. Reflect these ideas in the visual identity without making the interface look like a farming poster.
+
+Product purpose:
+
+Help farmers and produce buyers in Sindh understand sample crop-market prices, compare markets, explore price trends, set price alerts, list agricultural produce, and estimate potential sales profit.
+
+Brand personality:
+- Trustworthy
+- Local and culturally grounded
+- Calm and approachable
+- Practical for everyday agricultural decisions
+- Modern but not overly technical
+- Accessible to users with different levels of digital literacy
+
+Suggested tagline:
+
+**“Know the market. Grow with confidence.”**
+
+Optional Sindhi supporting line:
+
+**“مارڪيٽ جا اگهه ڄاڻو، اعتماد سان اڳتي وڌو.”**
+
+Keep the English and Sindhi branding visually balanced. Display the Sindhi script correctly with an appropriate font and right-to-left text direction where required.
+
+Do not invent a different product name, replace the Sindhi name with another spelling, or use an unrelated logo.
+
+## 3. VISUAL DESIGN DIRECTION — EXTREMELY IMPORTANT
+
+I specifically want a LIGHT, SOFT, OFF-WHITE design.
+
+Do not use a dark theme, black backgrounds, neon colors, strong gradients, excessive saturated green, or a conventional corporate admin-dashboard appearance.
+
+### Core palette
+
+Use this palette as the initial design system:
+
+- Main background: warm off-white `#FAF9F5`
+- Primary surfaces/cards: white `#FFFFFF`
+- Secondary surface: pale sage `#EEF2E8`
+- Primary brand green: muted leaf green `#607D52`
+- Deep green for important headings: `#344B35`
+- Pale green accent: `#DCE8D3`
+- Warm sand accent: `#F2E8D7`
+- Subtle yellow accent: `#F5E8B8`
+- Main text: warm charcoal `#30352F`
+- Secondary text: `#777B72`
+- Borders/dividers: `#E8E7DF`
+- Success: restrained green
+- Warning: muted amber
+- Error: soft red, used sparingly
+
+Green should communicate agriculture and growth, not dominate every screen.
+
+Use color intentionally. Most of the interface should remain off-white, white, and soft neutral tones.
+
+### Visual style
+
+Aim for a refined agricultural technology product with:
+- Generous whitespace
+- Clean typography
+- Rounded cards with moderate corner radii
+- Very subtle shadows
+- Thin, quiet borders
+- Clear visual hierarchy
+- Small, tasteful illustrations
+- Consistent spacing
+- Elegant charts and tables
+- Carefully designed empty states
+- Soft hover and focus states
+- Short, smooth transitions
+
+Avoid excessive glassmorphism, heavy shadows, oversized rounded pills, unnecessary floating widgets, clutter, and generic template styling.
+
+The result should feel designed specifically for saa-wak, rather than an unmodified dashboard template.
+
+### Minimal fruit and vegetable symbols
+
+I want a small number of minimalist fruit, vegetable, and crop symbols throughout the interface.
+
+Use tasteful symbols such as:
+- 🌾 wheat or grain
+- 🌱 seedling
+- 🍅 tomato
+- 🥔 potato
+- 🧅 onion
+- 🌶️ chilli
+- 🥭 mango
+- 🍌 banana
+- 🍊 citrus
+- 🥬 leafy vegetables
+
+Use these sparingly: for crop categories, small illustrations beside crop names, onboarding, selected empty states, and a few decorative accents.
+
+Prefer simple, consistent line icons or small, restrained illustrations wherever possible. Emoji may be used for crop identity, but do not scatter large colorful emoji across the dashboard.
+
+Do not use fruit symbols in place of every functional icon. Use a consistent icon library such as Lucide React for navigation, search, notifications, settings, editing, charts, filters, and actions.
+
+### Typography
+
+Use a modern, readable sans-serif font for English, with a suitable Sindhi-compatible font for Sindhi text.
+
+Use clear heading sizes and comfortable body text. Ensure Sindhi glyphs render properly rather than appearing as disconnected or malformed characters.
+
+Keep text readable on small screens and avoid overly thin font weights.
+
+## 4. APPLICATION ARCHITECTURE AND FRONTEND STACK
+
+Follow the TRD and the supplied documents. Use the recommended stack unless a specific constraint makes that impossible:
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS or the existing configured styling solution
+- Recharts for charts
+- Lucide React for functional icons
+
+Reuse existing project configuration if the environment has already generated a working starter.
+
+Build reusable, maintainable components. Keep the implementation organized into logical areas such as:
+- Application shell and navigation
+- Shared UI components
+- Dashboard
+- Crop prices
+- Market comparisons
+- Price history and charts
+- Alerts
+- Marketplace
+- Profit calculator
+- User profile and preferences
+- Mock data
+- API service interfaces and data-access utilities
+- Types and formatting utilities
+
+Avoid a giant single-file application.
+
+Use TypeScript types for the six domain collections defined in the supplied schema:
+`users`, `crops`, `markets`, `prices`, `listings`, and `alerts`.
+
+Create a clear data-access layer so the future backend can replace the frontend's demo data without rewriting the UI components.
+
+Keep API base URLs configurable through environment variables when appropriate. Do not hardcode a future production URL.
+
+## 5. APPLICATION SHELL AND NAVIGATION
+
+Create a complete application shell with the saa-wak brand.
+
+### Desktop
+
+Use a refined sidebar and a clean top navigation bar.
+
+The sidebar should include:
+- Overview
+- Crop Prices
+- Market Comparison
+- Price Alerts
+- Produce Marketplace
+- Profit Calculator
+- My Listings
+- Profile / Settings
+
+Use small Lucide icons with clear labels and consistent active states.
+
+The top bar should include:
+- Current page title or breadcrumb
+- Search or relevant contextual action
+- Selected location/market context when useful
+- Notifications entry point
+- User profile menu
+- A clear, compact saa-wak brand mark
+
+Avoid filling the header with unnecessary controls.
+
+### Mobile
+
+Create a genuinely mobile-first experience, not simply a compressed desktop layout.
+
+Use:
+- A compact header
+- A collapsible navigation drawer or appropriate bottom navigation
+- Large, touch-friendly controls
+- Responsive cards instead of overly wide tables
+- Horizontally scrollable charts only where necessary
+- Mobile-friendly forms and dialogs
+- Proper spacing around the edges
+
+Ensure the application remains usable on narrow phones, tablets, and desktop screens.
+
+## 6. ONBOARDING AND DEMO ROLE SELECTION
+
+Create a welcoming entry/onboarding experience that introduces saa-wak and its purpose.
+
+Show the brand as:
+
+**saa-wak**
+**ساوڪ**
+
+Use a subtle crop illustration, a small seedling motif, and the off-white visual system.
+
+Allow the user to select between:
+1. Farmer
+2. Buyer
+
+The role selection must produce a meaningful difference in the visible interface and available actions.
+
+Farmer-oriented experience:
+- View crop prices
+- Compare markets
+- Set price alerts
+- Calculate potential profit
+- Create and manage produce listings
+
+Buyer-oriented experience:
+- Browse produce
+- Search and filter listings
+- Compare prices and quantities
+- View seller-provided listing details
+- Access relevant crop-market information
+
+Provide a simple demo entry flow so the application can be explored without real credentials.
+
+Clearly communicate that this is a demo experience. Do not represent frontend role selection as secure authentication or authorization.
+
+Persist the demo selection only through a suitable lightweight frontend mechanism if needed. Keep this behavior isolated so it can later be replaced with real backend authentication.
+
+## 7. OVERVIEW DASHBOARD
+
+Build a visually polished dashboard that immediately answers: “What should I know about the crop market today?”
+
+Include:
+
+### Welcome section
+- A friendly, concise heading
+- A short contextual subtitle
+- Current selected market or district
+- A compact date indicator
+
+### Key information cards
+- Number of crops represented
+- Selected market's sample price overview
+- Crops with notable price increases
+- Crops with notable price decreases
+
+Only display figures supported by the sample dataset. Do not invent claims about real market performance.
+
+### Today's crop prices
+Show a compact, readable list or card grid with:
+- Crop name and small crop symbol
+- Price per clearly defined unit
+- Market or district
+- Daily price change
+- Trend direction
+- A link to view the crop's details
+
+### Market insights
+Include a compact visual comparison of selected crops or markets, based on the available sample data.
+
+### Quick actions
+- Explore crop prices
+- Compare markets
+- Create a price alert
+- List produce
+- Open the profit calculator
+
+### Recent activity
+If appropriate to the supplied requirements, show a small panel for recent demo actions or listing activity. Do not invent real transactions or external events.
+
+Keep the dashboard calm and scannable. Do not put every feature into a separate oversized card.
+
+## 8. CROP PRICES SCREEN
+
+Create a dedicated crop prices page.
+
+Users should be able to:
+- Browse the available crops
+- Search by crop name
+- Filter by crop category
+- Select a market
+- Select a district where supported by the data
+- Sort by price or daily change
+- View the price per standardized unit
+- View daily percentage or absolute change where meaningful
+- Open detailed crop-price information
+
+Display:
+- Crop name
+- Crop symbol or small illustration
+- Category
+- Current sample price
+- Unit
+- Selected market
+- Daily change
+- Trend indicator
+
+Provide clear loading, empty, and error states.
+
+Ensure that the unit is consistent for comparable prices. Never compare prices with incompatible units without explaining the difference.
+
+Make it easy to return to the full crop list after viewing a crop.
+
+## 9. PRICE HISTORY AND MARKET COMPARISON
+
+Create a dedicated comparison experience using the 14-day price history defined in the documents.
+
+### Price history
+Allow users to select:
+- A crop
+- A market
+- A time period supported by the dataset
+
+Display a readable line chart with:
+- Date on the horizontal axis
+- Price and unit on the vertical axis
+- Useful tooltips
+- A clear legend when needed
+- Accessible labels and readable tick marks
+
+Include a concise summary:
+- First recorded sample price
+- Latest sample price
+- Absolute change
+- Percentage change when mathematically valid
+
+If the starting price is zero, avoid dividing by zero or showing a misleading percentage change.
+
+### Market comparison
+Allow the user to compare the same crop across the available markets.
+
+Show:
+- Market name
+- District
+- Sample price
+- Unit
+- Difference from the lowest displayed price
+- Appropriate visual comparison
+
+Use the supplied sample dataset and consistent units.
+
+Make the lowest price easy to identify without relying on color alone.
+
+Do not claim that a lower listed price automatically means the best real-world deal, because transportation, quality, quantity, and other costs may differ.
+
+## 10. PRICE ALERTS
+
+Create a dedicated price alerts screen.
+
+Users should be able to:
+- View their configured alerts
+- Create an alert
+- Select a crop
+- Select a market where applicable
+- Choose a target price
+- Choose whether the alert triggers above or below the target
+- Enable or disable an alert
+- Edit an alert
+- Delete an alert
+
+Show clear status labels and concise explanations.
+
+Use appropriate form validation:
+- Crop must be selected
+- Target price must be a valid positive number
+- Required fields cannot be left blank
+- Invalid values should show helpful inline messages
+
+For the frontend demo, evaluate alerts only when sample prices are loaded or refreshed, in line with the PRD.
+
+Clearly explain that demo alert evaluation does not provide background monitoring, SMS, email, or push notifications.
+
+Do not imply that a notification was sent when the application has only evaluated a local sample price.
+
+## 11. PRODUCE MARKETPLACE
+
+Build a complete marketplace experience for browsing agricultural produce.
+
+### Marketplace browsing
+
+Display listing cards containing:
+- Crop or produce name
+- Small, restrained crop illustration or symbol
+- Quantity available
+- Price per unit
+- Seller-provided location
+- Listing date when available
+- Listing status
+- A simple market-price comparison badge when valid data supports it
+- A clear action to view details
+
+Add search and useful filters:
+- Crop
+- Category
+- District or location
+- Price range
+- Quantity
+- Listing status where appropriate
+
+Allow sorting by price, newest listing, or other relevant criteria supported by the schema.
+
+### Listing details
+
+Create a clear detail view with:
+- Crop name
+- Quantity
+- Price and unit
+- Location
+- Seller-provided description
+- Relevant market-price reference
+- Seller details available in the demo data
+- Appropriate contact or enquiry UI if supported by the product requirements
+
+Do not invent verified identities, live seller availability, ratings, or completed transactions.
+
+If no real messaging service exists, contact actions must not pretend to send a message. Use an honest demo interaction.
+
+### Create and edit listings
+
+Build complete forms for creating and editing a listing.
+
+Include fields supported by the project schema, such as:
+- Crop
+- Quantity
+- Unit
+- Price per unit
+- Location
+- Description
+- Status, if supported
+
+Add:
+- Required-field validation
+- Numeric validation
+- Helpful field descriptions
+- Save and cancel actions
+- Confirmation or success feedback
+- Clear edit and delete interactions
+
+Allow users to manage their own demo listings with a clear ownership-oriented UI. Do not describe frontend checks as real security.
+
+Use confirmation before deleting a listing.
+
+Do not introduce payment processing, checkout, logistics tracking, or a complex e-commerce workflow unless explicitly required in the supplied documents.
+
+## 12. PROFIT CALCULATOR
+
+Create a practical calculator designed for farmers estimating potential crop-sale revenue.
+
+Include:
+- Crop selection where appropriate
+- Quantity
+- Unit
+- Selling price per unit
+- Estimated costs where supported by the PRD
+- A price adjustment slider from -20% to +20%
+
+Show a clear summary of:
+- Baseline gross revenue
+- Adjusted selling price
+- Adjusted gross revenue
+- Estimated costs, if entered
+- Estimated net profit where costs are available
+- Difference between baseline and adjusted outcomes
+
+Use these calculation principles:
+
+Gross revenue = quantity × selling price per unit.
+
+Adjusted price = baseline price × (1 + adjustment percentage / 100).
+
+Adjusted gross revenue = quantity × adjusted price.
+
+Estimated net profit = gross revenue − entered costs, provided the cost inputs represent the relevant total costs.
+
+Make the adjustment slider update the displayed results immediately.
+
+Show clear currency and quantity units. Use Pakistani rupees (PKR / Rs.) consistently for the fictional Sindh demo data.
+
+Do not call gross revenue “profit.” If costs have not been supplied, clearly state that net profit cannot yet be calculated.
+
+This is an estimate, not a guarantee of market price or earnings.
+
+## 13. SAMPLE DATA AND VISUAL REALISM
+
+Use the provided backend schema and seed requirements as the source of truth.
+
+The sample data must support:
+- At least 8 crops across at least 4 categories
+- At least 3 markets in different districts of Sindh
+- 14 consecutive days of sample prices for every crop-market combination
+- At least 336 price records
+- At least 6 fictional users
+- At least 12 fictional produce listings
+- At least 5 fictional price alerts
+
+Use plausible but entirely fictional prices and contact information.
+
+Keep data internally consistent:
+- All referenced crops and markets must exist
+- All listing prices must use their declared units
+- Price histories must contain valid dates
+- Market comparisons must use compatible units
+- Trend calculations must match the underlying data
+- The dashboard must calculate its summaries from the dataset rather than display unrelated hardcoded statistics
+
+Do not claim that fictional prices are current market prices.
+
+**Show a visible, persistent disclosure wherever sample prices are displayed:**
+
+“Sample demo prices — not live market data.”
+
+Use realistic sample locations in Sindh as defined by the documents, and label them appropriately as demo data.
+
+Do not fetch live prices or use external APIs in this frontend phase.
+
+## 14. DATA FLOW AND BACKEND HANDOFF
+
+This is a strict architecture requirement.
+
+Build the UI using local seed data and a clean frontend data-access layer.
+
+Separate:
+- UI components
+- Domain types
+- Sample seed data
+- Business calculations
+- API/data-access functions
+- Form validation
+- Formatting utilities
+
+Use one consistent data contract aligned with the supplied schema.
+
+Provide clearly named functions for operations such as:
+- Fetching crops
+- Fetching markets
+- Fetching crop prices
+- Fetching price history
+- Fetching listings
+- Creating, editing, and deleting listings
+- Fetching and updating alerts
+- Evaluating alerts against the loaded sample prices
+
+The exact function names can follow the project's existing conventions.
+
+If API interfaces are created, keep them replaceable and do not couple the UI to a specific mock API provider.
+
+Use sample data for the working preview. If you implement local demo mutations, keep them isolated behind the data-access layer.
+
+Do not create a second schema that conflicts with the supplied backend schema.
+
+Do not implement a separate backend, database, server-side authentication, or persistent production storage in this phase.
+
+Do not hardcode credentials, API keys, or secrets.
+
+The future Antigravity phase will implement the backend and connect the application to real API endpoints. Make that transition straightforward.
+
+## 15. SHARED COMPONENTS AND INTERACTION QUALITY
+
+Create reusable components where appropriate:
+- Brand logo / wordmark
+- Sidebar and mobile navigation
+- Header
+- Page heading
+- Price card
+- Crop badge
+- Market selector
+- Search and filter controls
+- Price trend indicator
+- Chart container
+- Listing card
+- Listing form
+- Alert form
+- Calculator controls
+- Empty state
+- Loading state
+- Error state
+- Confirmation dialog
+- Toast or inline feedback
+- Reusable form fields
+
+All interactive elements must work.
+
+Specifically:
+- Buttons must perform their stated actions
+- Search must filter actual displayed data
+- Filters must change results
+- Sorting must change order
+- Forms must validate input
+- Charts must display meaningful sample data
+- Sliders must update calculations
+- Tabs and navigation must switch views
+- Create, edit, and delete flows must work in the demo data layer
+- Modals and drawers must open and close properly
+- Empty states must be handled intentionally
+- Users must receive feedback after actions
+
+Avoid placeholder buttons that do nothing.
+
+Where a feature genuinely depends on the future backend, build its complete UI and provide a clearly identified demo interaction or integration placeholder rather than pretending that the real service exists.
+
+## 16. ACCESSIBILITY, LANGUAGE, AND RESPONSIVENESS
+
+Ensure:
+- Semantic HTML
+- Keyboard-accessible controls
+- Visible focus states
+- Sufficient contrast
+- Proper labels for inputs
+- Helpful validation messages
+- Accessible chart summaries where practical
+- Tooltips that do not hide essential information
+- Touch-friendly controls
+- Responsive layouts
+- No horizontal page overflow
+- Consistent number, currency, and date formatting
+
+English should be the primary interface language for this prototype.
+
+Use Sindhi in the brand identity and selected supporting text. Set appropriate right-to-left direction for Sindhi text without accidentally flipping the entire English interface.
+
+Do not add a large language-switching system unless it is already required by the supplied documents.
+
+## 17. WHAT NOT TO BUILD
+
+Do not:
+- Build the backend or database
+- Add a complex authentication system
+- Claim sample prices are live
+- Claim demo alerts send real notifications
+- Add unrequested AI chat features
+- Add cryptocurrency, blockchain, or unrelated features
+- Add unnecessary maps, animations, or decorative sections
+- Turn the interface into a generic enterprise admin dashboard
+- Use a dark theme
+- Use excessive bright green
+- Fill every empty space with cards or icons
+- Add payment processing or advanced logistics
+- Change the six-collection data model without justification
+- Ignore the supplied project documents
+- Replace working starter functionality unnecessarily
+
+## 18. BUILD ORDER
+
+Implement the application in this order:
+
+1. Read all five documents and reconcile their requirements.
+2. Establish the saa-wak design tokens, typography, spacing, and shared components.
+3. Build the application shell and responsive navigation.
+4. Build demo onboarding and role selection.
+5. Build the dashboard and crop prices.
+6. Build price history and market comparison charts.
+7. Build price alerts.
+8. Build the marketplace, listing details, and listing CRUD interactions.
+9. Build the profit calculator.
+10. Add fictional sample data and verify that all summaries and calculations agree with it.
+11. Add loading, empty, validation, success, error, and confirmation states.
+12. Test the responsive layout and all key interactions.
+13. Fix build errors, broken routes, console errors, and obvious usability issues.
+
+If time is constrained, prioritize a complete and working core experience over decorative extras.
+
+## 19. ACCEPTANCE CRITERIA
+
+Do not consider the frontend complete until all the following are satisfied:
+
+- The product is consistently branded **saa-wak (ساوڪ)**.
+- The design uses a warm off-white and restrained nature-inspired palette.
+- Minimal crop symbols are present but not excessive.
+- The app looks polished on desktop and mobile.
+- All five supplied documents have informed the implementation.
+- The dashboard and crop prices use coherent sample data.
+- The 14-day history can be explored in charts.
+- Users can compare sample prices across markets.
+- Users can create and manage demo price alerts.
+- Users can browse, create, edit, and delete demo listings.
+- The profit calculator updates correctly when inputs change.
+- Role selection changes the user experience.
+- Search, filters, sorting, forms, navigation, and buttons work.
+- All sample prices are explicitly labeled as non-live.
+- No real backend or production authentication is falsely claimed.
+- The project has a clean, reusable TypeScript structure.
+- The application builds successfully and has no obvious runtime errors.
+- The data-access layer is ready for the next Antigravity integration phase.
+
+## 20. FINAL INSTRUCTION
+
+Now inspect the five supplied documents and build the actual frontend.
+
+Do not respond with only a plan, wireframe, explanation, or list of recommended components. Implement the working application and render the live preview.
+
+Make thoughtful design decisions without repeatedly asking me to choose minor styling details.
+
+Prioritize a beautiful, usable, culturally grounded agricultural product that feels like a real platform for farmers and buyers in Sindh.
+
+The final experience should communicate one clear identity:
+
+**saa-wak — ساوڪ**
+**Know the market. Grow with confidence.**
+
+Build the frontend now, and keep the backend integration boundary clean for Google Antigravity.

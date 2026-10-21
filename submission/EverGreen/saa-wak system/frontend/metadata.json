@@ -1,0 +1,6 @@
+{
+  "name": "saa-wak | ساوڪ — Crop Prices & Produce Marketplace",
+  "description": "Sindh-focused crop-price intelligence and agricultural produce marketplace for farmers and buyers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
