@@ -1,0 +1,14 @@
+{
+  "name": "campus-gig-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "seed": "node server/seed.js",
+    "test:api": "node server/test-api.js"
+  },
+  "dependencies": {
+    "campus-gig-portal": "file:",
+    "express": "^4.21.2"
+  }
+}

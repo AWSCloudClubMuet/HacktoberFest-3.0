@@ -17,21 +17,20 @@ A student is a Poster on gigs they create and an Applicant on gigs they apply to
 
 ## Tech stack and run commands
 
-Proposed stack (confirm before implementation):
-
-- API: Node.js + Express. In-memory store seeded on startup. No database.
-- UI: Vite + React (JavaScript). One user switcher; no real auth.
-- Acting user: every mutating request, and profile-scoped reads, send header `X-User-Id`.
+- API: Node.js 18+ and Express. In-memory store loaded from `data/db.json`. No database.
+- UI (later): Vite + React. One student switcher; no real auth.
+- Acting user: mutating requests send header `x-user-id`.
 
 From `submission/PhantomX/problem-2/`:
 
 ```bash
 npm install
-npm run dev      # API http://localhost:3001  client http://localhost:5173
-npm run start    # API only
+npm run seed       # rewrite data/db.json
+npm start          # http://localhost:3001
+npm run test:api   # rule checks against a temporary database
 ```
 
-Client calls the API with `VITE_API_URL=http://localhost:3001`.
+`npm run seed` resets the file. A running server reloads it on the next request. The client will use `VITE_API_URL=http://localhost:3001`.
 
 ## Data model
 
@@ -39,10 +38,9 @@ Client calls the API with `VITE_API_URL=http://localhost:3001`.
 
 Computed on read, never stored or patched:
 
-- `gigsPosted` — gigs where `user_id` is this user
-- `gigsCompleted` — `Completed` gigs where this user is the owner or `accepted_applicant_id`
-- `averageRating` — mean of reviews where `reviewee_id` is this user (one decimal). `null` if none
-- `reviewCount`
+- `gigs_posted` — gigs where `user_id` is this user
+- `gigs_completed` — `Completed` gigs where this user is the owner or `accepted_applicant_id`
+- `average_rating` — mean of reviews where `reviewee_id` is this user (one decimal). `null` if none
 
 **Gigs:** `id`, `user_id`, `title`, `description`, `type` (`Offering` | `Requesting`), `category` (`Programming` | `Design` | `Writing` | `Tutoring`), `payment_type` (`Paid` | `SkillSwap` | `Free`), `budget` (number or `null`), `deadline` (ISO date), `status` (`Open` | `In Progress` | `Completed` | `Expired` | `Cancelled`), `accepted_applicant_id` (nullable), `created_at`.
 
@@ -58,7 +56,7 @@ Allowed transitions:
 
 - `Open` + owner accepts one `Pending` application → `In Progress`, set `accepted_applicant_id`, reject every other `Pending` application, refuse new applications.
 - `In Progress` → `Completed` (owner only, via `PATCH /gigs/:id`).
-- `Open` → `Cancelled` (owner only). Reject remaining `Pending` applications.
+- `Open` or `In Progress` → `Cancelled` (owner only). Reject remaining `Pending` applications. A stored `Open` gig past its deadline can still be cancelled. Keep `accepted_applicant_id` when cancelling `In Progress`.
 - Completion is allowed only from `In Progress`.
 - `In Progress` is set only by accepting an applicant, not by patching status.
 - No reopen. No complete from `Open`, `Expired`, `Cancelled`, or `Completed`.
@@ -67,7 +65,7 @@ Allowed transitions:
 
 Gig create (`POST /gigs`):
 
-- `X-User-Id` must match an existing user.
+- `x-user-id` must match an existing user. Missing header is `400`. Unknown user is `404`.
 - `title` and `description` required, non-empty, trimmed.
 - `type`, `category`, `payment_type` must be one of the enums above.
 - `Paid`: `budget` required, number, greater than 0. `SkillSwap` and `Free`: `budget` must be `null`.
@@ -76,13 +74,14 @@ Gig create (`POST /gigs`):
 
 Discovery (`GET /gigs`):
 
-- Filters: `category`, `type`, `payment_type`, `status` (effective), `budget_min`, `budget_max`, `q`.
+- Filters combine with AND: `category`, `type`, `payment_type`, `min`, `max`, `q`.
 - `q` matches title or description, case-insensitive.
-- If either budget bound is set, return only `Paid` gigs whose budget is inside the inclusive range.
+- `min` and `max` are an inclusive budget range. Gigs with a null budget drop out when either bound is set.
+- There is no status query. Expired is only the computed `status` on the gig.
 
 Applications:
 
-- Applicant is `X-User-Id`. `message` required, 1–500 characters.
+- Applicant is `x-user-id`. `message` required, 1–500 characters.
 - Reject apply to your own gig, a second application to the same gig (any status), or a gig that is not effectively `Open`.
 - New applications start `Pending`.
 - Only the gig owner may `PATCH` an application.
@@ -93,11 +92,11 @@ Applications:
 Reviews:
 
 - Gig must be `Completed`.
-- Reviewer is `X-User-Id` and must be the owner or the accepted applicant.
+- Reviewer is `x-user-id` and must be the owner or the accepted applicant.
 - `reviewee_id` must be the other participant.
 - One review per reviewer per gig.
 - `rating` integer 1–5. `comment` required, non-empty, max 500 characters.
-- Profile averages come from these rows. No endpoint edits `averageRating`.
+- Profile averages come from these rows. No endpoint edits `average_rating`.
 
 ## API
 
@@ -105,21 +104,21 @@ Reviews:
 | --- | --- | --- |
 | GET | `/users` | List users (for the switcher) |
 | GET | `/users/:id` | Profile plus computed stats |
-| GET | `/gigs` | Search and filter. Query: `category`, `type`, `payment_type`, `status`, `budget_min`, `budget_max`, `q` |
+| GET | `/gigs` | Search and filter. Query: `category`, `type`, `payment_type`, `min`, `max`, `q` |
 | GET | `/gigs/:id` | Gig detail, effective status |
 | POST | `/gigs` | Create gig as `X-User-Id` |
 | PATCH | `/gigs/:id` | Owner sets `Completed` or `Cancelled` |
 | GET | `/applications` | Query: `gig_id`, `applicant_id` |
 | POST | `/applications` | Apply to a gig |
 | PATCH | `/applications/:id` | Owner sets `Accepted` or `Rejected` |
-| GET | `/reviews` | Query: `gig_id`, `reviewee_id` |
+| GET | `/reviews` | Query: `reviewee_id`. Omit it to return every review |
 | POST | `/reviews` | Review the other party |
 
-Errors: `400` validation, `401` missing or unknown `X-User-Id`, `403` not the owner or not a party, `404` missing record, `409` duplicate application or duplicate review. JSON body `{ "error": "..." }`.
+Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403` not the owner, applying to your own gig, or reviewing when you are not a participant. `404` unknown user, gig, or application. `409` duplicate application, duplicate review, or an illegal status change.
 
 ## Seed data
 
-Loaded on API startup. Counts are minimums; relationships must already satisfy the rules above.
+`npm run seed` writes `data/db.json`. Counts are minimums; relationships must already satisfy the rules above. The current seed is 12 users, 27 gigs, 33 applications, and 9 reviews.
 
 - At least 12 users with names, majors, semesters, bios, and skills.
 - At least 25 gigs across Programming, Design, Writing, and Tutoring; both `Offering` and `Requesting`; all three payment types; all five effective statuses.
@@ -135,10 +134,16 @@ Loaded on API startup. Counts are minimums; relationships must already satisfy t
 - Keep business rules in the API. The UI may hide invalid actions; it is not the source of truth.
 - IDs are strings. Dates are ISO-8601.
 
+## Progress
+
+- [x] Stage 1 — Express API, seed file, business rules, and `npm run test:api`
+- [ ] Stage 2 — Frontend
+- [ ] Stage 3 — not started
+
 ## Milestones
 
-- [ ] M1 Profiles show name, major, skills, gigs posted, gigs completed, average rating. Create Offering or Requesting gigs with validation.
-- [ ] M2 Browse and filter by category, type, payment type, and budget. Search title and description. Apply with a message. See my application statuses. Block own-gig and duplicate applies. Past-deadline Open gigs show as Expired.
-- [ ] M3 Owner reviews applicants, accepts one, rejects the rest. Accept moves the gig to In Progress and closes new applications. Complete only from In Progress.
-- [ ] M4 After completion, owner and accepted applicant each leave one 1–5 review. Averages are computed from reviews.
-- [ ] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.
+- [ ] M1 Profiles and validated gig creation. API done; UI not started.
+- [ ] M2 Search, filters, and applications. API done; UI not started.
+- [ ] M3 Applicant selection and status changes. API done; UI not started.
+- [ ] M4 Two-way reviews and computed reputation. API done; UI not started.
+- [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.

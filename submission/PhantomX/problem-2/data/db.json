@@ -1,0 +1,877 @@
+{
+  "users": [
+    {
+      "id": "u01",
+      "name": "Aisha Khan",
+      "major": "Computer Science",
+      "semester": 6,
+      "bio": "Full-stack student who tutors intro courses.",
+      "skills": [
+        "JavaScript",
+        "React",
+        "Tutoring"
+      ]
+    },
+    {
+      "id": "u02",
+      "name": "Bilal Ahmed",
+      "major": "Graphic Design",
+      "semester": 4,
+      "bio": "Brand and poster designer for campus events.",
+      "skills": [
+        "Figma",
+        "Illustration",
+        "Branding"
+      ]
+    },
+    {
+      "id": "u03",
+      "name": "Chen Wei",
+      "major": "Computer Science",
+      "semester": 5,
+      "bio": "Backend student who likes debugging sessions.",
+      "skills": [
+        "Python",
+        "APIs",
+        "Debugging"
+      ]
+    },
+    {
+      "id": "u04",
+      "name": "Dua Malik",
+      "major": "English",
+      "semester": 3,
+      "bio": "Edits essays, resumes, and lab reports.",
+      "skills": [
+        "Editing",
+        "Creative Writing",
+        "Proofreading"
+      ]
+    },
+    {
+      "id": "u05",
+      "name": "Ethan Brooks",
+      "major": "Mathematics",
+      "semester": 7,
+      "bio": "Calculus and statistics tutor.",
+      "skills": [
+        "Calculus",
+        "Statistics",
+        "Tutoring"
+      ]
+    },
+    {
+      "id": "u06",
+      "name": "Fatima Noor",
+      "major": "Visual Design",
+      "semester": 2,
+      "bio": "Makes UI layouts and slide decks.",
+      "skills": [
+        "UI Design",
+        "Canva",
+        "Figma"
+      ]
+    },
+    {
+      "id": "u07",
+      "name": "George Patel",
+      "major": "Computer Science",
+      "semester": 8,
+      "bio": "Looking for project partners on web apps.",
+      "skills": [
+        "JavaScript",
+        "Node.js",
+        "Writing"
+      ]
+    },
+    {
+      "id": "u08",
+      "name": "Hina Shah",
+      "major": "Biology",
+      "semester": 4,
+      "bio": "Builds study guides and cleans up lab writeups.",
+      "skills": [
+        "Biology",
+        "Tutoring",
+        "Editing"
+      ]
+    },
+    {
+      "id": "u09",
+      "name": "Imran Qureshi",
+      "major": "Media Studies",
+      "semester": 6,
+      "bio": "Writes short scripts, captions, and outlines.",
+      "skills": [
+        "Writing",
+        "Video",
+        "Storytelling"
+      ]
+    },
+    {
+      "id": "u10",
+      "name": "Julia Santos",
+      "major": "Computer Science",
+      "semester": 3,
+      "bio": "Frontend practice partner for HTML and CSS.",
+      "skills": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ]
+    },
+    {
+      "id": "u11",
+      "name": "Kamran Ali",
+      "major": "Business",
+      "semester": 5,
+      "bio": "Helps with cover letters and case notes.",
+      "skills": [
+        "Writing",
+        "Presentations",
+        "Research"
+      ]
+    },
+    {
+      "id": "u12",
+      "name": "Lena Ortiz",
+      "major": "Fine Arts",
+      "semester": 4,
+      "bio": "Poster concepts and design critiques.",
+      "skills": [
+        "Design",
+        "Drawing",
+        "Tutoring"
+      ]
+    }
+  ],
+  "gigs": [
+    {
+      "id": "g01",
+      "user_id": "u01",
+      "title": "React office hours",
+      "description": "Weekly help with React components, props, and debugging student projects.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 150,
+      "deadline": "2026-11-20T05:39:52.944Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.945Z"
+    },
+    {
+      "id": "g02",
+      "user_id": "u02",
+      "title": "Need a club poster",
+      "description": "Design a print-ready poster for the design club showcase next month.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 80,
+      "deadline": "2026-11-11T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g03",
+      "user_id": "u03",
+      "title": "Proofread your README",
+      "description": "I will proofread a project README and suggest clearer setup steps.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-08T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g04",
+      "user_id": "u04",
+      "title": "Swap essay edit for grammar coaching",
+      "description": "I will edit a short essay if you coach me through grammar rules for an hour.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-15T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g05",
+      "user_id": "u05",
+      "title": "Python script for lab data",
+      "description": "Need a Python script that cleans a CSV and plots two columns.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 200,
+      "deadline": "2026-11-30T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g06",
+      "user_id": "u06",
+      "title": "Slide deck critique for a logo",
+      "description": "I will critique your slide deck if you sketch a simple logo concept in return.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-06T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g07",
+      "user_id": "u07",
+      "title": "Look over my project abstract",
+      "description": "Need a second pair of eyes on a 250-word project abstract. No pay.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-02T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g08",
+      "user_id": "u08",
+      "title": "Intro biology study session",
+      "description": "One-hour session covering cell structure before the midterm.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 45,
+      "deadline": "2026-11-18T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g09",
+      "user_id": "u09",
+      "title": "Pair on a small JavaScript bug",
+      "description": "Sit with me for an hour and we will trace a JavaScript bug in your page.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-04T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g10",
+      "user_id": "u10",
+      "title": "Landing page mock",
+      "description": "Need a Figma mock for a one-page student portfolio landing page.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 120,
+      "deadline": "2026-11-25T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g11",
+      "user_id": "u11",
+      "title": "Cover letter help for a resume review",
+      "description": "I will draft your cover letter if you review my one-page resume.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-09T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g12",
+      "user_id": "u12",
+      "title": "Practice explaining color theory",
+      "description": "I want a classmate to quiz me on color theory before a critique. Free.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-12T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g13",
+      "user_id": "u01",
+      "title": "Logo sketch session",
+      "description": "A paid hour of logo sketches. The deadline has already passed.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 60,
+      "deadline": "2026-10-11T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-06T05:39:52.946Z"
+    },
+    {
+      "id": "g14",
+      "user_id": "u02",
+      "title": "Caption swap that expired",
+      "description": "Trade social captions for a poster tweak. This request is past its deadline.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-15T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "g15",
+      "user_id": "u03",
+      "title": "Python office hour",
+      "description": "Free Python help hour. The date has passed.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-09T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-04T05:39:52.946Z"
+    },
+    {
+      "id": "g16",
+      "user_id": "u04",
+      "title": "Debug my form handler",
+      "description": "Paid help debugging a form handler. The deadline has passed.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 90,
+      "deadline": "2026-10-18T05:39:52.946Z",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-13T05:39:52.946Z"
+    },
+    {
+      "id": "g17",
+      "user_id": "u05",
+      "title": "Node API walkthrough",
+      "description": "Live walkthrough of a small Express API for a class project.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 100,
+      "deadline": "2026-11-05T05:39:52.946Z",
+      "status": "In Progress",
+      "accepted_applicant_id": "u06",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g18",
+      "user_id": "u06",
+      "title": "Feedback on a poster layout",
+      "description": "Need layout feedback on a campus event poster. No payment.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-30T05:39:52.946Z",
+      "status": "In Progress",
+      "accepted_applicant_id": "u01",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g19",
+      "user_id": "u07",
+      "title": "Edit a lab report for notes",
+      "description": "I will edit your lab report if you share your study notes.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-01T05:39:52.946Z",
+      "status": "In Progress",
+      "accepted_applicant_id": "u08",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g20",
+      "user_id": "u08",
+      "title": "Stats problem set help",
+      "description": "Need help finishing a statistics problem set before Friday.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 55,
+      "deadline": "2026-10-29T05:39:52.946Z",
+      "status": "In Progress",
+      "accepted_applicant_id": "u05",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g21",
+      "user_id": "u09",
+      "title": "Fix the quiz app",
+      "description": "Paid fix for a quiz app that failed two test cases.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 180,
+      "deadline": "2026-10-19T05:39:52.946Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u01",
+      "created_at": "2026-10-14T05:39:52.946Z"
+    },
+    {
+      "id": "g22",
+      "user_id": "u10",
+      "title": "Portfolio thumbnail set",
+      "description": "I made a set of portfolio thumbnails for a classmate.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-17T05:39:52.946Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u02",
+      "created_at": "2026-10-12T05:39:52.946Z"
+    },
+    {
+      "id": "g23",
+      "user_id": "u11",
+      "title": "Case note edit swap",
+      "description": "Swapped a case-note edit for a resume pass.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-13T05:39:52.946Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u04",
+      "created_at": "2026-10-08T05:39:52.946Z"
+    },
+    {
+      "id": "g24",
+      "user_id": "u12",
+      "title": "Design critique session",
+      "description": "Paid critique session covering composition and hierarchy.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 75,
+      "deadline": "2026-10-20T05:39:52.946Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u08",
+      "created_at": "2026-10-15T05:39:52.946Z"
+    },
+    {
+      "id": "g25",
+      "user_id": "u01",
+      "title": "Abstract rewrite",
+      "description": "Rewrote a project abstract for clarity. No payment.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-14T05:39:52.946Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u11",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g26",
+      "user_id": "u03",
+      "title": "Icon set for a club",
+      "description": "Cancelled icon-set gig for the robotics club.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 40,
+      "deadline": "2026-10-26T05:39:52.946Z",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "g27",
+      "user_id": "u04",
+      "title": "Poem proofread",
+      "description": "Cancelled request for a short poem proofread.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-27T05:39:52.946Z",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T05:39:52.946Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": "a01",
+      "gig_id": "g01",
+      "applicant_id": "u02",
+      "message": "I can help with React components this week.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.945Z"
+    },
+    {
+      "id": "a02",
+      "gig_id": "g01",
+      "applicant_id": "u03",
+      "message": "Happy to debug alongside you.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.945Z"
+    },
+    {
+      "id": "a03",
+      "gig_id": "g02",
+      "applicant_id": "u01",
+      "message": "I have made event posters in Figma.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a04",
+      "gig_id": "g02",
+      "applicant_id": "u05",
+      "message": "I can handle layout if the brief is clear.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a05",
+      "gig_id": "g03",
+      "applicant_id": "u04",
+      "message": "Send me the README and I will mark it up.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a06",
+      "gig_id": "g03",
+      "applicant_id": "u06",
+      "message": "I can clean up the wording.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a07",
+      "gig_id": "g03",
+      "applicant_id": "u07",
+      "message": "I write docs for my own projects.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a08",
+      "gig_id": "g04",
+      "applicant_id": "u08",
+      "message": "I can coach grammar for an hour.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a09",
+      "gig_id": "g04",
+      "applicant_id": "u09",
+      "message": "A swap works for me this weekend.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a10",
+      "gig_id": "g05",
+      "applicant_id": "u10",
+      "message": "I can write the Python and the plot.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a11",
+      "gig_id": "g05",
+      "applicant_id": "u12",
+      "message": "CSV cleanup is something I can do.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a12",
+      "gig_id": "g06",
+      "applicant_id": "u11",
+      "message": "I will sketch a logo if you review my deck.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a13",
+      "gig_id": "g07",
+      "applicant_id": "u12",
+      "message": "I can read the abstract today.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a14",
+      "gig_id": "g08",
+      "applicant_id": "u01",
+      "message": "I would like the biology session.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a15",
+      "gig_id": "g09",
+      "applicant_id": "u03",
+      "message": "Let us trace the bug together.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a16",
+      "gig_id": "g10",
+      "applicant_id": "u06",
+      "message": "I can deliver a Figma mock.",
+      "status": "Pending",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a17",
+      "gig_id": "g13",
+      "applicant_id": "u05",
+      "message": "I wanted the logo hour before the deadline.",
+      "status": "Pending",
+      "created_at": "2026-10-07T05:39:52.946Z"
+    },
+    {
+      "id": "a18",
+      "gig_id": "g14",
+      "applicant_id": "u08",
+      "message": "I can still trade captions.",
+      "status": "Pending",
+      "created_at": "2026-10-11T05:39:52.946Z"
+    },
+    {
+      "id": "a19",
+      "gig_id": "g17",
+      "applicant_id": "u06",
+      "message": "I need the Express walkthrough.",
+      "status": "Accepted",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a20",
+      "gig_id": "g17",
+      "applicant_id": "u07",
+      "message": "I can join the API session too.",
+      "status": "Rejected",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a21",
+      "gig_id": "g18",
+      "applicant_id": "u01",
+      "message": "I can give poster feedback tomorrow.",
+      "status": "Accepted",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a22",
+      "gig_id": "g19",
+      "applicant_id": "u08",
+      "message": "I will trade notes for the edit.",
+      "status": "Accepted",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a23",
+      "gig_id": "g19",
+      "applicant_id": "u09",
+      "message": "I can share notes as well.",
+      "status": "Rejected",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a24",
+      "gig_id": "g20",
+      "applicant_id": "u05",
+      "message": "I can finish the stats set with you.",
+      "status": "Accepted",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a25",
+      "gig_id": "g21",
+      "applicant_id": "u01",
+      "message": "I can fix the quiz test cases.",
+      "status": "Accepted",
+      "created_at": "2026-10-15T05:39:52.946Z"
+    },
+    {
+      "id": "a26",
+      "gig_id": "g22",
+      "applicant_id": "u02",
+      "message": "I would like those thumbnails.",
+      "status": "Accepted",
+      "created_at": "2026-10-13T05:39:52.946Z"
+    },
+    {
+      "id": "a27",
+      "gig_id": "g22",
+      "applicant_id": "u06",
+      "message": "I can take the thumbnail set.",
+      "status": "Rejected",
+      "created_at": "2026-10-13T05:39:52.946Z"
+    },
+    {
+      "id": "a28",
+      "gig_id": "g23",
+      "applicant_id": "u04",
+      "message": "I will edit the case note.",
+      "status": "Accepted",
+      "created_at": "2026-10-09T05:39:52.946Z"
+    },
+    {
+      "id": "a29",
+      "gig_id": "g24",
+      "applicant_id": "u08",
+      "message": "Please sign me up for the critique.",
+      "status": "Accepted",
+      "created_at": "2026-10-16T05:39:52.946Z"
+    },
+    {
+      "id": "a30",
+      "gig_id": "g25",
+      "applicant_id": "u11",
+      "message": "Please rewrite my abstract.",
+      "status": "Accepted",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a31",
+      "gig_id": "g26",
+      "applicant_id": "u05",
+      "message": "I was interested in the icons.",
+      "status": "Rejected",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a32",
+      "gig_id": "g26",
+      "applicant_id": "u12",
+      "message": "I can use an icon set.",
+      "status": "Rejected",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "a33",
+      "gig_id": "g27",
+      "applicant_id": "u07",
+      "message": "I can proofread the poem.",
+      "status": "Rejected",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "r01",
+      "gig_id": "g21",
+      "reviewer_id": "u09",
+      "reviewee_id": "u01",
+      "rating": 5,
+      "comment": "Clear debugging help and the quiz tests passed.",
+      "created_at": "2026-10-16T05:39:52.946Z"
+    },
+    {
+      "id": "r02",
+      "gig_id": "g21",
+      "reviewer_id": "u01",
+      "reviewee_id": "u09",
+      "rating": 4,
+      "comment": "Well scoped request and quick feedback.",
+      "created_at": "2026-10-16T05:39:52.946Z"
+    },
+    {
+      "id": "r03",
+      "gig_id": "g22",
+      "reviewer_id": "u10",
+      "reviewee_id": "u02",
+      "rating": 5,
+      "comment": "Sharp poster thumbnails and fast turnaround.",
+      "created_at": "2026-10-14T05:39:52.946Z"
+    },
+    {
+      "id": "r04",
+      "gig_id": "g22",
+      "reviewer_id": "u02",
+      "reviewee_id": "u10",
+      "rating": 3,
+      "comment": "Good brief, with a few late replies.",
+      "created_at": "2026-10-14T05:39:52.946Z"
+    },
+    {
+      "id": "r05",
+      "gig_id": "g23",
+      "reviewer_id": "u11",
+      "reviewee_id": "u04",
+      "rating": 4,
+      "comment": "Careful edit and useful notes on the case writeup.",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "r06",
+      "gig_id": "g23",
+      "reviewer_id": "u04",
+      "reviewee_id": "u11",
+      "rating": 5,
+      "comment": "Fair swap and easy to work with.",
+      "created_at": "2026-10-10T05:39:52.946Z"
+    },
+    {
+      "id": "r07",
+      "gig_id": "g24",
+      "reviewer_id": "u12",
+      "reviewee_id": "u08",
+      "rating": 5,
+      "comment": "Great study of the composition problems.",
+      "created_at": "2026-10-17T05:39:52.946Z"
+    },
+    {
+      "id": "r08",
+      "gig_id": "g24",
+      "reviewer_id": "u08",
+      "reviewee_id": "u12",
+      "rating": 4,
+      "comment": "Clear expectations for the critique session.",
+      "created_at": "2026-10-17T05:39:52.946Z"
+    },
+    {
+      "id": "r09",
+      "gig_id": "g25",
+      "reviewer_id": "u01",
+      "reviewee_id": "u11",
+      "rating": 5,
+      "comment": "Helpful abstract edits and a clear ask.",
+      "created_at": "2026-10-11T05:39:52.946Z"
+    }
+  ]
+}
