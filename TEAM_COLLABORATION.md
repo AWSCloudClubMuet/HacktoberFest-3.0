@@ -1,10 +1,10 @@
-# 🤝 Team Collaboration Guide
+#  Team Collaboration Guide
 
 This document explains how team members should collaborate efficiently while working on their hackathon project.
 
 ---
 
-## 👥 Team Structure and Roles
+##  Team Structure and Roles
 
 Every team should assign clear roles:
 
@@ -14,7 +14,7 @@ Every team should assign clear roles:
 
 ---
 
-## 🌿 Branching and Folder Structure
+##  Branching and Folder Structure
 
 Each team must work only within their **team branch** and **team folder**:
 
@@ -27,7 +27,7 @@ Example:
 /submission/team-alpha/
 ```
 
-## ⚔️ Conflict Prevention Tips
+##  Conflict Prevention Tips
 
 - Always **pull** before pushing.
 - Avoid working on the **same file** simultaneously.
@@ -37,7 +37,7 @@ Example:
 
 ---
 
-## 🧩 Best Practices
+##  Best Practices
 
 - One person should handle merging at a time to prevent conflicts.
 - Run tests or check app functionality before every commit.
@@ -46,7 +46,7 @@ Example:
 
 ---
 
-## ✅ Summary
+##  Summary
 
 Each team:
 - Works in `/submission/team-name/`
