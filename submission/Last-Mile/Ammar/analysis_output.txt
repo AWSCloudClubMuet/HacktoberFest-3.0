@@ -1,0 +1,153 @@
+
+==============================================================================
+MILESTONE 1 - noise rate and Tier A vs Tier B
+==============================================================================
+Pooled disagreement: 60/400 = 0.1500
+  Wald (normal)  95% CI: 0.1150 - 0.1850
+  Wilson         95% CI: 0.1183 - 0.1883
+  Clopper-Pearson 95% CI: 0.1165 - 0.1888
+Post-stratified (true tier mix 20k/25k): 0.1508  95% CI 0.1165 - 0.1852
+=> implied noisy tickets among 45,000 crowd labels: ~6,750  (CI 5,326 - 8,474)
+=> whole 50k dataset (if expert labels are clean): ~13.5%
+Sensitivity: if experts themselves err 2%, crowd noise ~ (D-e)/(1-2e) = 0.135
+
+Tier A: 12/180 = 0.0667  Wilson 0.0385-0.1129
+Tier B: 48/220 = 0.2182  Wilson 0.1687-0.2773
+Difference B-A = 0.1515; Newcombe 95% CI 0.0838 - 0.2170
+Two-proportion z-test: z = 4.222, two-sided p = 2.42e-05
+Fisher exact: p = 1.83e-05   |   chi2 (no continuity corr.): 17.83, p = 2.42e-05
+Risk ratio B/A = 3.27  (95% CI 1.79 - 5.97)
+Bayesian (flat Beta priors): P(theta_B > theta_A) = 0.999988
+Permutation test (100k shuffles): p ~ 0.00001
+
+==============================================================================
+MILESTONE 2 - is the noise random or systematic?
+==============================================================================
+Unordered confusable pairs (both directions):
+          Billing <-> Refund           26  (43%)
+   Account Access <-> Technical        15  (25%)
+            Other <-> Shipping         11  (18%)
+            Other <-> Technical         5  (8%)
+          Billing <-> Other             3  (5%)
+Top-3 pairs hold 52/60 = 87% of errors; non-empty cells: 8 of 30 off-diagonal cells
+Errors by TRUE (expert) class : {'Billing': 12, 'Refund': 14, 'Technical': 6, 'Account Access': 9, 'Shipping': 3, 'Other': 16}
+Errors by CROWD label         : {'Billing': 17, 'Refund': 12, 'Technical': 14, 'Account Access': 6, 'Shipping': 8, 'Other': 3}
+True-'Other' tickets that the crowd force-fitted into a specific class: 16/60 = 27% of errors (Other is ~5% of data)
+Crowd used 'Other' wrongly only 3 times -> the crowd UNDER-uses the catch-all class
+Chi-square vs 'uniform random flip' null = 316.7; Monte-Carlo p = 0.00005
+Biggest cells, observed vs expected under uniform flips (crowd -> expert):
+  Billing -> Refund: observed 14, expected 1.8
+  Refund -> Billing: observed 12, expected 3.6
+  Technical -> Account Access: observed 9, expected 1.8
+  Shipping -> Other: observed 8, expected 0.6
+  Account Access -> Technical: observed 6, expected 3.0
+
+Error rate per TRUE class (ASSUMES the 400-ticket audit mirrors the stated class shares: n_i = 400*share):
+          Billing: 12/ 120 = 10%
+           Refund: 14/  60 = 23%
+        Technical:  6/ 100 = 6%
+   Account Access:  9/  60 = 15%
+         Shipping:  3/  40 = 8%
+            Other: 16/  20 = 80%
+Direction asymmetry inside each confusable pair (per-true-class rate):
+  true         Refund labelled Billing   : 14/ 60 = 23%   vs   true Billing    labelled Refund        : 12/120 = 10%
+  true Account Access labelled Technical :  9/ 60 = 15%   vs   true Technical  labelled Account Access:  6/100 = 6%
+  true          Other labelled Shipping  :  8/ 20 = 40%   vs   true Shipping   labelled Other         :  3/ 40 = 8%
+Sensitivity: how many audited true-Other tickets would make Other's error rate 30%?  16/0.30 = 53 (vs ~20 if Other = 5%)
+
+==============================================================================
+MILESTONE 3 - what does 82% on a 15%-noisy test set imply?
+==============================================================================
+Uniform flips: obs = a(1-eta) + (1-a)(eta/5)  ->  a = (obs - eta/5)/(1 - eta - eta/5) = 0.9634
+Quick approx ignoring lucky matches: 0.9647.   Ceiling for a PERFECT model on this test set: 85%
+Sensitivity of 'true accuracy' to the assumed noise rate (uniform flips):
+  eta = 0.118 (CI low): a = 0.928
+  eta = 0.150 ( point): a = 0.963
+  eta = 0.188 (CI high): a = 1.011  (>100% => impossible: the data/assumption are inconsistent)
+Sensitivity to c, the chance a wrong prediction matches the noisy label (eta = .15):
+  c = 0.03: a = 0.963
+  c = 0.06: a = 0.962
+  c = 0.10: a = 0.960
+  c = 0.20: a = 0.954
+  c = 0.40: a = 0.933
+
+==============================================================================
+Loading synthetic data
+==============================================================================
+50,000 tickets, 100 distinct phrasing templates, crowd noise 0.151
+TF-IDF matrix: (50000, 1779)
+
+==============================================================================
+MILESTONE 4 - ticket-selection strategies (detectors never see true_label / is_noisy)
+==============================================================================
+  dial keep=1.0   -> baseline accuracy on NOISY test = 0.850
+  dial keep=0.4   -> baseline accuracy on NOISY test = 0.841
+  dial keep=0.3   -> baseline accuracy on NOISY test = 0.836
+  dial keep=0.25  -> baseline accuracy on NOISY test = 0.828
+  dial keep=0.22  -> baseline accuracy on NOISY test = 0.819
+  dial keep=0.2   -> baseline accuracy on NOISY test = 0.811
+  dial keep=0.18  -> baseline accuracy on NOISY test = 0.801
+  dial keep=0.15  -> baseline accuracy on NOISY test = 0.777
+=> calibrated keep = 0.22 (baseline noisy-test accuracy 0.819, brief says 0.82)
+Review pool: 29,736 crowd-labelled train tickets, 4,523 truly noisy (15.2%). With 2,000 reviews even a PERFECT detector fixes at most 44% of them.
+  full text (easy)                 detector accuracy vs truth 1.000 | audit-400 AUROC: margin 1.000, tier-B 0.647  (oracle AUROC on pool: margin 1.000, tier-B 0.648)
+  calibrated dial (keep=0.22)      detector accuracy vs truth 0.962 | audit-400 AUROC: margin 0.999, tier-B 0.647  (oracle AUROC on pool: margin 0.997, tier-B 0.648)
+  harder dial (keep=0.10)          detector accuracy vs truth 0.823 | audit-400 AUROC: margin 0.981, tier-B 0.647  (oracle AUROC on pool: margin 0.972, tier-B 0.648)
+  unseen wording (grouped CV)      detector accuracy vs truth 0.364 | audit-400 AUROC: margin 0.550, tier-B 0.647  (oracle AUROC on pool: margin 0.554, tier-B 0.648)
+
+Precision of the top-2000 selection  (random review would give ~15%):
+strategy                     random  Tier-B first (no model)  self-confidence  margin  confident-learning + margin  combined (model+tier+pair rule)
+regime                                                                                                                                             
+full text (easy)              0.162                    0.221            1.000   1.000                        1.000                            1.000
+calibrated dial (keep=0.22)   0.162                    0.221            0.975   1.000                        1.000                            0.994
+harder dial (keep=0.10)       0.162                    0.221            0.894   0.995                        0.995                            0.996
+unseen wording (grouped CV)   0.162                    0.221            0.202   0.250                        0.250                            0.322
+
+Truly-mislabelled tickets found in the top-2000 (out of 4523 in the pool):
+strategy                     random  Tier-B first (no model)  self-confidence  margin  confident-learning + margin  combined (model+tier+pair rule)
+regime                                                                                                                                             
+full text (easy)                325                      442             2000    2000                         2000                             2000
+calibrated dial (keep=0.22)     325                      442             1950    2000                         2000                             1989
+harder dial (keep=0.10)         325                      442             1788    1990                         1990                             1992
+unseen wording (grouped CV)     325                      442              403     500                          500                              644
+
+==============================================================================
+MILESTONES 4-5 - robust training and honest evaluation (calibrated regime, keep=0.22)
+==============================================================================
+Transition matrix T estimated from the 400-ticket audit, diagonal (1 - flip rate per true class): [0.82  0.756 0.858 0.864 0.72  0.82 ]
+[seed 0] detector-picked: 99.5% truly noisy | random-picked: 15.7% | CL flags 3,726 tickets (98.9% noisy)
+[seed 1] detector-picked: 99.7% truly noisy | random-picked: 15.7% | CL flags 3,624 tickets (99.1% noisy)
+[seed 2] detector-picked: 99.9% truly noisy | random-picked: 16.2% | CL flags 3,686 tickets (98.9% noisy)
+
+Test-split accuracy, mean over 3 degradation seeds (true_acc = vs hidden clean label [oracle]; noisy_acc = vs crowd label = what you report today):
+                                             true_acc  true_sd  noisy_acc     n_train
+method                                                                               
+A. CE on crowd+expert labels (baseline)        0.9589   0.0035     0.8181  35000.0000
+B. Generalised CE (q=0.7), CE warm start       0.9701   0.0017     0.8264  35000.0000
+C. Forward loss correction (T from audit)      0.9628   0.0029     0.8215  35000.0000
+D. Prune confident-learning flags, retrain     0.9685   0.0016     0.8254  31321.3333
+E. Expert-fix 2,000 RANDOM tickets             0.9606   0.0023     0.8196  35000.0000
+F. Expert-fix 2,000 DETECTOR-picked tickets    0.9608   0.0020     0.8212  35000.0000
+G. F + prune the remaining flagged suspects    0.9692   0.0016     0.8262  33240.3333
+H. ORACLE: every label clean (upper bound)     0.9738   0.0022     0.8289  35000.0000
+I. G + generalised CE on what is left          0.9721   0.0015     0.8277  33240.3333
+
+Baseline model: noisy-test acc 0.8195; TRUE acc 0.9623; test noise rate 0.1503
+  M3 uniform-noise formula  -> 0.9631   (compare with true 0.9623)
+  M3 formula with the brief's 15% -> 0.9628;   naive ceiling 1-eta = 0.850
+Does noise distort model COMPARISON?  (same features, only the training labels differ)
+  trained on noisy labels   : noisy-test acc 0.8195 | clean-test acc 0.9623
+  trained on clean labels   : noisy-test acc 0.8300 | clean-test acc 0.9757
+  true improvement 1.35 pts looks like 1.05 pts on the noisy test set (78% of it)
+Gold test set: random expert-labelled test tickets (simulated with true_label), Wilson 95% CI for the baseline model:
+  n= 500: acc 0.962  CI 0.941-0.976  (half-width +/-0.017)
+  n=1000: acc 0.966  CI 0.953-0.976  (half-width +/-0.011)
+  n=2000: acc 0.960  CI 0.950-0.967  (half-width +/-0.009)
+Gold-set size needed for a +/-m 95% CI half-width (worst case p=0.5 | p=0.9):
+  +/-3.0%: n =  1068 |   385
+  +/-2.0%: n =  2401 |   865
+  +/-1.5%: n =  4269 |  1537
+  +/-1.0%: n =  9604 |  3458
+Sampling error of the 7,500-ticket crowd test set is only +/-0.87 pts -- but its LABEL BIAS is ~14.3 pts.
+
+Saved: results.json, fig1_transition_matrix.png, fig2_true_accuracy_sensitivity.png, fig3_review_selection_curves.png
