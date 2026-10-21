@@ -1,4 +1,4 @@
-# 🧭 Git Workflow – How to Work and Submit Your Project
+gi# 🧭 Git Workflow – How to Work and Submit Your Project
 
 This guide explains exactly how your team should fork, clone, collaborate, and submit your project to the main hackathon repository. **All setup and submission steps must be performed by the Team Lead only.**
 
