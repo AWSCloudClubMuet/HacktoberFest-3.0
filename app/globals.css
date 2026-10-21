@@ -89,6 +89,7 @@ button, input, select, textarea { font: inherit; } button { cursor: pointer; }
 .reviewed-note svg { width: 13px; }
 .profile-card { background: #fff; border: 1px solid #e9e5df; border-radius: 10px; padding: 24px; gap: 14px; box-shadow: none; margin-top: 18px; }
 .profile-head { display: flex; gap: 16px; align-items: center; }
+.profile-head .edit-profile-btn { margin-left: auto; align-self: flex-start; flex: 0 0 auto; }
 .profile-head h3 { margin: 0; font-size: 21px; letter-spacing: -.6px; }
 .profile-head > div > span { display: block; color: #aaa49d; font-size: 11px; margin-top: 3px; }
 .profile-rating { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 12px; }

@@ -22,6 +22,7 @@ import {
   Heart,
   LayoutDashboard,
   LogOut,
+  Pencil,
   Plus,
   Search,
   Send,
@@ -80,6 +81,8 @@ export default function Page() {
   const [authChecked, setAuthChecked] = useState(false)
   const [users, setUsers] = useState<User[]>([])
   const [completeForm, setCompleteForm] = useState({ major: 'Computer Science', semester: '5', skills: '', bio: '' })
+  const [showEditProfile, setShowEditProfile] = useState(false)
+  const [editForm, setEditForm] = useState({ major: '', semester: '5', skills: '', bio: '' })
   const [stats, setStats] = useState<Stats | null>(null)
   const [allGigs, setAllGigs] = useState<Gig[]>([])
   const [discoverGigs, setDiscoverGigs] = useState<Gig[]>([])
@@ -179,6 +182,24 @@ export default function Page() {
       await loadAll()
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Could not save profile')
+    }
+  }
+
+  function openEditProfile() {
+    if (!profile) return
+    setEditForm({ major: profile.major, semester: String(profile.semester), skills: profile.skills.join(', '), bio: profile.bio })
+    setShowEditProfile(true)
+  }
+
+  async function doEditProfile() {
+    try {
+      await api.updateProfile({ major: editForm.major, semester: Number(editForm.semester), bio: editForm.bio, skills: editForm.skills })
+      setShowEditProfile(false)
+      notify('Profile updated')
+      await loadAll()
+      api.user(profileId).then(setProfile).catch(() => {})
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Could not update profile')
     }
   }
 
@@ -343,7 +364,6 @@ export default function Page() {
         <header className="topbar">
           <div className="mobile-brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
           <div className="topbar-actions">
-            {me && <span className="acting-as-label signed-in-as">Signed in as {me.name}</span>}
             <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={doSignOut}><LogOut /></button>
             {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /></button>}
           </div>
@@ -553,6 +573,7 @@ export default function Page() {
                           {profile.average_rating ? <><Stars rating={profile.average_rating} size={15} /><strong>{profile.average_rating}</strong><span>({profile.review_count} review{profile.review_count === 1 ? '' : 's'})</span></> : <span>No reviews yet</span>}
                         </div>
                       </div>
+                    {profile.id === me?.id && <Button size="sm" variant="outline" className="btn-plain edit-profile-btn" onClick={openEditProfile}><Pencil data-icon="inline-start" />Edit profile</Button>}
                     </div>
                     <p className="modal-description">{profile.bio}</p>
                     {profile.skills.length > 0 && <p className="gig-meta-line profile-skills-line">Skills: {profile.skills.join(' · ')}</p>}
@@ -672,6 +693,40 @@ export default function Page() {
               )}
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit profile */}
+      <Dialog open={showEditProfile} onOpenChange={setShowEditProfile}>
+        <DialogContent className="gig-dialog">
+          <DialogHeader>
+            <DialogTitle className="dialog-title">Edit profile</DialogTitle>
+            <DialogDescription className="modal-description">This is what other students see on your profile.</DialogDescription>
+          </DialogHeader>
+          <div className="dialog-form">
+            <div className="form-row">
+              <div>
+                <Label>Major</Label>
+                <Input value={editForm.major} onChange={(e) => setEditForm({ ...editForm, major: e.target.value })} placeholder="Your major" />
+              </div>
+              <div>
+                <Label>Semester</Label>
+                <Input type="number" min="1" max="12" value={editForm.semester} onChange={(e) => setEditForm({ ...editForm, semester: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Skills (comma separated)</Label>
+              <Input value={editForm.skills} onChange={(e) => setEditForm({ ...editForm, skills: e.target.value })} placeholder="e.g. React, Figma, Proofreading" />
+            </div>
+            <div>
+              <Label>Short bio</Label>
+              <Textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} rows={3} />
+            </div>
+          </div>
+          <div className="modal-actions">
+            <Button onClick={doEditProfile}>Save changes</Button>
+            <Button variant="outline" className="btn-plain" onClick={() => setShowEditProfile(false)}>Cancel</Button>
+          </div>
         </DialogContent>
       </Dialog>
 

@@ -82,6 +82,22 @@ app.post('/api/profile', async (req, res) => {
   res.status(201).json(rows[0])
 })
 
+// Updates the signed-in user's own profile (session required).
+app.patch('/api/profile', async (req, res) => {
+  if (!auth) return fail(res, 400, 'Auth is not enabled')
+  if (!req.sessionUser) return fail(res, 401, 'Sign in required')
+  if (!req.domainUserId) return fail(res, 403, 'Create a profile first')
+  const { major, semester, bio, skills } = req.body || {}
+  if (!major?.trim()) return fail(res, 400, 'Major is required')
+  if (!(Number(semester) >= 1 && Number(semester) <= 12)) return fail(res, 400, 'Semester must be between 1 and 12')
+  const skillList = Array.isArray(skills) ? skills : String(skills || '').split(',').map((s) => s.trim()).filter(Boolean)
+  const { rows } = await query(
+    'UPDATE users SET major = $1, semester = $2, bio = $3, skills = $4 WHERE id = $5 RETURNING *',
+    [major.trim(), Number(semester), (bio || '').trim(), skillList, req.domainUserId],
+  )
+  res.json(rows[0])
+})
+
 const CATEGORIES = ['Programming', 'Design', 'Writing', 'Tutoring']
 const TYPES = ['Offering', 'Requesting']
 const PAYMENT_TYPES = ['Paid', 'SkillSwap', 'Free']
