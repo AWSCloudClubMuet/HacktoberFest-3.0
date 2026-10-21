@@ -49,7 +49,7 @@
 - **Backend:** Node.js (v24), Express 5, CORS, Dotenv
 - **Database:** SQLite via `better-sqlite3` with Write-Ahead Logging (`WAL`) & Foreign Keys
 - **Reliability:** React `ErrorBoundary`, 25-point automated test suite (`test/api.test.js`)
-- **Hosting:** Vercel (Frontend SPA) + Express / SQLite (Local & Production API)
+- **Hosting & Persistence:** Vercel (Production SPA) with Dual-Mode Storage Architecture (Express/SQLite backend + persistent client-side storage engine for zero-config static hosting)
 
 ---
 

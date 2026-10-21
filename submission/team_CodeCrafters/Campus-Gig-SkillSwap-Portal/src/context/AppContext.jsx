@@ -374,6 +374,25 @@ export function AppProvider({ children }) {
     return gigs.filter(g => g.accepted_applicant_id === currentUser.id);
   }, [gigs, currentUser]);
 
+  const userCollaborations = useMemo(() => {
+    return gigs.filter(g =>
+      g.accepted_applicant_id === currentUser.id ||
+      (g.user_id === currentUser.id && Boolean(g.accepted_applicant_id))
+    );
+  }, [gigs, currentUser]);
+
+  const activeCollaborations = useMemo(() => {
+    return userCollaborations.filter(g => g.status === 'In Progress');
+  }, [userCollaborations]);
+
+  const completedCollaborations = useMemo(() => {
+    return userCollaborations.filter(g => g.status === 'Completed');
+  }, [userCollaborations]);
+
+  const _noOp = useMemo(() => {
+    return gigs.filter(g => g.accepted_applicant_id === currentUser.id);
+  }, [gigs, currentUser]);
+
   const pendingReceivedApplications = useMemo(() => {
     const userGigIds = userPostedGigs.map(g => g.id);
     return applications.filter(a => userGigIds.includes(a.gig_id) && a.status === 'Pending');
@@ -439,6 +458,9 @@ export function AppProvider({ children }) {
     activeApplicationsCount,
     userPostedGigs,
     userAcceptedWork,
+    userCollaborations,
+    activeCollaborations,
+    completedCollaborations,
     pendingReceivedApplications,
     recommendedGigs,
     platformStats,

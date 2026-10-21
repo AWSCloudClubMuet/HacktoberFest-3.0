@@ -19,7 +19,9 @@ export function DashboardScreen() {
   const {
     currentUser,
     userPostedGigs,
-    userAcceptedWork,
+
+    activeCollaborations,
+    completedCollaborations,
     applications,
     gigs,
     notifications,
@@ -34,7 +36,7 @@ export function DashboardScreen() {
   const myApplications = applications.filter(a => a.applicant_id === currentUser.id);
 
   // My work in progress
-  const activeWork = userAcceptedWork.filter(g => g.status === 'In Progress');
+  const activeWork = activeCollaborations;
 
   return (
     <div className="space-y-8 pb-20">
@@ -109,7 +111,7 @@ export function DashboardScreen() {
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[var(--primary-emerald)]">
-            {currentUser.gigs_completed || 0}
+            {currentUser.gigs_completed || completedCollaborations.length || 0}
           </div>
           <span className="text-[11px] text-[var(--text-muted)] mt-1">Verified collaborations</span>
         </div>

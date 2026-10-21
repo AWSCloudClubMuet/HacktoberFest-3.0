@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export function ExploreScreen() {
-  const { gigs, globalSearch, setGlobalSearch, setCurrentScreen, isGigExpired } = useApp();
+  const { gigs, globalSearch, setGlobalSearch, setCurrentScreen, isGigExpired, isLoading } = useApp();
 
   // Filter States
   const [category, setCategory] = useState('All');
@@ -276,7 +276,23 @@ export function ExploreScreen() {
       </div>
 
       {/* Gigs Card Grid (Fluid multi-column responsive) */}
-      {filteredGigs.length > 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <div key={i} className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border-color)] overflow-hidden animate-pulse flex flex-col h-[380px]">
+              <div className="h-44 w-full bg-[var(--bg-surface-secondary)]" />
+              <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="h-4 bg-[var(--bg-surface-secondary)] rounded w-3/4" />
+                  <div className="h-3 bg-[var(--bg-surface-secondary)] rounded w-full" />
+                  <div className="h-3 bg-[var(--bg-surface-secondary)] rounded w-5/6" />
+                </div>
+                <div className="h-8 bg-[var(--bg-surface-secondary)] rounded w-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredGigs.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
           {filteredGigs.map(gig => (
             <GigCard key={gig.id} gig={gig} />

@@ -21,6 +21,7 @@ export function CreateGigScreen() {
   const [skillsList, setSkillsList] = useState(['React', 'Tailwind CSS']);
 
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddSkill = (e) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -77,11 +78,14 @@ export function CreateGigScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    if (isSubmitting) return;
     e.preventDefault();
     if (!validate()) return;
 
-    createGig({
+    setIsSubmitting(true);
+    try {
+      await createGig({
       title,
       type,
       category,
@@ -90,7 +94,10 @@ export function CreateGigScreen() {
       deadline,
       description,
       skills_required: skillsList.length > 0 ? skillsList : [category]
-    });
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -379,10 +386,11 @@ export function CreateGigScreen() {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[var(--primary-emerald)] hover:bg-[var(--primary-emerald-hover)] active:scale-95 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all flex items-center gap-2"
+              disabled={isSubmitting}
+              className={`px-6 py-2.5 rounded-xl bg-[var(--primary-emerald)] hover:bg-[var(--primary-emerald-hover)] active:scale-95 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all flex items-center gap-2 ${isSubmitting ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Publish Gig</span>
+              <span>{isSubmitting ? 'Publishing Gig...' : 'Publish Gig'}</span>
             </button>
           </div>
 

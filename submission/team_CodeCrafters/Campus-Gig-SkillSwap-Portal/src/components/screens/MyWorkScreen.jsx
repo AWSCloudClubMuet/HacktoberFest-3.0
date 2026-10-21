@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Badge } from '../common/Badge';
-import { RatingStars } from '../common/RatingStars';
 import {
   CheckCircle2,
   Clock,
@@ -28,14 +27,16 @@ export function MyWorkScreen() {
   const [ratingScore, setRatingScore] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewError, setReviewError] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [completingGigId, setCompletingGigId] = useState(null);
 
   const inProgressWork = gigs.filter(g =>
-    (g.accepted_applicant_id === currentUser.id || g.user_id === currentUser.id) &&
+    (g.accepted_applicant_id === currentUser.id || (g.user_id === currentUser.id && Boolean(g.accepted_applicant_id))) &&
     g.status === 'In Progress'
   );
 
   const completedWork = gigs.filter(g =>
-    (g.accepted_applicant_id === currentUser.id || g.user_id === currentUser.id) &&
+    (g.accepted_applicant_id === currentUser.id || (g.user_id === currentUser.id && Boolean(g.accepted_applicant_id))) &&
     g.status === 'Completed'
   );
 
@@ -46,8 +47,9 @@ export function MyWorkScreen() {
     setReviewError('');
   };
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmittingReview) return;
     if (!reviewComment.trim()) {
       setReviewError('Please write feedback for your collaborator.');
       return;
@@ -56,15 +58,30 @@ export function MyWorkScreen() {
     const isOwner = reviewModalGig.user_id === currentUser.id;
     const revieweeId = isOwner ? reviewModalGig.accepted_applicant_id : reviewModalGig.user_id;
 
-    const success = submitReview({
-      gigId: reviewModalGig.id,
-      revieweeId,
-      rating: ratingScore,
-      comment: reviewComment
-    });
+    setIsSubmittingReview(true);
+    try {
+      const success = await submitReview({
+        gigId: reviewModalGig.id,
+        revieweeId,
+        rating: ratingScore,
+        comment: reviewComment
+      });
 
-    if (success) {
-      setReviewModalGig(null);
+      if (success) {
+        setReviewModalGig(null);
+      }
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleCompleteGig = async (gigId) => {
+    if (completingGigId) return;
+    setCompletingGigId(gigId);
+    try {
+      await completeGig(gigId);
+    } finally {
+      setCompletingGigId(null);
     }
   };
 
@@ -168,11 +185,12 @@ export function MyWorkScreen() {
                     </div>
 
                     <button
-                      onClick={() => completeGig(gig.id)}
+                      onClick={() => handleCompleteGig(gig.id)}
+                      disabled={completingGigId === gig.id}
                       className="px-4 py-2 rounded-xl bg-[var(--primary-emerald)] hover:bg-[var(--primary-emerald-hover)] active:scale-95 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>Mark as Complete</span>
+                      <span>{completingGigId === gig.id ? 'Completing...' : 'Mark as Complete'}</span>
                     </button>
                   </div>
                 </div>
@@ -268,35 +286,38 @@ export function MyWorkScreen() {
               </h3>
               <button
                 onClick={() => setReviewModalGig(null)}
-                className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-sm font-bold p-1"
+                className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
               >
                 ✕
               </button>
             </div>
 
-            <div>
-              <p className="text-xs text-[var(--text-muted)]">Project:</p>
-              <p className="font-bold text-[var(--text-primary)] text-sm">{reviewModalGig.title}</p>
-            </div>
+            <p className="text-xs text-[var(--text-secondary)]">
+              Reviewing for project: <span className="font-bold text-[var(--text-primary)]">{reviewModalGig.title}</span>
+            </p>
 
             <form onSubmit={handleReviewSubmit} className="space-y-4">
-              {/* Star Rating Select */}
               <div>
                 <label className="block text-xs font-bold text-[var(--text-primary)] mb-2">
-                  Overall Rating (1 - 5 Stars) <span className="text-rose-500">*</span>
+                  Rating Score (1 to 5 Stars)
                 </label>
-                <div className="flex items-center gap-3">
-                  <RatingStars
-                    rating={ratingScore}
-                    interactive
-                    size="lg"
-                    onRate={(val) => setRatingScore(val)}
-                  />
-                  <span className="text-sm font-extrabold text-amber-500">{ratingScore} / 5</span>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRatingScore(star)}
+                      className="p-1 text-amber-500 hover:scale-110 transition-transform"
+                    >
+                      <Star className={`w-6 h-6 ${star <= ratingScore ? 'fill-amber-500' : 'text-slate-300 dark:text-slate-700'}`} />
+                    </button>
+                  ))}
+                  <span className="text-xs font-bold text-[var(--text-primary)] ml-2">
+                    {ratingScore}.0 / 5.0
+                  </span>
                 </div>
               </div>
 
-              {/* Comments */}
               <div>
                 <label className="block text-xs font-bold text-[var(--text-primary)] mb-1.5">
                   Peer Review & Feedback <span className="text-rose-500">*</span>
@@ -329,9 +350,10 @@ export function MyWorkScreen() {
                 </button>
                 <button
                   type="submit"
+                  disabled={isSubmittingReview}
                   className="px-5 py-2.5 rounded-xl bg-[var(--primary-emerald)] hover:bg-[var(--primary-emerald-hover)] active:scale-95 text-white text-xs font-bold shadow-sm transition-all"
                 >
-                  Publish Review
+                  {isSubmittingReview ? 'Publishing Review...' : 'Publish Review'}
                 </button>
               </div>
             </form>
