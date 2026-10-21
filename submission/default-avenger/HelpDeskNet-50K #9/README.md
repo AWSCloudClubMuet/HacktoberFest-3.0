@@ -57,6 +57,9 @@ Test calculation:
 Conclusion:
 Since the p-value is far below the standard threshold of 0.05, we reject the null hypothesis. The difference is statistically significant. Tier B workers have a much higher error rate (roughly 3.3 times higher) than Tier A workers, showing that newer workers lacked proper training or clear instructions.
 
+### Milestone 1 Execution Output
+![Milestone 1 Results](milestone%201%20-%20results.png)
+
 ---
 
 ## 3. Milestone 2: Characterizing the Noise
@@ -75,6 +78,9 @@ The 60 disagreements breakdown is as follows:
 | Other -> Shipping | 3 | 5.0% |
 | Billing -> Other | 3 | 5.0% |
 
+### Graphical Distribution of Disagreements
+![Annotation Disagreements Chart](chart.png)
+
 ### Key Observations
 1. The noise is systematic rather than random. Errors heavily cluster around specific class boundaries:
    * Billing and Refund account for 26 out of 60 errors (43.3%).
@@ -85,6 +91,9 @@ The 60 disagreements breakdown is as follows:
    * Write explicit tie-breaking rules (e.g., if a customer explicitly requests money back, always label as Refund).
    * Implement a qualification test with feedback for Tier B workers before letting them work on real tickets.
    * Allow multi-label tagging or a secondary tag for tickets that cover more than one issue.
+
+### Milestone 2 Execution Output
+![Milestone 2 Results](Milestone%202-results.png)
 
 ---
 
@@ -113,6 +122,9 @@ This 96.3% estimate is likely too high in practice because the uniform noise ass
 * As shown in Milestone 2, errors are class-conditional, not uniform. A Billing ticket almost never flips to Shipping; it almost always flips to Refund.
 * Because the noise is concentrated in specific classes, the model is penalized systematically rather than randomly. Therefore, while true accuracy is certainly higher than 82%, a realistic estimate on clean data is likely in the 88% to 91% range rather than 96.3%.
 
+### Milestone 3 Execution Output
+![Milestone 3 Results](milestone%203%20result.png)
+
 ---
 
 ## 5. Milestone 4: Plan for Reviewing 2,000 Additional Tickets
@@ -132,6 +144,9 @@ We can evaluate this method by tracking the hit rate (precision@2000):
 * Reserve 1,000 of the newly verified tickets to build a clean, reliable validation set.
 * Add the remaining 1,000 corrected tickets back into the training set with higher sample weights during fine-tuning.
 
+### Milestone 4 Execution Output
+![Milestone 4 Output](milestone%204%20output.png)
+
 ---
 
 ## 6. Milestone 5: Noise Mitigation and Evaluation Strategy
@@ -143,6 +158,9 @@ We can evaluate this method by tracking the hit rate (precision@2000):
 ### Building a Trustworthy Evaluation Set
 * Stop evaluating on the crowd-labeled test set: The current test set contains roughly 15% errors, which penalizes the model even when it makes the correct prediction and encourages it to memorize crowd mistakes.
 * Use the expert-labeled data: The dataset already has 5,000 tickets (10% of the data) labeled by in-house expert agents. This subset should be used as the official, clean benchmark test set to evaluate real model performance.
+
+### Milestone 5 Execution Output
+![Milestone 5 Output](milestone%205%20output.png)
 
 ---
 
