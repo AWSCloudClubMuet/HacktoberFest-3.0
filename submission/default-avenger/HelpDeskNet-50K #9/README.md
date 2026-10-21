@@ -58,7 +58,7 @@ Conclusion:
 Since the p-value is far below the standard threshold of 0.05, we reject the null hypothesis. The difference is statistically significant. Tier B workers have a much higher error rate (roughly 3.3 times higher) than Tier A workers, showing that newer workers lacked proper training or clear instructions.
 
 ### Milestone 1 Execution Output
-![Milestone 1 Results](milestone%201%20-%20results.png)
+<img src="milestone 1 - results.png" width="700" alt="Milestone 1 Results" />
 
 ---
 
@@ -78,9 +78,6 @@ The 60 disagreements breakdown is as follows:
 | Other -> Shipping | 3 | 5.0% |
 | Billing -> Other | 3 | 5.0% |
 
-### Graphical Distribution of Disagreements
-![Annotation Disagreements Chart](chart.png)
-
 ### Key Observations
 1. The noise is systematic rather than random. Errors heavily cluster around specific class boundaries:
    * Billing and Refund account for 26 out of 60 errors (43.3%).
@@ -93,7 +90,7 @@ The 60 disagreements breakdown is as follows:
    * Allow multi-label tagging or a secondary tag for tickets that cover more than one issue.
 
 ### Milestone 2 Execution Output
-![Milestone 2 Results](Milestone%202-results.png)
+<img src="Milestone 2-results.png" width="700" alt="Milestone 2 Results" />
 
 ---
 
@@ -123,7 +120,7 @@ This 96.3% estimate is likely too high in practice because the uniform noise ass
 * Because the noise is concentrated in specific classes, the model is penalized systematically rather than randomly. Therefore, while true accuracy is certainly higher than 82%, a realistic estimate on clean data is likely in the 88% to 91% range rather than 96.3%.
 
 ### Milestone 3 Execution Output
-![Milestone 3 Results](milestone%203%20result.png)
+<img src="milestone 3 result.png" width="700" alt="Milestone 3 Results" />
 
 ---
 
@@ -145,7 +142,7 @@ We can evaluate this method by tracking the hit rate (precision@2000):
 * Add the remaining 1,000 corrected tickets back into the training set with higher sample weights during fine-tuning.
 
 ### Milestone 4 Execution Output
-![Milestone 4 Output](milestone%204%20output.png)
+<img src="milestone 4 output.png" width="700" alt="Milestone 4 Output" />
 
 ---
 
@@ -160,7 +157,7 @@ We can evaluate this method by tracking the hit rate (precision@2000):
 * Use the expert-labeled data: The dataset already has 5,000 tickets (10% of the data) labeled by in-house expert agents. This subset should be used as the official, clean benchmark test set to evaluate real model performance.
 
 ### Milestone 5 Execution Output
-![Milestone 5 Output](milestone%205%20output.png)
+<img src="milestone 5 output.png" width="700" alt="Milestone 5 Output" />
 
 ---
 
