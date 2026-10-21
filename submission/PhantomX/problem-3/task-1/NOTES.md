@@ -20,7 +20,7 @@ Design notes, decisions and line-by-line explanations for the demo go here.
 
 ### Assumptions and decisions
 
-- **Reserve price must be greater than zero.** A zero reserve would break winner detection:
+- **Our assumption (not in the task script): reserve price must be greater than zero.** A zero reserve would break winner detection:
   `highestBid` starts at 0, so a reserve of 0 could not tell "nobody bid" apart from
   "someone bid zero", and a zero-value bid can never deposit funds anyway. `createAuction`
   reverts with `InvalidReserve` when `reservePrice == 0`.
@@ -60,7 +60,7 @@ Design notes, decisions and line-by-line explanations for the demo go here.
   can never open it, because their own address is hashed in. Tested explicitly.
 - **Deposit must cover the revealed amount** (`DepositDoesNotCoverBid`). Otherwise a bidder could
   commit to a huge amount, win, and never actually pay it.
-- **Assumption: revealed amount must be at least the reserve** (`BidBelowReserve`). A bid under
+- **Our assumption (not in the task script): revealed amount must be at least the reserve** (`BidBelowReserve`). A bid under
   the reserve could never win, so we reject the reveal rather than record a useless bid. The
   bidder can retry with the correct values until `revealEnd`. If they never reveal successfully
   they are treated like any other non-revealer at finalize.
@@ -186,3 +186,21 @@ loop gas, events/NatSpec/existence checks, unexpected fund loss, and compiler wa
 - A copied commitment can never be revealed by the copier and forfeits.
 - A receiver that rejects ETH keeps its credit; nothing is lost, it just cannot be pulled until the receiver is fixed.
 - ETH forced in via `selfdestruct` would sit in the contract with no owner. It is not credited to anyone and cannot break settlement, because settlement is driven by stored deposits, not by `address(this).balance`.
+
+## Stretch goals
+
+Considered but not built, in rough priority order:
+
+1. **Minimum reveal window** (audit finding A-7): reject `createAuction` unless
+   `revealEnd - biddingEnd >= 1 hours`, so a seller cannot create a window too short to reveal in.
+2. **Lazy per-bidder refunds** instead of the `MAX_BIDDERS` cap: `finalize` would only credit the
+   seller and record the winner; each bidder would then claim their own refund or excess in a
+   separate call. That removes the loop entirely and lifts the bidder cap.
+3. **Seller cancel before the first commit**: let the seller withdraw a listing while
+   `getBidderCount(id) == 0`, with an `AuctionCancelled` event.
+4. **ERC-721 item escrow**: hold the item token in the contract at creation and transfer it to the
+   winner in `finalize`, so payment and delivery settle together.
+5. **`getBidders(auctionId)` view**: expose the private bidder list for off-chain auditing without
+   having to replay `BidCommitted` events.
+6. **Front-end**: a small web page that builds the commitment hash locally, stores the secret in the
+   browser, and shows the current phase and countdown.
