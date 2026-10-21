@@ -519,7 +519,10 @@ $("replayBtn").addEventListener("click", replay);
       if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
     });
   }, { threshold: 0.15 });
-  els.forEach(function (el) { io.observe(el); });
+  els.forEach(function (el, i) {
+    el.style.transitionDelay = Math.min(i, 2) * 0.12 + "s"; // cascade the three cards
+    io.observe(el);
+  });
 })();
 </script>
 </body>
