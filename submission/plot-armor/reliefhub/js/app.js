@@ -37,6 +37,7 @@ const App = {
   state: { role: localStorage.getItem('rh_role') || 'coordinator' },
   _renderSeq: 0,
   _revealIO: null,
+  _statsIO: null,
   _progressBar: null,
   _fxQueued: false,
 
@@ -179,6 +180,7 @@ const App = {
     document.body.dataset.route = mod.id;
     document.body.classList.toggle('route-home', landing);
     if (this._revealIO) this._revealIO.disconnect();
+    if (this._statsIO) this._statsIO.disconnect();
     this.renderNav();
     view.innerHTML = '';
     let skeleton = null;
@@ -378,9 +380,8 @@ App.registerModule({
       ]),
     ]));
 
-    /* Count-up starts on the frame after the node is appended to the view. */
-    requestAnimationFrame(() => this._runCountUps(root, stats));
-    /* pointer-driven 3D tilt on the mission cards */
+    /* Count-up waits until the stats strip scrolls into view; cards get pointer tilt. */
+    this._observeCountUps(root, stats);
     this._setupTilt(root);
     return root;
   },
@@ -406,12 +407,37 @@ App.registerModule({
     });
   },
 
+  /* Count-up triggers when the stats strip scrolls into view (once), so the
+   * numbers spin up in front of whoever is scrolling instead of on page load.
+   * Reduced motion (or no IntersectionObserver) lands the values immediately.
+   * Works unchanged in demo mode: api.js falls back to bundled db.json, the
+   * strip just counts up the demo numbers the same way. */
+  _observeCountUps(root, stats) {
+    const run = () => this._runCountUps(root, stats);
+    const band = root.querySelector('.home-stats');
+    if (App._reduceMotion() || !band || !('IntersectionObserver' in window)) return run();
+    if (this._statsIO) this._statsIO.disconnect();
+    this._statsIO = new IntersectionObserver(entries => {
+      if (entries.some(en => en.isIntersecting)) {
+        this._statsIO.disconnect();
+        run();
+      }
+    }, { threshold: 0.3 });
+    this._statsIO.observe(band);
+  },
+
   _runCountUps(root, stats) {
     const numerals = root.querySelectorAll('.stat-numeral');
     numerals.forEach((el, i) => {
       const s = stats[i];
       if (!s) return;
-      const finish = () => { el.textContent = s.format(s.value); };
+      const finish = () => {
+        el.textContent = s.format(s.value);
+        /* soft brand-glow pulse as each counter lands */
+        el.classList.add('count-done');
+        const stat = el.closest('.stat');
+        if (stat) stat.classList.add('stat-done');
+      };
       if (App._reduceMotion()) return finish();
       const t0 = performance.now(), dur = 1100;
       (function tick(t) {
