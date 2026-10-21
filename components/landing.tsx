@@ -31,7 +31,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     api.stats().then(setStats).catch(() => {})
-    api.gigs({ status: 'Open' }).then((all) => setGigs(all.slice(0, 3))).catch(() => {})
+    api.gigs({ status: 'Open' }).then((all) => setGigs(all.slice(0, 2))).catch(() => {})
   }, [])
 
   const moreOpen = stats ? Math.max(0, stats.open_gigs - gigs.length) : 0
