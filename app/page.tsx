@@ -1,11 +1,12 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import LandingPage from '@/components/landing'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -50,6 +51,52 @@ function deadlineInfo(deadline: string) {
   const diff = Math.round((date.getTime() - today.getTime()) / 86400000)
   const label = diff < 0 ? `${-diff}d ago` : diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : `${diff} days left`
   return { label, full: date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) }
+}
+
+function ProfileSkeleton() {
+  return (
+    <div aria-busy="true" aria-label="Loading profile">
+      <Card className="profile-card">
+        <div className="profile-head">
+          <Skeleton className="h-[45px] w-[45px] rounded-full" />
+          <div>
+            <Skeleton className="h-5 w-44" />
+            <Skeleton className="mt-2 h-3.5 w-64" />
+            <Skeleton className="mt-2 h-3.5 w-32" />
+          </div>
+        </div>
+        <div>
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="mt-2 h-4 w-3/4" />
+          <Skeleton className="mt-3 h-3.5 w-56" />
+        </div>
+        <Separator />
+        <div className="profile-stats">
+          {[0, 1, 2].map((i) => (
+            <div key={i}><Skeleton className="h-6 w-10" /><Skeleton className="mt-1.5 h-3 w-20" /></div>
+          ))}
+        </div>
+      </Card>
+      <div className="section-heading profile-section"><Skeleton className="h-6 w-44" /></div>
+      <div className="activity-list">
+        {[0, 1].map((i) => (
+          <Card key={i} className="activity-card">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-4 w-full" />
+          </Card>
+        ))}
+      </div>
+      <div className="section-heading profile-section"><Skeleton className="h-6 w-32" /></div>
+      <div className="activity-list">
+        {[0, 1].map((i) => (
+          <Card key={i} className="activity-card">
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-3.5 w-2/3" />
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function Avatar({ name, id, size = 'md' }: { name: string; id: number; size?: 'sm' | 'md' | 'lg' }) {
@@ -112,6 +159,8 @@ export default function Page() {
   const [reviewComment, setReviewComment] = useState('')
   const [profileId, setProfileId] = useState<number>(1)
   const [profile, setProfile] = useState<(User & { reviews_received: Review[] }) | null>(null)
+  const [profileLoading, setProfileLoading] = useState(false)
+  const profileLoadedFor = useRef<number | null>(null)
   const [toast, setToast] = useState('')
 
   const me = users.find((u) => u.email && (u.email === authEmail || u.email === session?.user?.email))
@@ -152,7 +201,12 @@ export default function Page() {
   }, [query, category, payment, mode, minBudget, maxBudget, loadAll, allGigs])
 
   useEffect(() => {
-    if (view === 'Profile') api.user(profileId).then(setProfile).catch(() => setProfile(null))
+    if (view !== 'Profile') return
+    if (profileLoadedFor.current !== profileId) setProfileLoading(true)
+    api.user(profileId)
+      .then((u) => { setProfile(u); profileLoadedFor.current = profileId })
+      .catch(() => setProfile(null))
+      .finally(() => setProfileLoading(false))
   }, [view, profileId, allGigs, reviews])
 
   useEffect(() => { window.localStorage.setItem('cg-saved', JSON.stringify(savedIds)) }, [savedIds])
@@ -588,8 +642,10 @@ export default function Page() {
               <div className="section-heading view-heading">
                 <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Ratings come from completed-gig reviews.</p></div>
               </div>
-              {!profile ? (
-                <div className="empty-state"><Users /><h3>Loading profile…</h3></div>
+              {profileLoading ? (
+                <ProfileSkeleton />
+              ) : !profile ? (
+                <div className="empty-state"><Users /><h3>Could not load this profile</h3><p>Try opening it again from Discover.</p></div>
               ) : (
                 <>
                   <Card className="profile-card">
