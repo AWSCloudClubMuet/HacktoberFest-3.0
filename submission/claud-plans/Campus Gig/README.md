@@ -117,3 +117,39 @@ Running `node test-checklist.js` verifies all 18 rules:
 ======================================================
 🎉 ALL 18 BUSINESS RULES PASSED WITH 100% SUCCESS!
 ```
+
+---
+
+## 🔒 Security, Authentication & Authorization Architecture
+
+### 1. Technology Stack
+- **`jsonwebtoken` (JWT)**: Stateless cryptographic authentication using HS256-signed tokens with expiration (`24h`).
+- **`bcryptjs`**: Cryptographic one-way hashing with 10 salt rounds for all user credentials.
+- **`helmet`**: Enterprise HTTP response headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `X-XSS-Protection`).
+- **`express-rate-limit`**: Brute-force & DDoS protection mitigating credential stuffing attacks on `/auth/*` (60 req / 15 min) and API abuse.
+- **`mongoose`**: Synchronous or asynchronous schema models with field validations, enum protections, and timestamps.
+
+### 2. Authentication Endpoints
+- **`POST /auth/register`**: Validates university email format, password complexity (min 6 characters), department, and semester. Hashes password using `bcrypt` and issues a signed JWT token.
+- **`POST /auth/login`**: Verifies email & password against stored `bcrypt` hash with constant-time comparison to prevent timing attacks.
+- **`GET /auth/me`**: Protected route guarded by JWT middleware; returns the authenticated student's profile and dynamic reputation metrics.
+- **`POST /auth/quick-login`**: Issues freshly signed JWT tokens for any of the 12 student personas for instant evaluator switching.
+
+### 3. Role-Based & Ownership Authorization Guards
+- **`requireAuth`**: Rejects unauthenticated requests with `401 Unauthorized`.
+- **`requireRole('admin' | 'student')`**: Role-based access control protecting administrative actions.
+- **Ownership Verification**:
+  - `PATCH /gigs/:id`: Enforces that only the gig owner can modify status (`In Progress` → `Completed`, `Open` → `Cancelled`).
+  - `PATCH /applications/:id`: Enforces that only the gig owner can Accept or Reject proposals.
+  - `POST /applications`: Prohibits gig creators from applying to their own postings.
+  - `POST /reviews`: Restricts peer reviews exclusively to the gig owner and accepted collaborator.
+- **Data Sanitization**: Password hashes are strictly stripped from all outbound API responses (`sanitizeUser`).
+
+### 4. Running the Security & Auth Test Suite
+```bash
+# Run Authentication & Security test suite
+npm run test:auth
+
+# Or run both business rules and auth suites together
+npm run test:all
+```

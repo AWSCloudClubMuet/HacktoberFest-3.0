@@ -1,6 +1,6 @@
 // ==========================================================================
 // Campus Gig & SkillSwap Portal - Professional Freelance Platform Client
-// Fiverr / Upwork Architecture with Dark Theme & Multi-Role Switching
+// Fiverr / Upwork Architecture with JWT Authentication, Role Management & Dark Theme
 // ==========================================================================
 
 const API_BASE = window.location.origin;
@@ -48,7 +48,6 @@ export function showToast(message, type = 'info') {
   }
 
   const toast = document.createElement('div');
-  const isDark = document.documentElement.classList.contains('dark');
   
   toast.className = `pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-xl border transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 ${
     type === 'success' 
@@ -77,13 +76,50 @@ export function showToast(message, type = 'info') {
   }, 4000);
 }
 
-// API fetch wrapper with automatic x-user-id header
+// Authentication Token Helpers
+export function getAuthToken() {
+  return localStorage.getItem('campus_jwt_token') || null;
+}
+
+export function setAuthToken(token) {
+  if (token) {
+    localStorage.setItem('campus_jwt_token', token);
+  } else {
+    localStorage.removeItem('campus_jwt_token');
+  }
+}
+
+// Automatically syncs a valid JWT for the active student persona
+export async function syncUserToken(userId) {
+  try {
+    const res = await fetch(`${API_BASE}/auth/quick-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.token) {
+        setAuthToken(data.token);
+      }
+    }
+  } catch (err) {
+    console.warn('Could not sync auth token:', err);
+  }
+}
+
+// API fetch wrapper with Bearer JWT and x-user-id fallback
 export async function api(path, options = {}) {
   const currentUserId = getCurrentUserId();
+  const token = getAuthToken();
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   if (currentUserId) {
     headers['x-user-id'] = currentUserId;
@@ -118,9 +154,10 @@ export function getCurrentUserId() {
   return localStorage.getItem('campus_current_user') || 'u1';
 }
 
-export function setCurrentUserId(userId) {
+export async function setCurrentUserId(userId) {
   localStorage.setItem('campus_current_user', userId);
   currentUser = allUsers.find((u) => u.id === userId) || null;
+  await syncUserToken(userId);
   window.dispatchEvent(new CustomEvent('campus:user_changed', { detail: { userId } }));
 }
 
@@ -173,6 +210,11 @@ export async function initNavbar(activePage = '') {
 
   const currentUserId = getCurrentUserId();
   currentUser = allUsers.find((u) => u.id === currentUserId) || allUsers[0] || null;
+
+  // Ensure active user has a valid JWT stored
+  if (!getAuthToken() && currentUser) {
+    await syncUserToken(currentUser.id);
+  }
 
   const navMount = document.getElementById('navbar-mount');
   if (!navMount) return;
@@ -239,7 +281,7 @@ export async function initNavbar(activePage = '') {
             </div>
           </div>
 
-          <!-- Right: Dark Mode Toggle & Role Switcher -->
+          <!-- Right: Dark Mode Toggle, Role Switcher & Auth Trigger -->
           <div class="flex items-center gap-2 sm:gap-3">
             
             <!-- Dark Mode Toggle Button -->
@@ -251,18 +293,27 @@ export async function initNavbar(activePage = '') {
               <i class="fa-solid fa-moon"></i>
             </button>
 
-            <!-- Role Switcher: "Acting as" -->
+            <!-- Role Switcher: "Acting as" (with automatic JWT generation) -->
             <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 transition-colors">
               <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
                 ${(currentUser?.name || 'U').charAt(0)}
               </div>
               <div class="flex flex-col">
                 <span class="text-[9px] font-black uppercase text-slate-400 dark:text-slate-400 tracking-wider leading-none">Acting As:</span>
-                <select id="user-switcher" class="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-100 outline-none cursor-pointer max-w-[150px] truncate leading-tight mt-0.5">
+                <select id="user-switcher" class="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-100 outline-none cursor-pointer max-w-[130px] sm:max-w-[160px] truncate leading-tight mt-0.5">
                   ${userOptions}
                 </select>
               </div>
             </div>
+
+            <!-- Auth Trigger Button (Sign In / Register modal) -->
+            <button
+              id="btn-open-auth-modal"
+              class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+              title="Sign In or Register New Student"
+            >
+              <i class="fa-solid fa-lock text-emerald-600 dark:text-emerald-400"></i> Account
+            </button>
 
             <!-- Post Gig Quick Action Button -->
             <a 
@@ -290,8 +341,137 @@ export async function initNavbar(activePage = '') {
         <a href="create.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Post a Gig</a>
         <a href="applications.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">My Applications</a>
         <a href="profile.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Student Profile</a>
+        <button id="mobile-open-auth-btn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i class="fa-solid fa-user-plus mr-1.5"></i> Sign In / Register
+        </button>
       </div>
     </nav>
+
+    <!-- Global Auth Modal (Login & Registration) -->
+    <div id="auth-modal" class="fixed inset-0 z-[100] bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-4">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-display font-extrabold text-base text-slate-900 dark:text-white">Student Authentication</h3>
+          </div>
+          <button id="auth-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl leading-none">&times;</button>
+        </div>
+
+        <!-- Auth Tabs: Sign In / Register -->
+        <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
+          <button id="tab-btn-login" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs">
+            Sign In
+          </button>
+          <button id="tab-btn-register" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900">
+            Register Account
+          </button>
+        </div>
+
+        <!-- Form 1: Sign In -->
+        <form id="form-auth-login" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Campus Email *</label>
+            <input
+              type="email"
+              id="login-email"
+              required
+              value="${currentUser?.email || 'ali.khan@campus.edu.pk'}"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password *</label>
+            <input
+              type="password"
+              id="login-password"
+              required
+              value="campus123"
+              placeholder="Enter password (default: campus123)"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+            <p class="text-[10px] text-slate-400 mt-1">Seeded accounts use default password: <strong>campus123</strong></p>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">
+            Sign In with JWT
+          </button>
+        </form>
+
+        <!-- Form 2: Register -->
+        <form id="form-auth-register" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
+            <input
+              type="text"
+              id="reg-name"
+              required
+              placeholder="e.g. Asad Rehman"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">University Email *</label>
+            <input
+              type="email"
+              id="reg-email"
+              required
+              placeholder="student@campus.edu.pk"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Major *</label>
+              <input
+                type="text"
+                id="reg-major"
+                required
+                placeholder="e.g. CSE"
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Semester *</label>
+              <input
+                type="number"
+                id="reg-semester"
+                required
+                min="1"
+                max="12"
+                value="5"
+                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password (min 6 chars) *</label>
+            <input
+              type="password"
+              id="reg-password"
+              required
+              placeholder="Create secure password"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Skills (comma-separated)</label>
+            <input
+              type="text"
+              id="reg-skills"
+              placeholder="e.g. React, Node.js, Python"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">
+            Create Account & Get JWT
+          </button>
+        </form>
+
+      </div>
+    </div>
   `;
 
   // Attach Dark theme toggle listener
@@ -310,17 +490,128 @@ export async function initNavbar(activePage = '') {
     });
   }
 
-  // Switcher event
+  // Switcher event with automatic JWT token issue
   const switcher = document.getElementById('user-switcher');
   if (switcher) {
-    switcher.addEventListener('change', (e) => {
+    switcher.addEventListener('change', async (e) => {
       const selectedId = e.target.value;
-      setCurrentUserId(selectedId);
+      await setCurrentUserId(selectedId);
       const selectedUser = allUsers.find((u) => u.id === selectedId);
-      showToast(`Switched user to ${selectedUser?.name || selectedId}`, 'success');
+      showToast(`Logged in as ${selectedUser?.name || selectedId} (JWT active)`, 'success');
       setTimeout(() => {
         window.location.reload();
       }, 300);
+    });
+  }
+
+  // Auth Modal Listeners
+  const authModal = document.getElementById('auth-modal');
+  const btnOpenAuth = document.getElementById('btn-open-auth-modal');
+  const btnOpenAuthMobile = document.getElementById('mobile-open-auth-btn');
+  const btnCloseAuth = document.getElementById('auth-modal-close');
+  const tabLogin = document.getElementById('tab-btn-login');
+  const tabRegister = document.getElementById('tab-btn-register');
+  const formLogin = document.getElementById('form-auth-login');
+  const formRegister = document.getElementById('form-auth-register');
+
+  const openModal = () => {
+    if (authModal) {
+      authModal.classList.remove('hidden');
+      authModal.classList.add('flex');
+    }
+  };
+
+  const closeModal = () => {
+    if (authModal) {
+      authModal.classList.add('hidden');
+      authModal.classList.remove('flex');
+    }
+  };
+
+  if (btnOpenAuth) btnOpenAuth.addEventListener('click', openModal);
+  if (btnOpenAuthMobile) btnOpenAuthMobile.addEventListener('click', openModal);
+  if (btnCloseAuth) btnCloseAuth.addEventListener('click', closeModal);
+
+  if (tabLogin && tabRegister) {
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-xs');
+      tabLogin.classList.remove('text-slate-500', 'dark:text-slate-400');
+      tabRegister.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-xs');
+      tabRegister.classList.add('text-slate-500', 'dark:text-slate-400');
+      formLogin.classList.remove('hidden');
+      formRegister.classList.add('hidden');
+    });
+
+    tabRegister.addEventListener('click', () => {
+      tabRegister.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-xs');
+      tabRegister.classList.remove('text-slate-500', 'dark:text-slate-400');
+      tabLogin.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-xs');
+      tabLogin.classList.add('text-slate-500', 'dark:text-slate-400');
+      formRegister.classList.remove('hidden');
+      formLogin.classList.add('hidden');
+    });
+  }
+
+  // Handle Login submission
+  if (formLogin) {
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await api('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (res.token) {
+          setAuthToken(res.token);
+          localStorage.setItem('campus_current_user', res.user.id);
+          showToast(`Welcome back, ${res.user.name}!`, 'success');
+          closeModal();
+          setTimeout(() => window.location.reload(), 400);
+        }
+      } catch (err) {
+        // showToast already called by api()
+      }
+    });
+  }
+
+  // Handle Registration submission
+  if (formRegister) {
+    formRegister.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const major = document.getElementById('reg-major').value;
+      const semester = document.getElementById('reg-semester').value;
+      const password = document.getElementById('reg-password').value;
+      const skills = document.getElementById('reg-skills').value;
+
+      try {
+        const res = await api('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            email,
+            major,
+            semester,
+            password,
+            skills,
+          }),
+        });
+
+        if (res.token) {
+          setAuthToken(res.token);
+          localStorage.setItem('campus_current_user', res.user.id);
+          showToast(`Account created for ${res.user.name}!`, 'success');
+          closeModal();
+          setTimeout(() => window.location.reload(), 400);
+        }
+      } catch (err) {
+        // showToast already called by api()
+      }
     });
   }
 }

@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 import {
   users,
   gigs,
@@ -15,6 +16,14 @@ import {
   resetStore,
 } from './store.js';
 import { connectDB, getMongoStatus } from './config/db.js';
+import {
+  createAuthMiddleware,
+  sanitizeUser,
+  requireAuth,
+  requireRole,
+  apiLimiter,
+} from './middleware/auth.js';
+import { createAuthRouter } from './routes/auth.js';
 
 dotenv.config();
 
@@ -29,19 +38,28 @@ connectDB().catch((err) => {
   console.log('[MongoDB] Running with in-memory store.');
 });
 
-// Middleware
+// Security HTTP headers with Helmet (CSP disabled to allow Tailwind CDN & FontAwesome)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// General middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Current user reader from x-user-id header
-app.use((req, res, next) => {
-  const userId = req.headers['x-user-id'];
-  req.currentUser = users.find((u) => u.id === userId) || null;
-  next();
-});
+// Authentication & Identity Extraction (Bearer JWT token with seamless x-user-id fallback)
+app.use(createAuthMiddleware(() => users));
+
+// Mount Authentication & Authorization Endpoints
+const authRouter = createAuthRouter();
+app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 
 // Helper: err(res, code, msg) so every error looks like { error: '...' }
 export const err = (res, code, msg) => {
@@ -119,7 +137,7 @@ app.post('/debug/reset', (req, res) => {
 
 // GET /users - list all users with computed metrics
 app.get('/users', (req, res) => {
-  const list = users.map((u) => computeUserMetrics(u));
+  const list = users.map((u) => sanitizeUser(computeUserMetrics(u)));
   res.json(list);
 });
 
@@ -129,7 +147,7 @@ app.get('/users/:id', (req, res) => {
   if (!user) {
     return err(res, 404, 'User not found');
   }
-  res.json(computeUserMetrics(user));
+  res.json(sanitizeUser(computeUserMetrics(user)));
 });
 
 // ==========================================
@@ -221,8 +239,8 @@ app.get('/gigs/:id', (req, res) => {
   res.json({
     ...gig,
     status: effStatus,
-    owner,
-    accepted_applicant: acceptedApplicant,
+    owner: sanitizeUser(owner),
+    accepted_applicant: sanitizeUser(acceptedApplicant),
     applications: gigApps,
   });
 });

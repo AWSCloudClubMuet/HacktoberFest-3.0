@@ -5,19 +5,21 @@
 const now = Date.now();
 const DAY = 24 * 60 * 60 * 1000;
 
+const DEFAULT_PASSWORD_HASH = '$2b$10$5vjjhknigM3s607Eiy6HUeWDvJjoKGIChkkgtpXGieKC1QA2rtLJ.'; // 'campus123'
+
 export const initialUsers = [
-  { id: 'u1', name: 'Ali Khan', email: 'ali.khan@campus.edu.pk', major: 'CSE', semester: 7, skills: ['Node.js', 'React', 'MongoDB', 'Python'] },
-  { id: 'u2', name: 'Fatima Ahmed', email: 'fatima.a@campus.edu.pk', major: 'Design', semester: 6, skills: ['Figma', 'UI/UX', 'Illustrator'] },
-  { id: 'u3', name: 'Bilal Hassan', email: 'bilal.h@campus.edu.pk', major: 'SE', semester: 5, skills: ['Express', 'TypeScript', 'Docker'] },
-  { id: 'u4', name: 'Zainab Malik', email: 'zainab.m@campus.edu.pk', major: 'Writing', semester: 4, skills: ['Technical Writing', 'Copywriting', 'SEO'] },
-  { id: 'u5', name: 'Hamza Tariq', email: 'hamza.t@campus.edu.pk', major: 'EE', semester: 8, skills: ['C++', 'Arduino', 'Circuit Design', 'MATLAB'] },
-  { id: 'u6', name: 'Ayesha Noor', email: 'ayesha.n@campus.edu.pk', major: 'CSE', semester: 3, skills: ['Java', 'Data Structures', 'Python'] },
-  { id: 'u7', name: 'Saad Siddiqui', email: 'saad.s@campus.edu.pk', major: 'BBA', semester: 6, skills: ['Pitch Decks', 'Financial Modeling', 'Market Research'] },
-  { id: 'u8', name: 'Hira Mani', email: 'hira.m@campus.edu.pk', major: 'Design', semester: 5, skills: ['Photoshop', 'Branding', 'Canva'] },
-  { id: 'u9', name: 'Usman Raza', email: 'usman.r@campus.edu.pk', major: 'SE', semester: 7, skills: ['Python', 'Machine Learning', 'SQL'] },
-  { id: 'u10', name: 'Maryam Shah', email: 'maryam.s@campus.edu.pk', major: 'Writing', semester: 6, skills: ['Essay Editing', 'Research Papers', 'Proofreading'] },
-  { id: 'u11', name: 'Daniyal Zafar', email: 'daniyal.z@campus.edu.pk', major: 'CSE', semester: 2, skills: ['HTML', 'CSS', 'JavaScript'] },
-  { id: 'u12', name: 'Sana Javed', email: 'sana.j@campus.edu.pk', major: 'BBA', semester: 4, skills: ['Public Speaking', 'Accounting', 'Tutoring'] },
+  { id: 'u1', name: 'Ali Khan', email: 'ali.khan@campus.edu.pk', major: 'CSE', semester: 7, skills: ['Node.js', 'React', 'MongoDB', 'Python'], role: 'admin', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u2', name: 'Fatima Ahmed', email: 'fatima.a@campus.edu.pk', major: 'Design', semester: 6, skills: ['Figma', 'UI/UX', 'Illustrator'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u3', name: 'Bilal Hassan', email: 'bilal.h@campus.edu.pk', major: 'SE', semester: 5, skills: ['Express', 'TypeScript', 'Docker'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u4', name: 'Zainab Malik', email: 'zainab.m@campus.edu.pk', major: 'Writing', semester: 4, skills: ['Technical Writing', 'Copywriting', 'SEO'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u5', name: 'Hamza Tariq', email: 'hamza.t@campus.edu.pk', major: 'EE', semester: 8, skills: ['C++', 'Arduino', 'Circuit Design', 'MATLAB'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u6', name: 'Ayesha Noor', email: 'ayesha.n@campus.edu.pk', major: 'CSE', semester: 3, skills: ['Java', 'Data Structures', 'Python'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u7', name: 'Saad Siddiqui', email: 'saad.s@campus.edu.pk', major: 'BBA', semester: 6, skills: ['Pitch Decks', 'Financial Modeling', 'Market Research'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u8', name: 'Hira Mani', email: 'hira.m@campus.edu.pk', major: 'Design', semester: 5, skills: ['Photoshop', 'Branding', 'Canva'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u9', name: 'Usman Raza', email: 'usman.r@campus.edu.pk', major: 'SE', semester: 7, skills: ['Python', 'Machine Learning', 'SQL'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u10', name: 'Maryam Shah', email: 'maryam.s@campus.edu.pk', major: 'Writing', semester: 6, skills: ['Essay Editing', 'Research Papers', 'Proofreading'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u11', name: 'Daniyal Zafar', email: 'daniyal.z@campus.edu.pk', major: 'CSE', semester: 2, skills: ['HTML', 'CSS', 'JavaScript'], role: 'student', password: DEFAULT_PASSWORD_HASH },
+  { id: 'u12', name: 'Sana Javed', email: 'sana.j@campus.edu.pk', major: 'BBA', semester: 4, skills: ['Public Speaking', 'Accounting', 'Tutoring'], role: 'student', password: DEFAULT_PASSWORD_HASH },
 ];
 
 export const initialGigs = [
