@@ -1,0 +1,85 @@
+name: Security - Gate and report
+
+on:
+  workflow_call:
+    inputs:
+      demo_failure:
+        description: Whether the run used the failure demo
+        required: false
+        type: boolean
+        default: false
+      sast_result:
+        required: false
+        type: string
+        default: unknown
+      secrets_result:
+        required: false
+        type: string
+        default: unknown
+      dependencies_result:
+        required: false
+        type: string
+        default: unknown
+      container_result:
+        required: false
+        type: string
+        default: unknown
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Enforce policy and report
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/webies/automated-security-vulnerability-02
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Download SARIF artifacts
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          pattern: security-sarif-*
+          path: submission/webies/automated-security-vulnerability-02/reports
+          merge-multiple: true
+
+      - name: Evaluate security gate
+        id: gate
+        continue-on-error: true
+        run: node scripts/gate.mjs --reports reports --exceptions security-exceptions.json
+
+      - name: Write consolidated report
+        if: always()
+        env:
+          DEMO_FAILURE: ${{ inputs.demo_failure }}
+          GATE_STATUS: ${{ steps.gate.outcome }}
+          SAST_RESULT: ${{ inputs.sast_result }}
+          SECRETS_RESULT: ${{ inputs.secrets_result }}
+          DEPENDENCIES_RESULT: ${{ inputs.dependencies_result }}
+          CONTAINER_RESULT: ${{ inputs.container_result }}
+        run: >-
+          node scripts/summarize.mjs
+          --reports reports
+          --output reports/security-summary.md
+          --exceptions security-exceptions.json
+
+      - name: Upload consolidated report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-report
+          path: |
+            submission/webies/automated-security-vulnerability-02/reports/security-summary.md
+            submission/webies/automated-security-vulnerability-02/reports/*.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Fail when the security gate failed
+        if: steps.gate.outcome == 'failure'
+        run: |
+          echo "Security gate failed. Review the report above and docs/SECURITY-GATE.md."
+          exit 1

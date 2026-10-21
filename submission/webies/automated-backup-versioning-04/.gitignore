@@ -1,0 +1,47 @@
+# Node dependencies and logs
+node_modules/
+npm-debug.log*
+*.log
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Terraform provider cache and local state
+.terraform/
+.terraform.lock.hcl.tmp
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Local variable files and CLI overrides. The *.example files stay tracked.
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Restored files are generated evidence, not source
+restored/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Default generated outputs. Use --manifest / --out to keep a copy elsewhere.
+manifests/manifest.json
+reports/backup-status.md
+reports/*.tmp
+
+# Keep the sample render and the real-AWS evidence report. The team-level
+# .gitignore excludes generated reports; these are intentional evidence.
+!reports/backup-status.sample.md
+!reports/real-aws-backup-status.md

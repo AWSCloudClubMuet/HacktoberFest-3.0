@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "description": "Synthetic manifest for offline report rendering and documentation. Version IDs are illustrative, not live AWS values.",
+  "createdAt": "2026-10-20T02:00:00.000Z",
+  "runs": [
+    {
+      "runId": "20261020T020000000Z-a1b2c3d4",
+      "startedAt": "2026-10-20T02:00:00.000Z",
+      "finishedAt": "2026-10-20T02:00:04.000Z",
+      "durationMs": 4000,
+      "status": "success",
+      "environment": "synthetic",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-example",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261020T020000000Z-a1b2c3d4/",
+      "counts": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+      },
+      "archiveBytes": 2624,
+      "uploadedBytes": 5248,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261020T020000000Z-a1b2c3d4/archive/2026-Q3-summary.csv",
+          "archiveVersionId": "synth-v1-summary",
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": "synth-v1-latest-summary",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261020T020000000Z-a1b2c3d4/customers.csv",
+          "archiveVersionId": "synth-v1-customers",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "synth-v1-latest-customers",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261020T020000000Z-a1b2c3d4/incident-notes.md",
+          "archiveVersionId": "synth-v1-notes",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "synth-v1-latest-notes",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261020T020000000Z-a1b2c3d4/orders.json",
+          "archiveVersionId": "synth-v1-orders",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "synth-v1-latest-orders",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 345,
+          "sha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+          "archiveKey": "backups/20261020T020000000Z-a1b2c3d4/service-config.yaml",
+          "archiveVersionId": "synth-v1-config",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "synth-v1-latest-config",
+          "status": "success",
+          "error": null
+        }
+      ]
+    },
+    {
+      "runId": "20261020T020500000Z-e5f6a7b8",
+      "startedAt": "2026-10-20T02:05:00.000Z",
+      "finishedAt": "2026-10-20T02:05:04.000Z",
+      "durationMs": 4000,
+      "status": "failed",
+      "environment": "synthetic",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-example",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261020T020500000Z-e5f6a7b8/",
+      "counts": {
+        "total": 5,
+        "successful": 4,
+        "failed": 1
+      },
+      "archiveBytes": 2539,
+      "uploadedBytes": 5078,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261020T020500000Z-e5f6a7b8/archive/2026-Q3-summary.csv",
+          "archiveVersionId": null,
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": null,
+          "status": "failed",
+          "error": "simulated upload failed: Simulated upload failure requested by --simulate-failure."
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261020T020500000Z-e5f6a7b8/customers.csv",
+          "archiveVersionId": "synth-v2-customers",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "synth-v2-latest-customers",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261020T020500000Z-e5f6a7b8/incident-notes.md",
+          "archiveVersionId": "synth-v2-notes",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "synth-v2-latest-notes",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261020T020500000Z-e5f6a7b8/orders.json",
+          "archiveVersionId": "synth-v2-orders",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "synth-v2-latest-orders",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 386,
+          "sha256": "5b5c41d1521b44f7bc7fb1a826f331493e2562e20484c2d09601e972af57a525",
+          "archiveKey": "backups/20261020T020500000Z-e5f6a7b8/service-config.yaml",
+          "archiveVersionId": "synth-v2-config",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "synth-v2-latest-config",
+          "status": "success",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "verifiedAt": "2026-10-20T02:02:00.000Z",
+      "runId": "20261020T020000000Z-a1b2c3d4",
+      "bucket": "webies-backup-04-example",
+      "status": "pass",
+      "expectedFiles": 5,
+      "passedFiles": 5,
+      "failedFiles": 0,
+      "objectsChecked": 10,
+      "objectsPassed": 10,
+      "totalArchiveBytes": 2624,
+      "results": []
+    }
+  ],
+  "recoveries": [
+    {
+      "restoredAt": "2026-10-20T02:04:00.000Z",
+      "bucket": "webies-backup-04-example",
+      "key": "latest/service-config.yaml",
+      "requestedVersionId": "synth-v1-latest-config",
+      "returnedVersionId": "synth-v1-latest-config",
+      "kind": "latest",
+      "sourceRunId": "20261020T020000000Z-a1b2c3d4",
+      "sourceFile": "service-config.yaml",
+      "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+      "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+      "expectedSize": 345,
+      "actualSize": 345,
+      "outputPath": "restored/service-config.yaml",
+      "status": "pass",
+      "message": "Restored bytes match the recorded version."
+    }
+  ]
+}
