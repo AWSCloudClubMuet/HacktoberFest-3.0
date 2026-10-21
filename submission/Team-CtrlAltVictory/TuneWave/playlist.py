@@ -6,6 +6,7 @@ class SongNode:
         self.prev = None
         self.next = None
 
+
 class Playlist:
     def __init__(self):
         self.head = None
@@ -14,9 +15,10 @@ class Playlist:
         self.repeat = False
         self.node_map = {}
 
+
     def addSong(self, song_node):
         if song_node.song_id in self.node_map:
-            return False 
+            return False
 
         self.node_map[song_node.song_id] = song_node
 
@@ -30,6 +32,7 @@ class Playlist:
             self.tail = song_node
 
         return True
+
 
     def removeSong(self, song_id):
         if song_id not in self.node_map:
@@ -54,9 +57,6 @@ class Playlist:
         node.next = None
         return True
 
-    def toggleRepeat(self):
-        self.repeat = not self.repeat
-        return self.repeat
 
     def next(self):
         if not self.current:
@@ -71,6 +71,7 @@ class Playlist:
             return self.current.song_id
 
         return "end"
+
 
     def previous(self):
         if not self.current:
@@ -87,3 +88,6 @@ class Playlist:
         return "start"
 
 
+    def toggleRepeat(self):
+        self.repeat = not self.repeat
+        return self.repeat
