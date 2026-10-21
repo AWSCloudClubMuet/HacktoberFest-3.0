@@ -1,0 +1,198 @@
+Team loop final verification
+Run on a clean export of the staged submission files.
+Python 3.11.9
+The existing NumPy environment supplies dependencies; application files come only from the staged export.
+No private study PDFs, local environment, or untracked application files are included.
+
+Issue 8: tests, gradient checks and saved experiment
+Command from repository root: python submission/team-loop/issue-08-attention-evaluation/verify.py
+test_all_analytic_gradients_match_finite_differences (test_attention.AttentionTests.test_all_analytic_gradients_match_finite_differences) ... ok
+test_cache_does_not_alias_inputs (test_attention.AttentionTests.test_cache_does_not_alias_inputs) ... ok
+test_causal_and_custom_masks_combine (test_attention.AttentionTests.test_causal_and_custom_masks_combine) ... ok
+test_causal_output_cannot_see_future_keys (test_attention.AttentionTests.test_causal_output_cannot_see_future_keys) ... ok
+test_forward_matches_independent_loop_reference (test_attention.AttentionTests.test_forward_matches_independent_loop_reference) ... ok
+test_large_scores_remain_finite (test_attention.AttentionTests.test_large_scores_remain_finite) ... ok
+test_masked_score_gradients_are_zero (test_attention.AttentionTests.test_masked_score_gradients_are_zero) ... ok
+test_one_key_returns_its_value (test_attention.AttentionTests.test_one_key_returns_its_value) ... ok
+test_rejects_fully_masked_row (test_attention.AttentionTests.test_rejects_fully_masked_row) ... ok
+test_rejects_nonboolean_or_wrong_shape_mask (test_attention.AttentionTests.test_rejects_nonboolean_or_wrong_shape_mask) ... ok
+test_rejects_nonfinite_input (test_attention.AttentionTests.test_rejects_nonfinite_input) ... ok
+test_rejects_overflow_instead_of_returning_nan (test_attention.AttentionTests.test_rejects_overflow_instead_of_returning_nan) ... ok
+test_rejects_rectangular_causal_mode (test_attention.AttentionTests.test_rejects_rectangular_causal_mode) ... ok
+test_rejects_shape_errors (test_attention.AttentionTests.test_rejects_shape_errors) ... ok
+test_rejects_wrong_output_gradient (test_attention.AttentionTests.test_rejects_wrong_output_gradient) ... ok
+test_scale_is_inverse_sqrt_feature_count (test_attention.AttentionTests.test_scale_is_inverse_sqrt_feature_count) ... ok
+test_zero_scores_average_values (test_attention.AttentionTests.test_zero_scores_average_values) ... ok
+test_zero_upstream_gradient_gives_zero_gradients (test_attention.AttentionTests.test_zero_upstream_gradient_gives_zero_gradients) ... ok
+test_baseline_arithmetic (test_evaluation.EvaluationTests.test_baseline_arithmetic) ... ok
+test_invalid_costs (test_evaluation.EvaluationTests.test_invalid_costs) ... ok
+test_invalid_probabilities (test_evaluation.EvaluationTests.test_invalid_probabilities) ... ok
+test_large_finite_costs_do_not_overflow_the_threshold (test_evaluation.EvaluationTests.test_large_finite_costs_do_not_overflow_the_threshold) ... ok
+test_numeric_inputs_are_converted_consistently (test_evaluation.EvaluationTests.test_numeric_inputs_are_converted_consistently) ... ok
+test_preferred_decision_on_each_side (test_evaluation.EvaluationTests.test_preferred_decision_on_each_side) ... ok
+test_threshold_derivation (test_evaluation.EvaluationTests.test_threshold_derivation) ... ok
+test_zero_cost_boundaries (test_evaluation.EvaluationTests.test_zero_cost_boundaries) ... ok
+test_batchnorm_mlp_gradients_match_finite_differences (test_synthetic_training.SyntheticTrainingTests.test_batchnorm_mlp_gradients_match_finite_differences) ... ok
+test_corrected_scaler_does_not_see_validation_or_test (test_synthetic_training.SyntheticTrainingTests.test_corrected_scaler_does_not_see_validation_or_test) ... ok
+test_corrected_scheduler_steps_per_epoch (test_synthetic_training.SyntheticTrainingTests.test_corrected_scheduler_steps_per_epoch) ... ok
+test_data_is_reproducible_and_splits_are_disjoint (test_synthetic_training.SyntheticTrainingTests.test_data_is_reproducible_and_splits_are_disjoint) ... ok
+test_eval_is_repeatable_and_does_not_update_buffers (test_synthetic_training.SyntheticTrainingTests.test_eval_is_repeatable_and_does_not_update_buffers) ... ok
+test_even_faulty_scaler_never_uses_test (test_synthetic_training.SyntheticTrainingTests.test_even_faulty_scaler_never_uses_test) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.406s
+
+OK
+{
+  "python": "3.11.9",
+  "numpy": "2.4.6",
+  "tests": {
+    "run": 32,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "gradient_checks_passed": true,
+  "fraud_scenario": {
+    "fraud_prevalence": 0.001,
+    "always_normal_accuracy": 0.999,
+    "always_normal_fraud_recall": 0.0,
+    "theoretical_cost_threshold": 0.02439024390243903,
+    "illustrative_transactions": 100000,
+    "expected_frauds_at_given_prevalence": 100,
+    "always_normal_expected_cost_at_100000_transactions": 20000,
+    "label": "Scenario arithmetic only; no trained model or measured performance."
+  },
+  "synthetic_experiment": {
+    "passed": true,
+    "dataset_rows": 10000,
+    "features": 40,
+    "recorded_runs": 30,
+    "epochs_per_run": 50,
+    "split_overlap": false,
+    "dataset_checksum_matches": true,
+    "summaries_recalculated": true,
+    "replay": []
+  },
+  "passed": true
+}
+Exit code: 0
+
+Issue 9: tests and recorded calculation consistency
+Command from repository root: python submission/team-loop/issue-09-noisy-labels/verify.py
+test_invalid_probabilities (test_calculations.AccuracyTests.test_invalid_probabilities) ... ok
+test_issue_answer_exact_rational (test_calculations.AccuracyTests.test_issue_answer_exact_rational) ... ok
+test_round_trip (test_calculations.AccuracyTests.test_round_trip) ... ok
+test_unidentifiable_or_impossible (test_calculations.AccuracyTests.test_unidentifiable_or_impossible) ... ok
+test_uniform_noise_ceiling (test_calculations.AccuracyTests.test_uniform_noise_ceiling) ... ok
+test_equal_and_degenerate_rates (test_calculations.ComparisonTests.test_equal_and_degenerate_rates) ... ok
+test_fisher_against_exhaustive_assignments (test_calculations.ComparisonTests.test_fisher_against_exhaustive_assignments) ... ok
+test_fisher_known_small_table (test_calculations.ComparisonTests.test_fisher_known_small_table) ... ok
+test_tier_swap_invariance (test_calculations.ComparisonTests.test_tier_swap_invariance) ... ok
+test_z_against_independent_chi_square_statistic (test_calculations.ComparisonTests.test_z_against_independent_chi_square_statistic) ... ok
+test_audit_interval (test_calculations.IntervalTests.test_audit_interval) ... ok
+test_invalid_counts_and_confidence (test_calculations.IntervalTests.test_invalid_counts_and_confidence) ... ok
+test_wilson_known_reference (test_calculations.IntervalTests.test_wilson_known_reference) ... ok
+test_wilson_symmetry_and_bounds (test_calculations.IntervalTests.test_wilson_symmetry_and_bounds) ... ok
+test_scope_and_weighting (test_calculations.ScenarioTests.test_scope_and_weighting) ... ok
+test_source_totals_and_review_budget (test_calculations.ScenarioTests.test_source_totals_and_review_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.005s
+
+OK
+PASS: recorded calculations match freshly computed results.
+Scope: aggregate-data analysis only; no training or review experiment was run.
+Exit code: 0
+
+Issue 13: behavior and edge-case tests
+Command from repository root: python -m unittest discover -s submission/team-loop/issue-13-tunewave -p test_*.py -v
+test_invalid_relation_does_not_mutate (test_player.GraphTests.test_invalid_relation_does_not_mutate) ... ok
+test_triangle_overlap_sorting_and_distance_three (test_player.GraphTests.test_triangle_overlap_sorting_and_distance_three) ... ok
+test_undirected_chain (test_player.GraphTests.test_undirected_chain) ... ok
+test_unknown_artist (test_player.GraphTests.test_unknown_artist) ... ok
+test_back_pops_without_reinserting_or_moving_cursor (test_player.PlaybackTests.test_back_pops_without_reinserting_or_moving_cursor) ... ok
+test_catalog_conflict_and_playlist_readdition (test_player.PlaybackTests.test_catalog_conflict_and_playlist_readdition) ... ok
+test_catalog_only_and_removed_songs_remain_playable (test_player.PlaybackTests.test_catalog_only_and_removed_songs_remain_playable) ... ok
+test_end_and_empty_do_not_create_history (test_player.PlaybackTests.test_end_and_empty_do_not_create_history) ... ok
+test_fifo_priority_and_cursor_preservation (test_player.PlaybackTests.test_fifo_priority_and_cursor_preservation) ... ok
+test_first_play_is_head (test_player.PlaybackTests.test_first_play_is_head) ... ok
+test_history_keeps_latest_ten (test_player.PlaybackTests.test_history_keeps_latest_ten) ... ok
+test_queue_before_initial_playlist_playback (test_player.PlaybackTests.test_queue_before_initial_playlist_playback) ... ok
+test_queue_still_plays_at_playlist_end (test_player.PlaybackTests.test_queue_still_plays_at_playlist_end) ... ok
+test_unknown_queue_id_has_no_side_effect (test_player.PlaybackTests.test_unknown_queue_id_has_no_side_effect) ... ok
+test_current_deletion_resumes_at_successor (test_player.PlaylistTests.test_current_deletion_resumes_at_successor) ... ok
+test_duplicate_rejected_without_mutation (test_player.PlaylistTests.test_duplicate_rejected_without_mutation) ... ok
+test_empty (test_player.PlaylistTests.test_empty) ... ok
+test_navigation_and_wrapping (test_player.PlaylistTests.test_navigation_and_wrapping) ... ok
+test_noncurrent_removal_preserves_cursor (test_player.PlaylistTests.test_noncurrent_removal_preserves_cursor) ... ok
+test_seeded_mutations_match_list_model (test_player.PlaylistTests.test_seeded_mutations_match_list_model) ... ok
+test_single_boundaries_and_repeat (test_player.PlaylistTests.test_single_boundaries_and_repeat) ... ok
+test_degenerate_tree_avoids_recursion_limit (test_player.SearchTests.test_degenerate_tree_avoids_recursion_limit) ... ok
+test_empty_and_missing (test_player.SearchTests.test_empty_and_missing) ... ok
+test_lookup_duplicate_titles_and_ids (test_player.SearchTests.test_lookup_duplicate_titles_and_ids) ... ok
+test_prefix_prunes_impossible_subtrees (test_player.SearchTests.test_prefix_prunes_impossible_subtrees) ... ok
+test_prefix_sorted_unique_and_case_sensitive (test_player.SearchTests.test_prefix_sorted_unique_and_case_sensitive) ... ok
+test_seeded_prefix_queries_match_reference (test_player.SearchTests.test_seeded_prefix_queries_match_reference) ... ok
+test_unicode_prefix_boundaries (test_player.SearchTests.test_unicode_prefix_boundaries) ... ok
+test_invalid_search_input (test_player.ValidationTests.test_invalid_search_input) ... ok
+test_invalid_song_fields (test_player.ValidationTests.test_invalid_song_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.145s
+
+OK
+Exit code: 0
+
+Issue 13: deterministic demo
+Command from repository root: python submission/team-loop/issue-13-tunewave/demo.py
+Playlist: Aurora, Breeze, Blue Sky
+First play: Aurora
+Up Next: Bonus Track / Blue Sky
+Cursor after queue: Aurora
+Back (pops history): Blue Sky
+Playlist resumes: Breeze
+Next: Blue Sky
+Repeat off: end
+Repeat enabled: True
+Wrap forward: Aurora
+Wrap backward: Blue Sky
+Removed: Breeze
+Find Breeze: ('2',)
+Prefix B: ['Bloom', 'Blue Sky', 'Bonus Track', 'Breeze']
+Recommendations for Aster: ['Dune']
+History capped at: 10
+Exit code: 0
+
+Issue 8: actual paired training replay
+Command from repository root: python submission/team-loop/issue-08-attention-evaluation/verify_experiment.py --rerun-seed 7
+{
+  "passed": true,
+  "dataset_rows": 10000,
+  "features": 40,
+  "recorded_runs": 30,
+  "epochs_per_run": 50,
+  "split_overlap": false,
+  "dataset_checksum_matches": true,
+  "summaries_recalculated": true,
+  "replay": [
+    {
+      "variant": "faulty_baseline",
+      "seed": 7,
+      "test_accuracy": 0.48,
+      "matched": true
+    },
+    {
+      "variant": "all_fixed",
+      "seed": 7,
+      "test_accuracy": 0.8965,
+      "matched": true
+    }
+  ]
+}
+Exit code: 0
+
+Summary: 78 unit tests and 15 attention gradient-array checks passed.
+Saved dataset/results checks, TuneWave demo and actual seed-7 baseline/corrected retraining passed.
+No original-dataset or real fraud-model performance is claimed.
