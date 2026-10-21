@@ -1,0 +1,333 @@
+{
+  "nav": {
+    "explore": "Explore gigs",
+    "myGigs": "My Gigs",
+    "myApplications": "My Applications",
+    "profile": "Profile",
+    "postGig": "＋ Post a gig",
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "demo": "Demo"
+  },
+  "hero": {
+    "eyebrow": "CAMPUSGIG · STUDENT SKILLS MARKETPLACE",
+    "title1": "Learn together.",
+    "title2": "Build something real.",
+    "sub": "Find campus talent, share your skills, and get your next project moving.",
+    "explore": "Explore gigs",
+    "post": "Post a gig"
+  },
+  "slider": {
+    "label": "Campus collaboration image slideshow",
+    "caption": "MADE FOR CAMPUS COLLABORATION",
+    "alt1": "University students working together on campus",
+    "alt2": "Students collaborating around a table",
+    "alt3": "Team working together on a project",
+    "show": "Show image {{n}}"
+  },
+  "categories": {
+    "eyebrow": "A little talent goes a long way",
+    "title": "What can you help with?",
+    "sub": "Explore a few ways to put your skills to work.",
+    "browseAll": "Browse all gigs",
+    "Programming": "Programming",
+    "ProgrammingSub": "Code & build",
+    "Design": "Design",
+    "DesignSub": "Make it visual",
+    "Writing": "Writing",
+    "WritingSub": "Find the words",
+    "Tutoring": "Tutoring",
+    "TutoringSub": "Learn together"
+  },
+  "board": {
+    "eyebrow": "The campus board",
+    "title": "Open opportunities",
+    "sub": "Small projects. New skills. People worth knowing.",
+    "tag": "LIVE DEMO DATA"
+  },
+  "filters": {
+    "title": "Filter gigs",
+    "reset": "Reset all",
+    "category": "Category",
+    "lookingFor": "I'm looking for",
+    "offers": "Skill offers",
+    "help": "Help wanted",
+    "payment": "Payment type",
+    "budget": "Budget (PKR)",
+    "min": "Min",
+    "max": "Max"
+  },
+  "search": {
+    "placeholder": "Search gigs, skills, or people...",
+    "sortNew": "Recently added",
+    "sortLow": "Budget: low to high",
+    "sortHigh": "Budget: high to low"
+  },
+  "results": {
+    "count_one": "{{count}} opportunity",
+    "count_other": "{{count}} opportunities",
+    "suffix": "to explore",
+    "right": "Showing campus listings"
+  },
+  "empty": {
+    "title": "No gigs found",
+    "hint": "Try a different keyword or reset the filters.",
+    "reset": "Reset filters"
+  },
+  "how": {
+    "eyebrow": "Easy as one, two, three",
+    "title": "Make something happen.",
+    "sub": "No awkward cold messages. Just a clear way to work together.",
+    "s1Title": "Find your fit",
+    "s1Body": "Search campus gigs by skill, category, or budget. Discover people doing interesting things.",
+    "s2Title": "Put your hand up",
+    "s2Body": "Send a short note about how you can help. For skill swaps, bring something you can teach in return.",
+    "s3Title": "Build your reputation",
+    "s3Body": "Complete the work, leave an honest review, and make your next collaboration easier to find."
+  },
+  "cta": {
+    "title": "Your next great project could be one conversation away.",
+    "sub": "Offer a skill, ask for help, or trade knowledge with someone new.",
+    "button": "Post your first gig"
+  },
+  "footer": {
+    "tagline": "Made for the people who make campus better.",
+    "explore": "Explore",
+    "how": "How it works",
+    "privacy": "Privacy",
+    "copyright": "© 2026 CampusGig"
+  },
+  "gig": {
+    "view": "View opportunity",
+    "due": "Due {{date}}",
+    "applicants_one": "{{count}} applicant",
+    "applicants_other": "{{count}} applicants",
+    "today": "today",
+    "daysAgo": "{{count}}d ago"
+  },
+  "details": {
+    "back": "Back to gigs",
+    "about": "About this gig",
+    "category": "Category",
+    "payment": "Payment",
+    "budget": "Budget",
+    "deadline": "Deadline",
+    "posted": "Posted",
+    "applicants": "Applicants",
+    "postedBy": "Posted by",
+    "workingWith": "Working with",
+    "status": "Status",
+    "applyTitle": "Apply to this gig",
+    "messageLabel": "Your message *",
+    "messagePlaceholder": "Tell the poster how you can help...",
+    "send": "Send application",
+    "sending": "Sending...",
+    "sent": "Your application has been sent!",
+    "messageInvalid": "Write a short message (5–500 characters).",
+    "manageTitle": "Manage this gig",
+    "ownGig": "This is your gig, so you can't apply to it. Review applicants below.",
+    "closed": "This gig is closed to new applications.",
+    "applied": "You applied to this gig",
+    "yourStatus": "Application status",
+    "notFound": "We couldn't find this gig.",
+    "noBudget": "—"
+  },
+  "create": {
+    "title": "Post a campus gig",
+    "sub": "Share what you need or what you can do. Fields marked * are required.",
+    "typeLabel": "Gig type *",
+    "offering": "I'm offering a skill",
+    "requesting": "I need some help",
+    "titleLabel": "Title *",
+    "titlePh": "e.g. Need help polishing my portfolio",
+    "descLabel": "Description *",
+    "descPh": "What needs to be done? Add a little context...",
+    "category": "Category *",
+    "payment": "Payment type *",
+    "budget": "Budget (PKR) *",
+    "budgetPh": "e.g. 3000",
+    "deadline": "Deadline *",
+    "submit": "Publish gig",
+    "publishing": "Publishing...",
+    "success": "Your gig has been published!",
+    "errTitle": "Title must be 3–100 characters.",
+    "errDesc": "Description must be 10–2000 characters.",
+    "errBudget": "Budget must be greater than zero.",
+    "errDeadline": "Please choose a deadline.",
+    "errDeadlinePast": "Deadline cannot be in the past."
+  },
+  "myGigs": {
+    "title": "Gigs you posted",
+    "sub": "Manage applicants and update the status of your gigs.",
+    "empty": "You haven't posted any gigs yet.",
+    "emptyCta": "Post your first gig",
+    "view": "View gig",
+    "viewApplicants": "View applicants",
+    "hideApplicants": "Hide applicants"
+  },
+  "controls": {
+    "cancel": "Cancel gig",
+    "complete": "Mark as Completed",
+    "confirmCancel": "Cancel this gig? This can't be undone.",
+    "confirmComplete": "Mark this gig as completed?",
+    "cancelled": "Gig cancelled.",
+    "completed": "Gig marked as completed."
+  },
+  "applicants": {
+    "title": "Applicants",
+    "none": "No applications yet.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "acceptedMsg": "Applicant accepted. The gig is now In Progress.",
+    "rejectedMsg": "Application rejected.",
+    "noRating": "No ratings yet"
+  },
+  "myApps": {
+    "title": "Your applications",
+    "sub": "Everything you've applied to, and where it stands.",
+    "empty": "You haven't applied to any gigs yet.",
+    "browse": "Browse gigs",
+    "appliedOn": "Applied {{date}}",
+    "yourMessage": "Your message"
+  },
+  "profile": {
+    "you": "Your profile",
+    "gigsPosted": "Gigs posted",
+    "gigsCompleted": "Gigs completed",
+    "avgRating": "Average rating",
+    "reviewCount": "Reviews",
+    "reviews": "Reviews received",
+    "noReviews": "No reviews yet.",
+    "notFound": "We couldn't find this profile.",
+    "semester": "Semester {{n}}"
+  },
+  "review": {
+    "title": "Leave a review",
+    "subtitle": "How was working with {{name}}?",
+    "rating": "Rating",
+    "comment": "Comment (optional)",
+    "commentPh": "Share a few words about the collaboration...",
+    "submit": "Submit review",
+    "submitting": "Submitting...",
+    "done": "You reviewed this gig",
+    "yourRating": "Your rating",
+    "sent": "Thanks for your review!",
+    "ratingRequired": "Please choose a rating from 1 to 5."
+  },
+  "common": {
+    "loading": "Loading...",
+    "retry": "Try again",
+    "backHome": "Back to browse",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you are looking for doesn't exist."
+  },
+  "status": {
+    "Open": "Open",
+    "In Progress": "In Progress",
+    "Completed": "Completed",
+    "Expired": "Expired",
+    "Cancelled": "Cancelled"
+  },
+  "appStatus": {
+    "Pending": "Pending",
+    "Accepted": "Accepted",
+    "Rejected": "Rejected"
+  },
+  "category": {
+    "Programming": "Programming",
+    "Design": "Design",
+    "Writing": "Writing",
+    "Tutoring": "Tutoring"
+  },
+  "payment": {
+    "Paid": "Paid",
+    "SkillSwap": "Skill swap",
+    "Free": "Free"
+  },
+  "payTag": {
+    "Paid": "PAID",
+    "SkillSwap": "SKILL SWAP",
+    "Free": "FREE"
+  },
+  "typeTag": {
+    "Offering": "SKILL OFFER",
+    "Requesting": "HELP WANTED"
+  },
+  "errors": {
+    "UNAUTHORIZED": "Please log in to continue.",
+    "FORBIDDEN": "You are not allowed to do this.",
+    "NOT_GIG_OWNER": "Only the gig owner can do this.",
+    "CANNOT_APPLY_OWN_GIG": "You can't apply to your own gig.",
+    "NOT_GIG_PARTICIPANT": "Only the gig owner or the accepted applicant can do this.",
+    "USER_NOT_FOUND": "User not found.",
+    "GIG_NOT_FOUND": "Gig not found.",
+    "APPLICATION_NOT_FOUND": "Application not found.",
+    "VALIDATION_ERROR": "Please check the form and try again.",
+    "GIG_NOT_OPEN": "This gig is closed.",
+    "DUPLICATE_APPLICATION": "You already applied.",
+    "APPLICATION_NOT_PENDING": "This application has already been decided.",
+    "INVALID_TRANSITION": "This status change isn't allowed.",
+    "GIG_NOT_COMPLETED": "You can review only after the gig is completed.",
+    "DUPLICATE_REVIEW": "You already reviewed this gig.",
+    "NOT_FOUND": "Not found.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "NETWORK": "Can't reach the server. Check your connection.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "EMAIL_TAKEN": "An account with this email already exists.",
+    "TOO_MANY_ATTEMPTS": "Too many attempts. Please wait a few minutes and try again."
+  },
+  "auth": {
+    "loginEyebrow": "CAMPUSGIG · WELCOME BACK",
+    "loginTitle": "Log in to CampusGig",
+    "loginSub": "Use the email and password you signed up with.",
+    "email": "Email",
+    "emailRequired": "Email *",
+    "emailPh": "you@campus.edu",
+    "password": "Password",
+    "passwordRequired": "Password *",
+    "passwordPh": "At least 8 characters",
+    "loginSubmit": "Log in",
+    "loggingIn": "Logging in...",
+    "noAccount": "New to CampusGig?",
+    "signupLink": "Create an account",
+    "demoTitle": "Demo account",
+    "signupEyebrow": "CAMPUSGIG · JOIN THE CAMPUS",
+    "signupTitle": "Create your profile",
+    "signupSub": "Tell the campus who you are. Fields marked * are required.",
+    "name": "Full name *",
+    "confirm": "Confirm password *",
+    "major": "Major *",
+    "majorPh": "e.g. Computer Science",
+    "semester": "Semester *",
+    "bio": "Short bio",
+    "bioPh": "What do you like working on?",
+    "skills": "Skills",
+    "skillsPh": "e.g. React, Figma, Calculus",
+    "skillsHint": "Separate skills with commas (up to 10).",
+    "signupSubmit": "Create account",
+    "creating": "Creating account...",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "errName": "Enter your full name (2–80 characters).",
+    "errEmail": "Enter a valid email address.",
+    "errPassword": "Password must be at least 8 characters.",
+    "errPasswordRequired": "Enter your password.",
+    "errConfirm": "Passwords don't match.",
+    "errMajor": "Enter your major (2–80 characters).",
+    "errBio": "Bio can be at most 300 characters.",
+    "errSkills": "Add up to 10 skills, each up to 30 characters.",
+    "welcomeBack": "Welcome back, {{name}}!",
+    "welcomeNew": "Welcome to CampusGig, {{name}}!",
+    "loggedOut": "You have been logged out.",
+    "demoAll": "See all demo accounts"
+  },
+  "demo": {
+    "eyebrow": "TRY IT OUT",
+    "title": "Demo accounts",
+    "sub": "Explore CampusGig as any of these students. Click a card to log in instantly.",
+    "passwordLabel": "Password for every demo account",
+    "loginAs": "Log in as {{name}}",
+    "current": "Currently logged in"
+  }
+}
