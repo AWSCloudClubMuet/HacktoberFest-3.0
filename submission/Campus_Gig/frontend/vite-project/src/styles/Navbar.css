@@ -1,0 +1,463 @@
+/* ========================================
+   CAMPUS GIG — NAVBAR
+   Dark navy · Purple · Blue · White
+======================================== */
+
+.campus-navbar-wrapper {
+  position: sticky;
+  top: 12px;
+  z-index: 1000;
+  width: min(1360px, calc(100% - 32px));
+  margin: 12px auto 30px;
+}
+
+/* Main pill-shaped navigation */
+
+.campus-navbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 76px;
+  padding: 11px 15px 11px 18px;
+  border: 1px solid rgba(167, 157, 255, 0.2);
+  border-radius: 999px;
+  background: linear-gradient(110deg, #111525 0%, #171a32 58%, #1d1a39 100%);
+  box-shadow:
+    0 12px 32px rgba(25, 30, 70, 0.15),
+    0 3px 10px rgba(88, 75, 190, 0.07);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+/* ========================================
+   BRAND / LOGO
+======================================== */
+
+.campus-brand,
+.campus-brand:hover,
+.campus-brand:focus,
+.campus-brand:active {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 11px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  text-decoration: none !important;
+}
+
+.campus-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #e9e7ff);
+  color: #6152d9;
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: -1.4px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.13);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.campus-brand:hover .campus-brand-mark {
+  transform: scale(1.01);
+  box-shadow: 0 0 0 4px rgba(139, 126, 255, 0.12);
+}
+
+.campus-brand-name {
+  color: #f7f7ff;
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   NAVIGATION LINKS
+======================================== */
+
+.campus-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  gap: 7px;
+}
+
+/* Every link state: no underline */
+
+.campus-nav-link,
+.campus-nav-link:hover,
+.campus-nav-link:focus,
+.campus-nav-link:focus-visible,
+.campus-nav-link:active,
+.campus-nav-link.active {
+  text-decoration: none !important;
+}
+
+.campus-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  flex-shrink: 0;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: #c0c3d4;
+  font-size: 12.5px;
+  font-weight: 550;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: scale(1);
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.campus-nav-link:hover {
+  transform: scale(1.01);
+  background: rgba(137, 126, 255, 0.12);
+  color: #ffffff;
+}
+
+.campus-nav-link.active {
+  background: rgba(132, 121, 255, 0.17);
+  border-color: rgba(157, 146, 255, 0.13);
+  color: #ffffff;
+}
+
+/* Explicitly remove the old active-link dot */
+
+.campus-nav-link::after,
+.campus-nav-link.active::after,
+.campus-nav-link:hover::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* ========================================
+   RIGHT-SIDE ACTIONS
+======================================== */
+
+.campus-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.campus-nav-user {
+  display: block;
+  max-width: 135px;
+  overflow: hidden;
+  padding-left: 3px;
+  color: #d5d6e5;
+  font-size: 12px;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Primary action: Get started */
+
+.campus-nav-cta,
+.campus-nav-cta:hover,
+.campus-nav-cta:focus,
+.campus-nav-cta:active {
+  text-decoration: none !important;
+}
+
+.campus-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 45px;
+  padding: 0 21px;
+  border: 1px solid #d6d1ff;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #e8e5ff, #d3d4ff);
+  color: #29234f;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: scale(1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.campus-nav-cta:hover {
+  transform: scale(1.01);
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #493bb1;
+  box-shadow: 0 5px 16px rgba(130, 119, 255, 0.15);
+}
+
+/* Secondary action: Switch user */
+
+.campus-nav-cta--secondary {
+  border-color: rgba(180, 174, 255, 0.3);
+  background: rgba(255, 255, 255, 0.045);
+  color: #efeeff;
+  box-shadow: none;
+}
+
+.campus-nav-cta--secondary:hover {
+  border-color: rgba(186, 177, 255, 0.6);
+  background: rgba(133, 121, 255, 0.15);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   KEYBOARD ACCESSIBILITY
+======================================== */
+
+.campus-brand:focus-visible,
+.campus-nav-link:focus-visible,
+.campus-nav-cta:focus-visible {
+  outline: 2px solid #a99eff;
+  outline-offset: 4px;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1050px) {
+  .campus-navbar-wrapper {
+    width: calc(100% - 28px);
+  }
+
+  .campus-navbar {
+    gap: 15px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .campus-brand {
+    gap: 8px;
+  }
+
+  .campus-brand-name {
+    font-size: 13px;
+  }
+
+  .campus-nav-links {
+    gap: 3px;
+  }
+
+  .campus-nav-link {
+    min-height: 41px;
+    padding-right: 11px;
+    padding-left: 11px;
+    font-size: 11.5px;
+  }
+
+  .campus-nav-actions {
+    gap: 8px;
+  }
+
+  .campus-nav-user {
+    max-width: 95px;
+  }
+
+  .campus-nav-cta {
+    min-height: 42px;
+    padding-right: 15px;
+    padding-left: 15px;
+    font-size: 11px;
+  }
+}
+
+/* ========================================
+   SMALL TABLET
+======================================== */
+
+@media (max-width: 780px) {
+  .campus-navbar-wrapper {
+    position: sticky;
+    top: 8px;
+    width: calc(100% - 24px);
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+
+  .campus-navbar {
+    min-height: 65px;
+    gap: 10px;
+    padding: 9px 11px;
+  }
+
+  .campus-brand-name {
+    display: none;
+  }
+
+  .campus-brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .campus-nav-links {
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .campus-nav-link {
+    min-height: 39px;
+    padding-right: 9px;
+    padding-left: 9px;
+    font-size: 11px;
+  }
+
+  .campus-nav-user {
+    display: none;
+  }
+
+  .campus-nav-actions {
+    gap: 6px;
+  }
+
+  .campus-nav-cta {
+    min-height: 40px;
+    padding-right: 12px;
+    padding-left: 12px;
+    font-size: 10.5px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 560px) {
+  .campus-navbar-wrapper {
+    width: calc(100% - 20px);
+    margin: 7px auto 20px;
+  }
+
+  .campus-navbar {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 23px;
+  }
+
+  .campus-brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .campus-brand-mark {
+    width: 39px;
+    height: 39px;
+    font-size: 15px;
+  }
+
+  .campus-nav-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .campus-nav-cta {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 10.5px;
+  }
+
+  .campus-nav-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    min-width: 0;
+    margin-top: 3px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .campus-nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .campus-nav-link {
+    min-height: 36px;
+    flex-shrink: 0;
+    padding: 0 12px;
+    font-size: 11px;
+  }
+}
+
+/* Extra-small mobile screens */
+
+@media (max-width: 360px) {
+  .campus-navbar {
+    gap: 7px;
+    padding: 8px;
+  }
+
+  .campus-nav-actions {
+    gap: 5px;
+  }
+
+  .campus-nav-cta {
+    min-height: 36px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+
+  .campus-nav-link {
+    padding: 0 10px;
+    font-size: 10.5px;
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-brand-mark,
+  .campus-nav-link,
+  .campus-nav-cta {
+    transition: none;
+  }
+
+  .campus-brand:hover .campus-brand-mark,
+  .campus-nav-link:hover,
+  .campus-nav-cta:hover {
+    transform: none;
+  }
+}

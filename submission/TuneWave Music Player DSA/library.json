@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "next_id": 5,
+  "songs": [
+    {
+      "id": 1,
+      "title": "Blank Space",
+      "artist": "Taylor Swift",
+      "audio_path": "C:/Users/Ammar/Downloads/Blank Space.mp3"
+    },
+    {
+      "id": 2,
+      "title": "About You",
+      "artist": "The 1975",
+      "audio_path": "C:/Users/Ammar/Downloads/About You.mp3"
+    },
+    {
+      "id": 3,
+      "title": "Clarity",
+      "artist": "Zedd",
+      "audio_path": "C:/Users/Ammar/Downloads/Clarity.mp3"
+    },
+    {
+      "id": 4,
+      "title": "Bad Habits",
+      "artist": "Ed sheeran",
+      "audio_path": "C:/Users/Ammar/Downloads/Bad Habits.mp3"
+    }
+  ],
+  "relations": [],
+  "playlist": [
+    1,
+    2,
+    3,
+    4
+  ]
+}
