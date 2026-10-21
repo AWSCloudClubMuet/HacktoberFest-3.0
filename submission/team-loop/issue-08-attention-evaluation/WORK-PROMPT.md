@@ -6,7 +6,7 @@ Paste the following into the coding assistant opened on your local clone. TASK.m
 
 I am Moksh, lead of team loop, working on issue #8: https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/8.
 
-Repository: https://github.com/mokashkumar1/HacktoberFest-3.0. Shared branch: team-loop. Read the repository instructions, submission/team-loop/COORDINATION.md, and this folder's TASK.md before editing. We have roughly two hours total and need a reproducible, defensible solution.
+Repository: https://github.com/mokashkumar1/HacktoberFest-3.0. Shared branch: team-loop. Read the repository instructions, submission/team-loop/COORDINATION.md, and this folder's TASK.md before editing. The user-stated deadline is 3:00 PM Pakistan time on 21 October 2026. Complete all mandatory deliverables and leave time for verification and demonstration.
 
 My exclusive implementation folder is submission/team-loop/issue-08-attention-evaluation/. Kartik owns issue-13-tunewave/; Laksh owns issue-09-noisy-labels/. Do not modify their folders. As lead I own the top-level team README and coordination, but coordinate any shared dependency changes first.
 

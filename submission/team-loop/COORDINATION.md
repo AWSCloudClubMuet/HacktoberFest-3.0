@@ -1,10 +1,12 @@
-# Team loop two hour execution plan
+# Team loop execution plan
+
+Deadline: **21 October 2026 at 3:00 PM, Asia/Karachi (Pakistan time)**, as clarified by Moksh. Earlier two-hour wording in task prompts is superseded by this deadline. Complete all mandatory requirements; use the remaining time for verification and demo preparation.
 
 ## Recommendation
 
-Select issue 8 (Debugging, Attention Gradients & Evaluation), issue 9 (Noisy Labels: HelpDeskNet-50K), and issue 13 (TuneWave Music Player). This is a recommendation based on the user's instruction to choose three eligible issues, not an assignment or approval from the organizers. The tasks are independent and avoid cloud setup, deployment, large training runs, mobile builds, and mandatory mock HTTP APIs.
+Select issue 8 (Debugging, Attention Gradients & Evaluation), issue 9 (Noisy Labels: HelpDeskNet-50K), and issue 13 (TuneWave Music Player). The team has chosen this division of work; it is not an assignment or approval from the organizers. The tasks are independent and avoid cloud setup, deployment, large training runs, mobile builds, and mandatory mock HTTP APIs.
 
-Exclude issues 14, 15, and 16, labeled C++ and 26 Batch Only. The three Web/App options require substantial working interfaces and mock API state workflows; they are less predictable within two hours starting from this documentation-only repository. No ranking or acceptance is guaranteed.
+Exclude issues 14, 15, and 16, labeled C++ and 26 Batch Only. The three Web/App options require substantial working interfaces and mock API state workflows; the selected independent tasks reduce integration dependencies. No ranking or acceptance is guaranteed.
 
 ## Verified repository state
 
@@ -65,18 +67,18 @@ python -m venv .venv
 
 Invoke `.venv\Scripts\python.exe` directly; activating PowerShell scripts is unnecessary. Keep the environment out of Git.
 
-## Relative two hour schedule
+## Schedule before the deadline
 
-| Minutes | Work |
+| Target | Work |
 | --- | --- |
-| 0-10 | Pull the shared plan, read the assigned issue, confirm ownership and ask organizers about the submission target |
-| 10-65 | Independently implement all mandatory deliverables in the assigned folder |
-| 65-85 | Run numerical checks/tests and finish analysis, assumptions, complexity and run instructions |
-| 85-100 | Cross-review: Kartik checks Moksh, Moksh checks Laksh, Laksh checks Kartik; each owner makes their fixes |
-| 100-110 | All commits pushed; Moksh pulls, checks the combined repository and final README |
-| 110-120 | Submit the verified work using the confirmed target branch; retain buffer for final errors |
+| Now | Pull the shared plan, work in your assigned folder and clarify the official submission target |
+| By 2:00 PM | Complete all mandatory deliverables and run the owner checks |
+| 2:00-2:30 PM | Cross-review: Kartik checks Moksh, Moksh checks Laksh, Laksh checks Kartik; each owner makes fixes and rehearses the demo |
+| 2:30-2:45 PM | Push accepted work; Moksh verifies the combined repository, README and submission diff |
+| By 2:45 PM | Aim to submit using the organizer-confirmed target, leaving a buffer |
+| 3:00 PM | User-stated deadline; all final changes and required submission must be in place |
 
-This is a planning budget, not evidence that any task can be guaranteed complete in that time. If behind, remove presentation extras first; do not silently omit mandatory requirements or claim incomplete work is complete.
+These are internal milestones, not alternative organizer deadlines. Do not silently omit mandatory requirements or claim incomplete work is complete.
 
 ## Shared branch commit protocol
 
@@ -110,4 +112,4 @@ git log -1 --oneline
 
 ## Submission readiness
 
-The root team README must link all three solutions and list authors, setup, run/test commands, results and limitations. No implementation has been completed by creating this plan. No official issue has been claimed or commented on, and no final PR has been created. Final submission is Moksh's responsibility after work is verified and the official target is clarified.
+The root team README must link all three solutions and list authors, setup, run/test commands, results and limitations. Moksh's issue 8 implementation and analysis have passed local verification; see its README and recorded results. Issues 9 and 13 remain pending teammate handoffs and verification. No official issue has been claimed or commented on, and no final PR has been created. Final submission is Moksh's responsibility after work is verified and the official target is clarified.
