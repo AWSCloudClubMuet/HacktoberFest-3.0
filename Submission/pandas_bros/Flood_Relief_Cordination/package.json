@@ -1,0 +1,38 @@
+{
+  "name": "reliefhub-flood-relief",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "api": "json-server --watch public/db/db.json --port 3001",
+    "dev:all": "concurrently \"npm run api\" \"npm run dev\"",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "seed": "node scripts/seed.cjs",
+    "reset-db": "cp public/db/db.json.backup public/db/db.json 2>/dev/null || echo 'No backup found'"
+  },
+  "dependencies": {
+    "axios": "^1.20.0",
+    "concurrently": "^10.0.6",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "json-server": "^1.0.0-beta.15",
+    "lucide-react": "^1.60.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "oxlint": "^1.88.0",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.3.4"
+  }
+}
