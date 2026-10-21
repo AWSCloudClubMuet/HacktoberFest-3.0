@@ -1,0 +1,88 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: 'class',
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#143825',
+          50: '#F0F9F3',
+          100: '#D9F2E2',
+          200: '#B5E4C7',
+          300: '#8CD2A7',
+          400: '#5FBB84',
+          500: '#3D9E64',
+          600: '#2C814F',
+          700: '#20653D',
+          800: '#174D2E',
+          900: '#103721',
+          950: '#092113',
+        },
+        forest: {
+          DEFAULT: '#0E2A1B',
+          50: '#EAF5EE',
+          100: '#C8E6D3',
+          200: '#97D1AF',
+          300: '#64B988',
+          400: '#3D9E67',
+          500: '#257F4F',
+          600: '#1B643D',
+          700: '#144B2E',
+          800: '#0E331F',
+          900: '#0A2315',
+          950: '#05130B',
+        },
+        neon: {
+          DEFAULT: '#DFFF38',
+          hover: '#E8FF66',
+          active: '#C7ED22',
+          dark: '#0C2014',
+        },
+        mint: {
+          DEFAULT: '#C6F5D5',
+          light: '#EBFBF1',
+          soft: '#D5F7E1',
+          dark: '#1E6B3E',
+        },
+        accent: {
+          DEFAULT: '#DFFF38',
+          50: '#FDFEE7',
+          100: '#FBFCBD',
+          200: '#F7F98B',
+          300: '#F2F654',
+          400: '#EBF128',
+          500: '#DFFF38',
+          600: '#C2E51A',
+          700: '#9BB811',
+          800: '#758C11',
+          900: '#5F7212',
+        },
+        background: {
+          DEFAULT: '#F5F8F6',
+          dark: '#0A1810',
+        },
+        surface: {
+          light: '#FFFFFF',
+          dark: '#11251A',
+          cardDark: '#163123',
+        },
+        // Cultural Accent Tokens
+        'ajrak-crimson': 'var(--ajrak-crimson)',
+        'ajrak-indigo': 'var(--ajrak-indigo)',
+        'ajrak-ivory': 'var(--ajrak-ivory)',
+        'ajrak-black': 'var(--ajrak-black)',
+        'ajrak-turquoise': 'var(--ajrak-turquoise)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        urdu: ['"Noto Sans Arabic"', '"Noto Nastaliq Urdu"', 'system-ui', 'sans-serif'],
+        nastaliq: ['"Noto Nastaliq Urdu"', '"Noto Sans Arabic"', 'serif'],
+      },
+    },
+  },
+  plugins: [],
+}
