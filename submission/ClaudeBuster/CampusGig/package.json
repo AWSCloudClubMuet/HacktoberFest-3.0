@@ -1,0 +1,17 @@
+{
+  "name": "campusgig",
+  "version": "1.0.0",
+  "description": "Campus Gig & SkillSwap Portal - student peer marketplace (ClaudeBuster)",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test-api.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
