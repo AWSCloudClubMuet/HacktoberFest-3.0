@@ -10,18 +10,18 @@ const day = (offset) => {
 }
 
 export const USERS = [
-  [1, 'Emma Rodriguez', 'Computer Science', 6, 'Third-year CS student who loves building small, useful web apps and helping first-years get started.', ['React', 'TypeScript', 'Git', 'Peer Tutoring']],
-  [2, 'Maya Chen', 'Computer Science', 6, 'CS junior into data and clean interfaces. Happy to trade Python help for design feedback.', ['Python', 'Data Analysis', 'HTML/CSS']],
-  [3, 'Jordan Lee', 'Design', 8, 'Final-year design student. Portfolio in branding and product illustration.', ['Figma', 'Branding', 'Illustration']],
-  [4, 'Sam Rivera', 'Sociology', 4, 'Sophomore who writes for the campus paper and proofreads everything in sight.', ['Academic Writing', 'Research', 'Editing']],
-  [5, 'Noah Williams', 'Mathematics', 8, 'Senior maths student running informal study groups before every midterm.', ['Calculus', 'Statistics', 'LaTeX']],
-  [6, 'Aisha Patel', 'Media Studies', 6, 'Media studies junior shooting events for campus societies.', ['Photography', 'Social Media', 'Canva']],
-  [7, 'Leo Martin', 'Film', 8, 'Film senior editing shorts and society recap videos.', ['Video Editing', 'Premiere Pro', 'Motion Graphics']],
-  [8, 'Priya Nair', 'Biology', 6, 'Biology junior, lab demonstrator, and APA-formatting perfectionist.', ['Lab Reports', 'Research', 'APA Formatting']],
-  [9, 'Daniel Kim', 'Computer Science', 4, 'CS sophomore focused on Java and algorithms. Debugging is my love language.', ['Java', 'Algorithms', 'Git']],
-  [10, 'Sofia Garcia', 'English', 8, 'English senior offering essay feedback; also a fluent Spanish conversation partner.', ['Creative Writing', 'Proofreading', 'Spanish']],
-  [11, 'Omar Farouk', 'Electrical Engineering', 6, 'EE junior who actually enjoys signals and MATLAB.', ['Circuit Analysis', 'MATLAB', 'Soldering']],
-  [12, 'Lily Zhang', 'Psychology', 4, 'Psychology sophomore, stats-anxious but SPSS-confident.', ['Statistics', 'SPSS', 'Note-taking']],
+  [1, 'Emma Rodriguez', 'Computer Science', 6, 'Third-year CS student who loves building small, useful web apps and helping first-years get started.', ['React', 'TypeScript', 'Git', 'Peer Tutoring'], 'emma@campusloop.edu'],
+  [2, 'Maya Chen', 'Computer Science', 6, 'CS junior into data and clean interfaces. Happy to trade Python help for design feedback.', ['Python', 'Data Analysis', 'HTML/CSS'], 'maya@campusloop.edu'],
+  [3, 'Jordan Lee', 'Design', 8, 'Final-year design student. Portfolio in branding and product illustration.', ['Figma', 'Branding', 'Illustration'], 'jordan@campusloop.edu'],
+  [4, 'Sam Rivera', 'Sociology', 4, 'Sophomore who writes for the campus paper and proofreads everything in sight.', ['Academic Writing', 'Research', 'Editing'], 'sam@campusloop.edu'],
+  [5, 'Noah Williams', 'Mathematics', 8, 'Senior maths student running informal study groups before every midterm.', ['Calculus', 'Statistics', 'LaTeX'], 'noah@campusloop.edu'],
+  [6, 'Aisha Patel', 'Media Studies', 6, 'Media studies junior shooting events for campus societies.', ['Photography', 'Social Media', 'Canva'], 'aisha@campusloop.edu'],
+  [7, 'Leo Martin', 'Film', 8, 'Film senior editing shorts and society recap videos.', ['Video Editing', 'Premiere Pro', 'Motion Graphics'], 'leo@campusloop.edu'],
+  [8, 'Priya Nair', 'Biology', 6, 'Biology junior, lab demonstrator, and APA-formatting perfectionist.', ['Lab Reports', 'Research', 'APA Formatting'], 'priya@campusloop.edu'],
+  [9, 'Daniel Kim', 'Computer Science', 4, 'CS sophomore focused on Java and algorithms. Debugging is my love language.', ['Java', 'Algorithms', 'Git'], 'daniel@campusloop.edu'],
+  [10, 'Sofia Garcia', 'English', 8, 'English senior offering essay feedback; also a fluent Spanish conversation partner.', ['Creative Writing', 'Proofreading', 'Spanish'], 'sofia@campusloop.edu'],
+  [11, 'Omar Farouk', 'Electrical Engineering', 6, 'EE junior who actually enjoys signals and MATLAB.', ['Circuit Analysis', 'MATLAB', 'Soldering'], 'omar@campusloop.edu'],
+  [12, 'Lily Zhang', 'Psychology', 4, 'Psychology sophomore, stats-anxious but SPSS-confident.', ['Statistics', 'SPSS', 'Note-taking'], 'lily@campusloop.edu'],
 ]
 
 // id, user_id, title, description, type, category, payment_type, budget, deadlineOffset, status, accepted_applicant_id
@@ -94,7 +94,7 @@ export async function seedIfEmpty() {
   if (rows[0].count > 0) return false
 
   for (const u of USERS) {
-    await query('INSERT INTO users (id, name, major, semester, bio, skills) VALUES ($1,$2,$3,$4,$5,$6)', u)
+    await query('INSERT INTO users (id, name, major, semester, bio, skills, email) VALUES ($1,$2,$3,$4,$5,$6,$7)', u)
   }
   for (const g of GIGS) {
     const [id, userId, title, description, type, category, paymentType, budget, offset, status, accepted] = g

@@ -1,6 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -24,6 +26,7 @@ import {
   Filter,
   Heart,
   LayoutDashboard,
+  LogOut,
   MessageCircle,
   Plus,
   Search,
@@ -78,11 +81,12 @@ type View = 'Discover' | 'My activity' | 'Profile'
 export default function Page() {
   const [view, setView] = useState<View>('Discover')
   const [activityTab, setActivityTab] = useState('applications')
+  const router = useRouter()
+  const { data: session } = authClient.useSession()
+  const [authEmail, setAuthEmail] = useState<string | null>(null)
+  const [authChecked, setAuthChecked] = useState(false)
   const [users, setUsers] = useState<User[]>([])
-  const [currentUserId, setCurrentUserId] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1
-    return Number(window.localStorage.getItem('cg-user')) || 1
-  })
+  const [completeForm, setCompleteForm] = useState({ major: 'Computer Science', semester: '5', skills: '', bio: '' })
   const [stats, setStats] = useState<Stats | null>(null)
   const [allGigs, setAllGigs] = useState<Gig[]>([])
   const [discoverGigs, setDiscoverGigs] = useState<Gig[]>([])
@@ -115,7 +119,7 @@ export default function Page() {
   const [profile, setProfile] = useState<(User & { reviews_received: Review[] }) | null>(null)
   const [toast, setToast] = useState('')
 
-  const me = users.find((u) => u.id === currentUserId) || users[0]
+  const me = users.find((u) => u.email && (u.email === authEmail || u.email === session?.user?.email))
   const selectedGig = allGigs.find((g) => g.id === selectedGigId) || discoverGigs.find((g) => g.id === selectedGigId) || null
 
   function notify(message: string) {
@@ -158,10 +162,31 @@ export default function Page() {
 
   useEffect(() => { window.localStorage.setItem('cg-saved', JSON.stringify(savedIds)) }, [savedIds])
 
-  function switchUser(id: number) {
-    setCurrentUserId(id)
-    window.localStorage.setItem('cg-user', String(id))
-    notify(`Now acting as ${users.find((u) => u.id === id)?.name}`)
+  // One definitive session check on mount (avoids bouncing to /login on a
+  // stale empty session state right after signing in).
+  useEffect(() => {
+    authClient.getSession()
+      .then(({ data }) => {
+        setAuthEmail(data?.user?.email ?? null)
+        setAuthChecked(true)
+        if (!data) router.replace('/login')
+      })
+      .catch(() => { setAuthChecked(true); router.replace('/login') })
+  }, [router])
+
+  async function doSignOut() {
+    await authClient.signOut()
+    router.push('/login')
+  }
+
+  async function doCompleteProfile() {
+    try {
+      await api.createProfile({ major: completeForm.major, semester: Number(completeForm.semester), bio: completeForm.bio, skills: completeForm.skills })
+      notify('Profile saved — welcome to campusloop!')
+      await loadAll()
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Could not save profile')
+    }
   }
 
   function openProfile(id: number) {
@@ -255,7 +280,48 @@ export default function Page() {
     }
   }
 
-  const userSelectItems = users.map((u) => ({ label: u.name, value: String(u.id) }))
+  if (!authChecked || !authEmail) {
+    return (
+      <div className="auth-shell">
+        <div className="auth-loading"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+      </div>
+    )
+  }
+
+  if (authEmail && !loading && !loadError && !me) {
+    return (
+      <div className="auth-shell">
+        <Card className="auth-card">
+          <div className="auth-brand"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+          <h1 className="auth-title">Finish your profile</h1>
+          <p className="modal-description">Signed in as {authEmail} — add the details other students will see.</p>
+          <div className="dialog-form auth-form">
+            <div className="form-row">
+              <div>
+                <Label>Major</Label>
+                <Input value={completeForm.major} onChange={(e) => setCompleteForm({ ...completeForm, major: e.target.value })} placeholder="Your major" />
+              </div>
+              <div>
+                <Label>Semester</Label>
+                <Input type="number" min="1" max="12" value={completeForm.semester} onChange={(e) => setCompleteForm({ ...completeForm, semester: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Skills (comma separated)</Label>
+              <Input value={completeForm.skills} onChange={(e) => setCompleteForm({ ...completeForm, skills: e.target.value })} placeholder="e.g. React, Figma, Proofreading" />
+            </div>
+            <div>
+              <Label>Short bio</Label>
+              <Textarea value={completeForm.bio} onChange={(e) => setCompleteForm({ ...completeForm, bio: e.target.value })} rows={3} placeholder="What do you study, what are you good at..." />
+            </div>
+            <Button className="auth-submit" onClick={doCompleteProfile}>Save profile <ArrowRight data-icon="inline-end" /></Button>
+            <Button variant="outline" onClick={doSignOut}>Sign out</Button>
+          </div>
+        </Card>
+        {toast && <div className="toast"><Check />{toast}</div>}
+      </div>
+    )
+  }
 
   return (
     <div className="app-shell">
@@ -286,13 +352,8 @@ export default function Page() {
         <header className="topbar">
           <div className="mobile-brand"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
           <div className="topbar-actions">
-            <div className="acting-as">
-              <span className="acting-as-label">Acting as</span>
-              <Select items={userSelectItems} value={me ? String(me.id) : undefined} onValueChange={(v) => v && switchUser(Number(v))}>
-                <SelectTrigger className="user-select" aria-label="Switch current user"><SelectValue>{me?.name ?? 'Select user'}</SelectValue></SelectTrigger>
-                <SelectContent>{users.map((u) => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
+            {me && <span className="acting-as-label signed-in-as">Signed in as {me.name}</span>}
+            <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={doSignOut}><LogOut /></button>
             <button className="icon-button notification-button" aria-label="Notifications"><Bell /><span /></button>
             {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /><ChevronDown /></button>}
           </div>

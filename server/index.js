@@ -15,12 +15,72 @@
 // sides of a gig can be demoed). All ownership rules are enforced here.
 import cors from 'cors'
 import express from 'express'
+import { fromNodeHeaders, toNodeHandler } from 'better-auth/node'
 import { SCHEMA, dbMode, exec, initDb, query, withTransaction } from './db.js'
 import { seedIfEmpty } from './seed.js'
+import { DEMO_PASSWORD, auth } from './auth.js'
 
 const app = express()
-app.use(cors())
+app.use(cors({ origin: ['http://localhost:3000'], credentials: true }))
+
+// Better Auth owns /api/auth/* (sign-up, sign-in, session, sign-out).
+// Mounted before express.json() because it reads the raw request body.
+if (auth) app.all('/api/auth/*', toNodeHandler(auth))
 app.use(express.json())
+
+// Resolves the signed-in session (if any) to a domain profile id.
+// Identity = Better Auth session -> users.email -> users.id.
+app.use('/api', async (req, _res, next) => {
+  req.domainUserId = null
+  req.sessionUser = null
+  if (auth) {
+    try {
+      const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) })
+      if (session?.user?.email) {
+        req.sessionUser = session.user
+        const { rows } = await query('SELECT id FROM users WHERE email = $1', [session.user.email])
+        req.domainUserId = rows[0]?.id ?? null
+      }
+    } catch { /* no session — public reads still work */ }
+  }
+  next()
+})
+
+// Who is acting? With auth on, only the session counts (401/403 otherwise).
+// With auth off (no DATABASE_URL), fall back to the body user_id for local dev.
+function actorId(req, res, bodyUserId) {
+  if (!auth) return bodyUserId ? Number(bodyUserId) : null
+  if (!req.sessionUser) { fail(res, 401, 'Sign in required'); return null }
+  if (!req.domainUserId) { fail(res, 403, 'No profile for this account yet — finish signing up'); return null }
+  return req.domainUserId
+}
+
+app.get('/api/me', async (req, res) => {
+  if (!auth) return res.json({ auth: false })
+  if (!req.sessionUser) return fail(res, 401, 'Not signed in')
+  if (!req.domainUserId) return res.json({ user: req.sessionUser, profile: null })
+  const { rows } = await query('SELECT * FROM users WHERE id = $1', [req.domainUserId])
+  res.json({ user: req.sessionUser, profile: rows[0] })
+})
+
+// Creates the domain profile for a freshly signed-up account (session required).
+app.post('/api/profile', async (req, res) => {
+  if (!auth) return fail(res, 400, 'Auth is not enabled')
+  if (!req.sessionUser) return fail(res, 401, 'Sign in required')
+  if (req.domainUserId) {
+    const { rows } = await query('SELECT * FROM users WHERE id = $1', [req.domainUserId])
+    return res.json(rows[0])
+  }
+  const { major, semester, bio, skills } = req.body || {}
+  if (!major?.trim()) return fail(res, 400, 'Major is required')
+  if (!(Number(semester) >= 1 && Number(semester) <= 12)) return fail(res, 400, 'Semester must be between 1 and 12')
+  const skillList = Array.isArray(skills) ? skills : String(skills || '').split(',').map((s) => s.trim()).filter(Boolean)
+  const { rows } = await query(
+    'INSERT INTO users (name, major, semester, bio, skills, email) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+    [req.sessionUser.name, major.trim(), Number(semester), (bio || '').trim(), skillList, req.sessionUser.email],
+  )
+  res.status(201).json(rows[0])
+})
 
 const CATEGORIES = ['Programming', 'Design', 'Writing', 'Tutoring']
 const TYPES = ['Offering', 'Requesting']
@@ -124,8 +184,9 @@ app.get('/api/gigs/:id', async (req, res) => {
 })
 
 app.post('/api/gigs', async (req, res) => {
-  const { user_id, title, description, type, category, payment_type, budget, deadline } = req.body || {}
-  if (!user_id) return fail(res, 400, 'user_id is required')
+  const { title, description, type, category, payment_type, budget, deadline } = req.body || {}
+  const user_id = actorId(req, res, req.body?.user_id)
+  if (user_id === null) { if (!auth) return fail(res, 400, 'user_id is required'); return }
   if (!title?.trim()) return fail(res, 400, 'Title is required')
   if (!description?.trim()) return fail(res, 400, 'Description is required')
   if (!TYPES.includes(type)) return fail(res, 400, `Type must be one of: ${TYPES.join(', ')}`)
@@ -148,10 +209,11 @@ app.post('/api/gigs', async (req, res) => {
 })
 
 app.patch('/api/gigs/:id', async (req, res) => {
-  const { user_id, status } = req.body || {}
+  const { status } = req.body || {}
+  const user_id = actorId(req, res, req.body?.user_id)
+  if (user_id === null) { if (!auth) return fail(res, 400, 'user_id is required'); return }
   const gig = await getGig(req.params.id)
   if (!gig) return fail(res, 404, 'Gig not found')
-  if (!user_id) return fail(res, 400, 'user_id is required')
   if (Number(user_id) !== gig.user_id) return fail(res, 403, 'Only the gig owner may change gig status')
   if (!status) return fail(res, 400, 'status is required')
 
@@ -185,8 +247,10 @@ app.get('/api/applications', async (req, res) => {
 })
 
 app.post('/api/applications', async (req, res) => {
-  const { gig_id, applicant_id, message } = req.body || {}
-  if (!gig_id || !applicant_id) return fail(res, 400, 'gig_id and applicant_id are required')
+  const { gig_id, message } = req.body || {}
+  const applicant_id = actorId(req, res, req.body?.applicant_id)
+  if (applicant_id === null) { if (!auth) return fail(res, 400, 'applicant_id is required'); return }
+  if (!gig_id) return fail(res, 400, 'gig_id is required')
   if (!message?.trim()) return fail(res, 400, 'A short application message is required')
 
   const gig = await getGig(gig_id)
@@ -210,8 +274,9 @@ app.post('/api/applications', async (req, res) => {
 })
 
 app.patch('/api/applications/:id', async (req, res) => {
-  const { user_id, status } = req.body || {}
-  if (!user_id) return fail(res, 400, 'user_id is required')
+  const { status } = req.body || {}
+  const user_id = actorId(req, res, req.body?.user_id)
+  if (user_id === null) { if (!auth) return fail(res, 400, 'user_id is required'); return }
   if (!['Accepted', 'Rejected'].includes(status)) return fail(res, 400, 'status must be Accepted or Rejected')
 
   const { rows } = await query('SELECT * FROM applications WHERE id = $1', [req.params.id])
@@ -254,8 +319,10 @@ app.get('/api/reviews', async (req, res) => {
 })
 
 app.post('/api/reviews', async (req, res) => {
-  const { gig_id, reviewer_id, rating, comment } = req.body || {}
-  if (!gig_id || !reviewer_id) return fail(res, 400, 'gig_id and reviewer_id are required')
+  const { gig_id, rating, comment } = req.body || {}
+  const reviewer_id = actorId(req, res, req.body?.reviewer_id)
+  if (reviewer_id === null) { if (!auth) return fail(res, 400, 'reviewer_id is required'); return }
+  if (!gig_id) return fail(res, 400, 'gig_id is required')
   if (!(Number(rating) >= 1 && Number(rating) <= 5)) return fail(res, 400, 'Rating must be between 1 and 5')
 
   const gig = await getGig(gig_id)
@@ -284,9 +351,30 @@ app.post('/api/reviews', async (req, res) => {
   }
 })
 
+async function seedAuthAccounts() {
+  if (!auth) return
+  try {
+    const { rows: tables } = await query(`SELECT to_regclass('public."user"') AS t`)
+    if (!tables[0].t) { console.log('Better Auth tables not found — run: node migrate-auth.mjs'); return }
+    const { rows: us } = await query('SELECT name, email FROM users WHERE email IS NOT NULL ORDER BY id')
+    let created = 0
+    for (const u of us) {
+      const { rows: existing } = await query('SELECT id FROM "user" WHERE email = $1', [u.email])
+      if (!existing[0]) {
+        await auth.api.signUpEmail({ body: { name: u.name, email: u.email, password: DEMO_PASSWORD } })
+        created++
+      }
+    }
+    if (created) console.log(`Better Auth: created ${created} demo accounts (password: ${DEMO_PASSWORD})`)
+  } catch (err) {
+    console.log('Better Auth account seeding skipped:', err.message)
+  }
+}
+
 const PORT = process.env.API_PORT || 4000
 await initDb()
 await exec(SCHEMA)
 const seeded = await seedIfEmpty()
+await seedAuthAccounts()
 console.log(`Campus Gig API on http://localhost:${PORT} — db: ${dbMode}${seeded ? ' (seeded: 12 users, 25 gigs, 20 applications, 8 reviews)' : ''}`)
 app.listen(PORT)

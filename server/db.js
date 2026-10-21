@@ -1,13 +1,17 @@
 // Database layer for the PERN backend.
 //
+// Loads server/.env (DATABASE_URL, BETTER_AUTH_SECRET, ...) when present.
+//
 // Two modes, same SQL everywhere:
 //  - DATABASE_URL set  -> real PostgreSQL via `pg` Pool
 //  - DATABASE_URL unset -> embedded PostgreSQL (PGlite) persisted to server/.data/
 //    so the stack runs locally with zero setup, still on genuine Postgres SQL.
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import dotenv from 'dotenv'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: path.join(__dirname, '.env') })
 
 let pool = null
 let pglite = null
@@ -71,8 +75,11 @@ CREATE TABLE IF NOT EXISTS users (
   major TEXT NOT NULL,
   semester INTEGER NOT NULL,
   bio TEXT NOT NULL DEFAULT '',
-  skills TEXT[] NOT NULL DEFAULT '{}'
+  skills TEXT[] NOT NULL DEFAULT '{}',
+  email TEXT UNIQUE
 );
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique ON users (email);
 
 CREATE TABLE IF NOT EXISTS gigs (
   id SERIAL PRIMARY KEY,

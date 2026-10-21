@@ -15,10 +15,21 @@ The frontend calls `/api/*`, which Next rewrites to the Express server (`API_URL
 
 ### Database modes
 
-- `DATABASE_URL` set → uses that PostgreSQL database (e.g. Neon/Supabase/local Postgres).
-- `DATABASE_URL` unset → uses an embedded PostgreSQL (PGlite) persisted under `server/.data/`, so the full stack runs with zero setup. Same SQL either way.
+- `DATABASE_URL` set in `server/.env` → uses that PostgreSQL database (this project runs on a Neon database named `campus_gig`).
+- `DATABASE_URL` unset → uses an embedded PostgreSQL (PGlite) persisted under `server/.data/`, so the full stack runs with zero setup. Same SQL either way. (Better Auth requires the real `DATABASE_URL` mode.)
 
 Tables are created automatically and seeded on first boot with **12 users, 25 gigs, 20 applications, 8 reviews** (deadlines are relative to the seed date, so Open/Expired states are always realistic).
+
+### Auth (Better Auth)
+
+Authentication is handled by **Better Auth**, hosted by the Express API at `/api/auth/*` with its own tables (`user`, `session`, `account`, `verification`) in the same database. The domain profile lives in `users` and is linked to the auth account by email.
+
+- **Roles are contextual, not account types:** a signed-in user is the *Poster* on gigs they own and the *Applicant* on gigs they applied to. The API derives the acting user from the session for every mutation — unauthenticated writes return `401`.
+- **Demo accounts:** all 12 seeded users can sign in with the password `campus1234` (e.g. `emma@campusloop.edu`). The login page has one-tap demo sign-in.
+- **New accounts:** sign up at `/signup` (name, email, password), then the profile step creates the domain profile (`POST /api/profile`, session required).
+- First-time setup against a fresh database: `npm --prefix server run migrate:auth` once to create Better Auth's tables, then start the API (it seeds demo accounts automatically).
+
+`server/.env` (gitignored) holds `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
 
 ## Run it
 
@@ -28,7 +39,7 @@ npm --prefix server install
 pnpm dev        # starts API (:4000) and web (:3000) together
 ```
 
-Open http://localhost:3000. Use the **"Acting as"** switcher in the top bar to demo both sides of a gig (poster and applicant) — there is no auth in this hackathon build; the acting user's id is sent with each request and all ownership rules are enforced by the API.
+Open http://localhost:3000 — you'll be redirected to `/login`; use a demo account or create your own.
 
 ## Features (by milestone)
 

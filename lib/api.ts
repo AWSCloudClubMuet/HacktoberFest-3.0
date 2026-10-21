@@ -4,6 +4,7 @@
 export type User = {
   id: number
   name: string
+  email: string | null
   major: string
   semester: number
   bio: string
@@ -69,6 +70,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  me: () => request<{ user: { name: string; email: string }; profile: User | null }>('/api/me'),
+  createProfile: (body: Record<string, unknown>) => request<User>('/api/profile', { method: 'POST', body: JSON.stringify(body) }),
   users: () => request<User[]>('/api/users'),
   user: (id: number) => request<User & { reviews_received: Review[] }>(`/api/users/${id}`),
   stats: () => request<Stats>('/api/stats'),
