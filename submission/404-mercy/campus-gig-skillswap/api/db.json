@@ -1,0 +1,819 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alex Chen",
+      "email": "alex.chen@university.edu",
+      "major": "Computer Science",
+      "year": 3,
+      "bio": "Full-stack dev who loves React and building cool things. Always up for a challenge.",
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "Python",
+        "PostgreSQL"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=alex",
+      "rating": 4.8,
+      "reviewCount": 5,
+      "createdAt": "2026-08-15T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Maya Patel",
+      "email": "maya.patel@university.edu",
+      "major": "Design",
+      "year": 2,
+      "bio": "UX/UI designer passionate about creating intuitive and beautiful interfaces.",
+      "skills": [
+        "Figma",
+        "Adobe XD",
+        "Illustrator",
+        "Photoshop",
+        "Prototyping"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=maya",
+      "rating": 4.9,
+      "reviewCount": 7,
+      "createdAt": "2026-08-20T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Jordan Williams",
+      "email": "jordan.williams@university.edu",
+      "major": "English/Writing",
+      "year": 4,
+      "bio": "Creative writer and editor with a passion for storytelling and content creation.",
+      "skills": [
+        "Copywriting",
+        "Editing",
+        "Content Strategy",
+        "SEO Writing",
+        "Blogging"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=jordan",
+      "rating": 4.7,
+      "reviewCount": 4,
+      "createdAt": "2026-08-18T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "name": "Sam Rodriguez",
+      "email": "sam.rodriguez@university.edu",
+      "major": "Mathematics",
+      "year": 3,
+      "bio": "Math tutor and data enthusiast. I love breaking down complex concepts into simple ideas.",
+      "skills": [
+        "Calculus",
+        "Linear Algebra",
+        "Statistics",
+        "MATLAB",
+        "Python"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=sam",
+      "rating": 4.9,
+      "reviewCount": 9,
+      "createdAt": "2026-08-22T08:00:00Z"
+    },
+    {
+      "id": 5,
+      "name": "Riley Thompson",
+      "email": "riley.thompson@university.edu",
+      "major": "Business",
+      "year": 2,
+      "bio": "Aspiring entrepreneur with experience in marketing, finance, and project management.",
+      "skills": [
+        "Marketing",
+        "Business Plan Writing",
+        "Excel",
+        "Project Management",
+        "Social Media"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=riley",
+      "rating": 4.6,
+      "reviewCount": 3,
+      "createdAt": "2026-09-01T09:30:00Z"
+    },
+    {
+      "id": 6,
+      "name": "Casey Kim",
+      "email": "casey.kim@university.edu",
+      "major": "Computer Science",
+      "year": 4,
+      "bio": "Backend engineer and open-source contributor. Loves APIs, databases, and clean code.",
+      "skills": [
+        "Java",
+        "Spring Boot",
+        "Docker",
+        "AWS",
+        "REST APIs",
+        "MySQL"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=casey",
+      "rating": 4.7,
+      "reviewCount": 6,
+      "createdAt": "2026-08-10T14:00:00Z"
+    },
+    {
+      "id": 7,
+      "name": "Morgan Davis",
+      "email": "morgan.davis@university.edu",
+      "major": "Graphic Design",
+      "year": 3,
+      "bio": "Visual storyteller specializing in branding, illustration, and motion graphics.",
+      "skills": [
+        "Illustrator",
+        "After Effects",
+        "Branding",
+        "Typography",
+        "Logo Design"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=morgan",
+      "rating": 4.8,
+      "reviewCount": 5,
+      "createdAt": "2026-08-25T12:00:00Z"
+    },
+    {
+      "id": 8,
+      "name": "Taylor Johnson",
+      "email": "taylor.johnson@university.edu",
+      "major": "Biology",
+      "year": 2,
+      "bio": "Pre-med student with a passion for science communication and research assistance.",
+      "skills": [
+        "Biology Tutoring",
+        "Lab Research",
+        "Scientific Writing",
+        "Data Collection",
+        "Chemistry"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=taylor",
+      "rating": 4.5,
+      "reviewCount": 2,
+      "createdAt": "2026-09-05T10:00:00Z"
+    },
+    {
+      "id": 9,
+      "name": "Drew Martinez",
+      "email": "drew.martinez@university.edu",
+      "major": "Economics",
+      "year": 3,
+      "bio": "Economics student interested in financial modeling, data analysis, and policy research.",
+      "skills": [
+        "Economics Tutoring",
+        "Financial Modeling",
+        "Excel",
+        "R",
+        "Data Analysis"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=drew",
+      "rating": 4.6,
+      "reviewCount": 4,
+      "createdAt": "2026-08-28T09:00:00Z"
+    },
+    {
+      "id": 10,
+      "name": "Avery Wilson",
+      "email": "avery.wilson@university.edu",
+      "major": "Software Engineering",
+      "year": 4,
+      "bio": "Mobile app developer with published apps on iOS and Android. React Native enthusiast.",
+      "skills": [
+        "React Native",
+        "Swift",
+        "Kotlin",
+        "Firebase",
+        "UI/UX",
+        "JavaScript"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=avery",
+      "rating": 4.9,
+      "reviewCount": 8,
+      "createdAt": "2026-08-12T11:00:00Z"
+    },
+    {
+      "id": 11,
+      "name": "Quinn Brown",
+      "email": "quinn.brown@university.edu",
+      "major": "Communication",
+      "year": 2,
+      "bio": "Podcast host and video content creator. Experienced in scriptwriting and video editing.",
+      "skills": [
+        "Video Editing",
+        "Scriptwriting",
+        "Podcasting",
+        "Adobe Premiere",
+        "Public Speaking"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quinn",
+      "rating": 4.7,
+      "reviewCount": 3,
+      "createdAt": "2026-09-10T13:00:00Z"
+    },
+    {
+      "id": 12,
+      "name": "Blake Anderson",
+      "email": "blake.anderson@university.edu",
+      "major": "Data Science",
+      "year": 3,
+      "bio": "Machine learning enthusiast building models that solve real campus problems.",
+      "skills": [
+        "Python",
+        "Machine Learning",
+        "TensorFlow",
+        "Data Visualization",
+        "SQL",
+        "Pandas"
+      ],
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=blake",
+      "rating": 4.8,
+      "reviewCount": 5,
+      "createdAt": "2026-08-30T10:00:00Z"
+    }
+  ],
+  "gigs": [
+    {
+      "id": 1,
+      "ownerId": 2,
+      "title": "Design a Logo for CS Club",
+      "description": "Looking for a talented designer to create a modern logo for our university CS club. Should be professional and convey innovation. Deliverables include SVG and PNG formats.",
+      "category": "Design",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 50,
+      "deadline": "2026-11-15T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "ownerId": 1,
+      "title": "React Developer for Student Dashboard",
+      "description": "Need help building a student productivity dashboard in React with hooks and context. Must include task management and calendar integration. 10-15 hours of work expected.",
+      "category": "Programming",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 120,
+      "deadline": "2026-11-20T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-10-03T09:00:00Z",
+      "acceptedApplicantId": 6
+    },
+    {
+      "id": 3,
+      "ownerId": 7,
+      "title": "Offering Logo & Brand Identity Design",
+      "description": "I will create a complete brand identity package including logo, color palette, and typography guide. Portfolio: behance.net/morgandavis. Turnaround: 5-7 days.",
+      "category": "Design",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 75,
+      "deadline": "2026-12-01T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-02T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "ownerId": 4,
+      "title": "Calculus & Linear Algebra Tutoring",
+      "description": "Experienced math tutor offering one-on-one sessions for Calc I, Calc II, and Linear Algebra. I have tutored 30+ students with an average grade improvement of one letter grade.",
+      "category": "Tutoring",
+      "type": "Offering",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-12-15T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-09-28T08:00:00Z"
+    },
+    {
+      "id": 5,
+      "ownerId": 3,
+      "title": "Essay Editing & Proofreading Service",
+      "description": "Offering professional editing for academic papers, personal statements, and creative writing. Fast turnaround (24-48 hours). English Literature senior with 4 years of writing experience.",
+      "category": "Writing",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 30,
+      "deadline": "2026-11-30T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-05T14:00:00Z"
+    },
+    {
+      "id": 6,
+      "ownerId": 5,
+      "title": "Need Business Plan Written for Startup Pitch",
+      "description": "Looking for someone to help write a comprehensive business plan for my food-tech startup idea. Should include market analysis, financial projections, and executive summary. 15-20 pages.",
+      "category": "Writing",
+      "type": "Requesting",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-11-10T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-06T10:30:00Z"
+    },
+    {
+      "id": 7,
+      "ownerId": 10,
+      "title": "Mobile App Development (React Native)",
+      "description": "Offering React Native development for simple to medium complexity mobile apps. Cross-platform iOS and Android. I have 3 published apps. DM for portfolio.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 200,
+      "deadline": "2026-12-10T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-04T13:00:00Z"
+    },
+    {
+      "id": 8,
+      "ownerId": 9,
+      "title": "Need Python Data Analysis Script",
+      "description": "Looking for someone to write a Python script that processes survey data from a CSV file, generates statistical summaries, and creates matplotlib visualizations. Dataset has ~2000 rows.",
+      "category": "Programming",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 60,
+      "deadline": "2026-11-05T23:59:59Z",
+      "status": "In Progress",
+      "createdAt": "2026-09-25T09:00:00Z",
+      "acceptedApplicantId": 12
+    },
+    {
+      "id": 9,
+      "ownerId": 11,
+      "title": "Video Editing for Campus Club Promo",
+      "description": "Offering professional video editing services for campus clubs and organizations. I use Adobe Premiere and After Effects. Deliverables include 60s social media cut and 3-min full version.",
+      "category": "Design",
+      "type": "Offering",
+      "paymentType": "Free",
+      "deadline": "2026-11-25T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-07T15:00:00Z"
+    },
+    {
+      "id": 10,
+      "ownerId": 6,
+      "title": "Backend API Development with Node.js",
+      "description": "Offering full backend API development including REST endpoints, database design, authentication, and deployment. Stack: Node.js, Express, PostgreSQL. Ideal for student project teams.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-12-05T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-08T10:00:00Z"
+    },
+    {
+      "id": 11,
+      "ownerId": 8,
+      "title": "Biology Lab Report Writing Help Needed",
+      "description": "Need assistance writing and formatting 3 biology lab reports (each 5-8 pages). Must follow APA format and include data interpretation. Due in 2 weeks.",
+      "category": "Writing",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 45,
+      "deadline": "2026-11-08T23:59:59Z",
+      "status": "In Progress",
+      "createdAt": "2026-10-01T11:00:00Z",
+      "acceptedApplicantId": 3
+    },
+    {
+      "id": 12,
+      "ownerId": 12,
+      "title": "Machine Learning Tutoring & Mentorship",
+      "description": "Offering tutoring in ML fundamentals: supervised learning, neural networks, scikit-learn, TensorFlow. Weekly 1-hour sessions. Ideal for CS students wanting to break into ML.",
+      "category": "Tutoring",
+      "type": "Offering",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-12-20T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-09T09:00:00Z"
+    },
+    {
+      "id": 13,
+      "ownerId": 5,
+      "title": "Social Media Content Calendar Creation",
+      "description": "I will create a 30-day social media content calendar for your student org or startup. Includes post ideas, captions, hashtag strategy, and scheduling recommendations.",
+      "category": "Writing",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 40,
+      "deadline": "2026-11-18T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-10T08:00:00Z"
+    },
+    {
+      "id": 14,
+      "ownerId": 1,
+      "title": "Offering Web Scraping & Automation Scripts",
+      "description": "I will build custom Python web scrapers or automation scripts for your research or personal projects. Experience with BeautifulSoup, Selenium, and Playwright.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 55,
+      "deadline": "2026-11-22T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-11T14:00:00Z"
+    },
+    {
+      "id": 15,
+      "ownerId": 9,
+      "title": "Economics Tutor for Micro/Macro",
+      "description": "Offering tutoring in Microeconomics and Macroeconomics. Exam prep, homework help, and concept clarification. 3rd year Econ student with A+ in all core econ courses.",
+      "category": "Tutoring",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 25,
+      "deadline": "2026-12-10T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-12T10:00:00Z"
+    },
+    {
+      "id": 16,
+      "ownerId": 4,
+      "title": "Need Statistics Help for Research Project",
+      "description": "Looking for someone proficient in R or SPSS to help analyze survey data for my psychology research project. Need regression analysis, ANOVA, and result interpretation. 5-6 hours work.",
+      "category": "Tutoring",
+      "type": "Requesting",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-11-12T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-13T11:00:00Z"
+    },
+    {
+      "id": 17,
+      "ownerId": 2,
+      "title": "UI/UX Design Review & Feedback",
+      "description": "Offering expert design critique and feedback on your app or website mockups. I will provide a written report with usability improvements, accessibility tips, and visual design suggestions.",
+      "category": "Design",
+      "type": "Offering",
+      "paymentType": "Free",
+      "deadline": "2026-11-28T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-14T09:00:00Z"
+    },
+    {
+      "id": 18,
+      "ownerId": 10,
+      "title": "Need Personal Statement Editing for Grad School",
+      "description": "Looking for an experienced writer to review and edit my personal statement for CS grad school applications. Need strong storytelling, concise writing, and grammar polish. 2-page document.",
+      "category": "Writing",
+      "type": "Requesting",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-11-01T23:59:59Z",
+      "status": "In Progress",
+      "createdAt": "2026-09-20T12:00:00Z",
+      "acceptedApplicantId": 3
+    },
+    {
+      "id": 19,
+      "ownerId": 6,
+      "title": "Docker & AWS Deployment Consulting",
+      "description": "Offering consulting on containerizing your app with Docker and deploying to AWS (EC2, ECS, or Lambda). I can help with CI/CD pipelines using GitHub Actions. 2-3 hours per session.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 80,
+      "deadline": "2026-12-15T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-15T13:00:00Z"
+    },
+    {
+      "id": 20,
+      "ownerId": 5,
+      "title": "Marketing Strategy for Student Club Event",
+      "description": "Needed a complete marketing strategy for our annual hackathon event including social media plan, poster design brief, and email campaign drafts. Event had 200+ attendees.",
+      "category": "Writing",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 35,
+      "deadline": "2026-09-10T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-08-20T10:00:00Z",
+      "acceptedApplicantId": 3
+    },
+    {
+      "id": 21,
+      "ownerId": 8,
+      "title": "Illustration for Student Magazine Cover",
+      "description": "The university biology magazine needed a creative illustration for the fall issue cover. Theme: 'Biodiversity in Urban Spaces'. Digital illustration in a modern scientific style.",
+      "category": "Design",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 60,
+      "deadline": "2026-09-20T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-08-25T09:00:00Z",
+      "acceptedApplicantId": 7
+    },
+    {
+      "id": 22,
+      "ownerId": 9,
+      "title": "Python Script for Financial Data Processing",
+      "description": "Needed a Python script to pull stock data from an API, calculate rolling averages, and generate PDF reports. Used for a personal investment tracking project.",
+      "category": "Programming",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 70,
+      "deadline": "2026-09-15T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-08-28T11:00:00Z",
+      "acceptedApplicantId": 1
+    },
+    {
+      "id": 23,
+      "ownerId": 11,
+      "title": "Podcast Script Writing & Editing",
+      "description": "Offered to write and edit scripts for two podcast episodes on campus life and sustainability. Each episode 20-25 minutes. Full research, outline, and teleprompter-ready script.",
+      "category": "Writing",
+      "type": "Offering",
+      "paymentType": "Skill Swap",
+      "deadline": "2026-09-05T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-08-10T08:00:00Z",
+      "acceptedApplicantId": 5
+    },
+    {
+      "id": 24,
+      "ownerId": 12,
+      "title": "Data Visualization Dashboard for Research Lab",
+      "description": "Built an interactive data visualization dashboard using Python (Plotly/Dash) for a biology research lab to explore gene expression data. Included filters, charts, and export functionality.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 150,
+      "deadline": "2026-09-30T23:59:59Z",
+      "status": "Completed",
+      "createdAt": "2026-08-15T10:00:00Z",
+      "acceptedApplicantId": 1
+    },
+    {
+      "id": 25,
+      "ownerId": 2,
+      "title": "Figma Prototype for Campus App Startup",
+      "description": "Looking for someone to create a high-fidelity Figma prototype for a campus ride-sharing app. Need 15-20 screens covering onboarding, booking, and driver views. Must be interactive.",
+      "category": "Design",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 90,
+      "deadline": "2026-11-30T23:59:59Z",
+      "status": "Open",
+      "createdAt": "2026-10-16T10:00:00Z"
+    },
+    {
+      "id": 26,
+      "ownerId": 1,
+      "title": "Need GitHub knowledge",
+      "description": "I want to learn Github and will pay the one who teaches me.",
+      "category": "Tutoring",
+      "type": "Requesting",
+      "paymentType": "Paid",
+      "budget": 50,
+      "deadline": "2026-10-25T00:00:00.000Z",
+      "status": "Open",
+      "createdAt": "2026-10-21T07:32:51.821Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "gigId": 1,
+      "applicantId": 7,
+      "message": "I have 3 years of logo design experience and a strong portfolio of university club branding. I would love to help make your CS club stand out!",
+      "status": "Pending",
+      "createdAt": "2026-10-05T14:00:00Z"
+    },
+    {
+      "id": 2,
+      "gigId": 1,
+      "applicantId": 10,
+      "message": "While my main focus is development, I have a solid eye for design and have created logos for 2 campus orgs. Happy to share samples.",
+      "status": "Pending",
+      "createdAt": "2026-10-06T09:00:00Z"
+    },
+    {
+      "id": 3,
+      "gigId": 2,
+      "applicantId": 6,
+      "message": "I am a senior CS student experienced in React and Redux. I have built 3 dashboard-style applications and can start immediately.",
+      "status": "Accepted",
+      "createdAt": "2026-10-07T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "gigId": 2,
+      "applicantId": 10,
+      "message": "React is my primary stack. I built a student planner app as a side project — it includes calendar and task features similar to what you need.",
+      "status": "Rejected",
+      "createdAt": "2026-10-08T10:00:00Z"
+    },
+    {
+      "id": 5,
+      "gigId": 6,
+      "applicantId": 3,
+      "message": "I have written two business plans before for entrepreneurship class and both received top marks. I can deliver a thorough and compelling document.",
+      "status": "Pending",
+      "createdAt": "2026-10-09T13:00:00Z"
+    },
+    {
+      "id": 6,
+      "gigId": 6,
+      "applicantId": 9,
+      "message": "As an Econ student I can write solid market analysis and financial projections. I am great at data-driven business storytelling.",
+      "status": "Pending",
+      "createdAt": "2026-10-10T10:00:00Z"
+    },
+    {
+      "id": 7,
+      "gigId": 8,
+      "applicantId": 12,
+      "message": "Python data analysis is my specialty. I work with pandas, matplotlib, and seaborn daily. I can handle your CSV and have it done within 3 days.",
+      "status": "Accepted",
+      "createdAt": "2026-09-27T09:00:00Z"
+    },
+    {
+      "id": 8,
+      "gigId": 8,
+      "applicantId": 1,
+      "message": "I have done similar data processing tasks for academic projects. I am comfortable with pandas and can create clear visualizations quickly.",
+      "status": "Rejected",
+      "createdAt": "2026-09-28T14:00:00Z"
+    },
+    {
+      "id": 9,
+      "gigId": 11,
+      "applicantId": 3,
+      "message": "I have written numerous biology and science lab reports. I am familiar with APA format and can ensure your reports are clear, accurate, and well-structured.",
+      "status": "Accepted",
+      "createdAt": "2026-10-03T10:00:00Z"
+    },
+    {
+      "id": 10,
+      "gigId": 11,
+      "applicantId": 12,
+      "message": "I have experience writing technical and scientific documents. I can help with the data interpretation and structuring sections especially.",
+      "status": "Rejected",
+      "createdAt": "2026-10-04T08:00:00Z"
+    },
+    {
+      "id": 11,
+      "gigId": 16,
+      "applicantId": 12,
+      "message": "Statistics is core to data science. I am proficient in both R and Python for statistical analysis and can walk you through the methods as we work.",
+      "status": "Pending",
+      "createdAt": "2026-10-14T11:00:00Z"
+    },
+    {
+      "id": 12,
+      "gigId": 16,
+      "applicantId": 9,
+      "message": "I took advanced econometrics and use R regularly for regression and ANOVA analysis. I can help interpret results in plain language for your research paper.",
+      "status": "Pending",
+      "createdAt": "2026-10-15T09:00:00Z"
+    },
+    {
+      "id": 13,
+      "gigId": 18,
+      "applicantId": 3,
+      "message": "I am an English senior who has helped 10+ friends edit their grad school personal statements with a strong success rate. I would love to help you shine on paper.",
+      "status": "Accepted",
+      "createdAt": "2026-09-22T14:00:00Z"
+    },
+    {
+      "id": 14,
+      "gigId": 18,
+      "applicantId": 5,
+      "message": "Strong communicator here. I have reviewed personal statements for MBA programs and can apply similar principles to CS grad school applications.",
+      "status": "Rejected",
+      "createdAt": "2026-09-23T10:00:00Z"
+    },
+    {
+      "id": 15,
+      "gigId": 20,
+      "applicantId": 3,
+      "message": "I have experience writing event marketing copy and have managed social campaigns for two student clubs. Excited to support the hackathon!",
+      "status": "Accepted",
+      "createdAt": "2026-08-22T10:00:00Z"
+    },
+    {
+      "id": 16,
+      "gigId": 21,
+      "applicantId": 7,
+      "message": "Illustration is my passion! I have created editorial illustrations for 3 university publications and have a strong scientific illustration style.",
+      "status": "Accepted",
+      "createdAt": "2026-08-27T09:00:00Z"
+    },
+    {
+      "id": 17,
+      "gigId": 21,
+      "applicantId": 2,
+      "message": "I specialize in digital illustration and have done nature-themed pieces for academic projects. Portfolio available on request.",
+      "status": "Rejected",
+      "createdAt": "2026-08-28T14:00:00Z"
+    },
+    {
+      "id": 18,
+      "gigId": 22,
+      "applicantId": 1,
+      "message": "I have built financial data scripts using yfinance and pandas. I can automate the PDF report generation using ReportLab. Ready to start.",
+      "status": "Accepted",
+      "createdAt": "2026-08-30T10:00:00Z"
+    },
+    {
+      "id": 19,
+      "gigId": 23,
+      "applicantId": 5,
+      "message": "I have strong writing and research skills and can create engaging, well-researched podcast scripts on campus life and sustainability topics.",
+      "status": "Accepted",
+      "createdAt": "2026-08-12T09:00:00Z"
+    },
+    {
+      "id": 20,
+      "gigId": 24,
+      "applicantId": 1,
+      "message": "I have experience with Plotly and Dash and have built interactive dashboards before. Gene expression data visualization sounds like a great project!",
+      "status": "Accepted",
+      "createdAt": "2026-08-17T11:00:00Z"
+    },
+    {
+      "id": 21,
+      "gigId": 26,
+      "applicantId": 10,
+      "message": "I can teach you GitHub in just two days.",
+      "status": "Pending",
+      "createdAt": "2026-10-21T07:34:24.215Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "gigId": 20,
+      "reviewerId": 5,
+      "revieweeId": 3,
+      "rating": 5,
+      "comment": "Jordan delivered an outstanding marketing strategy. The social media plan was creative and the email drafts were perfectly on-brand. Highly recommend!",
+      "createdAt": "2026-09-12T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "gigId": 20,
+      "reviewerId": 3,
+      "revieweeId": 5,
+      "rating": 5,
+      "comment": "Riley was a great client — very clear in their requirements and provided all necessary info promptly. Payment was fast. Would work with them again!",
+      "createdAt": "2026-09-13T09:00:00Z"
+    },
+    {
+      "id": 3,
+      "gigId": 21,
+      "reviewerId": 8,
+      "revieweeId": 7,
+      "rating": 5,
+      "comment": "Morgan's illustration was absolutely stunning! Captured the biodiversity theme perfectly with a fresh modern style. Delivered 2 days early.",
+      "createdAt": "2026-09-22T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "gigId": 21,
+      "reviewerId": 7,
+      "revieweeId": 8,
+      "rating": 4,
+      "comment": "Taylor gave helpful feedback during the revision rounds. Could have been a bit more specific with initial requirements but overall a pleasant collaboration.",
+      "createdAt": "2026-09-23T08:00:00Z"
+    },
+    {
+      "id": 5,
+      "gigId": 22,
+      "reviewerId": 9,
+      "revieweeId": 1,
+      "rating": 5,
+      "comment": "Alex built exactly what I needed. The PDF reports were clean and the script runs perfectly. Excellent communication throughout. 10/10!",
+      "createdAt": "2026-09-17T14:00:00Z"
+    },
+    {
+      "id": 6,
+      "gigId": 22,
+      "reviewerId": 1,
+      "revieweeId": 9,
+      "rating": 4,
+      "comment": "Drew had a clear vision and gave me the dataset quickly. A few spec changes mid-project but handled them well. Good experience overall.",
+      "createdAt": "2026-09-18T10:00:00Z"
+    },
+    {
+      "id": 7,
+      "gigId": 24,
+      "reviewerId": 12,
+      "revieweeId": 1,
+      "rating": 5,
+      "comment": "Alex built an incredible Plotly dashboard. The filters and export features worked flawlessly. The lab team was very impressed. Will hire again!",
+      "createdAt": "2026-10-02T13:00:00Z"
+    },
+    {
+      "id": 8,
+      "gigId": 23,
+      "reviewerId": 11,
+      "revieweeId": 5,
+      "rating": 4,
+      "comment": "Riley wrote well-researched and engaging scripts. Needed minor edits but the structure and tone were spot-on. Great collaborator!",
+      "createdAt": "2026-09-07T10:00:00Z"
+    }
+  ]
+}
