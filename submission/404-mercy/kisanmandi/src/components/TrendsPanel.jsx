@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
@@ -40,13 +41,14 @@ export default function TrendsPanel({ crop, market, markets, prices, onBack }) {
 
   return (
     <div className="screen">
-      <div className="data-notice">⚠️ Fictional sample data — not live mandi prices.</div>
-
       <div className="section-header" style={{ marginBottom: '.75rem' }}>
         <button className="btn btn-secondary btn-sm" onClick={onBack} aria-label="Back to prices">← Back to Prices</button>
-        <span style={{ fontSize: '.9rem', fontWeight: 700, color: 'var(--green-dark)' }}>
-          {crop.name} — {market.name}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <span style={{ fontSize: '.9rem', fontWeight: 700, color: 'var(--green-dark)' }}>
+            {crop.name} — {market.name}
+          </span>
+          <DemoPriceBadge label="Demo Data" />
+        </div>
       </div>
 
       {/* 14-day chronological chart */}

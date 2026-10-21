@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getCrops, getMarkets, getPrices } from '../services/api';
+import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) {
   if (n == null || isNaN(n)) return '—';
@@ -78,8 +79,10 @@ export default function ProfitCalculator({ currentUser }) {
 
   return (
     <div className="screen">
-      <h2 className="screen-title">Profit Calculator</h2>
-      <div className="data-notice">⚠️ Fictional sample data — not live mandi prices.</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.75rem' }}>
+        <h2 className="screen-title" style={{ margin: 0 }}>Profit Calculator</h2>
+        <DemoPriceBadge label="Demo Prices" />
+      </div>
 
       {loading && <div className="state-box"><div className="spinner" /><p className="state-text">Loading…</p></div>}
       {error && !loading && (

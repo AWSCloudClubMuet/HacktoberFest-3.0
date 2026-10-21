@@ -4,6 +4,7 @@ import {
   createAlert, updateAlert, deleteAlert
 } from '../services/api';
 import { evaluateUserAlerts } from '../services/alertService';
+import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
@@ -129,20 +130,21 @@ export default function AlertsScreen({ currentUser, onTriggeredCountChange }) {
   return (
     <div className="screen">
       <div className="section-header">
-        <h2 className="screen-title" style={{ marginBottom: 0 }}>
-          Price Alerts
-          {triggeredAlerts.length > 0 && (
-            <span className="pill pill-amber" style={{ marginLeft: '.5rem', verticalAlign: 'middle' }}>
-              {triggeredAlerts.length} triggered
-            </span>
-          )}
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
+          <h2 className="screen-title" style={{ marginBottom: 0 }}>
+            Price Alerts
+            {triggeredAlerts.length > 0 && (
+              <span className="pill pill-amber" style={{ marginLeft: '.5rem', verticalAlign: 'middle' }}>
+                {triggeredAlerts.length} triggered
+              </span>
+            )}
+          </h2>
+          <DemoPriceBadge label="Demo Rates" />
+        </div>
         <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(true); }}>
           + New Alert
         </button>
       </div>
-
-      <div className="data-notice">⚠️ Fictional sample data — not live mandi prices.</div>
 
       {/* Create Alert Form Modal */}
       {showForm && (

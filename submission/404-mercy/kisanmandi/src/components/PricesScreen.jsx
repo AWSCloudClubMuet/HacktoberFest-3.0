@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getCrops, getMarkets, getPrices } from '../services/api';
 import TrendsPanel from './TrendsPanel';
+import DemoPriceBadge from './DemoPriceBadge';
 
 function fmt(n) { return Number(n).toLocaleString('en-PK'); }
 
@@ -92,10 +93,11 @@ export default function PricesScreen({ currentUser, onPricesRefreshed }) {
 
   return (
     <div className="screen">
-      <div className="data-notice">⚠️ Fictional sample data — not live mandi prices.</div>
-
       <div className="section-header">
-        <h2 className="screen-title" style={{ marginBottom: 0 }}>Crop Prices</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
+          <h2 className="screen-title" style={{ marginBottom: 0 }}>Crop Prices</h2>
+          <DemoPriceBadge label="Demo Prices" />
+        </div>
         <button
           className="btn btn-secondary btn-sm"
           onClick={loadData}

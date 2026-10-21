@@ -283,14 +283,91 @@ a { text-decoration: none; color: inherit; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Fictional Data Notice ───────────────────────────────────────────────── */
-.data-notice {
-  background: var(--amber-pale);
-  border: 1px solid #fde68a;
+/* ── Demo Price Badge & Tooltip ─────────────────────────────────────────── */
+.demo-badge-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.demo-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.demo-badge-btn:hover, .demo-badge-btn:focus-visible {
+  border-color: var(--green);
+  color: var(--green-dark);
+  background: var(--green-pale);
+  outline: none;
+}
+
+.demo-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.demo-badge-icon {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1px;
+}
+
+.demo-badge-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 150;
+  width: 240px;
+  background: var(--gray-900);
+  color: var(--white);
   border-radius: var(--radius-sm);
-  padding: .4rem .75rem;
+  padding: 0.6rem 0.75rem;
+  box-shadow: var(--shadow-lg);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.demo-badge-tooltip-title {
+  font-weight: 700;
+  color: #a5d6a7;
+  margin-bottom: 0.2rem;
+}
+
+.demo-badge-tooltip-desc {
+  color: var(--gray-200);
+  margin: 0;
+}
+
+/* ── Legacy Notice (Subtle fallback) ─────────────────────────────────────── */
+.data-notice {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: .35rem .65rem;
   font-size: .72rem;
-  color: #92400e;
+  color: var(--gray-600);
   margin-bottom: .75rem;
   display: flex;
   align-items: center;
