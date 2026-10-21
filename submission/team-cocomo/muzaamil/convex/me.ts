@@ -60,7 +60,7 @@ export const assignment = query({
     const vol = await rosterEntry(ctx, user._id);
     if (!vol?.camp_id) return { linked: !!vol, camp: null };
     const camp = await ctx.db.get(vol.camp_id);
-    if (!camp) return { linked: true, camp: null };
+    if (!camp || camp.status === "Closed") return { linked: true, camp: null };
 
     const [needs, dispatches, team] = await Promise.all([
       ctx.db.query("needs").withIndex("by_camp", (q) => q.eq("camp_id", camp._id)).collect(),

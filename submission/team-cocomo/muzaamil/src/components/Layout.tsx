@@ -119,7 +119,7 @@ export default function Layout() {
             <span className="truncate text-[13px] font-semibold">{viewer?.name}</span>
             <span className="text-xs text-muted">{isCoordinator ? "Coordinator" : "Field volunteer"}</span>
           </div>
-          <button onClick={() => void signOut()} className="cursor-pointer rounded-md px-1.5 py-1 text-xs font-semibold text-muted hover:bg-alert-wash hover:text-alert-ink">
+          <button onClick={() => void signOut().then(() => navigate("/", { replace: true }))} className="cursor-pointer rounded-md px-1.5 py-1 text-xs font-semibold text-muted hover:bg-alert-wash hover:text-alert-ink">
             Sign out
           </button>
         </div>
@@ -154,7 +154,7 @@ export default function Layout() {
 
         <footer className="flex items-center justify-between border-t border-line bg-paper px-8 py-3 font-mono text-[11px] text-muted">
           <span>
-            Synced {syncedAt.toLocaleTimeString("en-GB")} · REST mirror at {import.meta.env.VITE_CONVEX_SITE_URL}/api/&lt;collection&gt;
+            Synced {syncedAt.toLocaleTimeString("en-GB")}
           </span>
           {counts && (
             <span>

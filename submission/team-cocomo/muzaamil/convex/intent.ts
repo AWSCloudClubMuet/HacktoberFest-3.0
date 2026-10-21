@@ -1,5 +1,6 @@
 import { choice, noul, score, TypeSafeClient } from "@typesafe-ai/sdk";
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
 
 // Convex exposes deployment env vars on process.env; the app tsconfig doesn't load Node types.
@@ -49,7 +50,7 @@ let client: TypeSafeClient | null = null;
 export const classify = action({
   args: { text: v.string() },
   handler: async (ctx, { text }) => {
-    if (!(await ctx.auth.getUserIdentity())) throw new ConvexError("Please sign in first");
+    await ctx.runQuery(internal.users.assertCoordinator, {});
     const apiKey = process.env.TYPESAFE_API_KEY;
     if (!looksLikeKey(apiKey)) return { mode: "offline" as const, reason: "TYPESAFE_API_KEY not set" };
 

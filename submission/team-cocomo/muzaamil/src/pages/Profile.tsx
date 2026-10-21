@@ -60,7 +60,7 @@ export default function Profile() {
                     ))}
                   </Select>
                 </Field>
-                <Field label="Phone" hint="Optional, so your camp can reach you">
+                <Field label="Phone" hint="Optional, visible to coordinators">
                   <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="03xx xxxxxxx" maxLength={30} />
                 </Field>
               </>

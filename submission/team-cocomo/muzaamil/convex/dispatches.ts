@@ -120,6 +120,10 @@ export const markDelivered = mutation({
       if (!vol?.camp_id || vol.camp_id !== d.camp_id) {
         throw new ConvexError("You can only confirm deliveries for your own camp");
       }
+      const camp = await ctx.db.get(vol.camp_id);
+      if (!camp || camp.status === "Closed") {
+        throw new ConvexError("You can only confirm deliveries for your active assigned camp");
+      }
     }
     if (d.status !== "In Transit") {
       throw new ConvexError("Only dispatches that are in transit can be marked delivered");

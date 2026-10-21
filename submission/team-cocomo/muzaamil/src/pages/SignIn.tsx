@@ -1,5 +1,8 @@
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../convex/_generated/api";
 import { Badge, Button, Card, Field, Input, Mark, Notice, Segmented, cx } from "../components/ui";
 
 type Role = "coordinator" | "volunteer";
@@ -18,7 +21,7 @@ const DEMO: Record<Role, { email: string; password: string; name: string; title:
     password: "reliefhub-demo-2026",
     name: "Demo Volunteer",
     title: "Field Volunteer",
-    body: "View, mark delivered",
+    body: "Assigned camp and deliveries",
   },
 };
 
@@ -35,8 +38,9 @@ const isMissingAccount = (err: unknown) => /InvalidAccountId/i.test(err instance
 
 export default function SignIn() {
   const { signIn } = useAuthActions();
+  const navigate = useNavigate();
+  const demoMode = useQuery(api.users.demoMode);
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
-  const [role, setRole] = useState<Role>("coordinator");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -47,10 +51,10 @@ export default function SignIn() {
     setError(null);
     const form = new FormData(e.currentTarget);
     form.set("flow", flow);
-    if (flow === "signUp") form.set("role", role);
     setBusy("form");
     try {
       await signIn("password", form);
+      navigate("/", { replace: true });
     } catch (err) {
       setError(friendlyAuthError(err, flow));
       setBusy(false);
@@ -66,6 +70,7 @@ export default function SignIn() {
     setBusy(r);
     try {
       await signIn("password", { email: demo.email, password: demo.password, flow: "signIn" });
+      navigate("/", { replace: true });
     } catch (err) {
       if (!isMissingAccount(err)) {
         setError(friendlyAuthError(err, "signIn"));
@@ -74,6 +79,7 @@ export default function SignIn() {
       }
       try {
         await signIn("password", { email: demo.email, password: demo.password, name: demo.name, role: r, flow: "signUp" });
+        navigate("/", { replace: true });
       } catch (err2) {
         setError(friendlyAuthError(err2, "signUp"));
         setBusy(false);
@@ -81,30 +87,14 @@ export default function SignIn() {
     }
   }
 
-  const roleCard = (value: Role, title: string, body: string) => (
-    <button
-      type="button"
-      onClick={() => setRole(value)}
-      className={cx(
-        "flex flex-1 cursor-pointer flex-col gap-2 rounded-lg border p-3.5 text-left transition-colors",
-        role === value ? "border-info bg-info-wash ring-1 ring-info" : "border-line-strong hover:border-ink",
-      )}
-    >
-      <span className="flex items-center justify-between gap-2">
-        <span className="text-[15px] font-bold">{title}</span>
-        <span className={cx("size-4 shrink-0 rounded-full bg-white", role === value ? "border-[5px] border-info" : "border-[1.5px] border-faint")} />
-      </span>
-      <span className="text-[13px] leading-[19px] text-ink-2">{body}</span>
-    </button>
-  );
-
   const quickButton = (r: Role) => (
     <button
       type="button"
+      aria-label={`Sign in as ${DEMO[r].title}`}
       disabled={!!busy}
       onClick={() => void quickSignIn(r)}
       className={cx(
-        "flex flex-1 cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-3 text-left transition-colors disabled:cursor-wait disabled:opacity-60",
+        "flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-3 text-left transition-colors disabled:cursor-wait disabled:opacity-60",
         r === "coordinator" ? "border-info-line bg-info-wash hover:border-info" : "border-ok-line bg-ok-wash hover:border-ok",
       )}
     >
@@ -116,11 +106,11 @@ export default function SignIn() {
       >
         {r === "coordinator" ? "RC" : "FV"}
       </span>
-      <span className="flex min-w-0 flex-col">
-        <span className={cx("text-sm font-bold", r === "coordinator" ? "text-info-ink" : "text-ok-ink")}>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className={cx("truncate text-sm font-bold", r === "coordinator" ? "text-info-ink" : "text-ok-ink")}>
           {busy === r ? "Signing in…" : DEMO[r].title}
         </span>
-        <span className="truncate text-xs text-muted">{DEMO[r].body}</span>
+        <span title={DEMO[r].body} className="truncate text-xs text-muted">{DEMO[r].body}</span>
       </span>
     </button>
   );
@@ -161,22 +151,27 @@ export default function SignIn() {
           <form onSubmit={submit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
               <h2 className="display text-[32px] leading-[38px]">{flow === "signIn" ? "Sign in" : "Create an account"}</h2>
-              <p className="text-[15px] text-muted">{flow === "signIn" ? "Welcome back. Your role was set when you joined." : "Choose how you'll be working."}</p>
+              <p className="text-[15px] text-muted">{flow === "signIn" ? "Welcome back. Sign in to your assigned role." : "Join as a field volunteer. Coordinator access is granted by the deployment administrator."}</p>
             </div>
 
-            <div className="flex flex-col gap-2 rounded-[20px] border border-dashed border-line-strong bg-tint p-3">
-              <span className="label">Quick test sign-in</span>
-              <div className="flex gap-2.5">
-                {quickButton("coordinator")}
-                {quickButton("volunteer")}
+            {demoMode && (
+              <div className="flex flex-col gap-2 rounded-[20px] border border-dashed border-line-strong bg-tint p-3">
+                <span className="label">Quick test sign-in</span>
+                <div className="flex gap-2.5">
+                  {quickButton("coordinator")}
+                  {quickButton("volunteer")}
+                </div>
+                <span className="text-xs text-muted">Demo mode · shared accounts for testing</span>
               </div>
-            </div>
+            )}
 
-            <div className="flex items-center gap-3 text-xs text-muted">
-              <span className="h-px flex-1 bg-line" />
-              or use your own account
-              <span className="h-px flex-1 bg-line" />
-            </div>
+            {demoMode && (
+              <div className="flex items-center gap-3 text-xs text-muted">
+                <span className="h-px flex-1 bg-line" />
+                or use your own account
+                <span className="h-px flex-1 bg-line" />
+              </div>
+            )}
 
             <Segmented
               size="sm"
@@ -212,19 +207,13 @@ export default function SignIn() {
             </Field>
 
             {flow === "signUp" && (
-              <div className="flex flex-col gap-2">
-                <span className="text-[13px] font-semibold text-ink-2">Role</span>
-                <div className="flex gap-3">
-                  {roleCard("coordinator", "Relief Coordinator", "Create and edit camps, needs and stock. Dispatch supplies. Assign volunteers.")}
-                  {roleCard("volunteer", "Field Volunteer", "See camps, needs and stock. Mark dispatches delivered on arrival.")}
-                </div>
-              </div>
+              <Notice tone="info">You can view your assigned camp, its needs, deliveries and team, update your profile, and confirm deliveries arriving at your camp.</Notice>
             )}
 
             {error && <Notice tone="error">{error}</Notice>}
 
             <Button type="submit" size="lg" disabled={!!busy}>
-              {busy === "form" ? "Please wait…" : flow === "signIn" ? "Sign in" : `Create account as ${role === "coordinator" ? "Coordinator" : "Field Volunteer"}`}
+              {busy === "form" ? "Please wait…" : flow === "signIn" ? "Sign in" : "Create field volunteer account"}
             </Button>
           </form>
         </Card>

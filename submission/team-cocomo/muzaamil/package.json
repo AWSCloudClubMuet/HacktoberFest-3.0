@@ -9,7 +9,9 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "seed": "convex run seed:run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npm run test:backend",
+    "test:backend": "node --import ./tests/support/register.mjs --test tests/backend/*.test.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
