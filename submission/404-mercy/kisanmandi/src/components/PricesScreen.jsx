@@ -11,7 +11,7 @@ function getCropImage(crop) {
   if (name.includes('wheat')) return '/images/crops/wheat.jpg';
   if (name.includes('rice')) return '/images/crops/rice.jpg';
   if (name.includes('cotton')) return '/images/crops/cotton.jpg';
-  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.png';
   if (name.includes('tomato')) return '/images/crops/tomato.jpg';
   if (name.includes('onion')) return '/images/crops/onion.jpg';
   if (name.includes('potato')) return '/images/crops/potato.jpg';
@@ -151,9 +151,21 @@ export default function PricesScreen({ currentUser, onPricesRefreshed }) {
       </div>
 
       {loading && (
-        <div className="state-box">
-          <div className="spinner" role="status" aria-label="Loading" />
-          <p className="state-text">Loading latest mandi rates…</p>
+        <div className="price-cards-grid" aria-busy="true" aria-label="Loading crop prices">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="skeleton-card">
+              <div style={{ display: 'flex', gap: '.75rem', marginBottom: '.65rem', alignItems: 'center' }}>
+                <div className="skeleton" style={{ width: 50, height: 50, borderRadius: 'var(--radius-sm)', flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ height: 15, width: '60%', marginBottom: 8, borderRadius: 'var(--radius-xs)' }} />
+                  <div className="skeleton" style={{ height: 11, width: '40%', borderRadius: 'var(--radius-xs)' }} />
+                </div>
+                <div className="skeleton" style={{ height: 24, width: 70, borderRadius: 'var(--radius-xs)' }} />
+              </div>
+              <div className="skeleton" style={{ height: 11, width: '75%', marginBottom: 6, borderRadius: 'var(--radius-xs)' }} />
+              <div className="skeleton" style={{ height: 36, width: '100%', marginTop: 10, borderRadius: 'var(--radius-sm)' }} />
+            </div>
+          ))}
         </div>
       )}
 
@@ -214,20 +226,20 @@ export default function PricesScreen({ currentUser, onPricesRefreshed }) {
                       Yesterday ({previousDate || 'prior'}): {ydayPrice != null ? `₨${fmt(ydayPrice)}` : '—'}
                     </span>
                     {delta && delta.change !== null && (
-                      <>
-                        <span className={`price-meta-item ${delta.change > 0 ? 'change-up' : delta.change < 0 ? 'change-down' : 'change-none'}`}>
-                          {delta.change > 0 ? '▲ +' : delta.change < 0 ? '▼ -' : '='}₨{fmt(Math.abs(delta.change))}
+                      <div style={{ display: 'flex', gap: '.35rem', flexWrap: 'wrap', marginTop: '.3rem' }}>
+                        <span className={`change-pill ${delta.change > 0 ? 'change-up' : delta.change < 0 ? 'change-down' : 'change-none'}`}>
+                          {delta.change > 0 ? '▲ +' : delta.change < 0 ? '▼ ' : '='} ₨{fmt(Math.abs(delta.change))}
                         </span>
-                        <span className={`price-meta-item ${delta.pct > 0 ? 'change-up' : delta.pct < 0 ? 'change-down' : 'change-none'}`}>
+                        <span className={`change-pill ${delta.pct > 0 ? 'change-up' : delta.pct < 0 ? 'change-down' : 'change-none'}`}>
                           {delta.pct > 0 ? '+' : ''}{delta.pct.toFixed(1)}%
                         </span>
-                      </>
+                      </div>
                     )}
                     {delta && delta.change === null && (
-                      <span className="price-meta-item change-none">Percentage unavailable</span>
+                      <span className="change-pill change-none" style={{ marginTop: '.3rem' }}>No prev. data</span>
                     )}
                     {delta === null && todayPrice == null && (
-                      <span className="price-meta-item change-none">No data available</span>
+                      <span className="change-pill change-none" style={{ marginTop: '.3rem' }}>No data</span>
                     )}
                   </div>
                 </div>

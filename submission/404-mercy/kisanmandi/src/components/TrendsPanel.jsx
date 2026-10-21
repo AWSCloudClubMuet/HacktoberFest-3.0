@@ -12,7 +12,7 @@ function getCropImage(crop) {
   if (name.includes('wheat')) return '/images/crops/wheat.jpg';
   if (name.includes('rice')) return '/images/crops/rice.jpg';
   if (name.includes('cotton')) return '/images/crops/cotton.jpg';
-  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.png';
   if (name.includes('tomato')) return '/images/crops/tomato.jpg';
   if (name.includes('onion')) return '/images/crops/onion.jpg';
   if (name.includes('potato')) return '/images/crops/potato.jpg';

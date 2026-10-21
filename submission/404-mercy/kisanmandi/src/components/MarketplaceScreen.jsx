@@ -15,7 +15,7 @@ function getCropFallback(cropName) {
   if (name.includes('wheat')) return '/images/crops/wheat.jpg';
   if (name.includes('rice')) return '/images/crops/rice.jpg';
   if (name.includes('cotton')) return '/images/crops/cotton.jpg';
-  if (name.includes('sugarcane')) return '/images/crops/sugarcane.jpg';
+  if (name.includes('sugarcane')) return '/images/crops/sugarcane.png';
   if (name.includes('tomato')) return '/images/crops/tomato.jpg';
   if (name.includes('onion')) return '/images/crops/onion.jpg';
   if (name.includes('potato')) return '/images/crops/potato.jpg';
@@ -75,6 +75,7 @@ export default function MarketplaceScreen({ currentUser }) {
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState('');
   const [liveToast, setLiveToast] = useState('');
+  const [successToast, setSuccessToast] = useState('');
 
   const [search, setSearch]       = useState('');
   const [filterCrop, setFilterCrop]   = useState('');
@@ -325,6 +326,8 @@ export default function MarketplaceScreen({ currentUser }) {
       setShowForm(false);
       resetForm();
       await loadData();
+      setSuccessToast(editId ? '✓ Listing updated successfully!' : '✓ Produce listed successfully!');
+      setTimeout(() => setSuccessToast(''), 4000);
     } catch (err) {
       setFormApiError(err.message || 'Failed to save listing.');
     } finally {
@@ -379,9 +382,21 @@ export default function MarketplaceScreen({ currentUser }) {
         <div style={{
           background: 'var(--green-pale)', border: '1px solid var(--green)', borderRadius: 'var(--radius-sm)',
           padding: '.5rem .75rem', fontSize: '.82rem', color: 'var(--green-dark)', marginBottom: '.75rem',
-          display: 'flex', alignItems: 'center', gap: '.5rem', animation: 'fadeIn .2s ease-in'
+          display: 'flex', alignItems: 'center', gap: '.5rem', animation: 'screenFadeIn .25s ease-out'
         }}>
           <span>{liveToast}</span>
+        </div>
+      )}
+
+      {successToast && (
+        <div style={{
+          background: 'var(--green-pale)', border: '1px solid var(--green)', borderRadius: 'var(--radius-sm)',
+          padding: '.55rem .85rem', fontSize: '.84rem', fontWeight: 600, color: 'var(--green-dark)',
+          marginBottom: '.75rem', display: 'flex', alignItems: 'center', gap: '.5rem',
+          animation: 'screenFadeIn .25s ease-out'
+        }}>
+          <span style={{ fontSize: '1rem' }}>✅</span>
+          <span>{successToast}</span>
         </div>
       )}
 

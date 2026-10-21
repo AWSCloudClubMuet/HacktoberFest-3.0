@@ -280,7 +280,7 @@ async function runVerification() {
     assert(imgSql.includes("storage.foldername(name)"), 'Storage RLS restricts upload/edit/delete to user-owned folders');
   }
 
-  const expectedCropPhotos = ['wheat.jpg', 'rice.jpg', 'cotton.jpg', 'sugarcane.jpg', 'tomato.jpg', 'onion.jpg', 'potato.jpg', 'chilies.jpg'];
+  const expectedCropPhotos = ['wheat.jpg', 'rice.jpg', 'cotton.jpg', 'sugarcane.png', 'tomato.jpg', 'onion.jpg', 'potato.jpg', 'chilies.jpg'];
   const allCropPhotosExist = expectedCropPhotos.every(f => fs.existsSync(`public/images/crops/${f}`));
   assert(allCropPhotosExist, `Genuine photographic reference images present in public/images/crops/ (${expectedCropPhotos.length} crops verified)`);
 

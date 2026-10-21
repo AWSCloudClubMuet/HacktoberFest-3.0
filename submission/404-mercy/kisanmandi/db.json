@@ -41,6 +41,14 @@
       "phone": "03556789012",
       "district": "Hyderabad",
       "role": "buyer"
+    },
+    {
+      "name": "Ali",
+      "email": "ali@gmail.com",
+      "phone": "03033532363",
+      "district": "Sukkur",
+      "role": "buyer",
+      "id": "5J3cTOeVgT0"
     }
   ],
   "crops": [
