@@ -10,11 +10,7 @@ import { Label } from '@/components/ui/label'
 import { ArrowRight } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 
-const DEMO = [
-  { name: 'Emma Rodriguez', email: 'emma@campusloop.edu' },
-  { name: 'Maya Chen', email: 'maya@campusloop.edu' },
-  { name: 'Daniel Kim', email: 'daniel@campusloop.edu' },
-]
+const DEMO_EMAIL = 'emma@campusloop.edu'
 const DEMO_PASSWORD = 'campus1234'
 
 export default function LoginPage() {
@@ -59,17 +55,8 @@ export default function LoginPage() {
           {error && <p className="form-error">{error}</p>}
           <Button type="submit" disabled={busy} className="auth-submit">{busy ? 'Signing in…' : 'Sign in'} <ArrowRight data-icon="inline-end" /></Button>
         </form>
-        <div className="demo-box">
-          <strong>Demo accounts</strong>
-          <p>Seeded users all use the password <code>{DEMO_PASSWORD}</code> — tap one to sign in instantly:</p>
-          <div className="demo-list">
-            {DEMO.map((d) => (
-              <button key={d.email} type="button" disabled={busy} onClick={() => signIn(undefined, { email: d.email, password: DEMO_PASSWORD })}>
-                {d.name}<span>{d.email}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <div className="auth-divider"><span>or</span></div>
+        <Button type="button" variant="outline" className="btn-plain demo-btn" disabled={busy} onClick={() => signIn(undefined, { email: DEMO_EMAIL, password: DEMO_PASSWORD })}>Try a demo account</Button>
         <p className="auth-switch">New to campusloop? <Link href="/signup">Create an account</Link></p>
       </Card>
     </div>
