@@ -1,0 +1,13 @@
+
+{
+     "name": "tunewave-music-player",
+     "version": "1.0.0",
+     "description": "TuneWave Music Player hackathon project",
+     "main": "index.js",
+     "scripts": {
+       "test": "node test.js",
+       "start": "node server.js"
+     },
+     "type": "commonjs"
+   }
+   
