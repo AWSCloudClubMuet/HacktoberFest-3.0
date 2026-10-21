@@ -1,0 +1,118 @@
+================================================================
+        UNIVERSITY SCHOLARSHIP ELIGIBILITY CHECKER
+================================================================
+ A console tool that screens a student against three scholarship
+ categories (Merit, Academic, Need-Based), explains every decision,
+ and prints a report. Currency: Pakistani Rupees (Rs.).
+================================================================
+
+MAIN MENU
+----------------------------------------------------------------
+  1. Check a new student
+  2. Exit
+----------------------------------------------------------------
+Enter your choice (1-2): -1
+  [Error] Please enter 1 or 2.
+Enter your choice (1-2): 3
+  [Error] Please enter 1 or 2.
+Enter your choice (1-2): 1
+
+ENTER STUDENT DETAILS
+----------------------------------------------------------------
+Full name: CodeCrafters1
+CGPA (0.0 - 4.0): -1
+  [Error] Value out of range. Enter a number from 0.0 to 4.0.
+CGPA (0.0 - 4.0): 5
+  [Error] Value out of range. Enter a number from 0.0 to 4.0.
+CGPA (0.0 - 4.0): 3.8
+Attendance % (0 - 100): -1
+  [Error] Value out of range. Enter a number from 0 to 100.
+Attendance % (0 - 100): 101
+  [Error] Value out of range. Enter a number from 0 to 100.
+Attendance % (0 - 100): 85
+Monthly household income in PKR (Rs.): -1
+  [Error] Value out of range. Enter a non-negative amount in rupees, digits only.
+Monthly household income in PKR (Rs.): 49999
+
+================================================================
+ STUDENT ELIGIBILITY REPORT
+================================================================
+ Name                    : CodeCrafters1
+ CGPA                    : 3.80
+ Attendance              : 85%
+ Monthly Family Income   : Rs. 49,999
+----------------------------------------------------------------
+ SCHOLARSHIP STATUS
+ Merit Scholarship       : ELIGIBLE
+ Academic Scholarship    : ELIGIBLE
+ Need-Based Scholarship  : ELIGIBLE
+----------------------------------------------------------------
+ DETAILS
+ Merit Scholarship: Eligible - all defined conditions are satisfied (CGPA >= 3.7, attendance >=85%).
+ Academic Scholarship: Eligible - all defined conditions are satisfied (CGPA >= 3.3, attendance>= 80%).
+ Need-Based Scholarship: Eligible - all defined conditions are satisfied (income < Rs. 50,000, CGPA >= 2.8, attendance >= 75%).
+----------------------------------------------------------------
+ Eligible scholarships: Merit, Academic, Need-Based
+ Total eligible categories: 3 of 3
+ (Eligibility only; actual awards and funding are not guaranteed.)
+----------------------------------------------------------------
+ Illustrative Performance Score (%): 92.00
+ Note: custom illustrative formula, not official university policy.
+================================================================
+
+Evaluate another student? (y/n): y
+
+ENTER STUDENT DETAILS
+----------------------------------------------------------------
+Full name: CodeCrafters2
+CGPA (0.0 - 4.0): 2.7
+Attendance % (0 - 100): 75
+Monthly household income in PKR (Rs.): 20000
+
+================================================================
+ STUDENT ELIGIBILITY REPORT
+================================================================
+ Name                    : CodeCrafters2
+ CGPA                    : 2.70
+ Attendance              : 75%
+ Monthly Family Income   : Rs. 20,000
+----------------------------------------------------------------
+ SCHOLARSHIP STATUS
+ Merit Scholarship       : NOT ELIGIBLE
+ Academic Scholarship    : NOT ELIGIBLE
+ Need-Based Scholarship  : NOT ELIGIBLE
+----------------------------------------------------------------
+ DETAILS
+ Merit Scholarship: Ineligible - CGPA is 2.70; minimum required is 3.70.
+ Merit Scholarship: Ineligible - attendance is 75%; minimum required is 85%.
+ Academic Scholarship: Ineligible - CGPA is 2.70; minimum required is 3.30.
+ Academic Scholarship: Ineligible - attendance is 75%; minimum required is 80%.
+ Need-Based Scholarship: Ineligible - CGPA is 2.70; minimum required is 2.80.
+----------------------------------------------------------------
+ Overall: Currently ineligible for all listed scholarships.
+ Total eligible categories: 0 of 3
+ (Eligibility only; actual awards and funding are not guaranteed.)
+----------------------------------------------------------------
+ Illustrative Performance Score (%): 69.75
+ Note: custom illustrative formula, not official university policy.
+================================================================
+
+Evaluate another student? (y/n): n
+
+MAIN MENU
+----------------------------------------------------------------
+  1. Check a new student
+  2. Exit
+----------------------------------------------------------------
+Enter your choice (1-2): 2
+
+================================================================
+ SESSION SUMMARY
+================================================================
+ Students processed                : 2
+ Eligible for Merit                : 1
+ Eligible for Academic             : 1
+ Eligible for Need-Based           : 1
+ Eligible for no scholarship       : 1
+================================================================
+Thank you for using the University Scholarship Eligibility Checker.
