@@ -1,0 +1,12 @@
+{
+  "name": "relief-camp-manager",
+  "version": "1.0.0",
+  "description": "Disaster Relief Camp Management - mock API + web UI (HacktoberFest 2.0)",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "seed": "node server/seed.js",
+    "test": "node --test tests/"
+  },
+  "engines": { "node": ">=18" }
+}
