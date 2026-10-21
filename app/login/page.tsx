@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
+import AuthSide from '@/components/auth-side'
 
 const DEMO = [
   { name: 'Emma Rodriguez', email: 'emma@campusloop.edu' },
@@ -39,7 +40,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="auth-shell">
+    <div className="auth-layout">
+      <AuthSide />
+      <div className="auth-main">
       <Card className="auth-card">
         <div className="auth-brand">
           <img src="/logo.png" alt="campusloop logo" className="brand-logo" />
@@ -72,6 +75,7 @@ export default function LoginPage() {
         </div>
         <p className="auth-switch">New to campusloop? <Link href="/signup">Create an account</Link></p>
       </Card>
+      </div>
     </div>
   )
 }
