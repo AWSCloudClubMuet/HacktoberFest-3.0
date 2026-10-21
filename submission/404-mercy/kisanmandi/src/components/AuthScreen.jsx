@@ -186,13 +186,6 @@ export default function AuthScreen({ onAuthSuccess }) {
         <h1 className="onboard-title">KisanMandi</h1>
         <p className="onboard-sub">Sindh Agricultural Marketplace</p>
 
-        {/* Backend mode pill */}
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          <span className={`pill ${isCloud ? 'pill-green' : 'pill-amber'}`} style={{ fontSize: '.72rem' }}>
-            {isCloud ? '🟢 Live Cloud Backend (Supabase)' : '🟡 Local Development Mode'}
-          </span>
-        </div>
-
         {/* Mode Selector Tabs */}
         <div className="tab-pills" style={{ justifyContent: 'center', marginBottom: '1.25rem' }}>
           <button

@@ -52,3 +52,4 @@ export default function DemoPriceBadge({ label = 'Demo Prices', className = '', 
     </div>
   );
 }
+
