@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Gig & SkillSwap</title>
+  <meta name="description" content="A student marketplace where students post or apply to small gigs for payment, skill swap, or peer help.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- =======================================================================
+       HEADER
+       ======================================================================= -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="site-title" id="nav-brand">Campus Gig & SkillSwap</a>
+
+      <nav class="main-nav" role="tablist">
+        <button class="nav-link active" id="nav-tab-browse" data-view="view-browse">Browse</button>
+        <button class="nav-link" id="nav-tab-post" data-view="view-post">Post a gig</button>
+        <button class="nav-link" id="nav-tab-activity" data-view="view-activity">
+          My activity <span class="nav-count" id="header-activity-count"></span>
+        </button>
+        <button class="nav-link" id="nav-tab-profile" data-view="view-profile">Profile</button>
+      </nav>
+
+      <div class="header-auth-area" id="header-auth-area">
+        <!-- Rendered dynamically: Log in button or Active student info with Switch / Log out -->
+      </div>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       MAIN CONTENT WRAPPER
+       ======================================================================= -->
+  <main class="content-wrapper">
+
+    <!-- -------------------------------------------------------------------
+         VIEW 1: BROWSE (DEFAULT HOME - NO HERO)
+         ------------------------------------------------------------------- -->
+    <div class="view-panel active" id="view-browse">
+      <div class="browse-layout">
+
+        <!-- Left Sidebar Filters -->
+        <aside class="sidebar-filters">
+          <div class="filter-section">
+            <div class="filter-heading">Category</div>
+            <div class="filter-options">
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-cat" value="All" checked> All categories
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-cat" value="Programming"> Programming
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-cat" value="Design"> Design
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-cat" value="Writing"> Writing
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-cat" value="Tutoring"> Tutoring
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-heading">Type</div>
+            <div class="filter-options">
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-type" value="All" checked> All
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-type" value="Offering"> Offering service
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-type" value="Requesting"> Requesting help
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-heading">Payment</div>
+            <div class="filter-options">
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-payment" value="All" checked> All
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-payment" value="Paid"> Paid
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-payment" value="SkillSwap"> Skill swap
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="filter-payment" value="Free"> Free
+              </label>
+            </div>
+          </div>
+
+
+          <div class="filter-section">
+            <div class="filter-heading">Budget ($)</div>
+            <div class="budget-row">
+              <input type="number" id="filter-min-budget" placeholder="Min" min="0">
+              <span class="budget-sep">–</span>
+              <input type="number" id="filter-max-budget" placeholder="Max" min="0">
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <button class="btn-link" id="btn-reset-filters">Reset filters</button>
+          </div>
+        </aside>
+
+        <!-- Main Listing -->
+        <section class="gigs-main">
+          <div class="search-bar-row">
+            <div class="search-input-wrap">
+              <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="search-input" placeholder="Search gigs by title or description..." autocomplete="off">
+            </div>
+          </div>
+
+          <div class="results-meta">
+            <span id="results-count-text">Loading gigs...</span>
+            <span style="font-size: 12px; color: var(--text-subtle);">Click a row for details</span>
+          </div>
+
+          <!-- Dense Rows Table -->
+          <div class="gigs-table-wrap">
+            <table class="gigs-table">
+              <thead>
+                <tr>
+                  <th style="width: 42%;">Title</th>
+                  <th style="width: 14%;">Category</th>
+                  <th style="width: 12%;">Type</th>
+                  <th style="width: 14%;">Payment</th>
+                  <th style="width: 10%;">Deadline</th>
+                  <th style="width: 8%;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="gigs-table-body">
+                <!-- Rendered dynamically as dense rows -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------
+         VIEW 2: GIG DETAIL
+         ------------------------------------------------------------------- -->
+    <div class="view-panel" id="view-detail">
+      <div class="detail-container">
+        <a class="back-link" id="btn-back-to-browse">← Back to browse</a>
+        <div id="detail-content-area">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------
+         VIEW 3: POST A GIG (Single Column, Plain Text Errors)
+         ------------------------------------------------------------------- -->
+    <div class="view-panel" id="view-post">
+      <div class="form-single-col">
+        <h2 style="margin-bottom: 0.35rem;">Post a gig</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 1.5rem;">
+          Post what you're offering to do or what you need help with.
+        </p>
+
+        <form id="form-post-gig" novalidate>
+          <div class="form-field">
+            <label for="post-title">Title</label>
+            <input type="text" id="post-title" placeholder="e.g. need help w/ my java loop bug, due fri">
+            <div class="field-error" id="err-title">Please enter a title.</div>
+          </div>
+
+          <div class="form-field">
+            <label for="post-category">Category</label>
+            <select id="post-category">
+              <option value="Programming">Programming</option>
+              <option value="Design">Design</option>
+              <option value="Writing">Writing</option>
+              <option value="Tutoring">Tutoring</option>
+            </select>
+            <div class="field-error" id="err-category">Select a category.</div>
+          </div>
+
+          <div class="form-field">
+            <label for="post-type">Type</label>
+            <select id="post-type">
+              <option value="Offering">Offering a service</option>
+              <option value="Requesting" selected>Requesting help</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="post-desc">Description</label>
+            <textarea id="post-desc" rows="4" placeholder="Be direct about what you need done, materials or links, and expectations."></textarea>
+            <div class="field-error" id="err-desc">Please write a description.</div>
+          </div>
+
+          <div class="form-field">
+            <label for="post-payment">Payment</label>
+            <select id="post-payment">
+              <option value="Paid">Paid</option>
+              <option value="SkillSwap">Skill swap</option>
+              <option value="Free">Free</option>
+            </select>
+          </div>
+
+          <!-- Budget field appears ONLY when Paid is selected -->
+          <div class="form-field" id="wrap-post-budget">
+            <label for="post-budget">Budget ($)</label>
+            <input type="number" id="post-budget" placeholder="35" min="1">
+            <div class="field-error" id="err-budget">Paid gigs need a budget.</div>
+          </div>
+
+          <div class="form-field">
+            <label for="post-deadline">Deadline</label>
+            <input type="date" id="post-deadline">
+            <div class="field-error" id="err-deadline">Pick a deadline date.</div>
+          </div>
+
+          <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; align-items: center;">
+            <button type="submit" class="btn-primary" id="btn-submit-post">Post gig</button>
+            <button type="button" class="btn-secondary" id="btn-cancel-post">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------
+         VIEW 4: MY ACTIVITY (Two Sub-Tabs)
+         ------------------------------------------------------------------- -->
+    <div class="view-panel" id="view-activity">
+      <div style="max-width: 1000px;">
+        <h2>My activity</h2>
+
+        <div class="sub-nav">
+          <button class="sub-nav-btn active" id="subtab-my-gigs">My gigs</button>
+          <button class="sub-nav-btn" id="subtab-my-apps">My applications</button>
+        </div>
+
+        <div id="activity-content-area">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------
+         VIEW 5: PROFILE
+         ------------------------------------------------------------------- -->
+    <div class="view-panel" id="view-profile">
+      <div class="profile-layout" id="profile-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    </div>
+  </main>
+
+  <!-- =======================================================================
+       STUDENT LOGIN / SWITCH ACCOUNT MODAL
+       ======================================================================= -->
+  <div class="modal-shim" id="modal-login">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-top">
+        <h3>Student Sign In</h3>
+        <button class="close-btn" id="btn-close-login-modal" aria-label="Close">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 1rem;">
+        Select your campus student account to sign in:
+      </p>
+
+      <div id="login-students-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
+        <!-- Populated dynamically with students -->
+      </div>
+
+      <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-secondary" id="btn-cancel-login-modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MUTUAL REVIEW MODAL
+       ======================================================================= -->
+  <div class="modal-shim" id="modal-review">
+    <div class="modal-box">
+      <div class="modal-top">
+        <h3 id="review-modal-title">Rate collaboration</h3>
+        <button class="close-btn" id="btn-close-review-modal" aria-label="Close">&times;</button>
+      </div>
+      <form id="form-review" novalidate>
+        <input type="hidden" id="review-gig-id">
+        <div class="form-field">
+          <label id="review-target-label">Rating (1 to 5)</label>
+          <select id="review-rating-select">
+            <option value="5">5 — Excellent work / great communication</option>
+            <option value="4">4 — Good, would work with again</option>
+            <option value="3">3 — Fair, met minimum expectations</option>
+            <option value="2">2 — Below expectations</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="review-comment-input">Comment</label>
+          <textarea id="review-comment-input" rows="3" placeholder="Write an honest note about how the gig went..."></textarea>
+          <div class="field-error" id="err-review-comment">Please write a short comment.</div>
+        </div>
+
+        <div style="margin-top: 1.25rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" id="btn-cancel-review-modal">Cancel</button>
+          <button type="submit" class="btn-primary">Submit review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Minimal Toast -->
+  <div class="toast-msg" id="toast-msg" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

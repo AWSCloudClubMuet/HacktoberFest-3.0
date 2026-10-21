@@ -1,0 +1,3 @@
+@echo off
+echo Running Campus Gig Automated Verification Test Suite...
+node test/test-api.js
