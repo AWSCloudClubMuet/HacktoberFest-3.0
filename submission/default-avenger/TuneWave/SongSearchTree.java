@@ -16,27 +16,28 @@ public class SongSearchTree {
         }
     }
 
-    private TreeNode root;
+    private TreeNode root_songNode;
     private final Set<String> songIds = new HashSet<>();
 //to add songs to the tree
     public boolean addSong(String title, String songId) {
         if (title == null || title.trim().isEmpty()
                 || songId == null || songId.trim().isEmpty()
                 || songIds.contains(songId)) {
+                    System.err.println("The error is inserting the song in tree");
             return false;
         }
 
-        if (root == null) {
-            root = new TreeNode(title, songId);
+        if (root_songNode == null) {
+            root_songNode = new TreeNode(title, songId);
             songIds.add(songId);
             return true;
         }
 
-        TreeNode current = root;
+        TreeNode current = root_songNode;
         while (true) {
             int comparison = title.compareToIgnoreCase(current.title);
             if (comparison == 0) return false;
-
+//Insert in left tree
             if (comparison < 0) {
                 if (current.left == null) {
                     current.left = new TreeNode(title, songId);
@@ -54,23 +55,27 @@ public class SongSearchTree {
             }
         }
     }
-
+//Uisng BST to serach the song
     public String findSong(String title) {
         if (title == null) return null;
 
-        TreeNode current = root;
+        TreeNode current = root_songNode;
         while (current != null) {
             int comparison = title.compareToIgnoreCase(current.title);
-            if (comparison == 0) return current.songId;
-            current = comparison < 0 ? current.left : current.right;
-        }
+            if (comparison == 0) 
+                return current.songId;
+if (comparison < 0) {
+    current = current.left;
+} else {
+    current = current.right;
+}        }
         return null;
     }
 
     public List<String> prefixSearch(String prefix) {
-        List<String> matches = new ArrayList<>();
+        List<String> matches = new ArrayList<>();//Arraylist for matching
         if (prefix == null) return matches;
-        collectPrefixMatches(root, prefix, matches);
+        collectPrefixMatches(root_songNode, prefix, matches);
         return matches;
     }
 

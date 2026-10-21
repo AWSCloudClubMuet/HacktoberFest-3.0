@@ -101,8 +101,9 @@ public class Playlist {
 
         if (node.next != null) node.next.prev = node.prev;
         else tail = node.prev;
-
-        Iterator<Song> queuedSongs = upNext.iterator();
+//removing the song from the upNext queue if it is present in the queue
+//When we are removing a song from the playlist, we also need to remove it from the upNext queue if it is present there. This is done by iterating through the upNext queue and checking if the songId matches the id of any song in the queue. If a match is found, that song is removed from the queue.       
+Iterator<Song> queuedSongs = upNext.iterator();
         while (queuedSongs.hasNext()) {
             if (Objects.equals(queuedSongs.next().id, songId)) queuedSongs.remove();
         }
