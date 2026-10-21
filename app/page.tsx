@@ -371,8 +371,7 @@ export default function Page() {
               </section>
 
 
-              <div className="section-heading">
-                <div><h2>{savedOnly ? 'Saved gigs' : 'Latest gigs'}</h2></div>
+              <div className="section-heading solo">
                 <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs'); setSavedOnly(false) }}>View all <ArrowRight /></button>
               </div>
 
