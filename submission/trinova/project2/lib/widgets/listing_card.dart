@@ -7,34 +7,25 @@ import '../utils.dart';
 
 class MarketLabelChip extends StatelessWidget {
   final String label;
-
-  const MarketLabelChip({
-    super.key,
-    required this.label,
-  });
+  const MarketLabelChip({super.key, required this.label});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Chip(
-      label: Text(label),
-      backgroundColor: switch (label) {
-        'Below market' => colorScheme.tertiaryContainer,
-        'At market' => colorScheme.secondaryContainer,
-        'Above market' => colorScheme.errorContainer,
-        _ => colorScheme.surfaceContainerHighest,
-      },
-      labelStyle: TextStyle(
-        color: switch (label) {
-          'Below market' => colorScheme.onTertiaryContainer,
-          'At market' => colorScheme.onSecondaryContainer,
-          'Above market' => colorScheme.onErrorContainer,
-          _ => colorScheme.onSurface,
-        },
-        fontWeight: FontWeight.w600,
+    final color = switch (label) {
+      'Below market' => Colors.green.shade800,
+      'Above market' => Colors.orange.shade900,
+      _ => Colors.blueGrey.shade700,
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color),
       ),
-      visualDensity: VisualDensity.compact,
+      child: Text(label,
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.w600, fontSize: 12)),
     );
   }
 }
@@ -42,23 +33,17 @@ class MarketLabelChip extends StatelessWidget {
 class ListingCard extends StatelessWidget {
   final Listing listing;
   final VoidCallback onTap;
-
-  const ListingCard({
-    super.key,
-    required this.listing,
-    required this.onTap,
-  });
+  const ListingCard({super.key, required this.listing, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cropName = appState.cropName(listing.cropId);
-    final label = appState.marketLabel(listing);
-
+    final l = listing;
+    final label = appState.marketLabel(l);
+    final textTheme = Theme.of(context).textTheme;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      clipBehavior: Clip.antiAlias,
       child: InkWell(
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -66,52 +51,33 @@ class ListingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text(
-                      cropName,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text(appState.cropName(l.cropId),
+                        style: textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${money(listing.askingPrice)} $priceUnit',
-                    textAlign: TextAlign.end,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
+                  if (!l.isActive)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 6),
+                      child: Chip(label: Text('Sold')),
                     ),
-                  ),
+                  Chip(label: Text('Grade ${l.grade}')),
                 ],
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  if (label != null) MarketLabelChip(label: label),
-                  if (!listing.isActive)
-                    const Chip(
-                      label: Text('Sold'),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                '${listing.district} · Grade ${listing.grade}',
-                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 4),
               Text(
-                '${numText(listing.quantity)} × 40 kg · Available from ${listing.availableFrom}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                  '${numText(l.quantity)} × 40 kg  ·  ${l.district}  ·  from ${fullDate(l.availableFrom)}'),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text('${money(l.askingPrice)} $priceUnit',
+                        style: textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                  ),
+                  if (label != null) MarketLabelChip(label: label),
+                ],
               ),
             ],
           ),
