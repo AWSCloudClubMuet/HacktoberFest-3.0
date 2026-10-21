@@ -5,7 +5,7 @@
 // pinned on the right. Signed-in users never see it.
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { api, type Gig, type Stats } from '@/lib/api'
+import { api, type Gig } from '@/lib/api'
 
 const TILTS = ['-1.3deg', '1deg', '-0.6deg']
 const PINS = ['#e96955', '#0d6e63', '#e9a13b']
@@ -26,15 +26,11 @@ function initials(name: string) {
 }
 
 export default function LandingPage() {
-  const [stats, setStats] = useState<Stats | null>(null)
   const [gigs, setGigs] = useState<Gig[]>([])
 
   useEffect(() => {
-    api.stats().then(setStats).catch(() => {})
     api.gigs({ status: 'Open' }).then((all) => setGigs(all.slice(0, 2))).catch(() => {})
   }, [])
-
-  const moreOpen = stats ? Math.max(0, stats.open_gigs - gigs.length) : 0
 
   return (
     <div className="landing">
@@ -90,15 +86,9 @@ export default function LandingPage() {
               </div>
             </article>
           ))}
-          {gigs.length > 0 && (
-            <Link className="board-more" href="/login">
-              {moreOpen > 0 ? `…and ${moreOpen} more open gigs — sign in to browse them all` : 'Sign in to browse all open gigs'} →
-            </Link>
-          )}
         </section>
       </div>
 
-      <footer className="landing-foot">campusloop — a campus community project · Programming · Design · Writing · Tutoring</footer>
     </div>
   )
 }
