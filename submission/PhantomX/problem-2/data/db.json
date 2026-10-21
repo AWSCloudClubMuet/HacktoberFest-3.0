@@ -4,7 +4,7 @@
       "id": "u01",
       "name": "Aisha Khan",
       "email": "aisha.khan@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Computer Science",
       "semester": 6,
       "bio": "Full-stack student who tutors intro courses.",
@@ -18,7 +18,7 @@
       "id": "u02",
       "name": "Bilal Ahmed",
       "email": "bilal.ahmed@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Graphic Design",
       "semester": 4,
       "bio": "Brand and poster designer for campus events.",
@@ -32,7 +32,7 @@
       "id": "u03",
       "name": "Sara Malik",
       "email": "sara.malik@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "English Literature",
       "semester": 5,
       "bio": "Edits essays and lab reports, and likes a clear brief.",
@@ -46,7 +46,7 @@
       "id": "u04",
       "name": "Hamza Raza",
       "email": "hamza.raza@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Business Administration",
       "semester": 7,
       "bio": "Works on case notes, presentations, and short research tasks.",
@@ -60,7 +60,7 @@
       "id": "u05",
       "name": "Zainab Tariq",
       "email": "zainab.tariq@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Mathematics",
       "semester": 3,
       "bio": "New on campus and looking for a first gig.",
@@ -72,7 +72,7 @@
       "id": "u06",
       "name": "Fatima Noor",
       "email": "fatima.noor@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Visual Design",
       "semester": 2,
       "bio": "Makes UI layouts and slide decks.",
@@ -86,7 +86,7 @@
       "id": "u07",
       "name": "George Patel",
       "email": "george.patel@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Computer Science",
       "semester": 8,
       "bio": "Looking for project partners on web apps.",
@@ -100,7 +100,7 @@
       "id": "u08",
       "name": "Hina Shah",
       "email": "hina.shah@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Biology",
       "semester": 4,
       "bio": "Builds study guides and cleans up lab writeups.",
@@ -114,7 +114,7 @@
       "id": "u09",
       "name": "Imran Qureshi",
       "email": "imran.qureshi@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Media Studies",
       "semester": 6,
       "bio": "Writes short scripts, captions, and outlines.",
@@ -128,7 +128,7 @@
       "id": "u10",
       "name": "Julia Santos",
       "email": "julia.santos@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Computer Science",
       "semester": 3,
       "bio": "Frontend practice partner for HTML and CSS.",
@@ -142,7 +142,7 @@
       "id": "u11",
       "name": "Kamran Ali",
       "email": "kamran.ali@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Business",
       "semester": 5,
       "bio": "Helps with cover letters and case notes.",
@@ -156,7 +156,7 @@
       "id": "u12",
       "name": "Lena Ortiz",
       "email": "lena.ortiz@campus.edu",
-      "password_hash": "$2b$10$85HURWvZbUbn1OHn8xbB4efGpBIcX0IKU1mK2YOeNz3nQv38PcsnK",
+      "password_hash": "$2b$10$PQbj661W5qlvdha.xl/4l.YCu741OD13y9Y22W42QrMJKNyjJ/CNe",
       "major": "Fine Arts",
       "semester": 4,
       "bio": "Poster concepts and design critiques.",
@@ -177,10 +177,10 @@
       "category": "Programming",
       "payment_type": "Paid",
       "budget": 150,
-      "deadline": "2026-11-20T06:47:05.817Z",
+      "deadline": "2026-11-20T09:38:15.472Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g02",
@@ -191,10 +191,10 @@
       "category": "Design",
       "payment_type": "Paid",
       "budget": 80,
-      "deadline": "2026-11-11T06:47:05.818Z",
+      "deadline": "2026-11-11T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g03",
@@ -205,10 +205,10 @@
       "category": "Writing",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-11-08T06:47:05.818Z",
+      "deadline": "2026-11-08T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g04",
@@ -219,10 +219,10 @@
       "category": "Tutoring",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-11-15T06:47:05.818Z",
+      "deadline": "2026-11-15T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g05",
@@ -233,10 +233,10 @@
       "category": "Programming",
       "payment_type": "Paid",
       "budget": 200,
-      "deadline": "2026-11-30T06:47:05.818Z",
+      "deadline": "2026-11-30T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g06",
@@ -247,10 +247,10 @@
       "category": "Design",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-11-06T06:47:05.818Z",
+      "deadline": "2026-11-06T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g07",
@@ -261,10 +261,10 @@
       "category": "Writing",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-11-02T06:47:05.818Z",
+      "deadline": "2026-11-02T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g08",
@@ -275,10 +275,10 @@
       "category": "Tutoring",
       "payment_type": "Paid",
       "budget": 45,
-      "deadline": "2026-11-18T06:47:05.818Z",
+      "deadline": "2026-11-18T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g09",
@@ -289,10 +289,10 @@
       "category": "Programming",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-11-04T06:47:05.818Z",
+      "deadline": "2026-11-04T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g10",
@@ -303,10 +303,10 @@
       "category": "Design",
       "payment_type": "Paid",
       "budget": 120,
-      "deadline": "2026-11-25T06:47:05.818Z",
+      "deadline": "2026-11-25T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g11",
@@ -317,10 +317,10 @@
       "category": "Writing",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-11-09T06:47:05.818Z",
+      "deadline": "2026-11-09T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g12",
@@ -331,10 +331,10 @@
       "category": "Tutoring",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-11-12T06:47:05.818Z",
+      "deadline": "2026-11-12T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g13",
@@ -345,10 +345,10 @@
       "category": "Design",
       "payment_type": "Paid",
       "budget": 60,
-      "deadline": "2026-10-11T06:47:05.818Z",
+      "deadline": "2026-10-11T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-06T06:47:05.818Z"
+      "created_at": "2026-10-06T09:38:15.473Z"
     },
     {
       "id": "g14",
@@ -359,10 +359,10 @@
       "category": "Writing",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-10-15T06:47:05.818Z",
+      "deadline": "2026-10-15T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z"
     },
     {
       "id": "g15",
@@ -373,10 +373,10 @@
       "category": "Tutoring",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-10-09T06:47:05.818Z",
+      "deadline": "2026-10-09T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-04T06:47:05.818Z"
+      "created_at": "2026-10-04T09:38:15.473Z"
     },
     {
       "id": "g16",
@@ -387,10 +387,10 @@
       "category": "Programming",
       "payment_type": "Paid",
       "budget": 90,
-      "deadline": "2026-10-18T06:47:05.818Z",
+      "deadline": "2026-10-18T09:38:15.473Z",
       "status": "Open",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-13T06:47:05.818Z"
+      "created_at": "2026-10-13T09:38:15.473Z"
     },
     {
       "id": "g17",
@@ -401,10 +401,10 @@
       "category": "Programming",
       "payment_type": "Paid",
       "budget": 100,
-      "deadline": "2026-11-05T06:47:05.818Z",
+      "deadline": "2026-11-05T09:38:15.473Z",
       "status": "In Progress",
       "accepted_applicant_id": "u06",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g18",
@@ -415,10 +415,10 @@
       "category": "Design",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-10-30T06:47:05.818Z",
+      "deadline": "2026-10-30T09:38:15.473Z",
       "status": "In Progress",
       "accepted_applicant_id": "u01",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g19",
@@ -429,10 +429,10 @@
       "category": "Writing",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-11-01T06:47:05.818Z",
+      "deadline": "2026-11-01T09:38:15.473Z",
       "status": "In Progress",
       "accepted_applicant_id": "u08",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g20",
@@ -443,10 +443,10 @@
       "category": "Tutoring",
       "payment_type": "Paid",
       "budget": 55,
-      "deadline": "2026-10-29T06:47:05.818Z",
+      "deadline": "2026-10-29T09:38:15.473Z",
       "status": "In Progress",
       "accepted_applicant_id": "u09",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g21",
@@ -457,10 +457,10 @@
       "category": "Programming",
       "payment_type": "Paid",
       "budget": 180,
-      "deadline": "2026-10-19T06:47:05.818Z",
+      "deadline": "2026-10-19T09:38:15.473Z",
       "status": "Completed",
       "accepted_applicant_id": "u01",
-      "created_at": "2026-10-14T06:47:05.818Z"
+      "created_at": "2026-10-14T09:38:15.473Z"
     },
     {
       "id": "g22",
@@ -471,10 +471,10 @@
       "category": "Design",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-10-17T06:47:05.818Z",
+      "deadline": "2026-10-17T09:38:15.473Z",
       "status": "Completed",
       "accepted_applicant_id": "u02",
-      "created_at": "2026-10-12T06:47:05.818Z"
+      "created_at": "2026-10-12T09:38:15.473Z"
     },
     {
       "id": "g23",
@@ -485,10 +485,10 @@
       "category": "Writing",
       "payment_type": "SkillSwap",
       "budget": null,
-      "deadline": "2026-10-13T06:47:05.818Z",
+      "deadline": "2026-10-13T09:38:15.473Z",
       "status": "Completed",
       "accepted_applicant_id": "u04",
-      "created_at": "2026-10-08T06:47:05.818Z"
+      "created_at": "2026-10-08T09:38:15.473Z"
     },
     {
       "id": "g24",
@@ -499,10 +499,10 @@
       "category": "Tutoring",
       "payment_type": "Paid",
       "budget": 75,
-      "deadline": "2026-10-20T06:47:05.818Z",
+      "deadline": "2026-10-20T09:38:15.473Z",
       "status": "Completed",
       "accepted_applicant_id": "u03",
-      "created_at": "2026-10-15T06:47:05.818Z"
+      "created_at": "2026-10-15T09:38:15.473Z"
     },
     {
       "id": "g25",
@@ -513,10 +513,10 @@
       "category": "Writing",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-10-14T06:47:05.818Z",
+      "deadline": "2026-10-14T09:38:15.473Z",
       "status": "Completed",
       "accepted_applicant_id": "u03",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g26",
@@ -527,10 +527,10 @@
       "category": "Design",
       "payment_type": "Paid",
       "budget": 40,
-      "deadline": "2026-10-26T06:47:05.818Z",
+      "deadline": "2026-10-26T09:38:15.473Z",
       "status": "Cancelled",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
     },
     {
       "id": "g27",
@@ -541,10 +541,24 @@
       "category": "Writing",
       "payment_type": "Free",
       "budget": null,
-      "deadline": "2026-10-27T06:47:05.818Z",
+      "deadline": "2026-10-27T09:38:15.473Z",
       "status": "Cancelled",
       "accepted_applicant_id": null,
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z"
+    },
+    {
+      "id": "g28",
+      "user_id": "u05",
+      "title": "Calculus problem walkthrough",
+      "description": "I can walk a classmate through two calculus problems in one hour.",
+      "category": "Tutoring",
+      "type": "Offering",
+      "payment_type": "Paid",
+      "budget": 40,
+      "deadline": "2026-11-20T13:00:00.000Z",
+      "status": "Completed",
+      "accepted_applicant_id": "u02",
+      "created_at": "2026-10-21T09:40:43.249Z"
     }
   ],
   "applications": [
@@ -554,7 +568,11 @@
       "applicant_id": "u02",
       "message": "I can help with React components this week.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a02",
@@ -562,7 +580,11 @@
       "applicant_id": "u03",
       "message": "Happy to debug alongside you.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a03",
@@ -570,7 +592,11 @@
       "applicant_id": "u01",
       "message": "I have made event posters in Figma.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a04",
@@ -578,7 +604,11 @@
       "applicant_id": "u08",
       "message": "I can handle layout if the brief is clear.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a05",
@@ -586,7 +616,11 @@
       "applicant_id": "u04",
       "message": "Send me the README and I will mark it up.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a06",
@@ -594,7 +628,11 @@
       "applicant_id": "u06",
       "message": "I can clean up the wording.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a07",
@@ -602,7 +640,11 @@
       "applicant_id": "u07",
       "message": "I write docs for my own projects.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a08",
@@ -610,7 +652,11 @@
       "applicant_id": "u08",
       "message": "I can coach grammar for an hour.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a09",
@@ -618,7 +664,11 @@
       "applicant_id": "u09",
       "message": "A swap works for me this weekend.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a10",
@@ -626,7 +676,11 @@
       "applicant_id": "u10",
       "message": "I can write the Python and the plot.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a11",
@@ -634,7 +688,11 @@
       "applicant_id": "u12",
       "message": "CSV cleanup is something I can do.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a12",
@@ -642,7 +700,11 @@
       "applicant_id": "u11",
       "message": "I will sketch a logo if you review my deck.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": "Weekday evenings after 6",
+      "portfolio_link": "https://campus.example/logo-sketches",
+      "swap_offer": "A simple logo sketch in exchange for the deck critique.",
+      "rejection_note": null
     },
     {
       "id": "a13",
@@ -650,7 +712,11 @@
       "applicant_id": "u12",
       "message": "I can read the abstract today.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a14",
@@ -658,7 +724,11 @@
       "applicant_id": "u01",
       "message": "I would like the biology session.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a15",
@@ -666,7 +736,11 @@
       "applicant_id": "u03",
       "message": "Let us trace the bug together.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a16",
@@ -674,7 +748,11 @@
       "applicant_id": "u06",
       "message": "I can deliver a Figma mock.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a17",
@@ -682,7 +760,11 @@
       "applicant_id": "u07",
       "message": "I wanted the logo hour before the deadline.",
       "status": "Pending",
-      "created_at": "2026-10-07T06:47:05.818Z"
+      "created_at": "2026-10-07T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a18",
@@ -690,7 +772,11 @@
       "applicant_id": "u08",
       "message": "I can still trade captions.",
       "status": "Pending",
-      "created_at": "2026-10-11T06:47:05.818Z"
+      "created_at": "2026-10-11T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a19",
@@ -698,7 +784,11 @@
       "applicant_id": "u06",
       "message": "I need the Express walkthrough.",
       "status": "Accepted",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a20",
@@ -706,7 +796,11 @@
       "applicant_id": "u07",
       "message": "I can join the API session too.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a21",
@@ -714,7 +808,11 @@
       "applicant_id": "u01",
       "message": "I can give poster feedback tomorrow.",
       "status": "Accepted",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a22",
@@ -722,7 +820,11 @@
       "applicant_id": "u08",
       "message": "I will trade notes for the edit.",
       "status": "Accepted",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a23",
@@ -730,7 +832,11 @@
       "applicant_id": "u09",
       "message": "I can share notes as well.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a24",
@@ -738,7 +844,11 @@
       "applicant_id": "u09",
       "message": "I can finish the stats set with you.",
       "status": "Accepted",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a25",
@@ -746,7 +856,11 @@
       "applicant_id": "u01",
       "message": "I can fix the quiz test cases.",
       "status": "Accepted",
-      "created_at": "2026-10-15T06:47:05.818Z"
+      "created_at": "2026-10-15T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a26",
@@ -754,7 +868,11 @@
       "applicant_id": "u02",
       "message": "I would like those thumbnails.",
       "status": "Accepted",
-      "created_at": "2026-10-13T06:47:05.818Z"
+      "created_at": "2026-10-13T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a27",
@@ -762,7 +880,11 @@
       "applicant_id": "u06",
       "message": "I can take the thumbnail set.",
       "status": "Rejected",
-      "created_at": "2026-10-13T06:47:05.818Z"
+      "created_at": "2026-10-13T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a28",
@@ -770,7 +892,11 @@
       "applicant_id": "u04",
       "message": "I will edit the case note.",
       "status": "Accepted",
-      "created_at": "2026-10-09T06:47:05.818Z"
+      "created_at": "2026-10-09T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a29",
@@ -778,7 +904,11 @@
       "applicant_id": "u03",
       "message": "Please sign me up for the critique.",
       "status": "Accepted",
-      "created_at": "2026-10-16T06:47:05.818Z"
+      "created_at": "2026-10-16T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a30",
@@ -786,7 +916,11 @@
       "applicant_id": "u03",
       "message": "Please rewrite my abstract.",
       "status": "Accepted",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a31",
@@ -794,7 +928,11 @@
       "applicant_id": "u10",
       "message": "I was interested in the icons.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a32",
@@ -802,7 +940,11 @@
       "applicant_id": "u12",
       "message": "I can use an icon set.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a33",
@@ -810,7 +952,11 @@
       "applicant_id": "u07",
       "message": "I can proofread the poem.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a34",
@@ -818,7 +964,11 @@
       "applicant_id": "u06",
       "message": "I can sit in on the React hour this week.",
       "status": "Pending",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": null
     },
     {
       "id": "a35",
@@ -826,7 +976,33 @@
       "applicant_id": "u02",
       "message": "I can sketch the logo, but the timing did not work.",
       "status": "Rejected",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null,
+      "rejection_note": "The timing did not work for this round."
+    },
+    {
+      "id": "a36",
+      "gig_id": "g28",
+      "applicant_id": "u02",
+      "message": "I can join Thursday evening and work through both problems with you.",
+      "status": "Accepted",
+      "created_at": "2026-10-21T09:42:17.430Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null
+    },
+    {
+      "id": "a37",
+      "gig_id": "g28",
+      "applicant_id": "u03",
+      "message": "I can take the second problem and send notes the same evening.",
+      "status": "Rejected",
+      "created_at": "2026-10-21T09:43:38.469Z",
+      "availability": null,
+      "portfolio_link": null,
+      "swap_offer": null
     }
   ],
   "reviews": [
@@ -837,7 +1013,7 @@
       "reviewee_id": "u01",
       "rating": 5,
       "comment": "Clear debugging help and the quiz tests passed.",
-      "created_at": "2026-10-16T06:47:05.818Z"
+      "created_at": "2026-10-16T09:38:15.473Z"
     },
     {
       "id": "r02",
@@ -846,7 +1022,7 @@
       "reviewee_id": "u09",
       "rating": 4,
       "comment": "Well scoped request and quick feedback.",
-      "created_at": "2026-10-16T06:47:05.818Z"
+      "created_at": "2026-10-16T09:38:15.473Z"
     },
     {
       "id": "r03",
@@ -855,7 +1031,7 @@
       "reviewee_id": "u02",
       "rating": 5,
       "comment": "Sharp poster thumbnails and fast turnaround.",
-      "created_at": "2026-10-14T06:47:05.818Z"
+      "created_at": "2026-10-14T09:38:15.473Z"
     },
     {
       "id": "r04",
@@ -864,7 +1040,7 @@
       "reviewee_id": "u10",
       "rating": 3,
       "comment": "Good brief, with a few late replies.",
-      "created_at": "2026-10-14T06:47:05.818Z"
+      "created_at": "2026-10-14T09:38:15.473Z"
     },
     {
       "id": "r05",
@@ -873,7 +1049,7 @@
       "reviewee_id": "u04",
       "rating": 4,
       "comment": "Careful edit and useful notes on the case writeup.",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z"
     },
     {
       "id": "r06",
@@ -882,7 +1058,7 @@
       "reviewee_id": "u11",
       "rating": 5,
       "comment": "Fair swap and easy to work with.",
-      "created_at": "2026-10-10T06:47:05.818Z"
+      "created_at": "2026-10-10T09:38:15.473Z"
     },
     {
       "id": "r07",
@@ -891,7 +1067,7 @@
       "reviewee_id": "u03",
       "rating": 5,
       "comment": "Great study of the composition problems.",
-      "created_at": "2026-10-17T06:47:05.818Z"
+      "created_at": "2026-10-17T09:38:15.473Z"
     },
     {
       "id": "r08",
@@ -900,7 +1076,7 @@
       "reviewee_id": "u12",
       "rating": 4,
       "comment": "Clear expectations for the critique session.",
-      "created_at": "2026-10-17T06:47:05.818Z"
+      "created_at": "2026-10-17T09:38:15.473Z"
     },
     {
       "id": "r09",
@@ -909,7 +1085,104 @@
       "reviewee_id": "u03",
       "rating": 5,
       "comment": "Helpful abstract edits and a clear ask.",
-      "created_at": "2026-10-11T06:47:05.818Z"
+      "created_at": "2026-10-11T09:38:15.473Z"
+    },
+    {
+      "id": "r10",
+      "gig_id": "g28",
+      "reviewer_id": "u05",
+      "reviewee_id": "u02",
+      "rating": 4,
+      "comment": "Clear explanations and on time.",
+      "created_at": "2026-10-21T09:46:13.986Z"
+    },
+    {
+      "id": "r11",
+      "gig_id": "g28",
+      "reviewer_id": "u02",
+      "reviewee_id": "u05",
+      "rating": 5,
+      "comment": "Well organized and easy to work with.",
+      "created_at": "2026-10-21T09:47:46.174Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m01",
+      "gig_id": "g17",
+      "sender_id": "u06",
+      "text": "Can we start with the routes, then the error handler?",
+      "created_at": "2026-10-09T11:38:15.473Z"
+    },
+    {
+      "id": "m02",
+      "gig_id": "g17",
+      "sender_id": "u04",
+      "text": "Yes. Bring the repo and we will follow one request through to the JSON response.",
+      "created_at": "2026-10-09T12:38:15.473Z"
+    },
+    {
+      "id": "m03",
+      "gig_id": "g17",
+      "sender_id": "u06",
+      "text": "I am free tomorrow after 4. Does that still work?",
+      "created_at": "2026-10-10T11:38:15.473Z"
+    },
+    {
+      "id": "m04",
+      "gig_id": "g17",
+      "sender_id": "u04",
+      "text": "Tomorrow after 4 works. I will share a video call link in this chat.",
+      "created_at": "2026-10-10T12:38:15.473Z"
+    },
+    {
+      "id": "m05",
+      "gig_id": "g17",
+      "sender_id": "u06",
+      "text": "Perfect. I will have the failing request ready.",
+      "created_at": "2026-10-10T13:38:15.473Z"
+    },
+    {
+      "id": "m06",
+      "gig_id": "g25",
+      "sender_id": "u03",
+      "text": "The second paragraph of the abstract is the one I am unsure about.",
+      "created_at": "2026-10-09T11:38:15.473Z"
+    },
+    {
+      "id": "m07",
+      "gig_id": "g25",
+      "sender_id": "u01",
+      "text": "I will tighten that paragraph and keep the word count under 250.",
+      "created_at": "2026-10-09T14:38:15.473Z"
+    },
+    {
+      "id": "m08",
+      "gig_id": "g25",
+      "sender_id": "u03",
+      "text": "Thank you. The claim in the last sentence can be shorter too.",
+      "created_at": "2026-10-09T15:38:15.473Z"
+    },
+    {
+      "id": "m09",
+      "gig_id": "g25",
+      "sender_id": "u01",
+      "text": "Done. The rewrite is shorter and the claim is easier to follow.",
+      "created_at": "2026-10-10T15:38:15.473Z"
+    },
+    {
+      "id": "m10",
+      "gig_id": "g25",
+      "sender_id": "u03",
+      "text": "This reads much more clearly. I will leave a review.",
+      "created_at": "2026-10-10T17:38:15.473Z"
+    },
+    {
+      "id": "m11",
+      "gig_id": "g28",
+      "sender_id": "u05",
+      "text": "Thursday at 6 works. I will send the two problems.",
+      "created_at": "2026-10-21T09:45:23.332Z"
     }
   ]
 }
