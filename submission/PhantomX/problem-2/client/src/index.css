@@ -148,19 +148,74 @@
 
 .header-bar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   grid-template-areas:
-    "brand search tools menu"
-    "tabs tabs tabs tabs";
+    "brand search tools"
+    "tabs tabs tabs";
   align-items: center;
+  column-gap: 0.5rem;
+  width: 100%;
+  padding-inline: 1rem;
 }
 
 .header-brand { grid-area: brand; min-width: 0; }
-.header-search { grid-area: search; justify-self: end; min-width: 0; }
-.header-tools { grid-area: tools; }
-.header-menu { grid-area: menu; }
-.header-tabs { grid-area: tabs; }
-.header-post { grid-area: post; display: none; }
+
+@media (max-width: 359px) {
+  .header-bar { column-gap: 0.25rem; }
+  .header-tools { gap: 0.25rem; }
+  .header-brand a { gap: 0.25rem; }
+  .header-brand .font-display { font-size: 1.0625rem; }
+}
+.header-center { display: contents; }
+.header-search { grid-area: search; justify-self: end; }
+.header-tools {
+  grid-area: tools;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.header-tabs {
+  grid-area: tabs;
+  padding-block: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-on-night) 12%, transparent);
+}
+.header-post-icon { display: inline-flex; }
+.header-post-label { display: none; }
+
+@media (min-width: 768px) {
+  .header-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    height: 5rem;
+    column-gap: 0.75rem;
+    padding-inline: 1.5rem;
+  }
+
+  .header-center {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .header-search { justify-self: auto; width: auto; }
+  .header-tabs {
+    padding-block: 0;
+    border-top: 0;
+  }
+  .header-tools { margin-left: auto; gap: 0.75rem; }
+  .header-brand { flex: 0 0 auto; }
+}
+
+@media (min-width: 1280px) {
+  .header-search { flex: 1 1 auto; max-width: 30rem; }
+  .header-post-icon { display: none; }
+  .header-post-label { display: inline-flex; }
+}
 
 .header-popover {
   position: fixed;
@@ -174,16 +229,6 @@
   padding: 0.5rem;
 }
 
-@media (min-width: 1024px) {
-  .header-bar {
-    height: 5rem;
-    grid-template-columns: auto auto minmax(7.5rem, 1fr) auto auto;
-    grid-template-areas: "brand tabs search post tools";
-  }
-
-  .header-search { justify-self: stretch; }
-  .header-post { display: inline-flex; }
-}
 
 .toast-stack {
   bottom: max(1rem, env(safe-area-inset-bottom));

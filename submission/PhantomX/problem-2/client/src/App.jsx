@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Briefcase, ClipboardList, MoreVertical } from 'lucide-react';
+import { Briefcase, ClipboardList, MoreVertical, Plus } from 'lucide-react';
 import { api, getToken, setToken } from './api.js';
 import logoUrl from './assets/logo.svg';
-import { Link, buttonClass, secondaryButtonClass } from './components.jsx';
+import { Link, buttonClass } from './components.jsx';
 import { initials } from './format.js';
 import { AppContext, AuthContext } from './context.js';
 import { SECTIONS, parseSearch, readSection, sectionFromPath, toQuery, writeSection } from './section.js';
@@ -83,13 +83,9 @@ const workNav = [
   { to: '/applications', label: 'My applications', icon: ClipboardList },
 ];
 
-const mobileNav = [
-  ...workNav,
-  { to: '/profile', label: 'Profile' },
-];
 
 function navClass(active) {
-  return `flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold transition duration-150 ${active ? 'bg-white/15 text-on-night' : 'text-on-night-muted hover:bg-white/10 hover:text-on-night'}`;
+  return `flex min-h-11 items-center whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition duration-150 ${active ? 'bg-white/15 text-on-night' : 'text-on-night-muted hover:bg-white/10 hover:text-on-night'}`;
 }
 
 function menuItemClass(active) {
@@ -204,12 +200,12 @@ function HeaderMenu({ id, label, open, onToggle, onClose, buttonClassName, butto
 
 function Brand({ to }) {
   return (
-    <Link to={to} className="flex h-11 min-w-0 items-center gap-2 text-on-night lg:h-14 lg:gap-2.5">
-      <img src={logoUrl} alt="" width="48" height="48" className="h-10 w-10 shrink-0 lg:h-12 lg:w-12" />
-      <span className="min-w-0 leading-none">
-        <span className="block truncate font-display text-xl font-bold tracking-tight lg:text-2xl xl:text-[1.7rem]">
+    <Link to={to} className="flex h-16 shrink-0 items-center gap-2 text-on-night md:h-20 md:gap-2.5">
+      <img src={logoUrl} alt="" width="48" height="48" className="h-9 w-9 shrink-0 md:h-11 md:w-11 xl:h-12 xl:w-12" />
+      <span className="leading-none">
+        <span className="block whitespace-nowrap font-display text-xl font-bold tracking-tight md:text-2xl xl:text-[1.7rem]">
           Campus Gig
-          <span className="hidden font-medium text-offer-soft sm:inline"> & SkillSwap</span>
+          <span className="hidden font-medium text-offer-soft md:inline"> & SkillSwap</span>
         </span>
         <span className="mt-1 hidden text-xs font-medium tracking-wide text-on-night-muted xl:block">Learn. Offer. Earn.</span>
       </span>
@@ -226,7 +222,7 @@ function AccountMenu({ user, path, open, onToggle, onClose, onLogout }) {
       open={open}
       onToggle={onToggle}
       onClose={onClose}
-      buttonClassName="hidden h-11 items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1 pl-1 pr-1 text-on-night focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-night lg:inline-flex xl:pr-3"
+      buttonClassName="inline-flex h-11 items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1 pl-1 pr-1 text-on-night focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-night xl:pr-3"
       button={(
         <>
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-offer-soft text-sm font-bold text-offer-deep" aria-hidden="true">{initials(user.name)}</span>
@@ -274,7 +270,6 @@ export function App() {
   const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
   const [toasts, setToasts] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -346,7 +341,6 @@ export function App() {
   }
 
   useEffect(() => {
-    setMenuOpen(false);
     setAccountOpen(false);
     setOptionsOpen(false);
     setSearchOpen(false);
@@ -386,35 +380,47 @@ export function App() {
     <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
       <div id="app-shell" className="min-h-screen">
         <header className="site-header sticky top-0 z-40 border-b border-white/10">
-          <div className="header-bar mx-auto w-full max-w-7xl gap-x-2 px-3 sm:px-4 lg:gap-x-3 lg:px-6">
-            <div className="header-brand flex h-16 items-center lg:h-20">
+          <div className="header-bar">
+            <div className="header-brand flex items-center">
               <Brand to={user ? `/${section}` : '/'} />
             </div>
-            {user && !isPublic ? (
-              <div className="header-search">
-                <SearchDock
-                  section={section}
-                  filters={parseSearch(query)}
-                  open={searchOpen}
-                  onOpen={() => setSearchOpen(true)}
-                  onClose={() => setSearchOpen(false)}
-                  onApply={(draft) => {
-                    setSearchOpen(false);
-                    navigate(`/${section}${toQuery({ ...draft, group: '' })}`);
-                  }}
-                  onClear={() => {
-                    setSearchOpen(false);
-                    navigate(`/${section}`);
-                  }}
-                />
-              </div>
-            ) : null}
-            {user && !isPublic ? (
-              <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`${buttonClass} header-post hidden shrink-0 whitespace-nowrap px-3 text-sm lg:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
-                {SECTIONS[section].post}
-              </Link>
-            ) : null}
-            <div className="header-tools flex items-center justify-end gap-1">
+            <div className="header-center">
+              {user && !isPublic ? (
+                <div className="header-tabs md:border-0">
+                  <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
+                </div>
+              ) : null}
+              {user && !isPublic ? (
+                <div className="header-search">
+                  <SearchDock
+                    section={section}
+                    filters={parseSearch(query)}
+                    open={searchOpen}
+                    onOpen={() => setSearchOpen(true)}
+                    onClose={() => setSearchOpen(false)}
+                    onApply={(draft) => {
+                      setSearchOpen(false);
+                      navigate(`/${section}${toQuery({ ...draft, group: '' })}`);
+                    }}
+                    onClear={() => {
+                      setSearchOpen(false);
+                      navigate(`/${section}`);
+                    }}
+                  />
+                </div>
+              ) : null}
+            </div>
+            <div className="header-tools">
+              {user && !isPublic ? (
+                <>
+                  <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`header-post-icon h-11 w-11 shrink-0 items-center justify-center rounded-full fill-offer text-white shadow-card ${section === 'request' ? 'fill-request' : ''}`} aria-label={SECTIONS[section].post}>
+                    <Plus size={20} aria-hidden="true" />
+                  </Link>
+                  <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`${buttonClass} header-post-label shrink-0 whitespace-nowrap px-4 text-sm ${section === 'request' ? 'fill-request' : ''}`}>
+                    {SECTIONS[section].post}
+                  </Link>
+                </>
+              ) : null}
               {user && !isPublic ? (
                 <OptionsMenu
                   user={user}
@@ -423,7 +429,6 @@ export function App() {
                   onToggle={() => {
                     setOptionsOpen((open) => !open);
                     setAccountOpen(false);
-                    setMenuOpen(false);
                   }}
                   onClose={() => setOptionsOpen(false)}
                 />
@@ -436,71 +441,16 @@ export function App() {
                   onToggle={() => {
                     setAccountOpen((open) => !open);
                     setOptionsOpen(false);
-                    setMenuOpen(false);
                   }}
                   onClose={() => setAccountOpen(false)}
                   onLogout={logout}
                 />
               ) : (
-                <nav className="hidden items-center gap-1 lg:flex" aria-label="Account">
+                <nav className="flex items-center gap-1" aria-label="Account">
                   <Link to="/login" className={navClass(path === '/login')}>Log in</Link>
                   <Link to="/signup" className={navClass(path === '/signup')}>Sign up</Link>
                 </nav>
               )}
-            </div>
-            <button
-              type="button"
-              className="header-menu inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night lg:hidden"
-              aria-expanded={menuOpen}
-              aria-controls="site-menu"
-              onClick={() => {
-                setMenuOpen((open) => !open);
-                setAccountOpen(false);
-                setOptionsOpen(false);
-              }}
-            >
-              <span className="sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
-              {menuOpen ? (
-                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M5 5l10 10M15 5L5 15" />
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13" />
-                </svg>
-              )}
-            </button>
-            {user && !isPublic ? (
-              <div className="header-tabs border-t border-white/10 py-2 lg:border-t-0 lg:py-0">
-                <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
-              </div>
-            ) : null}
-          </div>
-          <div id="site-menu" className="menu-panel lg:hidden" data-open={menuOpen ? 'true' : 'false'} inert={menuOpen ? undefined : true}>
-            <div>
-              <nav className="flex flex-col gap-1 px-4 pb-4 sm:px-6" aria-label={user ? 'Primary' : 'Account'}>
-                {user && !isPublic ? (
-                  <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={navClass(path === '/gigs/new')}>
-                    {SECTIONS[section].post}
-                  </Link>
-                ) : null}
-                {user ? mobileNav.map((item) => (
-                  <Link key={item.to} to={item.to} className={navClass(path === item.to)}>
-                    {item.label}
-                  </Link>
-                )) : (
-                  <>
-                    <Link to="/login" className={navClass(path === '/login')}>Log in</Link>
-                    <Link to="/signup" className={navClass(path === '/signup')}>Sign up</Link>
-                  </>
-                )}
-                {user ? (
-                  <div className="mt-2 flex flex-col gap-2 border-t border-white/15 pt-3">
-                    <p className="truncate px-3 text-sm font-semibold text-on-night">{user.name}</p>
-                    <button type="button" className={`${secondaryButtonClass} w-full`} onClick={logout}>Log out</button>
-                  </div>
-                ) : null}
-              </nav>
             </div>
           </div>
         </header>
