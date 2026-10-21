@@ -3,6 +3,69 @@
 Multi-user, read-only dashboard for an EC2 Auto Scaling group, its Application Load Balancer and CloudWatch.
 It never creates, scales or deletes anything. Original specs are in `docs/`.
 
+This submission contains two complementary projects:
+
+| Project | Location | Purpose |
+|---|---|---|
+| **ScaleOps** | [`scaleops/`](.) | Read-only AWS observability dashboard for EC2, Auto Scaling, ALB and CloudWatch. |
+| **saa-wak (ساوڪ)** | [`saa-wak system/`](../saa-wak%20system/) | Crop-price discovery and produce marketplace for farmers and buyers in Sindh, Pakistan. |
+
+## saa-wak — crop marketplace for Sindh
+
+**saa-wak** helps farmers and buyers explore agricultural prices and produce listings in one
+mobile-friendly interface. Users can browse crop prices, compare three Sindh markets
+(Hyderabad, Sukkur and Mirpur Khas), view 14-day trends, create sample price alerts,
+manage produce listings and estimate a potential sale with the profit calculator.
+
+### saa-wak features
+
+- Farmer and buyer demo experiences with responsive navigation.
+- Crop prices, daily movement, market comparison and 14-day trend charts.
+- Demo-only above/below price alerts.
+- Marketplace search, filtering, sorting and listing details.
+- Farmer listing management and a revenue, cost, profit and margin calculator.
+- Optional Express/Prisma backend with authentication, crops, prices, listings, alerts,
+  conversations, Socket.IO messaging and Gemini-powered AI routes.
+
+### saa-wak technology and local setup
+
+The frontend is a React + TypeScript + Vite application. Its default mode uses fictional
+seed data and browser `localStorage`; it does not claim to provide live market prices.
+
+```powershell
+cd "saa-wak system\frontend"
+npm install
+npm run dev
+# Open http://localhost:5173
+```
+
+For a production frontend build, run `npm run build`; use `npm run preview` to review it locally.
+
+The optional backend is an Express + TypeScript + Prisma API backed by PostgreSQL:
+
+```powershell
+cd "saa-wak system\Backend"
+npm install
+copy .env.example .env
+# Set DATABASE_URL, JWT_SECRET, FRONTEND_ORIGIN and (optionally) GEMINI_API_KEY in .env
+npm run prisma:generate
+npm run prisma:migrate:dev
+npm run dev
+# API health: http://localhost:5000/api/v1/health
+```
+
+The frontend can use the backend by setting `VITE_API_BASE_URL` in
+[`saa-wak system/frontend/.env.example`](../saa-wak%20system/frontend/.env.example).
+Keep `GEMINI_API_KEY`, database credentials and JWT secrets on the server only.
+
+### saa-wak demo limitations
+
+The frontend seed prices, profiles and listings are fictional. Browser role selection is
+not authentication, localStorage is not durable server persistence, and alerts do not send
+email, SMS or push notifications. Calculator results are estimates and the interface is
+not a source of official market quotations. See the [full saa-wak README](../saa-wak%20system/README.md)
+for the complete feature reference and data model.
+
 For the combined AWS workload + dashboard demo, repeatable load tests, evidence collection,
 scaling analysis and cleanup, follow [the hackathon runbook](docs/HACKATHON-DEMO.md).
 The dashboard's **Export evidence JSON** button saves the selected metric window, current capacity,
