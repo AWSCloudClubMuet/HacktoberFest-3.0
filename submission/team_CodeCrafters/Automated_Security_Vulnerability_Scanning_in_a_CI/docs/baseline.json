@@ -1,0 +1,11 @@
+{
+  "total": 57,
+  "vulnerable_branch": "demo/vulnerable",
+  "generated_at": "2026-10-20T22:00:00Z",
+  "breakdown": {
+    "sast": 2,
+    "dependencies": 12,
+    "container": 42,
+    "secrets": 1
+  }
+}

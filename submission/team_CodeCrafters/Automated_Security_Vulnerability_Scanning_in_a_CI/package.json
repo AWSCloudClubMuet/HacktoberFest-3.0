@@ -1,0 +1,15 @@
+{
+  "name": "secure-pipeline-demo",
+  "version": "1.0.0",
+  "description": "DevSecOps Automated Security Vulnerability Scanning in a CI/CD Pipeline",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "lodash": "^4.17.21"
+  }
+}
