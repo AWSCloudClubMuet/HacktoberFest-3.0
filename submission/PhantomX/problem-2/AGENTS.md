@@ -192,29 +192,31 @@ Each section is what the visitor wants to do, so the catalogue shows the opposit
 
 ## Visual design
 
-Colors live in `client/src/index.css` as Tailwind theme tokens. Components use those utilities instead of hard-coded hex values.
+Colors live in `client/src/index.css` as Tailwind theme tokens. Components use those utilities instead of hard-coded hex values. The page background is lavender (`canvas`), cards are white (`surface`), and section rows sit on `band`. The navbar, heroes, and footer use the midnight `night` family with `on-night` text.
 
 | Role | Hex |
 | --- | --- |
-| Canvas | `#F4F1EA` |
+| Canvas / band | `#EEF1FB` / `#E3E8F8` |
 | Surface | `#FFFFFF` |
-| Ink | `#1B2430` |
-| Secondary / muted | `#3E4A55` / `#4A5560` |
-| Line | `#E7E1D6` |
-| Offer (primary) | `#0A6B5C` |
-| Offer deep / bright / soft | `#075248` / `#12A58C` / `#E5F5F1` |
-| Request | `#5B3DF5` |
-| Request deep / soft | `#4328C9` / `#F0EBFF` |
-| Coral accent | `#C2413A` |
-| Coral bright / soft | `#E36A4F` / `#FFEDE8` |
-| Success | `#146B45` |
+| Ink | `#14182B` |
+| Secondary / muted | `#3C4462` / `#4E5672` |
+| Line | `#D5DAF0` |
+| Night / deep / mid | `#12163A` / `#0B0F24` / `#2A3178` |
+| On night / muted | `#F4F6FF` / `#C5CBE8` |
+| Primary and request | `#5B21B6` |
+| Request deep / bright / soft | `#4318A8` / `#7C3AED` / `#EDE7FF` |
+| Offer / deep / bright / soft | `#0B6B5A` / `#064E45` / `#12957F` / `#D7F6EE` |
+| Coral / bright / soft | `#C23B42` / `#E15A4A` / `#FFE6E2` |
+| Open | `#0E7490` |
+| Free | `#047857` |
+| Success | `#0F6B45` |
 | Warning (Paid) | `#8A4B08` |
 | Danger | `#B42318` |
-| In progress | `#1E4B86` |
-| Star | `#B86E09` |
+| In progress | `#1D4ED8` |
+| Star | `#9A5B08` |
 
-Offer uses the teal family for the active tab, hero, and buttons. Request uses violet for those same roles so white labels stay WCAG AA. Coral is the warm accent (deadline hints and the request hero wash). Payment and status badges use the success, warning, danger, progress, offer, and request tokens on tinted backgrounds.
+Offer uses emerald for its tab, hero wash, and buttons. Request uses violet for those same roles. White on `#0B6B5A` and `#5B21B6` stays WCAG AA. Paid is amber, SkillSwap is violet, Free is emerald. Open is cyan, In Progress is blue, Completed is green, Expired is red, Cancelled is muted.
 
-Fonts: Outfit for headings, Plus Jakarta Sans for body and form text. Headings use `clamp()` and tight tracking. Body line height is 1.6. Inputs stay at 16px.
+Spacing is compact: about 16px between blocks on mobile and 24px on desktop, 16px card padding, and a 1280px page (`max-w-7xl`). Heroes are short banners with the title and action side by side. Gig grids are 1 column below 768px, 2 from `md`, 3 from `lg`, and 4 from `xl`. Touch targets stay at least 44px. Body text stays at least 14px. Inputs stay at 16px. Hover lift and focus rings respect `prefers-reduced-motion`.
 
-Breakpoints are mobile-first Tailwind defaults. Catalogue blocks scroll sideways inside the page. Gig cards are 1 column below 768px, 2 from `md` (768px), and 3 from `lg` (1024px). The navbar search is an icon below `md` and a bar from `md`. The navbar links collapse into a hamburger below `lg`. Page content stops at `max-w-6xl` (72rem). Gig detail is one column below `lg` and two columns from `lg`, with the action panel sticky on desktop. Checked at 320, 375, 768, 1024, and 1440px, plus a short landscape width, with no horizontal overflow.
+Fonts: Outfit for headings, Plus Jakarta Sans for body and form text. The navbar search is an icon below `md` and a bar from `md`. Navbar links collapse into a hamburger below `lg`. Gig detail is one column below `lg` and two columns from `lg`. Login and signup are a gradient panel beside the form from `lg`, and a short gradient header on smaller screens.
