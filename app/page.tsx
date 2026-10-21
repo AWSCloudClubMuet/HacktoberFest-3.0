@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
+import LandingPage from '@/components/landing'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -164,14 +165,14 @@ export default function Page() {
       .then(({ data }) => {
         setAuthEmail(data?.user?.email ?? null)
         setAuthChecked(true)
-        if (!data) router.replace('/login')
       })
-      .catch(() => { setAuthChecked(true); router.replace('/login') })
+      .catch(() => { setAuthChecked(true) })
   }, [router])
 
   async function doSignOut() {
     await authClient.signOut()
-    router.push('/login')
+    setAuthEmail(null)
+    router.push('/')
   }
 
   async function doCompleteProfile() {
@@ -291,6 +292,10 @@ export default function Page() {
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Could not submit review')
     }
+  }
+
+  if (authChecked && !authEmail) {
+    return <LandingPage />
   }
 
   if (!authChecked || !authEmail) {
