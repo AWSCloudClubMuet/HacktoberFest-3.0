@@ -71,8 +71,8 @@ export const Onboarding: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background-dark py-6 sm:py-10 px-4 transition-colors">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-transparent py-6 sm:py-10 px-4 transition-colors">
+      <div className="max-w-5xl mx-auto">
         {/* Top bar with Language Switcher */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -85,7 +85,7 @@ export const Onboarding: React.FC = () => {
         </div>
 
         {/* Full-width Hero with Large Faint Outlined Circle (Requirement 2.3 #2) */}
-        <div className="relative overflow-hidden rounded-3xl bg-forest-900 dark:bg-forest-950 text-white p-6 sm:p-10 mb-8 shadow-xl border border-forest-800">
+        <div className="hero-grid relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-900 to-[#061b10] text-white p-7 sm:p-11 mb-8 shadow-[0_24px_60px_rgba(14,42,27,0.22)] border border-forest-700/70">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-forest-700/20 blur-3xl pointer-events-none" />
 
@@ -98,7 +98,7 @@ export const Onboarding: React.FC = () => {
               </div>
 
               {/* Hero Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-mint mb-3 leading-tight font-sans">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.045em] text-white mb-4 leading-[0.98] font-sans">
                 {t('onboarding.title')}
               </h1>
 
@@ -109,13 +109,13 @@ export const Onboarding: React.FC = () => {
 
             {/* Indus River Landscape Illustration in Large Outlined Circle */}
             <div className="flex-shrink-0 relative flex items-center justify-center">
-              <IndusLandscape size={260} className="w-56 h-56 sm:w-64 sm:h-64" />
+              <IndusLandscape size={260} className="animate-float-soft w-56 h-56 sm:w-64 sm:h-64" />
             </div>
           </div>
         </div>
 
         {/* Main Onboarding Card with Ajrak Corner and Ajrak Strip Header */}
-        <div className="max-w-xl mx-auto relative bg-white dark:bg-forest-950 rounded-3xl shadow-lg border border-gray-100 dark:border-forest-800/80 overflow-hidden">
+        <div className="premium-panel max-w-xl mx-auto relative rounded-[2rem] dark:bg-forest-950 overflow-hidden">
           {/* Ajrak Strip Header (Requirement 2.3 #2) */}
           <AjrakStrip height={10} variant="md" />
 

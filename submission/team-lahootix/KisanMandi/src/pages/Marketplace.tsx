@@ -146,9 +146,9 @@ export const Marketplace: React.FC = () => {
 
   return (
     <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefetchingListings}>
-      <div className="space-y-4 max-w-4xl mx-auto pb-16">
+      <div className="space-y-5 max-w-5xl mx-auto pb-16">
         {/* Top Header Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-forest-950 p-4 sm:p-5 rounded-3xl border border-gray-100 dark:border-forest-800 shadow-xs">
+        <div className="premium-panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 sm:p-6 rounded-3xl dark:bg-forest-950">
           <div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <ShoppingBag className="w-5 h-5 text-forest dark:text-mint" />
@@ -187,7 +187,7 @@ export const Marketplace: React.FC = () => {
         </div>
 
         {/* Search, Filter Bar & Sorting */}
-        <div className="bg-white dark:bg-forest-950 p-4 rounded-3xl border border-gray-100 dark:border-forest-800 shadow-xs space-y-3">
+        <div className="premium-panel p-4 sm:p-5 rounded-3xl dark:bg-forest-950 space-y-3">
           <div className="flex flex-col sm:flex-row items-center gap-2.5">
             {/* Search Box */}
             <div className="relative flex-1 w-full">
@@ -339,7 +339,7 @@ export const Marketplace: React.FC = () => {
                 <div
                   key={listing.id}
                   onClick={() => navigate(`/listings/${listing.id}`)}
-                  className="bg-white dark:bg-forest-950 rounded-3xl p-5 border border-gray-100 dark:border-forest-800 shadow-xs hover:border-forest-300 dark:hover:border-forest-600 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+                  className="premium-card bg-white dark:bg-forest-950 rounded-3xl p-5 sm:p-6 border border-white dark:border-forest-800 hover:border-forest-200 dark:hover:border-forest-600 transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden"
                 >
                   {/* Top: Crop name, Woven Grade Tag (Requirement 2.3 #6), Market Label */}
                   <div>

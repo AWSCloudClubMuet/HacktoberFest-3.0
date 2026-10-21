@@ -167,10 +167,12 @@ export const Prices: React.FC = () => {
 
   return (
     <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefetchingPrices}>
-      <div className="space-y-5 max-w-4xl mx-auto pb-10">
+      <div className="space-y-6 max-w-5xl mx-auto pb-10">
         {/* Prices Hero: Forest Green with SteppedBars, Faint Circle with Ajrak Overlay, and Ajrak Strip */}
-        <div className="relative overflow-hidden rounded-3xl bg-forest-900 dark:bg-forest-950 text-white shadow-xl border border-forest-800">
-          <div className="p-6 sm:p-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="hero-grid relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-900 to-[#061b10] text-white shadow-[0_24px_60px_rgba(14,42,27,0.22)] border border-forest-700/70">
+          <div className="absolute -left-20 -bottom-28 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
+          <div className="absolute -right-10 -top-24 w-72 h-72 rounded-full bg-neon/10 blur-3xl" />
+          <div className="p-7 sm:p-10 relative z-10 flex flex-col md:flex-row items-center justify-between gap-7">
             <div className="max-w-lg text-center md:text-left rtl:md:text-right">
               {/* Time-of-day greeting badge with Sun/Moon icon */}
               <div className="inline-flex items-center space-x-1.5 rtl:space-x-reverse px-3 py-1 rounded-full bg-forest-800/80 border border-forest-700/60 text-xs font-semibold text-mint mb-2.5">
@@ -179,12 +181,12 @@ export const Prices: React.FC = () => {
               </div>
 
               {/* Main culture hero title */}
-              <h1 className="text-2xl sm:text-3xl font-black text-mint tracking-tight mb-1.5 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-black text-white tracking-[-0.035em] mb-2 leading-[1.05]">
                 {t('app.heroTagline')}
               </h1>
 
               {/* Supporting tagline */}
-              <p className="text-xs sm:text-sm text-gray-300 max-w-md leading-relaxed">
+              <p className="text-sm sm:text-base text-forest-100/85 max-w-lg leading-relaxed">
                 {t('app.heroSubtagline')}
               </p>
 
@@ -216,7 +218,7 @@ export const Prices: React.FC = () => {
             </div>
 
             {/* Stepped Bars with Faint Outlined Circle & Subtle Ajrak Overlay */}
-            <div className="relative flex-shrink-0 flex items-center justify-center w-48 h-36 sm:w-56 sm:h-40">
+            <div className="animate-float-soft relative flex-shrink-0 flex items-center justify-center w-52 h-40 sm:w-64 sm:h-48">
               {/* Large Faint Outlined Circle */}
               <div className="absolute inset-0 rounded-full border border-forest-700/40 pointer-events-none" />
               {/* Subtle Ajrak Tile Overlay inside circle (6-8% opacity) */}
@@ -231,7 +233,7 @@ export const Prices: React.FC = () => {
         </div>
 
         {/* Market Selector Chips with Sindhi Architectural Arch and Location markers (Requirement 2.3 #5) */}
-        <div className="bg-white dark:bg-forest-950 p-4 rounded-2xl border border-gray-100 dark:border-forest-800 shadow-xs">
+        <div className="premium-panel p-4 sm:p-5 rounded-3xl dark:bg-forest-950">
           <div className="flex items-center space-x-1.5 rtl:space-x-reverse text-xs font-bold text-gray-500 dark:text-gray-400 mb-2.5">
             <SindhiArchIcon size={14} className="text-forest dark:text-mint" />
             <span>{t('prices.selectMarket')}</span>
@@ -360,7 +362,7 @@ export const Prices: React.FC = () => {
                   onClick={() =>
                     navigate(`/crops/${crop.id}?market=${selectedMarketId}`)
                   }
-                  className="bg-white dark:bg-forest-950 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-forest-800 shadow-xs hover:border-forest-300 dark:hover:border-forest-600 hover:shadow-md transition-all duration-200 cursor-pointer group flex flex-col justify-between relative overflow-hidden"
+                  className="premium-card bg-white dark:bg-forest-950 rounded-3xl p-5 sm:p-6 border border-white dark:border-forest-800 hover:border-forest-200 dark:hover:border-forest-600 transition-all duration-300 cursor-pointer group flex flex-col justify-between relative overflow-hidden"
                 >
                   {/* Top: Crop Icon with Ajrak Badge Ring (Requirement 2.3 #4), Crop Name & Category */}
                   <div className="flex items-start justify-between gap-3">

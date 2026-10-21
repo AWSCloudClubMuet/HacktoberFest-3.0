@@ -9,6 +9,9 @@
     --ajrak-ivory: #F6EEDC;
     --ajrak-black: #1A1A1A;
     --ajrak-turquoise: #1F8A9E;
+    --page-bg: #F2F6F3;
+    --card-shadow: 0 1px 2px rgba(14, 42, 27, 0.04), 0 12px 32px rgba(14, 42, 27, 0.07);
+    --card-shadow-hover: 0 18px 48px rgba(14, 42, 27, 0.13);
   }
 
   .dark {
@@ -20,17 +23,45 @@
   }
 
   body {
-    background-color: #F5F8F6;
+    background-color: var(--page-bg);
+    background-image:
+      radial-gradient(circle at 8% 0%, rgba(198, 245, 213, 0.55), transparent 28rem),
+      radial-gradient(circle at 92% 12%, rgba(223, 255, 56, 0.10), transparent 24rem);
+    background-attachment: fixed;
     color: #111827;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     transition-property: color, background-color, border-color;
     transition-duration: 200ms;
     -webkit-tap-highlight-color: transparent;
+    min-width: 320px;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
   }
 
   .dark body {
     background-color: #0A1810;
+    background-image:
+      radial-gradient(circle at 8% 0%, rgba(37, 127, 79, 0.16), transparent 30rem),
+      radial-gradient(circle at 92% 12%, rgba(223, 255, 56, 0.035), transparent 25rem);
     color: #F3F4F6;
+  }
+
+  ::selection {
+    background: #DFFF38;
+    color: #0C2014;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid rgba(61, 158, 103, 0.28);
+    outline-offset: 2px;
   }
 
   /* Urdu typography adjustments */
@@ -42,6 +73,55 @@
 
   .font-nastaliq {
     font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif;
+  }
+}
+
+@layer components {
+  .premium-panel {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(18px);
+  }
+
+  .dark .premium-panel {
+    background: rgba(5, 28, 16, 0.84);
+    border-color: rgba(100, 185, 136, 0.14);
+  }
+
+  .premium-card {
+    box-shadow: var(--card-shadow);
+    transform: translateZ(0);
+  }
+
+  .premium-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-3px);
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+
+.animate-float-soft {
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

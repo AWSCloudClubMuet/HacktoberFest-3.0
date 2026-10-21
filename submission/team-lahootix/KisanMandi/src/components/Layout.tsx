@@ -80,14 +80,14 @@ export const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-background dark:bg-background-dark flex flex-col text-gray-900 dark:text-gray-100 transition-colors duration-200">
       {/* Sticky Header with translucent blur and thin Ajrak strip at bottom edge */}
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-forest-950/90 backdrop-blur-md shadow-2xs border-b border-gray-100 dark:border-forest-800/80">
-        <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/75 dark:bg-forest-950/75 backdrop-blur-xl shadow-[0_8px_30px_rgba(14,42,27,0.06)] border-b border-white/70 dark:border-forest-800/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           {/* Logo */}
           <div
             onClick={() => navigate('/prices')}
             className="flex items-center space-x-2.5 rtl:space-x-reverse cursor-pointer select-none group"
           >
-            <div className="w-9 h-9 rounded-xl bg-forest-50 dark:bg-forest-900 border border-forest-200/60 dark:border-forest-700/60 flex items-center justify-center text-xl shadow-2xs group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-forest text-neon border border-forest-700 dark:border-forest-700/60 flex items-center justify-center text-xl shadow-[0_8px_20px_rgba(14,42,27,0.2)] group-hover:-translate-y-0.5 group-hover:rotate-3 transition-transform">
               🌾
             </div>
             <div>
@@ -307,7 +307,7 @@ export const Layout: React.FC = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:px-6 sm:py-7">
         <Outlet />
       </main>
 
@@ -317,7 +317,7 @@ export const Layout: React.FC = () => {
       {/* Mobile Bottom Tab Bar */}
       {currentUser && (
         <nav
-          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-forest-950/95 backdrop-blur-md border-t border-gray-200 dark:border-forest-800 px-2 py-2 flex items-center justify-around shadow-lg"
+          className="md:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/90 dark:bg-forest-950/90 backdrop-blur-xl border border-white dark:border-forest-800 px-2 py-2 flex items-center justify-around shadow-[0_16px_40px_rgba(14,42,27,0.2)] rounded-2xl"
           role="navigation"
         >
           {/* Prices Tab */}
