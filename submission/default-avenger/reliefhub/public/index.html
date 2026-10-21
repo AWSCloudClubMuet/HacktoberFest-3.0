@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReliefHub — Flood Relief Coordination, Sindh</title>
+<link rel="icon" type="image/png" href="assets/reliefhub-logo.png">
+<meta name="theme-color" content="#0d2033">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<section id="login" hidden>
+  <div class="hero">
+    <div class="login-brand"><img src="assets/reliefhub-logo.png" alt="ReliefHub logo"><span><strong>ReliefHub</strong><small>FLOOD RESPONSE · SINDH</small></span></div>
+    <span class="hero-kicker"><i></i> HUMANITARIAN OPERATIONS PLATFORM</span>
+    <h1>Help moves faster when we work as one.</h1>
+    <p>Camps, supplies, dispatches, donors and volunteers — one live picture for Sukkur, Larkana, Dadu and Jacobabad.</p>
+    <ul class="hero-benefits"><li>Real-time needs and fulfilment tracking</li><li>Supply movement from warehouse to camp</li><li>One coordinated view across Sindh</li></ul>
+    <div class="hero-footnote"><span class="hero-footnote-icon">✳</span> Built for the people who show up when it matters.</div>
+  </div>
+  <form id="loginForm" class="card auth-card" novalidate>
+    <span class="auth-eyebrow">YOUR RESPONSE WORKSPACE</span>
+    <div class="auth-heading"><h2 id="authTitle">Welcome back</h2><p id="authSubtitle">Sign in to continue coordinating relief.</p></div>
+    <div class="err" id="loginErr" role="alert" aria-live="polite" hidden></div>
+    <div id="signupFields" class="signup-fields" hidden>
+      <label for="signupName">Full name<input id="signupName" name="name" autocomplete="name" placeholder="Your full name" minlength="3"></label>
+      <label for="signupUsername">Username<input id="signupUsername" name="username" autocomplete="username" placeholder="Choose a username" minlength="3" maxlength="24"></label>
+    </div>
+    <label for="u">Username<input id="u" name="username" autocomplete="username" placeholder="Enter your username" required></label>
+    <label for="p"><span id="passwordLabel">Password</span><input id="p" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required></label>
+    <label id="confirmPasswordField" for="signupConfirm" hidden>Confirm password<input id="signupConfirm" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Re-enter your password"></label>
+    <button class="btn block auth-submit" id="authSubmit" type="submit"><span>Sign in</span><span aria-hidden="true">→</span></button>
+    <div class="demo" id="demoAccounts"><small>Quick access · demo accounts</small>
+      <button type="button" class="chip" data-u="admin" data-p="admin123"><span class="demo-avatar coordinator">RC</span><span><strong>Relief Coordinator</strong><small>admin · admin123</small></span><span class="chip-arrow" aria-hidden="true">→</span></button>
+      <button type="button" class="chip" data-u="volunteer" data-p="field123"><span class="demo-avatar volunteer">FV</span><span><strong>Field Volunteer</strong><small>volunteer · field123</small></span><span class="chip-arrow" aria-hidden="true">→</span></button>
+    </div>
+    <div class="auth-switchline"><span id="authPrompt">New to ReliefHub?</span><button id="authToggle" type="button"><span id="authToggleText">Create volunteer account</span><span aria-hidden="true"> →</span></button></div>
+    <p class="auth-security"><span aria-hidden="true">◇</span> Volunteer accounts receive field-level access.</p>
+  </form>
+</section>
+<div id="app" hidden>
+  <aside id="side">
+    <a class="brand" href="#/dashboard" aria-label="ReliefHub dashboard"><img class="brand-mark" src="assets/reliefhub-logo.png" alt=""><span class="brand-name">Relief<span>Hub</span></span></a>
+    <div class="workspace-label">ACTIVE RESPONSE</div>
+    <nav id="nav" aria-label="Main"></nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar" id="userAvatar" aria-hidden="true"></div>
+      <div class="user-details"><strong id="uname"></strong><small id="urole"></small></div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <button id="menu" class="icon" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <div class="breadcrumbs"><span>Relief operations</span><span class="crumb-slash">/</span><strong id="crumb">Dashboard</strong></div>
+      <div class="global-search">
+        <label class="search-box" for="globalSearch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.2 4.2"></path></svg><input id="globalSearch" type="search" placeholder="Search camps, supplies, people…" autocomplete="off" aria-label="Search camps, supplies, and volunteers" aria-expanded="false" aria-controls="searchResults"><kbd>Ctrl K</kbd></label>
+        <div class="search-results" id="searchResults" hidden></div>
+      </div>
+      <div class="top-meta"><span class="region"><span class="region-dot"></span>Sindh, Pakistan</span><span class="live"><span class="live-dot"></span>Operations live</span></div>
+      <div class="top-actions">
+        <div class="pop-wrap">
+          <button id="notificationsToggle" class="top-icon" aria-label="Notifications" aria-expanded="false" aria-controls="notificationsMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><i id="alertCount" class="notification-count" hidden>0</i></button>
+          <div id="notificationsMenu" class="popover notifications-menu" hidden>
+            <div class="popover-title"><strong>Operations alerts</strong><small>Live from your relief data</small></div>
+            <a href="#/dashboard"><span class="notice-mark critical">!</span><span><strong>Critical gaps</strong><small>High-priority needs below 40%</small></span><b id="criticalNotificationCount">0</b></a>
+            <a href="#/inventory"><span class="notice-mark stock">↓</span><span><strong>Low stock</strong><small>Items at or below reorder level</small></span><b id="stockNotificationCount">0</b></a>
+          </div>
+        </div>
+        <div class="pop-wrap">
+          <button id="profileToggle" class="profile-toggle" aria-label="Open profile menu" aria-expanded="false" aria-controls="profileMenu"><span class="profile-initials" id="profileInitials">RH</span><span class="profile-chevron" aria-hidden="true">⌄</span></button>
+          <div id="profileMenu" class="popover profile-menu" hidden><strong id="profileName"></strong><small id="profileRole"></small><div class="popover-divider"></div><button class="profile-signout" id="logout">Sign out <span aria-hidden="true">↗</span></button></div>
+        </div>
+      </div>
+    </header>
+    <main id="view"></main>
+  </div>
+  <button class="nav-scrim" id="navScrim" aria-label="Close navigation"></button>
+</div>
+<div id="toasts" aria-live="polite"></div>
+<script src="js/services.js"></script><script src="js/ui.js"></script><script src="js/pages.js"></script><script src="js/main.js"></script>
+</body></html>

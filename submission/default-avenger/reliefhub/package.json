@@ -1,0 +1,20 @@
+{
+  "name": "reliefhub",
+  "version": "1.0.0",
+  "description": "ReliefHub - Flood Relief Coordination Dashboard for Sindh, Pakistan",
+  "scripts": {
+    "start": "node seed.js && json-server --watch db.json --static ./public --port 3000",
+    "start:api": "node backend/server.js",
+    "seed": "node seed.js",
+    "seed:api": "node backend/import-demo.js",
+    "db:migrate": "node backend/migrate.js",
+    "test": "node seed.js && node test.js",
+    "test:api": "node --test backend/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "json-server": "0.17.4",
+    "pg": "^8.16.3"
+  }
+}
