@@ -1,21 +1,39 @@
-import subprocess
-from flask import Flask, request
+import os
+import re
+import socket
+from flask import Flask, request, abort
 
 app = Flask(__name__)
 
-# DUMMY fake token for demo only, not a real secret
-GITHUB_TOKEN = "ghp_1a2b3c4d5e6f7g8h9i0jklmnopqrstuvwxyz"
+# FIX: secret from environment variable, never hardcoded
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+
 
 @app.route("/")
 def home():
-    return "Hello from DevSecOps demo app!"
+    return "<h1>DevSecOps Demo App</h1><p>Try /resolve?host=example.com</p>"
 
-@app.route("/ping")
-def ping():
-    host = request.args.get("host", "127.0.0.1")
-    # Command injection bug: user input goes straight into a shell
-    out = subprocess.check_output("ping -c 1 " + host, shell=True)
-    return out
+
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+
+@app.route("/resolve")
+def resolve():
+    host = request.args.get("host", "localhost")
+    # FIX: validate input
+    if not re.fullmatch(r"[A-Za-z0-9.\-]{1,253}", host):
+        abort(400)
+    # FIX: no shell commands, use Python's network library
+    try:
+        return {"host": host, "ip": socket.gethostbyname(host)}
+    except socket.gaierror:
+        return {"host": host, "error": "could not resolve"}, 404
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # FIX: debug off, host from config
+    app.run(host=os.environ.get("APP_HOST", "127.0.0.1"),
+            port=int(os.environ.get("APP_PORT", "5000")),
+            debug=False)
