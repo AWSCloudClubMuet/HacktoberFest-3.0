@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
 import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
+import { readSection } from '../section.js';
 
 const DEMOS = [
   { name: 'Aisha Khan', email: 'aisha.khan@campus.edu', note: 'Poster with applicants' },
@@ -38,7 +39,7 @@ export function LoginPage() {
     setSaving(true);
     try {
       await login(email.trim(), password);
-      navigate('/');
+      navigate(`/${readSection()}`);
     } catch (err) {
       setFormError(err.message);
     } finally {

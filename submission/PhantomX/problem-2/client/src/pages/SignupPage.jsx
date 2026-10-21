@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
 import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
+import { readSection } from '../section.js';
 
 const empty = {
   name: '',
@@ -60,7 +61,7 @@ export function SignupPage() {
         bio: form.bio.trim(),
         skills,
       });
-      navigate('/');
+      navigate(`/${readSection()}`);
     } catch (err) {
       setFormError(err.message);
     } finally {

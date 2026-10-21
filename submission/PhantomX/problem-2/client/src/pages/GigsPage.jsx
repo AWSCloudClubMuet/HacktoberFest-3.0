@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
-import { CATEGORIES, GIG_TYPES, PAYMENTS, paymentLabel } from '../constants.js';
+import { useApp } from '../context.js';
+import { CATEGORIES, PAYMENTS, paymentLabel } from '../constants.js';
+import { SECTIONS } from '../section.js';
 import { formatMoney, formatWhen } from '../format.js';
 import { Alert, Badge, Empty, Link, Loading, inputClass, paymentTone, secondaryButtonClass, statusTone } from '../components.jsx';
 
@@ -13,6 +15,7 @@ const initialFilters = {
 };
 
 export function GigsPage() {
+  const { section } = useApp();
   const [filters, setFilters] = useState(initialFilters);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -28,7 +31,7 @@ export function GigsPage() {
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.category) params.set('category', filters.category);
-    if (filters.type) params.set('type', filters.type);
+    params.set('type', SECTIONS[section]?.type || 'Offering');
     if (filters.payment_type) params.set('payment_type', filters.payment_type);
     if (filters.min.trim() !== '' && Number.isFinite(Number(filters.min))) params.set('min', filters.min.trim());
     if (filters.max.trim() !== '' && Number.isFinite(Number(filters.max))) params.set('max', filters.max.trim());
@@ -50,7 +53,7 @@ export function GigsPage() {
     return () => {
       cancelled = true;
     };
-  }, [filters, search]);
+  }, [filters, search, section]);
 
   function update(field, value) {
     setFilters((current) => ({ ...current, [field]: value }));
@@ -80,13 +83,6 @@ export function GigsPage() {
           <select className={inputClass} value={filters.category} onChange={(event) => update('category', event.target.value)}>
             <option value="">All categories</option>
             {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
-          </select>
-        </label>
-        <label className="block min-w-0 text-base">
-          <span className="mb-1.5 block text-sm font-semibold text-ink">Type</span>
-          <select className={inputClass} value={filters.type} onChange={(event) => update('type', event.target.value)}>
-            <option value="">Offering and requesting</option>
-            {GIG_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
         </label>
         <label className="block min-w-0 text-base">

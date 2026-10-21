@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { api, getToken, setToken } from './api.js';
 import { Link, secondaryButtonClass } from './components.jsx';
 import { AppContext, AuthContext } from './context.js';
+import { readSection, sectionFromPath, writeSection } from './section.js';
+import { SectionTabs } from './ui.jsx';
 import { GigsPage } from './pages/GigsPage.jsx';
 import { GigDetailPage } from './pages/GigDetailPage.jsx';
 import { CreateGigPage } from './pages/CreateGigPage.jsx';
@@ -12,24 +14,41 @@ import { LoginPage } from './pages/LoginPage.jsx';
 import { SignupPage } from './pages/SignupPage.jsx';
 
 function useRoute() {
-  const [path, setPath] = useState(() => normalize(window.location.pathname));
+  const initial = splitTarget(window.location.pathname + window.location.search);
+  const [path, setPath] = useState(initial.path);
+  const [query, setQuery] = useState(initial.query);
 
   useEffect(() => {
-    const onPop = () => setPath(normalize(window.location.pathname));
+    const onPop = () => {
+      const next = splitTarget(window.location.pathname + window.location.search);
+      setPath(next.path);
+      setQuery(next.query);
+    };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  function navigate(to) {
-    const next = normalize(to);
-    if (next !== window.location.pathname) {
-      window.history.pushState({}, '', next);
+  function navigate(to, options = {}) {
+    const next = splitTarget(to);
+    const target = next.path + next.query;
+    const current = window.location.pathname + window.location.search;
+    if (target !== current) {
+      window.history[options.replace ? 'replaceState' : 'pushState']({}, '', target);
     }
-    setPath(next);
+    setPath(next.path);
+    setQuery(next.query);
     window.scrollTo(0, 0);
   }
 
-  return { path, navigate };
+  return { path, query, navigate };
+}
+
+function splitTarget(to) {
+  const raw = String(to || '/');
+  const mark = raw.indexOf('?');
+  const pathname = mark === -1 ? raw : raw.slice(0, mark);
+  const query = mark === -1 ? '' : raw.slice(mark);
+  return { path: normalize(pathname), query };
 }
 
 function normalize(path) {
@@ -38,7 +57,7 @@ function normalize(path) {
 }
 
 function matchRoute(path) {
-  if (path === '/') return { name: 'gigs' };
+  if (path === '/' || path === '/offer' || path === '/request') return { name: 'gigs' };
   if (path === '/login') return { name: 'login' };
   if (path === '/signup') return { name: 'signup' };
   if (path === '/gigs/new') return { name: 'create' };
@@ -53,8 +72,6 @@ function matchRoute(path) {
 }
 
 const nav = [
-  { to: '/', label: 'Gigs' },
-  { to: '/gigs/new', label: 'Post a gig' },
   { to: '/my-gigs', label: 'My gigs' },
   { to: '/applications', label: 'My applications' },
   { to: '/profile', label: 'Profile' },
@@ -65,13 +82,20 @@ function navClass(active) {
 }
 
 export function App() {
-  const { path, navigate } = useRoute();
+  const { path, query, navigate } = useRoute();
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
   const [toasts, setToasts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [section, setSection] = useState(() => sectionFromPath(normalize(window.location.pathname)) || readSection());
   const userId = user?.id || '';
+
+  function chooseSection(next, goCatalogue = false) {
+    const safe = writeSection(next);
+    setSection(safe);
+    if (goCatalogue) navigate(`/${safe}`);
+  }
 
   function pushToast(tone, message) {
     const id = `${Date.now()}-${Math.random()}`;
@@ -135,13 +159,21 @@ export function App() {
     setMenuOpen(false);
   }, [path]);
 
+  useEffect(() => {
+    const fromPath = sectionFromPath(path);
+    if (fromPath) {
+      setSection(fromPath);
+      writeSection(fromPath);
+    }
+  }, [path]);
+
   const route = matchRoute(path);
   const isPublic = route.name === 'login' || route.name === 'signup';
 
   useEffect(() => {
     if (booting) return;
     if (!user && !isPublic) navigate('/login');
-    else if (user && isPublic) navigate('/');
+    else if (user && (isPublic || path === '/')) navigate(`/${readSection()}`, { replace: path === '/' });
   }, [booting, user, isPublic, path]);
 
   let page = <p className="text-sm text-muted">That page does not exist.</p>;
@@ -158,11 +190,11 @@ export function App() {
 
   return (
     <AuthContext.Provider value={{ user, login, signup, logout }}>
-    <AppContext.Provider value={{ path, navigate, userId, users, pushToast }}>
+    <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
       <div className="min-h-screen">
         <header className="site-header sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6">
-            <Link to={user ? '/' : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink">
+            <Link to={user ? `/${section}` : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm text-white" aria-hidden="true">CG</span>
               <span className="truncate">Campus Gig</span>
             </Link>
@@ -227,6 +259,11 @@ export function App() {
               </nav>
             </div>
           </div>
+          {user && !isPublic ? (
+            <div className="mx-auto w-full max-w-6xl px-4 pb-3 sm:px-6">
+              <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
+            </div>
+          ) : null}
         </header>
         <main className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:px-6 sm:py-8">{page}</main>
         <div className="toast-stack pointer-events-none fixed inset-x-4 z-50 flex flex-col gap-2 sm:left-auto sm:right-4 sm:w-full sm:max-w-sm">
