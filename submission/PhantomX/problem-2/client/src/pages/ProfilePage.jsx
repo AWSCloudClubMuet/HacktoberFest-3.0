@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
-import { Alert, Badge, Loading } from '../components.jsx';
+import { Alert, Badge, Empty, Loading, Stars } from '../components.jsx';
 
 export function ProfilePage({ profileId }) {
-  const { userId } = useApp();
+  const { userId, users } = useApp();
   const [profile, setProfile] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -13,9 +14,14 @@ export function ProfilePage({ profileId }) {
     let cancelled = false;
     setLoading(true);
     setError('');
-    api(`/users/${encodeURIComponent(profileId)}`)
-      .then((data) => {
-        if (!cancelled) setProfile(data);
+    Promise.all([
+      api(`/users/${encodeURIComponent(profileId)}`),
+      api(`/reviews?reviewee_id=${encodeURIComponent(profileId)}`),
+    ])
+      .then(([nextProfile, nextReviews]) => {
+        if (cancelled) return;
+        setProfile(nextProfile);
+        setReviews(nextReviews.slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)));
       })
       .catch((err) => {
         if (!cancelled) setError(err.message);
@@ -53,9 +59,27 @@ export function ProfilePage({ profileId }) {
         <Stat
           label="Average rating"
           value={profile.average_rating == null ? '—' : profile.average_rating}
-          hint={profile.average_rating == null ? 'No reviews yet' : 'From completed reviews'}
+          hint={profile.average_rating == null ? 'No reviews yet' : 'From stored reviews'}
         />
       </dl>
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold text-stone-900">Reviews</h2>
+        {reviews.length === 0 ? <Empty>No reviews yet.</Empty> : null}
+        <ul className="space-y-3">
+          {reviews.map((review) => {
+            const reviewer = users.find((user) => user.id === review.reviewer_id);
+            return (
+              <li key={review.id} className="rounded-xl border border-stone-200 bg-white p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-stone-900">{reviewer?.name || 'Student'}</p>
+                  <Stars value={review.rating} />
+                </div>
+                <p className="mt-2 text-sm text-stone-700">{review.comment}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </div>
   );
 }

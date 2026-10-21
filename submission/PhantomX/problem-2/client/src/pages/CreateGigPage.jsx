@@ -15,7 +15,7 @@ const emptyForm = {
 };
 
 export function CreateGigPage() {
-  const { navigate } = useApp();
+  const { navigate, pushToast } = useApp();
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
@@ -68,9 +68,11 @@ export function CreateGigPage() {
     setSaving(true);
     try {
       const created = await api('/gigs', { method: 'POST', body: payload });
+      pushToast('success', 'Gig posted.');
       navigate(`/gigs/${created.id}`);
     } catch (err) {
       setApiError(err.message);
+      pushToast('error', err.message);
     } finally {
       setSaving(false);
     }

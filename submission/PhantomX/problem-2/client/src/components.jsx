@@ -41,6 +41,20 @@ export const inputClass = 'w-full rounded-md border border-stone-300 bg-white px
 
 export const buttonClass = 'rounded-md bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-60';
 
+export const secondaryButtonClass = 'rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-800 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60';
+
+export const dangerButtonClass = 'rounded-md border border-rose-300 bg-white px-3 py-1.5 text-sm font-medium text-rose-800 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60';
+
+export function Stars({ value }) {
+  const filled = Math.max(0, Math.min(5, Number(value) || 0));
+  return (
+    <span className="text-amber-500" aria-label={`${filled} out of 5`}>
+      {'★'.repeat(filled)}
+      <span className="text-stone-300">{'★'.repeat(5 - filled)}</span>
+    </span>
+  );
+}
+
 export function Field({ label, children, error }) {
   return (
     <label className="block text-sm">

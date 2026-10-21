@@ -140,12 +140,12 @@ Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403
 
 - [x] Stage 1 — Express API, seed file, business rules, and `npm run test:api`
 - [x] Stage 2 — Browse, profiles, create gig, apply, and my applications
-- [ ] Stage 3 — Applicant management and reviews UI
+- [x] Stage 3 — Owner actions, My Gigs, reviews, and toasts
 
 ## Milestones
 
 - [x] M1 Profiles and validated gig creation.
 - [x] M2 Search, filters, applications, and expired gigs.
-- [ ] M3 Applicant selection and status changes. API done; UI not started.
-- [ ] M4 Two-way reviews and computed reputation. API done; UI not started.
+- [x] M3 Applicant selection, In Progress, completion, and cancel.
+- [x] M4 Two-way reviews and computed reputation.
 - [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.

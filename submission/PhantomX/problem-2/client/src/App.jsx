@@ -7,6 +7,7 @@ import { GigDetailPage } from './pages/GigDetailPage.jsx';
 import { CreateGigPage } from './pages/CreateGigPage.jsx';
 import { ProfilePage } from './pages/ProfilePage.jsx';
 import { ApplicationsPage } from './pages/ApplicationsPage.jsx';
+import { MyGigsPage } from './pages/MyGigsPage.jsx';
 
 function useRoute() {
   const [path, setPath] = useState(() => normalize(window.location.pathname));
@@ -38,6 +39,7 @@ function matchRoute(path) {
   if (path === '/') return { name: 'gigs' };
   if (path === '/gigs/new') return { name: 'create' };
   if (path === '/applications') return { name: 'applications' };
+  if (path === '/my-gigs') return { name: 'my-gigs' };
   if (path === '/profile') return { name: 'profile' };
   const gig = path.match(/^\/gigs\/([^/]+)$/);
   if (gig) return { name: 'gig', id: decodeURIComponent(gig[1]) };
@@ -49,6 +51,7 @@ function matchRoute(path) {
 const nav = [
   { to: '/', label: 'Gigs' },
   { to: '/gigs/new', label: 'Post a gig' },
+  { to: '/my-gigs', label: 'My gigs' },
   { to: '/applications', label: 'My applications' },
   { to: '/profile', label: 'Profile' },
 ];
@@ -59,6 +62,15 @@ export function App() {
   const [userId, setUserId] = useState('');
   const [bootError, setBootError] = useState('');
   const [booting, setBooting] = useState(true);
+  const [toasts, setToasts] = useState([]);
+
+  function pushToast(tone, message) {
+    const id = `${Date.now()}-${Math.random()}`;
+    setToasts((current) => [...current, { id, tone, message }]);
+    window.setTimeout(() => {
+      setToasts((current) => current.filter((item) => item.id !== id));
+    }, 4200);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -96,10 +108,11 @@ export function App() {
   else if (route.name === 'create') page = <CreateGigPage key={userId} />;
   else if (route.name === 'gig') page = <GigDetailPage key={`${userId}-${route.id}`} gigId={route.id} />;
   else if (route.name === 'applications') page = <ApplicationsPage key={userId} />;
+  else if (route.name === 'my-gigs') page = <MyGigsPage key={userId} />;
   else if (route.name === 'profile') page = <ProfilePage key={`${userId}-${route.userId || 'me'}`} profileId={route.userId || userId} />;
 
   return (
-    <AppContext.Provider value={{ path, navigate, userId, users, selectUser }}>
+    <AppContext.Provider value={{ path, navigate, userId, users, selectUser, pushToast }}>
       <div className="min-h-screen">
         <header className="border-b border-stone-200 bg-white">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
@@ -120,7 +133,7 @@ export function App() {
             <label className="ml-auto flex items-center gap-2 text-sm text-stone-600">
               <span className="font-medium">Current student</span>
               <select
-                className="rounded-md border border-stone-300 bg-white px-2 py-1.5 text-stone-900"
+                className="max-w-[14rem] rounded-md border border-stone-300 bg-white px-2 py-1.5 text-stone-900 sm:max-w-xs"
                 value={userId}
                 disabled={!users.length}
                 onChange={(event) => selectUser(event.target.value)}
@@ -135,6 +148,17 @@ export function App() {
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-6">{page}</main>
+        <div className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-end gap-2 sm:left-auto sm:right-4">
+          {toasts.map((toast) => (
+            <p
+              key={toast.id}
+              role="status"
+              className={`pointer-events-auto w-full max-w-sm rounded-md px-3 py-2 text-sm shadow-lg ${toast.tone === 'error' ? 'border border-rose-200 bg-rose-50 text-rose-900' : 'border border-emerald-200 bg-emerald-50 text-emerald-900'}`}
+            >
+              {toast.message}
+            </p>
+          ))}
+        </div>
       </div>
     </AppContext.Provider>
   );
