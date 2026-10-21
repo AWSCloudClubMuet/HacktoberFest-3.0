@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ajrak-crimson: #A8201A;
+    --ajrak-indigo: #1F2A6B;
+    --ajrak-ivory: #F6EEDC;
+    --ajrak-black: #1A1A1A;
+    --ajrak-turquoise: #1F8A9E;
+    --page-bg: #F2F6F3;
+    --card-shadow: 0 1px 2px rgba(14, 42, 27, 0.04), 0 12px 32px rgba(14, 42, 27, 0.07);
+    --card-shadow-hover: 0 18px 48px rgba(14, 42, 27, 0.13);
+  }
+
+  .dark {
+    --ajrak-crimson: #D1453B;
+    --ajrak-indigo: #5B6BD6;
+    --ajrak-ivory: #EDE4D0;
+    --ajrak-black: #121212;
+    --ajrak-turquoise: #38B2C6;
+  }
+
+  body {
+    background-color: var(--page-bg);
+    background-image:
+      radial-gradient(circle at 8% 0%, rgba(198, 245, 213, 0.55), transparent 28rem),
+      radial-gradient(circle at 92% 12%, rgba(223, 255, 56, 0.10), transparent 24rem);
+    background-attachment: fixed;
+    color: #111827;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition-property: color, background-color, border-color;
+    transition-duration: 200ms;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 320px;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+  }
+
+  .dark body {
+    background-color: #0A1810;
+    background-image:
+      radial-gradient(circle at 8% 0%, rgba(37, 127, 79, 0.16), transparent 30rem),
+      radial-gradient(circle at 92% 12%, rgba(223, 255, 56, 0.035), transparent 25rem);
+    color: #F3F4F6;
+  }
+
+  ::selection {
+    background: #DFFF38;
+    color: #0C2014;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid rgba(61, 158, 103, 0.28);
+    outline-offset: 2px;
+  }
+
+  /* Urdu typography adjustments */
+  html[lang="ur"] body,
+  :lang(ur) {
+    font-family: 'Noto Sans Arabic', 'Noto Nastaliq Urdu', system-ui, -apple-system, sans-serif;
+    letter-spacing: 0;
+  }
+
+  .font-nastaliq {
+    font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif;
+  }
+}
+
+@layer components {
+  .premium-panel {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(18px);
+  }
+
+  .dark .premium-panel {
+    background: rgba(5, 28, 16, 0.84);
+    border-color: rgba(100, 185, 136, 0.14);
+  }
+
+  .premium-card {
+    box-shadow: var(--card-shadow);
+    transform: translateZ(0);
+  }
+
+  .premium-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-3px);
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+
+.animate-float-soft {
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Cultural patterns toggle: hides all accent pattern layers cleanly when off */
+.culture-off .culture-layer {
+  display: none !important;
+}
+
+/* Cultural Ajrak & Rilli Pattern Utilities */
+@layer utilities {
+  /* Subtle Ajrak Tile repeating background */
+  .bg-ajrak-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M16 0l16 16-16 16L0 16z' stroke='%23A8201A' stroke-width='0.75' opacity='0.35'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%231F2A6B' opacity='0.35'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%23F6EEDC' opacity='0.5'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23A8201A' opacity='0.3'/%3E%3Ccircle cx='32' cy='0' r='2' fill='%23A8201A' opacity='0.3'/%3E%3Ccircle cx='0' cy='32' r='2' fill='%23A8201A' opacity='0.3'/%3E%3Ccircle cx='32' cy='32' r='2' fill='%23A8201A' opacity='0.3'/%3E%3Cpath d='M16 6v4m0 12v4M6 16h4m12 0h4' stroke='%231F8A9E' stroke-width='0.75' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .dark .bg-ajrak-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M16 0l16 16-16 16L0 16z' stroke='%23D1453B' stroke-width='0.75' opacity='0.25'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%235B6BD6' opacity='0.3'/%3E%3Ccircle cx='16' cy='16' r='1.5' fill='%23EDE4D0' opacity='0.35'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23D1453B' opacity='0.25'/%3E%3Ccircle cx='32' cy='0' r='2' fill='%23D1453B' opacity='0.25'/%3E%3Ccircle cx='0' cy='32' r='2' fill='%23D1453B' opacity='0.25'/%3E%3Ccircle cx='32' cy='32' r='2' fill='%23D1453B' opacity='0.25'/%3E%3Cpath d='M16 6v4m0 12v4M6 16h4m12 0h4' stroke='%2338B2C6' stroke-width='0.75' opacity='0.25'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Thin Ajrak Strip - 8px to 14px band */
+  .bg-ajrak-strip {
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='10' viewBox='0 0 24 10' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='24' height='10' fill='%231F2A6B'/%3E%3Cpath d='M0 5L6 0l6 5-6 5zM12 5l6-5 6 5-6 5z' fill='%23A8201A'/%3E%3Ccircle cx='6' cy='5' r='1.2' fill='%23F6EEDC'/%3E%3Ccircle cx='18' cy='5' r='1.2' fill='%23F6EEDC'/%3E%3Crect x='0' y='0' width='24' height='0.75' fill='%23F6EEDC' opacity='0.6'/%3E%3Crect x='0' y='9.25' width='24' height='0.75' fill='%23F6EEDC' opacity='0.6'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 24px 10px;
+  }
+
+  /* Header 6px Ajrak Strip */
+  .bg-ajrak-strip-sm {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='6' viewBox='0 0 16 6' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='6' fill='%231F2A6B'/%3E%3Cpath d='M0 3L4 0l4 3-4 3zM8 3l4-3 4 3-4 3z' fill='%23A8201A'/%3E%3Ccircle cx='4' cy='3' r='0.8' fill='%23F6EEDC'/%3E%3Ccircle cx='12' cy='3' r='0.8' fill='%23F6EEDC'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 16px 6px;
+  }
+
+  /* Sindhi Rilli patchwork tile for banners and badges */
+  .bg-rilli-patch {
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='10' height='10' fill='%23A8201A'/%3E%3Crect x='10' width='10' height='10' fill='%231F2A6B'/%3E%3Crect y='10' width='10' height='10' fill='%231F8A9E'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%23D48A1A'/%3E%3Cpolygon points='0,0 10,10 0,10' fill='%23F6EEDC' opacity='0.3'/%3E%3Cpolygon points='10,0 20,10 20,0' fill='%23F6EEDC' opacity='0.3'/%3E%3Cpolygon points='0,10 10,20 10,10' fill='%231A1A1A' opacity='0.25'/%3E%3Cpolygon points='10,10 20,20 20,10' fill='%23F6EEDC' opacity='0.4'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 20px 20px;
+  }
+}
+
+/* RTL Icon Flipping */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Animated splash draw-in */
+@keyframes drawAjrakBorder {
+  0% {
+    stroke-dashoffset: 240;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.animate-draw-border {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: drawAjrakBorder 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-draw-border {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
