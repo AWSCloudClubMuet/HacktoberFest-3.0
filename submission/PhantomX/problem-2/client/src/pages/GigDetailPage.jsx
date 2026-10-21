@@ -18,7 +18,7 @@ import {
   statusTone,
   textLinkClass,
 } from '../components.jsx';
-import { ApplyWizard } from '../flow.jsx';
+import { ApplicantCard, ApplyWizard, ConfirmDialog, Tabs } from '../flow.jsx';
 
 export function GigDetailPage({ gigId }) {
   const { userId, users, pushToast } = useApp();
@@ -27,6 +27,12 @@ export function GigDetailPage({ gigId }) {
   const [applicantUser, setApplicantUser] = useState(null);
   const [application, setApplication] = useState(null);
   const [applicants, setApplicants] = useState([]);
+  const [profiles, setProfiles] = useState({});
+  const [applicantTab, setApplicantTab] = useState('Pending');
+  const [pendingSort, setPendingSort] = useState('newest');
+  const [accepting, setAccepting] = useState(null);
+  const [rejecting, setRejecting] = useState(null);
+  const [rejectNote, setRejectNote] = useState('');
   const [reviews, setReviews] = useState([]);
   const [applyOpen, setApplyOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -59,7 +65,16 @@ export function GigDetailPage({ gigId }) {
     setPoster(nextPoster);
     setApplicantUser(nextApplicant);
     setApplication(mine[0] || null);
-    setApplicants(allApps.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+    const ordered = allApps.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setApplicants(ordered);
+    if (nextGig.user_id === userId && ordered.length > 0) {
+      const people = await Promise.all(ordered.map((item) => api(`/users/${encodeURIComponent(item.applicant_id)}`)));
+      const nextProfiles = {};
+      for (const person of people) nextProfiles[person.id] = person;
+      setProfiles(nextProfiles);
+    } else {
+      setProfiles({});
+    }
     setReviews(reviewLists.flat().filter((review) => review.gig_id === nextGig.id));
   }
 
@@ -81,12 +96,14 @@ export function GigDetailPage({ gigId }) {
     return users.find((user) => user.id === id)?.name || 'Student';
   }
 
-  async function decide(applicationId, status) {
+  async function decide(applicationId, status, note) {
     setBusy(`${status}:${applicationId}`);
+    const body = { status };
+    if (status === 'Rejected' && note && note.trim()) body.rejection_note = note.trim();
     try {
       await api(`/applications/${encodeURIComponent(applicationId)}`, {
         method: 'PATCH',
-        body: { status },
+        body,
       });
       pushToast(
         'success',
@@ -94,6 +111,9 @@ export function GigDetailPage({ gigId }) {
           ? 'Applicant accepted. Other pending applications were rejected, and the gig is in progress.'
           : 'Application rejected.',
       );
+      setAccepting(null);
+      setRejecting(null);
+      setRejectNote('');
       await load(false);
     } catch (err) {
       pushToast('error', err.message);
@@ -194,45 +214,21 @@ export function GigDetailPage({ gigId }) {
           </article>
 
           {isOwner ? (
-            <section className={`${cardClass} space-y-3 p-5`}>
-              <h2 className="font-display text-lg font-semibold text-ink">Applicants</h2>
-              {applicants.length === 0 ? <p className="text-base text-muted">No one has applied yet.</p> : null}
-              <ul className="space-y-3">
-                {applicants.map((item) => (
-                  <li key={item.id} className="min-w-0 rounded-xl border border-line p-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <Link to={`/users/${item.applicant_id}`} className={`${textLinkClass} min-w-0 break-words`}>
-                        {nameOf(item.applicant_id)}
-                      </Link>
-                      <Badge tone={statusTone(item.status)}>{item.status}</Badge>
-                    </div>
-                    <p className="mt-2 break-words text-base text-secondary">{item.message}</p>
-                    {item.status === 'Pending' ? (
-                      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                        {gig.status === 'Open' ? (
-                          <button
-                            type="button"
-                            className={`${buttonClass} w-full sm:w-auto`}
-                            disabled={Boolean(busy)}
-                            onClick={() => decide(item.id, 'Accepted')}
-                          >
-                            {busy === `Accepted:${item.id}` ? 'Accepting…' : 'Accept'}
-                          </button>
-                        ) : null}
-                        <button
-                          type="button"
-                          className={`${dangerButtonClass} w-full sm:w-auto`}
-                          disabled={Boolean(busy)}
-                          onClick={() => decide(item.id, 'Rejected')}
-                        >
-                          {busy === `Rejected:${item.id}` ? 'Rejecting…' : 'Reject'}
-                        </button>
-                      </div>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <OwnerApplicants
+              gig={gig}
+              applicants={applicants}
+              profiles={profiles}
+              tab={applicantTab}
+              onTab={setApplicantTab}
+              sort={pendingSort}
+              onSort={setPendingSort}
+              busy={Boolean(busy)}
+              onAccept={setAccepting}
+              onReject={(item) => {
+                setRejectNote('');
+                setRejecting(item);
+              }}
+            />
           ) : null}
 
           {gig.status === 'Completed' ? (
@@ -352,7 +348,112 @@ export function GigDetailPage({ gigId }) {
           await load(false);
         }}
       />
+      <ConfirmDialog
+        open={Boolean(accepting)}
+        title="Accept this applicant?"
+        confirmLabel="Accept applicant"
+        busy={Boolean(busy)}
+        onClose={() => setAccepting(null)}
+        onConfirm={() => decide(accepting.id, 'Accepted')}
+      >
+        <p className="text-base text-ink">
+          {nameOf(accepting?.applicant_id)} will be selected. The gig moves to In Progress
+          {(() => {
+            const others = applicants.filter((item) => item.status === 'Pending' && item.id !== accepting?.id).length;
+            return others > 0 ? `, and ${others} other pending ${others === 1 ? 'applicant is' : 'applicants are'} rejected automatically` : '';
+          })()}.
+          New applications close.
+        </p>
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={Boolean(rejecting)}
+        title="Reject this applicant?"
+        confirmLabel="Reject applicant"
+        tone="danger"
+        busy={Boolean(busy)}
+        onClose={() => setRejecting(null)}
+        onConfirm={() => decide(rejecting.id, 'Rejected', rejectNote)}
+      >
+        <p className="text-base text-ink">The gig stays as it is. You can leave an optional note.</p>
+        <label className="block text-sm font-semibold text-ink">
+          Note to the applicant <span className="font-normal text-muted">(optional)</span>
+          <textarea
+            className={`${inputClass} mt-1.5`}
+            maxLength={200}
+            rows="3"
+            value={rejectNote}
+            onChange={(event) => setRejectNote(event.target.value)}
+          />
+        </label>
+        <p className="text-sm text-muted">{rejectNote.length}/200</p>
+      </ConfirmDialog>
     </div>
+  );
+}
+
+function OwnerApplicants({ gig, applicants, profiles, tab, onTab, sort, onSort, busy, onAccept, onReject }) {
+  const selected = applicants.find((item) => item.status === 'Accepted');
+  const counts = {
+    Pending: applicants.filter((item) => item.status === 'Pending').length,
+    Accepted: applicants.filter((item) => item.status === 'Accepted').length,
+    Rejected: applicants.filter((item) => item.status === 'Rejected').length,
+  };
+  const rows = applicants.filter((item) => item.status === tab);
+  if (tab === 'Pending') {
+    rows.sort((a, b) => {
+      const delta = new Date(a.created_at) - new Date(b.created_at);
+      return sort === 'oldest' ? delta : -delta;
+    });
+  }
+  const gigOpen = gig.status === 'Open';
+  return (
+    <section className={`${cardClass} space-y-4 p-5`}>
+      <h2 className="font-display text-lg font-semibold text-ink">Applicants</h2>
+      {selected ? (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-success">Selected applicant</h3>
+          <ApplicantCard application={selected} person={profiles[selected.applicant_id]} gig={gig} gigOpen={false} busy={busy} />
+        </div>
+      ) : null}
+      {!gigOpen ? (
+        <p className="text-base text-muted">This gig is {gig.status}, so applicants can no longer be accepted or rejected.</p>
+      ) : null}
+      {applicants.length === 0 ? <p className="text-base text-muted">No one has applied yet.</p> : null}
+      {applicants.length > 0 ? (
+        <>
+          <Tabs
+            label="Applicant status"
+            value={tab}
+            onChange={onTab}
+            tabs={[
+              { id: 'Pending', label: 'Pending', count: counts.Pending },
+              { id: 'Accepted', label: 'Accepted', count: counts.Accepted },
+              { id: 'Rejected', label: 'Rejected', count: counts.Rejected },
+            ]}
+          />
+          {tab === 'Pending' && counts.Pending > 1 ? (
+            <button type="button" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary" onClick={() => onSort(sort === 'newest' ? 'oldest' : 'newest')}>
+              Sort: {sort === 'newest' ? 'Newest' : 'Oldest'}
+            </button>
+          ) : null}
+          {rows.length === 0 ? <p className="text-base text-muted">No applicants in this tab.</p> : null}
+          <div className="space-y-3">
+            {rows.map((item) => (
+              <ApplicantCard
+                key={item.id}
+                application={item}
+                person={profiles[item.applicant_id]}
+                gig={gig}
+                gigOpen={gigOpen}
+                busy={busy}
+                onAccept={() => onAccept(item)}
+                onReject={() => onReject(item)}
+              />
+            ))}
+          </div>
+        </>
+      ) : null}
+    </section>
   );
 }
 

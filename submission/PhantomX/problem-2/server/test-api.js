@@ -277,6 +277,25 @@ try {
     check(badUrl.status === 400, 'portfolio_link must be a valid URL', badUrl);
   }
 
+  const noteGig = openGigs.find((item) => item.id !== gig.id && item.id !== swapGig?.id);
+  const noteApp = noteGig && existingApps.find((application) => application.gig_id === noteGig.id && application.status === 'Pending');
+  if (noteGig && noteApp) {
+    const tooLong = await api('PATCH', `/applications/${noteApp.id}`, {
+      user: noteGig.user_id,
+      body: { status: 'Rejected', rejection_note: 'x'.repeat(201) },
+    });
+    check(tooLong.status === 400, 'rejection_note is limited to 200 characters', tooLong);
+    const noted = await api('PATCH', `/applications/${noteApp.id}`, {
+      user: noteGig.user_id,
+      body: { status: 'Rejected', rejection_note: 'Thanks for applying. The timing is tight.' },
+    });
+    check(
+      noted.status === 200 && noted.data.status === 'Rejected' && noted.data.rejection_note === 'Thanks for applying. The timing is tight.',
+      'owner can store an optional rejection note',
+      noted,
+    );
+  }
+
   const otherOpen = openGigs.find((item) => item.id !== gig.id);
   const completedEarly = await api('PATCH', `/gigs/${otherOpen.id}`, {
     user: otherOpen.user_id,

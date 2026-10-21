@@ -117,6 +117,7 @@ function presentApplication(application) {
     availability: application.availability || null,
     portfolio_link: application.portfolio_link || null,
     swap_offer: application.swap_offer || null,
+    rejection_note: application.rejection_note || null,
   };
 }
 
@@ -383,7 +384,10 @@ export function createApp() {
     }
 
     if (status === 'Rejected') {
+      const note = optionalText((req.body || {}).rejection_note, 'rejection_note', 200);
+      if (note.error) return sendError(res, 400, note.error);
       application.status = 'Rejected';
+      application.rejection_note = note.value;
       save();
       return res.json(presentApplication(application));
     }

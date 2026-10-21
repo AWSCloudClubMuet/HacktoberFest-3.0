@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { api } from './api.js';
 import { paymentLabel } from './constants.js';
 import { formatMoney, formatWhen, initials } from './format.js';
-import { Alert, Badge, Link, buttonClass, paymentTone, secondaryButtonClass } from './components.jsx';
+import { Alert, Badge, Link, Stars, buttonClass, dangerButtonClass, paymentTone, secondaryButtonClass, statusTone, textLinkClass } from './components.jsx';
 
 const focusableSelector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -360,6 +360,75 @@ export function applicationLabel(status) {
   if (status === 'Accepted') return 'Accepted';
   if (status === 'Rejected') return 'Rejected';
   return status;
+}
+
+export function ConfirmDialog({ open, title, confirmLabel, busy, tone = 'primary', onClose, onConfirm, children }) {
+  const fill = tone === 'danger' ? '' : tone === 'request' ? 'fill-request' : '';
+  const confirmClass = tone === 'danger' ? dangerButtonClass : `${buttonClass} ${fill}`;
+  return (
+    <Dialog open={open} title={title} onClose={busy ? undefined : onClose}>
+      <div className="space-y-4">
+        {children}
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button type="button" className={`${secondaryButtonClass} flex-1`} disabled={busy} onClick={onClose}>Back</button>
+          <button type="button" className={`${confirmClass} flex-1`} disabled={busy} onClick={onConfirm}>
+            {busy ? 'Saving…' : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
+export function ApplicantCard({ application, person, gig, gigOpen, busy, onAccept, onReject }) {
+  const [expanded, setExpanded] = useState(false);
+  const message = application.message || '';
+  const long = message.length > 160;
+  const shown = long && !expanded ? `${message.slice(0, 160)}…` : message;
+  const auto = wasAutoRejected(application, gig);
+  return (
+    <article className={`min-w-0 space-y-3 rounded-3xl border p-4 ${application.status === 'Accepted' ? 'border-success-line bg-success-soft' : 'border-line bg-surface'}`}>
+      <div className="flex items-start gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-offer text-sm font-semibold text-white" aria-hidden="true">{initials(person?.name)}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="break-words font-semibold text-ink">{person?.name || 'Student'}</p>
+            <Badge tone={statusTone(application.status)}>{applicationLabel(application.status)}</Badge>
+          </div>
+          <p className="text-sm text-muted">{person?.major || 'Major not listed'}{person?.semester ? ` · Semester ${person.semester}` : ''}</p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
+            <Stars value={person?.average_rating || 0} />
+            <span>{person?.average_rating == null ? 'No reviews yet' : `${person.average_rating} average`}</span>
+            <span>· {person?.gigs_completed ?? 0} completed</span>
+          </div>
+        </div>
+      </div>
+      {person?.skills?.length ? (
+        <div className="flex flex-wrap gap-1">
+          {person.skills.map((skill) => <Badge key={skill} tone="neutral">{skill}</Badge>)}
+        </div>
+      ) : null}
+      <p className="whitespace-pre-wrap break-words text-base text-ink">{shown}</p>
+      {long ? (
+        <button type="button" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary" onClick={() => setExpanded((value) => !value)}>
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      ) : null}
+      {application.availability ? <p className="text-sm text-muted">Availability: {application.availability}</p> : null}
+      {application.portfolio_link ? <a className="inline-flex min-h-11 items-center break-all text-sm font-semibold text-primary" href={application.portfolio_link} target="_blank" rel="noreferrer">{application.portfolio_link}</a> : null}
+      {application.swap_offer ? <p className="text-sm text-muted">In exchange: {application.swap_offer}</p> : null}
+      {application.rejection_note ? <p className="text-sm text-ink">Note: {application.rejection_note}</p> : null}
+      {auto ? <p className="text-sm font-semibold text-muted">Auto-rejected</p> : null}
+      <p className="text-sm text-muted">Applied {formatWhen(application.created_at)}</p>
+      <Link to={`/users/${application.applicant_id}`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>View profile</Link>
+      {application.status === 'Pending' && gigOpen ? (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button type="button" className={`${buttonClass} flex-1`} disabled={busy} onClick={onAccept}>Accept</button>
+          <button type="button" className={`${dangerButtonClass} flex-1`} disabled={busy} onClick={onReject}>Reject</button>
+        </div>
+      ) : null}
+    </article>
+  );
 }
 
 export function wasAutoRejected(application, gig) {
