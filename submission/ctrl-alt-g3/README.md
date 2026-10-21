@@ -19,7 +19,7 @@
 ### Project Submissions
 1. TuneWave — DSA (Issue #13)
 2. Campus Gig & SkillSwap — Web (Issue #12)
-3. KisanMandi — App (Issue #11)
+3. [KisanMandi — Flutter App (Issue #11)](kisanmandi/README.md)
 
 ### Technology Stack
 - React
@@ -28,5 +28,5 @@
 - DSA implementation language: TBD
 
 ### Project Setup
-Setup instructions for each project will be added
-to its respective directory.
+KisanMandi setup, all six milestone details, API contract and judging walkthrough
+are in [kisanmandi/README.md](kisanmandi/README.md).
