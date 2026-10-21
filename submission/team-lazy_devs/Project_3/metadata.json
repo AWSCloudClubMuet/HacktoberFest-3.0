@@ -1,0 +1,8 @@
+{
+  "name": "ReliefHub - Flood Relief Coordination Dashboard",
+  "description": "Humanitarian relief operations coordinating flood-affected camps, inventory reservations, dispatches, donations, and volunteer logistics across Sindh, Pakistan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

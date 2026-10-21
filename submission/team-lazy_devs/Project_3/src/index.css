@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal-primary: #202B3C;
+  --color-charcoal-deep: #172232;
+  --color-sidebar-bg: #172232;
+  --color-sidebar-hover: #29384B;
+  --color-sidebar-active: #344354;
+  --color-gold-muted: #D6A85F;
+  --color-gold-soft: #E8C98E;
+  --color-warm-bg: #F6F3ED;
+  --color-warm-surface: #F0ECE3;
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #263242;
+  --color-text-secondary: #697586;
+  --color-border-warm: #E5E1D9;
+}
+
+:root {
+  --color-charcoal-primary: #202B3C;
+  --color-charcoal-deep: #172232;
+  --color-gold-muted: #D6A85F;
+  --color-gold-soft: #E8C98E;
+  --color-warm-bg: #F6F3ED;
+  --color-warm-surface: #F0ECE3;
+  --color-text-primary: #263242;
+  --color-text-secondary: #697586;
+  --color-border-warm: #E5E1D9;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #263242;
+    background-color: #F6F3ED;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Accessible visible focus ring using antique gold */
+  :focus-visible {
+    outline: 2px solid #D6A85F;
+    outline-offset: 2px;
+  }
+}
+
+/* Subtle topographic map contour texture for sidebar & hero */
+.bg-topo-pattern {
+  background-image: radial-gradient(rgba(214, 168, 95, 0.08) 1px, transparent 0),
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* Shimmer pulse for premium skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Custom scrollbars for data tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
