@@ -332,6 +332,29 @@ function Summary({ title, onEdit, children }) {
   );
 }
 
+export function Tabs({ label, tabs, value, onChange }) {
+  return (
+    <div className="flex gap-1 overflow-x-auto rounded-full bg-surface p-1 shadow-card" role="tablist" aria-label={label}>
+      {tabs.map((tab) => {
+        const selected = value === tab.id;
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={selected}
+            className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-3 text-sm font-semibold ${selected ? 'fill-offer text-white' : 'text-muted'}`}
+            onClick={() => onChange(tab.id)}
+          >
+            {tab.label}
+            {tab.count != null ? <span className="ml-1">{tab.count}</span> : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function applicationLabel(status) {
   if (status === 'Pending') return 'Under review';
   if (status === 'Accepted') return 'Accepted';

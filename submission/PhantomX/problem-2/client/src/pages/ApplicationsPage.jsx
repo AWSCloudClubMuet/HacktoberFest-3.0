@@ -4,11 +4,20 @@ import { api } from '../api.js';
 import { formatWhen } from '../format.js';
 import { PageHeader } from '../ui.jsx';
 import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
+import { StatusTracker, Tabs, wasAutoRejected } from '../flow.jsx';
+
+const FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'Pending', label: 'Under review' },
+  { id: 'Accepted', label: 'Accepted' },
+  { id: 'Rejected', label: 'Rejected' },
+];
 
 export function ApplicationsPage() {
   const { userId, section } = useApp();
   const [rows, setRows] = useState(null);
   const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     let cancelled = false;
@@ -25,8 +34,7 @@ export function ApplicationsPage() {
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map((application) => ({
             ...application,
-            gigTitle: byId.get(application.gig_id)?.title || 'Untitled gig',
-            gigStatus: byId.get(application.gig_id)?.status || '',
+            gig: byId.get(application.gig_id) || null,
           }));
         setRows(next);
       })
@@ -41,33 +49,73 @@ export function ApplicationsPage() {
     };
   }, [userId]);
 
+  const counts = {
+    all: rows?.length || 0,
+    Pending: rows?.filter((row) => row.status === 'Pending').length || 0,
+    Accepted: rows?.filter((row) => row.status === 'Accepted').length || 0,
+    Rejected: rows?.filter((row) => row.status === 'Rejected').length || 0,
+  };
+  const visible = rows ? rows.filter((row) => filter === 'all' || row.status === filter) : null;
+
   return (
     <div className="space-y-5">
-      <PageHeader title="My applications" subtitle="Every gig you have applied to, in either section." />
+      <PageHeader title="My applications" subtitle="Every proposal you sent, and where it stands." />
+      <Tabs
+        label="Application status"
+        value={filter}
+        onChange={setFilter}
+        tabs={FILTERS.map((item) => ({ ...item, count: counts[item.id] }))}
+      />
       <Alert>{error}</Alert>
-      {rows === null && !error ? <Loading>Loading applications…</Loading> : null}
-      {rows && rows.length === 0 && !error ? (
+      {visible === null && !error ? <Loading>Loading applications…</Loading> : null}
+      {visible && visible.length === 0 && !error ? (
         <Empty>
-          You have not applied to any gigs yet.{' '}
+          Nothing in this list yet.{' '}
           <Link to={`/${section}`} className={textLinkClass}>Keep browsing</Link>
         </Empty>
       ) : null}
-      {rows && rows.length > 0 ? (
+      {visible && visible.length > 0 ? (
         <ul className="space-y-3">
-          {rows.map((application) => (
-            <li key={application.id} className="min-w-0 rounded-2xl border border-line bg-surface p-4 shadow-card">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} min-w-0 break-words font-display text-lg`}>
-                  {application.gigTitle}
-                </Link>
-                <Badge tone={statusTone(application.status)}>{application.status}</Badge>
-              </div>
-              <p className="mt-2 break-words text-base text-secondary">{application.message}</p>
-              <p className="mt-2 text-sm text-muted">Applied {formatWhen(application.created_at)}</p>
-            </li>
+          {visible.map((application) => (
+            <ApplicationCard key={application.id} application={application} />
           ))}
         </ul>
       ) : null}
     </div>
+  );
+}
+
+function ApplicationCard({ application }) {
+  const gig = application.gig;
+  const accepted = application.status === 'Accepted';
+  const rejected = application.status === 'Rejected';
+  const shell = accepted
+    ? 'border-success-line bg-success-soft'
+    : rejected
+      ? 'border-line bg-canvas'
+      : 'border-line bg-surface';
+  return (
+    <li className={`min-w-0 space-y-3 rounded-3xl border p-4 shadow-card ${shell}`}>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} min-w-0 break-words font-display text-lg`}>
+          {gig?.title || 'Untitled gig'}
+        </Link>
+        {gig ? <Badge tone={statusTone(gig.status)}>{gig.status}</Badge> : null}
+      </div>
+      <StatusTracker status={application.status} />
+      {accepted ? <p className="text-base font-semibold text-success">You were selected!</p> : null}
+      {rejected && application.rejection_note ? <p className="text-base text-ink">{application.rejection_note}</p> : null}
+      {rejected && !application.rejection_note && wasAutoRejected(application, gig) ? (
+        <p className="text-base text-muted">Another applicant was selected for this gig.</p>
+      ) : null}
+      <p className="break-words text-base text-secondary">{application.message}</p>
+      <p className="text-sm text-muted">Submitted {formatWhen(application.created_at)}</p>
+      {accepted && gig?.status === 'Completed' ? (
+        <Link to={`/gigs/${application.gig_id}`} className={textLinkClass}>Leave a review</Link>
+      ) : null}
+      {accepted && gig && gig.status !== 'Completed' ? (
+        <Link to={`/gigs/${application.gig_id}`} className={textLinkClass}>Open the gig</Link>
+      ) : null}
+    </li>
   );
 }
