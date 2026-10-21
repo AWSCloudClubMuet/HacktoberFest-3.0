@@ -23,7 +23,10 @@ export const auth = process.env.DATABASE_URL
       database: new Pool({ connectionString: process.env.DATABASE_URL }),
       secret: process.env.BETTER_AUTH_SECRET,
       baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-      trustedOrigins: ['http://localhost:3000'],
+      trustedOrigins: [
+        'http://localhost:3000',
+        ...(process.env.TRUSTED_ORIGINS ? process.env.TRUSTED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean) : []),
+      ],
       emailAndPassword: { enabled: true },
     })
   : null

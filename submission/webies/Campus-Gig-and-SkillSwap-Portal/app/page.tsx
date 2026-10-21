@@ -1,11 +1,12 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
+import LandingPage from '@/components/landing'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,24 +16,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import {
   ArrowRight,
-  Bell,
-  BookOpen,
   BriefcaseBusiness,
   Check,
-  ChevronDown,
   Clock3,
   Compass,
-  DollarSign,
   Filter,
   Heart,
   LayoutDashboard,
   LogOut,
-  MessageCircle,
+  Pencil,
   Plus,
   Search,
   Send,
-  Settings,
-  Sparkles,
   Star,
   Users,
   X,
@@ -47,7 +42,7 @@ const colorFor = (id: number) => COLORS[(id - 1) % COLORS.length]
 const yearLabel = (semester: number) => (semester <= 2 ? 'Freshman' : semester <= 4 ? 'Sophomore' : semester <= 6 ? 'Junior' : 'Senior')
 const majorLine = (name: string, major: string, semester?: number) => (semester ? `${major} · ${yearLabel(semester)}` : major)
 const paymentLabel = (p: Gig['payment_type']) => (p === 'SkillSwap' ? 'Skill swap' : p)
-const paymentClass = (p: Gig['payment_type']) => `payment-${paymentLabel(p).toLowerCase().replace(' ', '-')}`
+const paymentText = (gig: Gig) => (gig.payment_type === 'Paid' ? `Paid · PKR ${Number(gig.budget).toLocaleString('en-US')}` : paymentLabel(gig.payment_type))
 
 function deadlineInfo(deadline: string) {
   const date = new Date(`${deadline.slice(0, 10)}T00:00:00`)
@@ -56,6 +51,78 @@ function deadlineInfo(deadline: string) {
   const diff = Math.round((date.getTime() - today.getTime()) / 86400000)
   const label = diff < 0 ? `${-diff}d ago` : diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : `${diff} days left`
   return { label, full: date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) }
+}
+
+function GigGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="gig-grid" aria-busy="true" aria-label="Loading gigs">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="gig-card gig-card-skeleton">
+          <div className="gig-card-top">
+            <Skeleton className="h-[22px] w-24" />
+            <Skeleton className="h-[15px] w-[15px] rounded-full" />
+          </div>
+          <Skeleton className="mt-4 h-4 w-3/4" />
+          <Skeleton className="mt-2.5 h-3 w-full" />
+          <Skeleton className="mt-1.5 h-3 w-5/6" />
+          <Skeleton className="mt-3.5 h-3 w-2/3" />
+          <div className="gig-card-footer">
+            <div className="person">
+              <Skeleton className="h-[29px] w-[29px] rounded-full" />
+              <div><Skeleton className="h-3 w-20" /><Skeleton className="mt-1 h-2.5 w-14" /></div>
+            </div>
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ProfileSkeleton() {
+  return (
+    <div aria-busy="true" aria-label="Loading profile">
+      <Card className="profile-card">
+        <div className="profile-head">
+          <Skeleton className="h-[45px] w-[45px] rounded-full" />
+          <div>
+            <Skeleton className="h-5 w-44" />
+            <Skeleton className="mt-2 h-3.5 w-64" />
+            <Skeleton className="mt-2 h-3.5 w-32" />
+          </div>
+        </div>
+        <div>
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="mt-2 h-4 w-3/4" />
+          <Skeleton className="mt-3 h-3.5 w-56" />
+        </div>
+        <Separator />
+        <div className="profile-stats">
+          {[0, 1, 2].map((i) => (
+            <div key={i}><Skeleton className="h-6 w-10" /><Skeleton className="mt-1.5 h-3 w-20" /></div>
+          ))}
+        </div>
+      </Card>
+      <div className="section-heading profile-section"><Skeleton className="h-6 w-44" /></div>
+      <div className="activity-list">
+        {[0, 1].map((i) => (
+          <Card key={i} className="activity-card">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-4 w-full" />
+          </Card>
+        ))}
+      </div>
+      <div className="section-heading profile-section"><Skeleton className="h-6 w-32" /></div>
+      <div className="activity-list">
+        {[0, 1].map((i) => (
+          <Card key={i} className="activity-card">
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-3.5 w-2/3" />
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function Avatar({ name, id, size = 'md' }: { name: string; id: number; size?: 'sm' | 'md' | 'lg' }) {
@@ -76,7 +143,7 @@ function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
   )
 }
 
-type View = 'Discover' | 'My activity' | 'Profile'
+type View = 'Discover' | 'My activity' | 'Saved' | 'Profile'
 
 export default function Page() {
   const [view, setView] = useState<View>('Discover')
@@ -87,9 +154,12 @@ export default function Page() {
   const [authChecked, setAuthChecked] = useState(false)
   const [users, setUsers] = useState<User[]>([])
   const [completeForm, setCompleteForm] = useState({ major: 'Computer Science', semester: '5', skills: '', bio: '' })
+  const [showEditProfile, setShowEditProfile] = useState(false)
+  const [editForm, setEditForm] = useState({ major: '', semester: '5', skills: '', bio: '' })
   const [stats, setStats] = useState<Stats | null>(null)
   const [allGigs, setAllGigs] = useState<Gig[]>([])
   const [discoverGigs, setDiscoverGigs] = useState<Gig[]>([])
+  const [discoverReady, setDiscoverReady] = useState(false)
   const [applications, setApplications] = useState<Application[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
@@ -101,7 +171,6 @@ export default function Page() {
   const [minBudget, setMinBudget] = useState('')
   const [maxBudget, setMaxBudget] = useState('')
   const [mode, setMode] = useState('All gigs')
-  const [savedOnly, setSavedOnly] = useState(false)
   const [savedIds, setSavedIds] = useState<number[]>(() => {
     if (typeof window === 'undefined') return []
     try { return JSON.parse(window.localStorage.getItem('cg-saved') || '[]') } catch { return [] }
@@ -117,6 +186,8 @@ export default function Page() {
   const [reviewComment, setReviewComment] = useState('')
   const [profileId, setProfileId] = useState<number>(1)
   const [profile, setProfile] = useState<(User & { reviews_received: Review[] }) | null>(null)
+  const [profileLoading, setProfileLoading] = useState(false)
+  const profileLoadedFor = useRef<number | null>(null)
   const [toast, setToast] = useState('')
 
   const me = users.find((u) => u.email && (u.email === authEmail || u.email === session?.user?.email))
@@ -153,11 +224,16 @@ export default function Page() {
     if (mode !== 'All gigs') params.type = mode
     if (minBudget) params.min_budget = minBudget
     if (maxBudget) params.max_budget = maxBudget
-    api.gigs(params).then(setDiscoverGigs).catch(() => setDiscoverGigs([]))
+    api.gigs(params).then((g) => { setDiscoverGigs(g); setDiscoverReady(true) }).catch(() => { setDiscoverGigs([]); setDiscoverReady(true) })
   }, [query, category, payment, mode, minBudget, maxBudget, loadAll, allGigs])
 
   useEffect(() => {
-    if (view === 'Profile') api.user(profileId).then(setProfile).catch(() => setProfile(null))
+    if (view !== 'Profile') return
+    if (profileLoadedFor.current !== profileId) setProfileLoading(true)
+    api.user(profileId)
+      .then((u) => { setProfile(u); profileLoadedFor.current = profileId })
+      .catch(() => setProfile(null))
+      .finally(() => setProfileLoading(false))
   }, [view, profileId, allGigs, reviews])
 
   useEffect(() => { window.localStorage.setItem('cg-saved', JSON.stringify(savedIds)) }, [savedIds])
@@ -169,14 +245,14 @@ export default function Page() {
       .then(({ data }) => {
         setAuthEmail(data?.user?.email ?? null)
         setAuthChecked(true)
-        if (!data) router.replace('/login')
       })
-      .catch(() => { setAuthChecked(true); router.replace('/login') })
+      .catch(() => { setAuthChecked(true) })
   }, [router])
 
   async function doSignOut() {
     await authClient.signOut()
-    router.push('/login')
+    setAuthEmail(null)
+    router.push('/')
   }
 
   async function doCompleteProfile() {
@@ -189,18 +265,56 @@ export default function Page() {
     }
   }
 
+  function openEditProfile() {
+    if (!profile) return
+    setEditForm({ major: profile.major, semester: String(profile.semester), skills: profile.skills.join(', '), bio: profile.bio })
+    setShowEditProfile(true)
+  }
+
+  async function doEditProfile() {
+    try {
+      await api.updateProfile({ major: editForm.major, semester: Number(editForm.semester), bio: editForm.bio, skills: editForm.skills })
+      setShowEditProfile(false)
+      notify('Profile updated')
+      await loadAll()
+      api.user(profileId).then(setProfile).catch(() => {})
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Could not update profile')
+    }
+  }
+
   function openProfile(id: number) {
     setProfileId(id)
     setSelectedGigId(null)
     setView('Profile')
   }
 
+  const renderGigCard = (gig: Gig) => (
+    <article className="gig-card" key={gig.id} onClick={() => setSelectedGigId(gig.id)}>
+                          <div className="gig-card-top">
+                            <span className="type-status">
+                              <span className={`type-label type-${gig.type.toLowerCase()}`}>{gig.type === 'Offering' ? 'Offering help' : 'Looking for help'}</span>
+                              {gig.display_status !== 'Open' && <StatusBadge status={gig.display_status} />}
+                            </span>
+                            <button className={`save-button ${savedIds.includes(gig.id) ? 'saved' : ''}`} aria-label="Save gig" onClick={(e) => { e.stopPropagation(); setSavedIds((ids) => ids.includes(gig.id) ? ids.filter((id) => id !== gig.id) : [...ids, gig.id]) }}><Heart /></button>
+                          </div>
+                          <h3>{gig.title}</h3>
+                          <p className="gig-description">{gig.description}</p>
+                          <p className="gig-meta-line">{gig.category} · {paymentText(gig)}{(gig.applications_count ?? 0) > 0 ? ` · ${gig.applications_count} applicant${gig.applications_count === 1 ? '' : 's'}` : ''}</p>
+                          <div className="gig-card-footer">
+                            <div className="person"><Avatar name={gig.owner_name} id={gig.user_id} size="sm" /><div><strong>{gig.owner_name}</strong><span>{gig.owner_major}</span></div></div>
+                            <span className="deadline"><Clock3 />{deadlineInfo(gig.deadline).label}</span>
+                          </div>
+                        </article>
+  )
+
   const myApplications = useMemo(() => applications.filter((a) => a.applicant_id === me?.id), [applications, me])
   const myGigs = useMemo(() => allGigs.filter((g) => g.user_id === me?.id), [allGigs, me])
   const appsForGig = useCallback((gigId: number) => applications.filter((a) => a.gig_id === gigId), [applications])
   const myAppFor = useCallback((gigId: number) => applications.find((a) => a.gig_id === gigId && a.applicant_id === me?.id), [applications, me])
   const myReviewFor = useCallback((gigId: number) => reviews.find((r) => r.gig_id === gigId && r.reviewer_id === me?.id), [reviews, me])
-  const visibleGigs = savedOnly ? discoverGigs.filter((g) => savedIds.includes(g.id)) : discoverGigs
+  const visibleGigs = discoverGigs
+  const savedGigs = useMemo(() => allGigs.filter((g) => savedIds.includes(g.id)), [allGigs, savedIds])
 
   const reviewableGigs = useMemo(
     () => allGigs.filter((g) => g.display_status === 'Completed' && (g.user_id === me?.id || g.accepted_applicant_id === me?.id) && !myReviewFor(g.id)),
@@ -280,6 +394,10 @@ export default function Page() {
     }
   }
 
+  if (authChecked && !authEmail) {
+    return <LandingPage />
+  }
+
   if (!authChecked || !authEmail) {
     return (
       <div className="auth-shell">
@@ -315,7 +433,7 @@ export default function Page() {
               <Textarea value={completeForm.bio} onChange={(e) => setCompleteForm({ ...completeForm, bio: e.target.value })} rows={3} placeholder="What do you study, what are you good at..." />
             </div>
             <Button className="auth-submit" onClick={doCompleteProfile}>Save profile <ArrowRight data-icon="inline-end" /></Button>
-            <Button variant="outline" onClick={doSignOut}>Sign out</Button>
+            <Button variant="outline" className="btn-plain" onClick={doSignOut}>Sign out</Button>
           </div>
         </Card>
         {toast && <div className="toast"><Check />{toast}</div>}
@@ -327,23 +445,26 @@ export default function Page() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
-        <div className="campus-switcher"><div className="campus-icon">NU</div><div><strong>Northwestern</strong><span>Student community</span></div><ChevronDown className="muted-icon" /></div>
         <nav className="main-nav" aria-label="Main navigation">
-          <span className="nav-label">WORKSPACE</span>
-          <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
+          <span className="nav-label">Workspace</span>
+          <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => setView('Discover')}><Compass />Discover</button>
           <button className={`nav-item ${view === 'My activity' ? 'active' : ''}`} onClick={() => setView('My activity')}><LayoutDashboard />My activity{(myApplications.length + reviewableGigs.length) > 0 && <span className="nav-count">{myApplications.length + reviewableGigs.length}</span>}</button>
-          <button className="nav-item" onClick={() => notify('Messaging is not part of this portal yet')}><MessageCircle />Messages</button>
-          <span className="nav-label nav-label-spaced">YOUR SPACE</span>
+          <span className="nav-label nav-label-spaced">Your space</span>
           <button className="nav-item" onClick={() => { setActivityTab('my-gigs'); setView('My activity') }}><BriefcaseBusiness />My gigs{myGigs.length > 0 && <span className="nav-count">{myGigs.length}</span>}</button>
-          <button className="nav-item" onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
+          <button className={`nav-item ${view === 'Saved' ? 'active' : ''}`} onClick={() => setView('Saved')}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
         </nav>
         <div className="sidebar-bottom">
-          <button className="nav-item" onClick={() => me && openProfile(me.id)}><Settings />My profile</button>
           {me && (
-            <button className="profile-mini profile-mini-button" onClick={() => openProfile(me.id)}>
-              <Avatar name={me.name} id={me.id} />
-              <div><strong>{me.name}</strong><span>{majorLine(me.name, me.major, me.semester)}</span></div>
-            </button>
+            <div className="profile-mini-wrap">
+              <div className="profile-hover-menu">
+                <button onClick={() => openProfile(me.id)}><Users />Profile</button>
+                <button onClick={doSignOut}><LogOut />Logout</button>
+              </div>
+              <button className="profile-mini profile-mini-button" onClick={() => openProfile(me.id)}>
+                <Avatar name={me.name} id={me.id} />
+                <div><strong>{me.name}</strong><span>{majorLine(me.name, me.major, me.semester)}</span></div>
+              </button>
+            </div>
           )}
         </div>
       </aside>
@@ -352,16 +473,15 @@ export default function Page() {
         <header className="topbar">
           <div className="mobile-brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
           <div className="topbar-actions">
-            {me && <span className="acting-as-label signed-in-as">Signed in as {me.name}</span>}
             <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={doSignOut}><LogOut /></button>
-            <button className="icon-button notification-button" aria-label="Notifications"><Bell /><span /></button>
-            {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /><ChevronDown /></button>}
+            {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /></button>}
           </div>
         </header>
 
         <nav className="mobile-nav" aria-label="Mobile navigation">
-          <button className={view === 'Discover' ? 'active' : ''} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
+          <button className={view === 'Discover' ? 'active' : ''} onClick={() => setView('Discover')}><Compass />Discover</button>
           <button className={view === 'My activity' ? 'active' : ''} onClick={() => setView('My activity')}><LayoutDashboard />My activity</button>
+          <button className={view === 'Saved' ? 'active' : ''} onClick={() => setView('Saved')}><Heart />Saved</button>
           <button className={view === 'Profile' ? 'active' : ''} onClick={() => me && openProfile(me.id)}><Users />Profile</button>
         </nav>
 
@@ -372,23 +492,15 @@ export default function Page() {
             <>
               <section className="welcome-row">
                 <div>
-                  <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()}</p>
-                  <h1>Find your next <span>collaboration.</span></h1>
-                  <p className="welcome-copy">Share what you know. Find what you need. Grow together.</p>
+                  <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <h1>Campus gigs</h1>
+                  <p className="welcome-copy">Small jobs and skill swaps posted by Northwestern students.</p>
+                  {stats && <p className="stats-line">{stats.open_gigs} open · {stats.active_students} students · {stats.avg_rating} average rating from {stats.review_count} reviews</p>}
                 </div>
                 <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
               </section>
 
-              <div className="stats-row">
-                <div className="stat-card"><div className="stat-icon stat-icon-coral"><Compass /></div><div><span>Open gigs</span><strong>{stats?.open_gigs ?? '—'}</strong></div><small>right now</small></div>
-                <div className="stat-card"><div className="stat-icon stat-icon-mint"><Users /></div><div><span>Active students</span><strong>{stats?.active_students ?? '—'}</strong></div><small>on campus</small></div>
-                <div className="stat-card"><div className="stat-icon stat-icon-yellow"><Star /></div><div><span>Community rating</span><strong>{stats?.avg_rating ?? '—'}</strong></div><small>from {stats?.review_count ?? 0} reviews</small></div>
-              </div>
 
-              <div className="section-heading">
-                <div><h2>{savedOnly ? 'Saved gigs' : 'Explore opportunities'}</h2><p>Discover ways to learn, earn, and connect with your campus community.</p></div>
-                <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs'); setSavedOnly(false) }}>View all <ArrowRight /></button>
-              </div>
 
               <div className="filters">
                 <div className="search-wrap"><Search /><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search gigs, skills, or keywords..." aria-label="Search gigs" /></div>
@@ -403,9 +515,9 @@ export default function Page() {
               </div>
               <div className="filters filters-budget">
                 <span className="budget-label"><Filter /> Budget</span>
-                <Input type="number" min="0" value={minBudget} onChange={(e) => setMinBudget(e.target.value)} placeholder="Min $" aria-label="Minimum budget" className="budget-input" />
+                <Input type="number" min="0" value={minBudget} onChange={(e) => setMinBudget(e.target.value)} placeholder="Min PKR" aria-label="Minimum budget" className="budget-input" />
                 <span className="budget-dash">–</span>
-                <Input type="number" min="0" value={maxBudget} onChange={(e) => setMaxBudget(e.target.value)} placeholder="Max $" aria-label="Maximum budget" className="budget-input" />
+                <Input type="number" min="0" value={maxBudget} onChange={(e) => setMaxBudget(e.target.value)} placeholder="Max PKR" aria-label="Maximum budget" className="budget-input" />
                 {(minBudget || maxBudget) && <button className="text-button" onClick={() => { setMinBudget(''); setMaxBudget('') }}><X /> Clear</button>}
               </div>
 
@@ -415,48 +527,40 @@ export default function Page() {
                 ))}
               </div>
 
-              {loading ? (
-                <div className="empty-state"><Search /><h3>Loading gigs…</h3><p>Fetching the latest from the campus board.</p></div>
+              {!discoverReady ? (
+                <GigGridSkeleton />
               ) : (
                 <div className="gig-grid">
-                  {visibleGigs.map((gig) => (
-                    <article className="gig-card" key={gig.id} onClick={() => setSelectedGigId(gig.id)}>
-                      <div className="gig-card-top">
-                        <span className="type-status">
-                          <span className={`type-label type-${gig.type.toLowerCase()}`}>{gig.type === 'Offering' ? 'Offering help' : 'Looking for help'}</span>
-                          {gig.display_status !== 'Open' && <StatusBadge status={gig.display_status} />}
-                        </span>
-                        <button className={`save-button ${savedIds.includes(gig.id) ? 'saved' : ''}`} aria-label="Save gig" onClick={(e) => { e.stopPropagation(); setSavedIds((ids) => ids.includes(gig.id) ? ids.filter((id) => id !== gig.id) : [...ids, gig.id]) }}><Heart /></button>
-                      </div>
-                      <h3>{gig.title}</h3>
-                      <p className="gig-description">{gig.description}</p>
-                      <div className="gig-tags">
-                        <span>{gig.category}</span>
-                        <span className={paymentClass(gig.payment_type)}>{gig.payment_type === 'Paid' ? <DollarSign /> : gig.payment_type === 'Free' ? <Sparkles /> : <ArrowRight />}{paymentLabel(gig.payment_type)}{gig.budget ? ` · $${Number(gig.budget)}` : ''}</span>
-                        {(gig.applications_count ?? 0) > 0 && <span>{gig.applications_count} applicant{gig.applications_count === 1 ? '' : 's'}</span>}
-                      </div>
-                      <div className="gig-card-footer">
-                        <div className="person"><Avatar name={gig.owner_name} id={gig.user_id} size="sm" /><div><strong>{gig.owner_name}</strong><span>{gig.owner_major}</span></div></div>
-                        <span className="deadline"><Clock3 />{deadlineInfo(gig.deadline).label}</span>
-                      </div>
-                    </article>
-                  ))}
+                  {visibleGigs.map((gig) => renderGigCard(gig))}
                 </div>
               )}
-              {!loading && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
+              {discoverReady && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
 
-              <div className="bottom-callout">
-                <div className="callout-icon"><BookOpen /></div>
-                <div><strong>Have a skill to share?</strong><p>Post a gig and find a collaborator in your community.</p></div>
-                <Button variant="outline" onClick={() => setShowPost(true)}>Share a skill <ArrowRight data-icon="inline-end" /></Button>
+            </>
+          )}
+
+          {view === 'Saved' && (
+            <>
+              <div className="section-heading view-heading">
+                <div><h2>Saved gigs</h2><p>Gigs you bookmarked with the heart. Only you can see this list.</p></div>
+                <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
               </div>
+              {loading ? (
+                <GigGridSkeleton count={3} />
+              ) : savedGigs.length === 0 ? (
+                <div className="empty-state"><Heart /><h3>No saved gigs yet</h3><p>Tap the heart on any gig and it will be kept here.</p></div>
+              ) : (
+                <div className="gig-grid">
+                  {savedGigs.map((gig) => renderGigCard(gig))}
+                </div>
+              )}
             </>
           )}
 
           {view === 'My activity' && me && (
             <>
               <div className="section-heading view-heading">
-                <div><h2>My activity</h2><p>Your applications, your gigs, and reviews — as {me.name}.</p></div>
+                <div><h2>My activity</h2><p>Everything you have posted and applied to.</p></div>
                 <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
               </div>
               <Tabs value={activityTab} onValueChange={setActivityTab}>
@@ -470,7 +574,7 @@ export default function Page() {
                   {myApplications.length === 0 && <div className="empty-state"><Send /><h3>No applications yet</h3><p>When you apply to a gig, its status will show up here.</p></div>}
                   <div className="activity-list">
                     {myApplications.map((app) => (
-                      <Card key={app.id} className="activity-card">
+                      <Card key={app.id} className="activity-card clickable" onClick={() => setSelectedGigId(app.gig_id)}>
                         <div className="row-between">
                           <button className="link-title" onClick={() => setSelectedGigId(app.gig_id)}>{app.gig_title}</button>
                           <span className="badge-row"><StatusBadge status={app.gig_status} /><StatusBadge status={app.status} /></span>
@@ -489,15 +593,15 @@ export default function Page() {
                       const gigApps = appsForGig(gig.id)
                       const accepted = gigApps.find((a) => a.status === 'Accepted')
                       return (
-                        <Card key={gig.id} className="activity-card">
+                        <Card key={gig.id} className="activity-card clickable" onClick={() => setSelectedGigId(gig.id)}>
                           <div className="row-between">
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status={gig.display_status} />
                           </div>
-                          <span className="activity-meta">{gig.type} · {gig.category} · {paymentLabel(gig.payment_type)}{gig.budget ? ` · $${Number(gig.budget)}` : ''} · Deadline {deadlineInfo(gig.deadline).full}</span>
-                          {accepted && <p className="activity-message">Working with <button className="link-inline" onClick={() => openProfile(accepted.applicant_id)}>{accepted.applicant_name}</button></p>}
+                          <span className="activity-meta">{gig.type} · {gig.category} · {paymentLabel(gig.payment_type)}{gig.budget ? ` · PKR ${Number(gig.budget).toLocaleString('en-US')}` : ''} · Deadline {deadlineInfo(gig.deadline).full}</span>
+                          {accepted && <p className="activity-message">Working with <button className="link-inline" onClick={(e) => { e.stopPropagation(); openProfile(accepted.applicant_id) }}>{accepted.applicant_name}</button></p>}
                           {gigApps.length > 0 && (
-                            <div className="applicant-list">
+                            <div className="applicant-list" onClick={(e) => e.stopPropagation()}>
                               {gigApps.map((app) => (
                                 <div key={app.id} className="applicant-row">
                                   <div className="person"><Avatar name={app.applicant_name} id={app.applicant_id} size="sm" /><div><button className="link-inline strong" onClick={() => openProfile(app.applicant_id)}>{app.applicant_name}</button><span>{app.applicant_major}</span></div></div>
@@ -505,18 +609,18 @@ export default function Page() {
                                   {app.status === 'Pending' && gig.display_status === 'Open' ? (
                                     <span className="applicant-actions">
                                       <Button size="sm" onClick={() => doReviewApplication(app, 'Accepted')}><Check data-icon="inline-start" />Accept</Button>
-                                      <Button size="sm" variant="outline" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
+                                      <Button size="sm" variant="outline" className="btn-danger" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
                                     </span>
                                   ) : <StatusBadge status={app.status} />}
                                 </div>
                               ))}
                             </div>
                           )}
-                          <div className="card-actions">
+                          <div className="card-actions" onClick={(e) => e.stopPropagation()}>
                             {gig.display_status === 'In Progress' && <Button size="sm" onClick={() => doGigStatus(gig, 'Completed')}><Check data-icon="inline-start" />Mark completed</Button>}
-                            {gig.display_status === 'Open' && <Button size="sm" variant="outline" onClick={() => doGigStatus(gig, 'Cancelled')}>Cancel gig</Button>}
+                            {gig.display_status === 'Open' && <Button size="sm" variant="outline" className="btn-danger" onClick={() => doGigStatus(gig, 'Cancelled')}>Cancel gig</Button>}
                             {gig.display_status === 'Completed' && !myReviewFor(gig.id) && gig.accepted_applicant_id && (
-                              <Button size="sm" variant="outline" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
+                              <Button size="sm" variant="outline" className="btn-plain" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
                             )}
                             {gig.display_status === 'Completed' && myReviewFor(gig.id) && <span className="reviewed-note"><Check /> You reviewed this gig</span>}
                           </div>
@@ -532,18 +636,18 @@ export default function Page() {
                       const otherId = gig.user_id === me.id ? gig.accepted_applicant_id : gig.user_id
                       const other = users.find((u) => u.id === otherId)
                       return (
-                        <Card key={gig.id} className="activity-card">
+                        <Card key={gig.id} className="activity-card clickable" onClick={() => setSelectedGigId(gig.id)}>
                           <div className="row-between">
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status="Completed" />
                           </div>
-                          <p className="activity-message">How was working with {other?.name}? Your review builds their reputation.</p>
-                          <div className="card-actions"><Button size="sm" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {other?.name.split(' ')[0]}</Button></div>
+                          <p className="activity-message">How did it go with {other?.name}?</p>
+                          <div className="card-actions" onClick={(e) => e.stopPropagation()}><Button size="sm" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {other?.name.split(' ')[0]}</Button></div>
                         </Card>
                       )
                     })}
                     {reviews.filter((r) => r.reviewer_id === me.id).map((r) => (
-                      <Card key={r.id} className="activity-card">
+                      <Card key={r.id} className="activity-card clickable" onClick={() => setSelectedGigId(r.gig_id)}>
                         <div className="row-between"><span className="strong-text">{r.gig_title}</span><Stars rating={r.rating} /></div>
                         <p className="activity-message">You reviewed {users.find((u) => u.id === r.reviewee_id)?.name}: “{r.comment}”</p>
                       </Card>
@@ -560,11 +664,12 @@ export default function Page() {
           {view === 'Profile' && (
             <>
               <div className="section-heading view-heading">
-                <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Reputation is calculated from completed-gig reviews.</p></div>
-                <button className="text-button" onClick={() => setView('Discover')}><ArrowRight /> Back to Discover</button>
+                <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Ratings come from completed-gig reviews.</p></div>
               </div>
-              {!profile ? (
-                <div className="empty-state"><Users /><h3>Loading profile…</h3></div>
+              {profileLoading ? (
+                <ProfileSkeleton />
+              ) : !profile ? (
+                <div className="empty-state"><Users /><h3>Could not load this profile</h3><p>Try opening it again from Discover.</p></div>
               ) : (
                 <>
                   <Card className="profile-card">
@@ -577,11 +682,10 @@ export default function Page() {
                           {profile.average_rating ? <><Stars rating={profile.average_rating} size={15} /><strong>{profile.average_rating}</strong><span>({profile.review_count} review{profile.review_count === 1 ? '' : 's'})</span></> : <span>No reviews yet</span>}
                         </div>
                       </div>
+                    {profile.id === me?.id && <Button size="sm" variant="outline" className="btn-plain edit-profile-btn" onClick={openEditProfile}><Pencil data-icon="inline-start" />Edit profile</Button>}
                     </div>
                     <p className="modal-description">{profile.bio}</p>
-                    <div className="gig-tags profile-skills">
-                      {profile.skills.map((s) => <Badge key={s} variant="secondary" className="skill-badge">{s}</Badge>)}
-                    </div>
+                    {profile.skills.length > 0 && <p className="gig-meta-line profile-skills-line">Skills: {profile.skills.join(' · ')}</p>}
                     <Separator />
                     <div className="profile-stats">
                       <div><strong>{profile.gigs_posted}</strong><span>Gigs posted</span></div>
@@ -612,7 +716,7 @@ export default function Page() {
                           <button className="link-title" onClick={() => setSelectedGigId(g.id)}>{g.title}</button>
                           <StatusBadge status={g.display_status} />
                         </div>
-                        <span className="activity-meta">{g.type} · {g.category} · {paymentLabel(g.payment_type)}{g.budget ? ` · $${Number(g.budget)}` : ''} · Deadline {deadlineInfo(g.deadline).full}</span>
+                        <span className="activity-meta">{g.type} · {g.category} · {paymentLabel(g.payment_type)}{g.budget ? ` · PKR ${Number(g.budget).toLocaleString('en-US')}` : ''} · Deadline {deadlineInfo(g.deadline).full}</span>
                       </Card>
                     ))}
                   </div>
@@ -643,7 +747,7 @@ export default function Page() {
               <p className="modal-description">{selectedGig.description}</p>
               <div className="modal-details">
                 <div><span>Category</span><strong>{selectedGig.category}</strong></div>
-                <div><span>Compensation</span><strong>{paymentLabel(selectedGig.payment_type)}{selectedGig.budget && ` · $${Number(selectedGig.budget)}`}</strong></div>
+                <div><span>Compensation</span><strong>{paymentLabel(selectedGig.payment_type)}{selectedGig.budget && ` · PKR ${Number(selectedGig.budget).toLocaleString('en-US')}`}</strong></div>
                 <div><span>Deadline</span><strong>{deadlineInfo(selectedGig.deadline).full}</strong></div>
               </div>
 
@@ -658,14 +762,14 @@ export default function Page() {
                       {app.status === 'Pending' && selectedGig.display_status === 'Open' ? (
                         <span className="applicant-actions">
                           <Button size="sm" onClick={() => doReviewApplication(app, 'Accepted')}><Check data-icon="inline-start" />Accept</Button>
-                          <Button size="sm" variant="outline" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
+                          <Button size="sm" variant="outline" className="btn-danger" onClick={() => doReviewApplication(app, 'Rejected')}>Reject</Button>
                         </span>
                       ) : <StatusBadge status={app.status} />}
                     </div>
                   ))}
                   <div className="modal-actions">
                     {selectedGig.display_status === 'In Progress' && <Button onClick={() => doGigStatus(selectedGig, 'Completed')}><Check data-icon="inline-start" />Mark completed</Button>}
-                    {selectedGig.display_status === 'Open' && <Button variant="outline" onClick={() => doGigStatus(selectedGig, 'Cancelled')}>Cancel gig</Button>}
+                    {selectedGig.display_status === 'Open' && <Button variant="outline" className="btn-danger" onClick={() => doGigStatus(selectedGig, 'Cancelled')}>Cancel gig</Button>}
                     {selectedGig.display_status === 'Completed' && selectedGig.accepted_applicant_id && !myReviewFor(selectedGig.id) && (
                       <Button onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Leave a review</Button>
                     )}
@@ -684,14 +788,14 @@ export default function Page() {
                         <Textarea id="apply-message" value={applyMessage} onChange={(e) => setApplyMessage(e.target.value)} placeholder="A short note on why you are a good fit..." rows={3} />
                         <div className="modal-actions">
                           <Button onClick={() => doApply(selectedGig)} disabled={!applyMessage.trim()}><Send data-icon="inline-start" />Apply to this gig</Button>
-                          <Button variant="outline" onClick={() => setSelectedGigId(null)}>Maybe later</Button>
+                          <Button variant="outline" className="btn-plain" onClick={() => setSelectedGigId(null)}>Maybe later</Button>
                         </div>
                       </div>
                     )
                   })()}
                   {selectedGig.display_status === 'Completed' && selectedGig.accepted_applicant_id === me.id && !myReviewFor(selectedGig.id) && (
                     <div className="modal-actions">
-                      <Button variant="outline" onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {selectedGig.owner_name.split(' ')[0]}</Button>
+                      <Button variant="outline" className="btn-plain" onClick={() => { setReviewGig(selectedGig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {selectedGig.owner_name.split(' ')[0]}</Button>
                     </div>
                   )}
                 </>
@@ -701,13 +805,46 @@ export default function Page() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit profile */}
+      <Dialog open={showEditProfile} onOpenChange={setShowEditProfile}>
+        <DialogContent className="gig-dialog">
+          <DialogHeader>
+            <DialogTitle className="dialog-title">Edit profile</DialogTitle>
+            <DialogDescription className="modal-description">This is what other students see on your profile.</DialogDescription>
+          </DialogHeader>
+          <div className="dialog-form">
+            <div className="form-row">
+              <div>
+                <Label>Major</Label>
+                <Input value={editForm.major} onChange={(e) => setEditForm({ ...editForm, major: e.target.value })} placeholder="Your major" />
+              </div>
+              <div>
+                <Label>Semester</Label>
+                <Input type="number" min="1" max="12" value={editForm.semester} onChange={(e) => setEditForm({ ...editForm, semester: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Skills (comma separated)</Label>
+              <Input value={editForm.skills} onChange={(e) => setEditForm({ ...editForm, skills: e.target.value })} placeholder="e.g. React, Figma, Proofreading" />
+            </div>
+            <div>
+              <Label>Short bio</Label>
+              <Textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} rows={3} />
+            </div>
+          </div>
+          <div className="modal-actions">
+            <Button onClick={doEditProfile}>Save changes</Button>
+            <Button variant="outline" className="btn-plain" onClick={() => setShowEditProfile(false)}>Cancel</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Post a gig */}
       <Dialog open={showPost} onOpenChange={(open) => { setShowPost(open); if (!open) setPostError('') }}>
         <DialogContent className="gig-dialog">
           <DialogHeader>
-            <p className="eyebrow">NEW OPPORTUNITY</p>
             <DialogTitle className="dialog-title">Post a gig</DialogTitle>
-            <DialogDescription className="modal-description">Tell your campus community what you need or what you can offer.</DialogDescription>
+            <DialogDescription className="modal-description">Say what you need, or what you can do.</DialogDescription>
           </DialogHeader>
           <div className="dialog-form">
             <div>
@@ -740,7 +877,7 @@ export default function Page() {
               </div>
               {postForm.payment_type === 'Paid' ? (
                 <div>
-                  <Label htmlFor="post-budget">Budget ($)</Label>
+                  <Label htmlFor="post-budget">Budget (PKR)</Label>
                   <Input id="post-budget" type="number" min="1" value={postForm.budget} onChange={(e) => setPostForm({ ...postForm, budget: e.target.value })} placeholder="e.g. 100" />
                 </div>
               ) : (
@@ -764,7 +901,7 @@ export default function Page() {
           </div>
           <div className="modal-actions">
             <Button onClick={doPostGig}>Publish gig <ArrowRight data-icon="inline-end" /></Button>
-            <Button variant="outline" onClick={() => setShowPost(false)}>Cancel</Button>
+            <Button variant="outline" className="btn-plain" onClick={() => setShowPost(false)}>Cancel</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -775,7 +912,6 @@ export default function Page() {
           {reviewGig && me && (
             <>
               <DialogHeader>
-                <p className="eyebrow">MUTUAL REVIEW</p>
                 <DialogTitle className="dialog-title">Review this gig</DialogTitle>
                 <DialogDescription className="modal-description">
                   {reviewGig.title} — your rating goes to {users.find((u) => u.id === (reviewGig.user_id === me.id ? reviewGig.accepted_applicant_id : reviewGig.user_id))?.name} and counts toward their profile average.
@@ -800,7 +936,7 @@ export default function Page() {
               </div>
               <div className="modal-actions">
                 <Button onClick={doReview}><Star data-icon="inline-start" />Submit review</Button>
-                <Button variant="outline" onClick={() => setReviewGig(null)}>Cancel</Button>
+                <Button variant="outline" className="btn-plain" onClick={() => setReviewGig(null)}>Cancel</Button>
               </div>
             </>
           )}
