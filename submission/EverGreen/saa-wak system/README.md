@@ -2,25 +2,25 @@
 
 <div align="center">
 
-![Frontend](https://img.shields.io/badge/Project-Frontend%20Demo-607d52?style=for-the-badge&labelColor=344b35)
-![Sample prices](https://img.shields.io/badge/Sample%20Prices-336%20Fictional%20Records-9aab7f?style=for-the-badge&labelColor=344b35)
+![Agricultural Platform](https://img.shields.io/badge/Sindh-Agricultural%20Platform-607d52?style=for-the-badge&labelColor=344b35)
+![Crop Price Records](https://img.shields.io/badge/Crop%20Price%20Records-336-9aab7f?style=for-the-badge&labelColor=344b35)
 ![Markets](https://img.shields.io/badge/Markets-3%20Sindh%20Districts-c0a577?style=for-the-badge&labelColor=344b35)
 
 ### Know the market. Grow with confidence.
 
-**A crop-price discovery and produce marketplace frontend for farmers and buyers in Sindh, Pakistan.**
+**A crop-price intelligence and produce marketplace for farmers and buyers in Sindh, Pakistan.**
 
-Explore fictional crop prices, compare markets, follow 14-day trends, create demo alerts, share produce listings, and estimate a potential sale with the profit calculator.
+Track crop prices, compare markets, follow price trends, manage alerts and listings, and estimate potential sale outcomes in one accessible platform.
 
 **🌾 Crop Prices · 📈 Market Insights · 🔔 Price Alerts · 🧺 Produce Marketplace · 🧮 Profit Calculator**
 
-## 🌐 Open the local demo
+## 🌐 Open saa-wak
 
 ### [http://localhost:5173/](http://localhost:5173/)
 
-Start the app with the instructions below before opening this address. This is a local development link; no public deployment is claimed.
+Run the application locally using the setup instructions below, then open this address in your browser.
 
-**Built for farmers and buyers across Sindh**  
+**Made for Sindh’s farming community**  
 Hyderabad · Sukkur · Mirpur Khas
 
 </div>
@@ -30,174 +30,164 @@ Hyderabad · Sukkur · Mirpur Khas
 ## 📑 Table of Contents
 
 - [1. Overview](#-1-overview)
-- [2. Product Experience](#-2-product-experience)
-- [3. Key Features](#-3-key-features)
-- [4. Demo Data](#-4-demo-data)
-- [5. System Architecture](#-5-system-architecture)
-- [6. Technology Stack](#-6-technology-stack)
-- [7. Business Rules](#-7-business-rules)
-- [8. Local Setup](#-8-local-setup)
-- [9. Project Structure](#-9-project-structure)
-- [10. Demo Data and Limitations](#-10-demo-data-and-limitations)
-- [11. Future Backend Integration](#-11-future-backend-integration)
+- [2. Platform Capabilities](#-2-platform-capabilities)
+- [3. Crop and Market Coverage](#-3-crop-and-market-coverage)
+- [4. System Architecture](#-4-system-architecture)
+- [5. Technology Stack](#-5-technology-stack)
+- [6. Price and Calculation Rules](#-6-price-and-calculation-rules)
+- [7. Local Installation](#-7-local-installation)
+- [8. Project Structure](#-8-project-structure)
+- [9. Data and Service Status](#-9-data-and-service-status)
+- [10. Backend Integration](#-10-backend-integration)
 
 ---
 
 ## 🌍 1. Overview
 
-**saa-wak (ساوڪ)** brings practical crop-market information and produce discovery into one calm, mobile-friendly experience. It is designed around everyday decisions: what a crop is priced at in a selected market, how that price has moved, where comparable sample prices are higher, and how a farmer can present available produce to buyers.
+**saa-wak (ساوڪ)** is an agricultural marketplace and crop-price information platform designed around the needs of farmers and produce buyers in Sindh. It brings price discovery, market comparison, price alerts, produce listings, and sale estimates together in a clear, mobile-friendly interface.
 
-### 🎯 Purpose
+### 🎯 Mission
 
-Help farmers and produce buyers explore market information and listings in one accessible place, with a clear distinction between sample data and real market quotations.
+Give farmers and buyers a more accessible way to understand crop-market information and connect around available produce.
 
 ### 🌿 Product principles
 
-- **Clear:** prices always include their comparison unit.
-- **Local:** sample markets represent different Sindh districts.
-- **Honest:** demo prices are fictional and are never presented as live market data.
-- **Practical:** price trends, alerts, listings, and estimates support straightforward workflows.
-- **Approachable:** a soft, off-white interface with restrained agricultural accents and touch-friendly controls.
+- **Clear information:** prices are paired with a consistent crop unit and market.
+- **Useful comparisons:** trends and market prices are presented for the same crop and unit.
+- **Farmer-focused workflows:** alerts, listing management, and sale estimates are easy to reach.
+- **Accessible design:** restrained colors, readable type, responsive pages, and touch-friendly controls.
+- **Honest price context:** the included records are clearly identified as fictional sample prices, not live quotations.
 
 ---
 
-## 🧭 2. Product Experience
+## ✨ 2. Platform Capabilities
 
-Choose a demo role to enter the application:
-
-### 👩‍🌾 Farmer
-
-Explore prices and trends, compare markets, create and manage sample price alerts, estimate potential sale outcomes, and manage demo produce listings.
-
-### 🧺 Buyer
-
-Explore crop prices and compare markets, then browse, search, filter, sort, and inspect available demo produce listings.
-
-Role selection is a way to explore the interface. It is not account authentication or a security boundary.
-
----
-
-## ✨ 3. Key Features
-
-| Feature | Description |
+| Capability | What it provides |
 |---|---|
-| 🌾 Crop Prices | Browse sample crop prices by market, search by crop, filter by category, and see movement from the previous day. |
-| 📈 Market Comparison | View a 14-day crop-price chart with low, average, high, and period-change summaries. Compare the same crop and unit across three markets. |
-| 🔔 Price Alerts | Create Above or Below sample thresholds, pause or resume alerts, and remove rules. Evaluation is demo-only and occurs when sample data is refreshed. |
-| 🧺 Produce Marketplace | Search and filter listings by crop, district, and grade. Sort by newest or price and inspect listing details. |
-| 📝 My Listings | Create, edit, mark sold, and delete listings associated with the demo farmer profile. |
-| 🧮 Profit Calculator | Estimate revenue, production cost, profit or loss, and margin while adjusting the sample price from −20% to +20%. |
-| 📱 Responsive Navigation | Use the full sidebar on wider screens and a touch-friendly navigation drawer on smaller screens. |
-| 🌱 Demo Onboarding | Enter as a farmer or buyer and set a display name and district without creating a real account. |
+| 🌾 Crop Prices | Search crops, filter by category, choose a market, and review price movement from the previous record. |
+| 📈 Price Trends | Explore 14 consecutive days of prices with minimum, average, maximum, and period-change summaries. |
+| 🏬 Market Comparison | Compare the same crop and unit across Hyderabad, Sukkur, and Mirpur Khas. |
+| 🔔 Price Alerts | Set Above or Below price thresholds, enable or pause alerts, and remove alert rules. |
+| 🧺 Produce Marketplace | Search listings and filter by crop, district, and grade; sort by newest or price. |
+| 📝 Listing Management | Create, edit, mark sold, and delete produce listings associated with the farmer profile. |
+| 🧮 Profit Calculator | Estimate revenue, production cost, profit or loss, and margin; explore price changes from −20% to +20%. |
+| 👩‍🌾 Role-Aware Navigation | Select Farmer or Buyer to see the relevant application sections and actions. |
+| 📱 Responsive Interface | Use the platform on mobile, tablet, and desktop layouts. |
 
 ---
 
-## 📊 4. Demo Data
+## 📊 3. Crop and Market Coverage
 
-The frontend uses a coherent fictional dataset generated in `src/data.ts`.
+The current frontend includes a complete, internally consistent set of fictional seed records in `src/data.ts`.
 
-| Collection | Included records |
-|---|---:|
-| Crops | 8 across Grains, Cash crops, Vegetables, and Fruits |
-| Markets | 3 across Hyderabad, Sukkur, and Mirpur Khas |
-| Prices | 336 — 14 consecutive dates for every crop-market pair |
-| Demo profiles | 6 fictional profiles |
+| Data group | Coverage |
+|---|---|
+| Crops | 8 crops across Grains, Cash crops, Vegetables, and Fruits |
+| Markets | Hyderabad, Sukkur, and Mirpur Khas |
+| Price history | 14 consecutive dates for every crop-market pair: 336 records |
+| User profiles | 6 fictional farmer and buyer profiles |
 | Produce listings | 12 fictional listings |
 | Price alerts | 5 sample alert rules |
 
-**All prices and people are fictional.** The persistent in-app disclosure reads: **“Sample demo prices — not live market data.”**
+### Crop catalogue
+
+Wheat, rice, cotton, sugarcane, onion, tomato, mango, and banana.
+
+> **Price data notice:** Sample prices are fictional and are not live market quotations. The application must not be used as a source of current mandi prices.
 
 ---
 
-## 🏗️ 5. System Architecture
+## 🏗️ 4. System Architecture
 
-This phase is a frontend demo. The interface reads its initial records from a local typed data module; demo profile, listing, and alert changes are saved in the current browser’s `localStorage`.
+The current release provides the application interface and local seeded records. Data is separated from the main screen code to keep the future API connection straightforward.
 
 ```text
-┌────────────────────────────────────────────┐
-│              saa-wak Frontend               │
-│                                            │
-│ Overview · Crop Prices · Insights           │
-│ Alerts · Marketplace · Calculator           │
-└─────────────────────┬──────────────────────┘
-                      │
-            Frontend data-access boundary
-                      │
-┌─────────────────────▼──────────────────────┐
-│           Local fictional demo data         │
-│                                            │
-│ 6 domain collections · 336 sample prices   │
-│ Browser localStorage for demo mutations    │
-└────────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│                 saa-wak UI                  │
+│                                             │
+│ Prices · Insights · Alerts · Marketplace    │
+│ Listings · Profit Calculator · Profile      │
+└──────────────────────┬──────────────────────┘
+                       │
+              Typed data boundary
+                       │
+┌──────────────────────▼──────────────────────┐
+│             Frontend data services           │
+│                                             │
+│ Fictional seed records · Browser storage    │
+└─────────────────────────────────────────────┘
 
-Future integration: Frontend → REST API → Backend → Database
+Planned connected architecture:
+React frontend → REST API → Application backend → Database
 ```
 
-There is no backend, database, live market feed, production authentication, or server-side authorization in this frontend phase.
+Profile preferences and listing and alert changes are stored in the browser’s `localStorage` in this release. They are local to that browser and do not synchronize between users or devices.
 
 ---
 
-## 🧰 6. Technology Stack
+## 🧰 5. Technology Stack
 
-- **React** — interactive application screens and reusable UI.
-- **TypeScript** — typed domain data and UI code.
-- **Vite** — local development server and frontend build tooling.
-- **Lucide React** — interface icons.
-- **SVG and CSS** — responsive 14-day price chart and visual system.
-- **Browser localStorage** — demo-only persistence for selected profile, listings, and alerts.
-
----
-
-## 📐 7. Business Rules
-
-- Daily movement is calculated from the latest and previous sample price for the same crop and market.
-- Market comparisons use the same crop and its standardized unit across markets.
-- The highest displayed price is not a guarantee of the best net return; transport and other costs may change the result.
-- Listing price labels compare the asking price with the mean sample price for the same crop across the three markets. The range within ±5% is labelled **Near market**.
-- **Above** alerts trigger when the sample price is greater than or equal to the target. **Below** alerts trigger when the sample price is less than or equal to the target.
-- The calculator applies the chosen percentage adjustment to the sample price and separates gross revenue from estimated profit.
-- Calculator results do not include transport, commission, storage, or other costs unless entered.
+- **React** — application interface and reusable screen components.
+- **TypeScript** — typed domain records and frontend behavior.
+- **Vite** — development server and static build tool.
+- **Lucide React** — navigation and action icons.
+- **SVG and CSS** — responsive price-history visualization and visual design system.
+- **Browser localStorage** — local persistence for profile preferences, listings, and alerts.
 
 ---
 
-## 🚀 8. Local Setup
+## 📐 6. Price and Calculation Rules
+
+- **Daily movement:** latest price minus the previous available record for the same crop and market. Percentage movement uses the previous price as the baseline.
+- **14-day history:** each chart series follows one crop, one market, and one unit across 14 consecutive dates.
+- **Market comparison:** market prices are compared for the same crop and standardized unit. The highest displayed price does not account for transport, commission, or handling costs.
+- **Listing price position:** asking price is compared with the mean sample price across the three markets for that crop. Prices within ±5% are labelled Near market.
+- **Price alerts:** Above triggers when the latest price is at least the target; Below triggers when the latest price is at most the target.
+- **Profit estimate:** adjusted price = base price × (1 + adjustment / 100). Gross revenue and entered production costs are shown separately.
+- **Margin:** calculated from estimated profit divided by gross revenue when revenue is greater than zero.
+
+All outputs are estimates based on the included fictional records and user-entered values.
+
+---
+
+## 🚀 7. Local Installation
 
 ### Requirements
 
-- Node.js and npm installed on your computer.
-- A terminal opened in the `saa-wak` project directory.
+- Node.js and npm.
+- A terminal opened in the `saa-wak` directory.
 
-### Install dependencies
+### Install packages
 
 ```bash
 npm install
 ```
 
-### Start the local application
+### Start the application
 
 ```bash
 npm run dev
 ```
 
-Open the local demo at **[http://localhost:5173/](http://localhost:5173/)**.
+Open **[http://localhost:5173/](http://localhost:5173/)** in your browser.
 
-### Create a production frontend build
+### Build the frontend
 
 ```bash
 npm run build
 ```
 
-### Preview the generated build locally
+### Preview the built files locally
 
 ```bash
 npm run preview
 ```
 
-Vite’s preview server is intended for local build review, not production hosting. Refer to the [Vite getting-started guide](https://vite.dev/guide/) and [static deployment guide](https://vite.dev/guide/static-deploy.html).
+Vite documents these development, build, and preview workflows in its [Getting Started guide](https://vite.dev/guide/). The preview server is for local review rather than production hosting; see the [static deployment guide](https://vite.dev/guide/static-deploy.html).
 
 ---
 
-## 🗂️ 9. Project Structure
+## 🗂️ 8. Project Structure
 
 ```text
 saa-wak/
@@ -207,33 +197,35 @@ saa-wak/
 ├── vite.config.ts
 ├── README.md
 └── src/
-    ├── App.tsx       # Screens, navigation, and demo interactions
-    ├── data.ts       # Domain types and fictional seed records
-    ├── main.tsx      # React application entry point
-    └── styles.css    # Design system and responsive layouts
+    ├── App.tsx       # Screens, navigation, and user interactions
+    ├── data.ts       # Types and fictional crop-market records
+    ├── main.tsx      # React entry point
+    └── styles.css    # Shared styles and responsive layouts
 ```
 
 ---
 
-## ⚠️ 10. Demo Data and Limitations
+## 🔎 9. Data and Service Status
 
-- Sample prices are **not live, official, verified, or guaranteed** market quotations.
-- Alert evaluation happens in the demo when data is refreshed or loaded; there is no background monitoring, SMS, email, or push delivery.
-- Profile, listing, and alert changes are stored only in the browser’s local storage. Clearing site data resets those changes.
-- Demo identities and contact information are fictional. The listing detail view does not place real calls or send messages.
-- Browser-side role and ownership controls are only interface behavior and do not provide security.
-- Calculator outputs are estimates, not guaranteed earnings.
-- This README describes the local frontend demo; it does not claim that the application has been deployed.
+SAA-WAK currently provides a **frontend application with seeded fictional data**. The following services are not connected in this release:
+
+- Live mandi price sources or external price APIs
+- Server-side API or database
+- Real user accounts or identity verification
+- Background alert monitoring or SMS, email, and push notifications
+- Real calls, messaging, payments, or transaction processing
+
+The profile and role controls support local application navigation only. Browser-side ownership checks do not provide server security. Clearing browser site data resets locally stored changes.
 
 ---
 
-## 🔌 11. Future Backend Integration
+## 🔌 10. Backend Integration
 
-The demo is organized around the six product collections:
+The product data model is organized around six collections:
 
 `users` · `crops` · `markets` · `prices` · `listings` · `alerts`
 
-A backend integration can replace the local data source with API operations while preserving the product screens. The server should validate all writes and enforce authentication, farmer role permissions, and ownership for listing and alert changes. Database credentials and privileged secrets must remain on the server and out of the frontend bundle.
+The frontend data boundary can later be connected to REST endpoints for reading crop and market records, querying price history, and creating or managing listings and alerts. A future server should validate requests and enforce account roles and record ownership. Database credentials and privileged keys belong on the server and should never be bundled into the browser application.
 
 ---
 
@@ -241,7 +233,5 @@ A backend integration can replace the local data source with API operations whil
 
 **saa-wak — ساوڪ**  
 **Know the market. Grow with confidence.**
-
-*Sample demo prices — not live market data.*
 
 </div>
