@@ -1,8 +1,8 @@
-# 🎵 TuneWave Music Player
+# TuneWave Music Player
 
 TuneWave is the core of a music streaming app, built for a hackathon. It uses a doubly linked list, hash map, queue, stack, binary search tree (BST) and graph to power a playlist, an Up Next queue, play history, song search and artist recommendations. A small web UI is included to demonstrate everything.
 
-## 🚀 Getting Started
+##  Getting Started
 
 Requirements: [Node.js](https://nodejs.org/) 16 or newer. There are no external dependencies.
 
@@ -14,7 +14,7 @@ npm test
 npm start
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ├── server.js          # HTTP server, playback state and timer, REST API
@@ -27,7 +27,7 @@ npm start
 └── public/            # Web UI (index.html, app.js, style.css)
 ```
 
-## 🧩 Milestones and Data Structures
+##  Milestones and Data Structures
 
 ### Milestone 1: Playlist (Doubly Linked List + Hash Map)
 
@@ -76,7 +76,7 @@ npm start
 
 `h` is the tree height (about log n on average, n in the worst case for an unbalanced tree), `k` is the number of results, and `d` is the number of direct connections.
 
-## 🔌 API
+##  API
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -86,7 +86,7 @@ npm start
 
 Supported actions: `play`, `toggle`, `next`, `previous`, `queue`, `repeat`, `seek`, `back`.
 
-## 🖥️ Demo Walkthrough
+##  Demo Walkthrough
 
 1. Click a song to play it, then click **+ Queue** on another song.
 2. Press **next**. The queued song plays first, and the playlist position does not move.
@@ -96,7 +96,7 @@ Supported actions: `play`, `toggle`, `next`, `previous`, `queue`, `repeat`, `see
 6. Type `ye` in search to see BST prefix results in alphabetical order.
 7. Play a song to see **Artist connections**, which are artists two links away.
 
-## ✅ Tests
+##  Tests
 
 `npm test` checks:
 
@@ -107,6 +107,6 @@ Supported actions: `play`, `toggle`, `next`, `previous`, `queue`, `repeat`, `see
 - BST `findSong` and alphabetical `prefixSearch`, including no matches
 - Graph recommendations that are exactly two links away, exclude direct relations, and are sorted
 
-## 👥 Team
+##  Team
 
 Team DevNova
