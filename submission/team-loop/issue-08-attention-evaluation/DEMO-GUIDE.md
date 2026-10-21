@@ -2,7 +2,7 @@
 
 ## 30 second introduction
 
-Hamare issue mein chaar kaam hain: ML training code ki problems samajhna, attention ke gradients khud banana aur check karna, fraud detector ki evaluation design karna, aur learning curves ki explanation dena. Attention aur cost calculations humne locally run ki hain. Original training data nahi diya gaya, is liye training accuracy improve hone ka claim nahi kiya.
+Hamare issue mein chaar kaam hain: ML training code ki problems samajhna, attention ke gradients khud banana aur check karna, fraud detector ki evaluation design karna, aur learning curves ki explanation dena. Organizer ki experimental-data wali baat ke baad humne apna synthetic dataset bhi banaya aur actual training ki. Apne dataset par baseline mean test accuracy 48.82% aur corrected mean 89.62% aayi. Original dataset nahi mila, is liye uske 55% result mein improvement ka claim nahi karte.
 
 ## Step 1 Training problem
 
@@ -46,11 +46,27 @@ Issue folder mein:
 ..\.venv\Scripts\python.exe verify.py
 ```
 
-Expected: 26 tests, zero failures/errors, gradient_checks_passed true. Final audit mein independent loop reference, zero upstream gradient aur large-cost edge cases bhi check kiye hain. Last digits of numerical errors platform ke hisaab se thore badal sakte hain; tolerances ke andar rehna chahiye.
+Expected: 32 tests, zero failures/errors, gradient_checks_passed true aur synthetic_experiment passed true. Final audit mein independent loop reference, zero upstream gradient, large-cost edge cases aur MLP/BatchNorm gradients bhi check kiye hain. Last digits of numerical errors platform ke hisaab se thore badal sakte hain; tolerances ke andar rehna chahiye.
+
+## Agar accuracy experiment poochein
+
+Humne 10,000 rows aur 40 features ka binary synthetic dataset banaya. 6,000 training, 2,000 validation aur 2,000 final test rows fix rakhin. Same architecture ke saath 10 pipeline variants ko 3 training seeds par 50 epochs chalaya. Mean test accuracy 48.82% se 89.62% hui. Ye 40.80 percentage points ka observed gain hai, original organizer dataset ka result nahi.
+
+Input-label pairing aur scheduler ka effect is experiment mein sab se zyada tha. Scaler leakage aur evaluation mode fix karna correct methodology hai lekin har fix ne individually accuracy nahi barhai. Humne woh results bhi save kiye, chhupaye nahi.
+
+Framework NumPy hai, original PyTorch execution nahi. PyTorch download fail hua tha, is liye same layer structure ka documented NumPy implementation use kiya. Naye MLP ke gradients bhi numerical test se verify kiye.
+
+Dataset aur recorded results check karne ke liye verify_experiment.py chalao. Actual baseline aur corrected training seed 7 par dobara reproduce karne ke liye:
+
+```powershell
+..\.venv\Scripts\python.exe verify_experiment.py --rerun-seed 7
+```
+
+Saare 30 runs dobara karne ke liye synthetic_training.py chalao. Experiment ka full data experiment_results/dataset.npz mein hai. Pehli 10 rows dataset_preview.csv mein hain; woh full dataset nahi.
 
 ## Jo claims nahi karne
 
-- Original dataset par training accuracy improve hui: humne woh experiment nahi kiya.
+- Original dataset par training accuracy improve hui: humne sirf apne generated dataset par improvement measure ki.
 - Real fraud detector deploy kiya: nahi, evaluation design aur arithmetic di hai.
 - FlashAttention GPU kernel banaya: nahi, explanation di hai.
 - AI use nahi hua: coding-assistant support ko honestly explain karo aur organizer policy follow karo.

@@ -8,7 +8,9 @@ Team loop, implementation owner Moksh. This report covers all four required mile
 
 [TRAINING-FIXES.md](TRAINING-FIXES.md) gives the complete finding/effect/fix table and corrected procedure. Its central findings are preprocessing leakage, possible X/y misalignment, validation performed in training mode and overly frequent StepLR decay if the intended schedule is epoch-based. It separately lists conditional dtype/device/loss problems and split/architecture hypotheses.
 
-No single cause of the 55% result is proven: train_loader construction, accuracy implementation, class counts and data ordering are omitted. The majority-class baseline, fixed-checkpoint repeatability, tiny-clean-subset fitting, shuffled-label control and operator learning-rate history are proposed diagnostics. Improved training metrics are not fabricated.
+No single cause of the original 55% result is proven: train_loader construction, accuracy implementation, class counts and data ordering are omitted. The majority-class baseline, fixed-checkpoint repeatability, tiny-clean-subset fitting, shuffled-label control and operator learning-rate history are proposed diagnostics.
+
+An additional experiment has now been executed on our own generated dataset, as requested verbally through Moksh: 10,000 rows, 40 features, two classes, fixed 6,000/2,000/2,000 train/validation/test split. A handwritten NumPy equivalent of the supplied layer structure was trained for 50 epochs in 10 predetermined variants across three seeds. The faulty baseline averaged 48.82% held-out test accuracy and the fully corrected pipeline 89.62%, an observed 40.80-percentage-point increase on this synthetic task. Individual scaler/evaluation fixes did not materially improve accuracy here; all outcomes are retained. [EXPERIMENT.md](EXPERIMENT.md) documents the generation rule, controls, recorded results and limitations. This does not reproduce the organizer's 55% dataset or train a fraud detector.
 
 ## B Attention derivation and implementation
 
@@ -72,7 +74,7 @@ Settings: NumPy float64, seed 42, central step h=1e-6. Each gradient must satisf
 
 The executable checks cover rectangular unmasked attention, square causal attention, and a custom sparse boolean mask. Q, K, V, intermediate probabilities P and pre-mask scores S are each checked numerically. Perturbations of forbidden pre-mask scores have no effect. The checker exits nonzero if any condition fails.
 
-Recorded final audit: 26 unittest tests passed, including an independent scalar-loop forward reference across four seeds and causal/noncausal modes, zero upstream gradients, and cost-helper robustness. Across the 15 gradient-array checks, the largest maximum absolute error was approximately 2.624e-10 and the largest relative L2 error approximately 4.515e-10. Exact machine-readable results are in [results/gradient_checks.json](results/gradient_checks.json). Last digits can vary with numerical libraries/platforms. These small synthetic checks establish local derivative consistency and tested edge behavior; they are not a proof for every possible input or a model-quality benchmark.
+Recorded final audit: 32 unittest tests passed, including attention reference/gradient tests, cost-helper robustness, and six synthetic-training tests. Across the 15 attention gradient-array checks, the largest maximum absolute error was approximately 2.624e-10 and the largest relative L2 error approximately 4.515e-10. Exact machine-readable results are in [results/gradient_checks.json](results/gradient_checks.json). Last digits can vary with numerical libraries/platforms. These small numerical checks establish local derivative consistency and tested edge behavior; they are not a proof for every possible input or a model-quality benchmark. The separately documented training experiment provides measured model results on the generated dataset.
 
 ### Memory growth and FlashAttention
 
@@ -146,7 +148,7 @@ Compare the model's performance and original-to-expert disagreement rates across
 
 - Attention checks use synthetic matrices, one head, 2D real-valued arrays and float64, with no attention dropout or GPU kernels. Small numerical tests do not establish every possible input's behavior.
 - Causal mode is square and includes the diagonal. Fully masked rows are rejected. No zero-gradient claim is made for whole Q/K/V rows solely from a masked score.
-- No original PyTorch training run was executed; precise fix descriptions satisfy the issue's permitted alternative. No improved 55% validation result is claimed.
+- No original PyTorch training run was executed; precise fix descriptions satisfy the written issue's permitted alternative. The additional NumPy experiment shows improvement on generated data, not on the original 55% example. Full methodology and seed variability are in EXPERIMENT.md.
 - Fraud evaluation, calibration, delay handling and learning-curve experiments are designs. No real card data, trained detector, observed AP or production-cost improvement is claimed.
 - The cost threshold depends on calibrated posteriors and the explicit constant-cost assumptions.
 - This work was developed with coding-assistant support; sources are attributed below. The owner must review the derivation, reproduce the checks and comply with the organizers' AI-use/disclosure rules.

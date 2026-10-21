@@ -24,8 +24,14 @@ test_numeric_inputs_are_converted_consistently (test_evaluation.EvaluationTests.
 test_preferred_decision_on_each_side (test_evaluation.EvaluationTests.test_preferred_decision_on_each_side) ... ok
 test_threshold_derivation (test_evaluation.EvaluationTests.test_threshold_derivation) ... ok
 test_zero_cost_boundaries (test_evaluation.EvaluationTests.test_zero_cost_boundaries) ... ok
+test_batchnorm_mlp_gradients_match_finite_differences (test_synthetic_training.SyntheticTrainingTests.test_batchnorm_mlp_gradients_match_finite_differences) ... ok
+test_corrected_scaler_does_not_see_validation_or_test (test_synthetic_training.SyntheticTrainingTests.test_corrected_scaler_does_not_see_validation_or_test) ... ok
+test_corrected_scheduler_steps_per_epoch (test_synthetic_training.SyntheticTrainingTests.test_corrected_scheduler_steps_per_epoch) ... ok
+test_data_is_reproducible_and_splits_are_disjoint (test_synthetic_training.SyntheticTrainingTests.test_data_is_reproducible_and_splits_are_disjoint) ... ok
+test_eval_is_repeatable_and_does_not_update_buffers (test_synthetic_training.SyntheticTrainingTests.test_eval_is_repeatable_and_does_not_update_buffers) ... ok
+test_even_faulty_scaler_never_uses_test (test_synthetic_training.SyntheticTrainingTests.test_even_faulty_scaler_never_uses_test) ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.256s
+Ran 32 tests in 0.200s
 
 OK

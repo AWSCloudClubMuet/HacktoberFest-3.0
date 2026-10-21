@@ -50,7 +50,7 @@ These experiments assume access to input/output predictions or cooperation from 
 
 ## Assumptions and limitations
 
-No original dataset, loader, trained weights, GPU run or verified class balance was supplied. No improved validation accuracy is claimed. The NumPy attention and evaluation arithmetic are independently executed deliverables; this training section is diagnosis and a correction specification, not a tested PyTorch training experiment.
+No original dataset, loader, trained weights, GPU run or verified original class balance was supplied. No improvement on the organizer's original dataset is claimed. Following the additional experimental-data instruction relayed by Moksh, [EXPERIMENT.md](EXPERIMENT.md) now documents actual training on generated data using a NumPy equivalent of the supplied architecture. Its mean test accuracy increased from 48.82% to 89.62% across three seeds. This section remains the original-snippet diagnosis and correction specification, not a tested PyTorch rerun; the separate experiment retains neutral and unfavorable ablation results.
 
 ## Sources
 

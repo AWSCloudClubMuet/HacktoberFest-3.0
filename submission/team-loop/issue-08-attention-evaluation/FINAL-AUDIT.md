@@ -18,18 +18,19 @@ Owner: Moksh. Scope: the mandatory deliverables in organizer issue 8, not the ot
 
 ## Final checks and improvements
 
-- 26 unittest tests pass, with no failures, errors or skips.
+- 32 unittest tests pass, with no failures, errors or skips. Six additional tests validate synthetic data/splits, scaler isolation, MLP/BatchNorm gradients, inference behavior and scheduler cadence.
 - Numerical differentiation checks dQ/dK/dV/dP/dS in three attention scenarios. Recorded maximum absolute error is about 2.624e-10, within the specified 1e-7 limit.
 - Independent forward-reference tests use scalar loops and math.exp across four seeds in causal and noncausal modes. These reduce reliance on a vectorized implementation merely agreeing with its own derivative.
 - Zero upstream gradients, masked gradients, causal future exclusion, stable large scores, malformed inputs, and fully masked rows are covered.
 - Audit improvement: normalize finite costs before adding them so extreme costs do not overflow the threshold denominator; normalize accepted numeric inputs consistently in both cost functions. Required default costs were already correct. Regression tests cover both improvements.
 - Exact verification commands and machine-readable/test-log evidence are included in README.md and results/.
+- Additional generated-data instruction: 30 NumPy training runs (10 variants x 3 seeds x 50 epochs) are recorded in experiment_results/. Mean test accuracy is 48.82% for the faulty baseline and 89.62% for the fully corrected pipeline on a fixed synthetic test split. A paired seed-7 retraining reproduced the saved results. See EXPERIMENT.md for controls, neutral ablations and limitations.
 
 The audit found no unmet mandatory requirement or known blocking defect in the reviewed scope. This is not a proof that every possible bug is absent or a guarantee of judges' acceptance.
 
 ## Limits the presenter must understand
 
-The original training dataset, loader and weights were not supplied; the permitted precise-fix description is delivered instead of an executed PyTorch retraining. No measured accuracy improvement is claimed. Fraud evaluation and learning-curve interventions are documented designs, with scenario arithmetic rather than a trained production detector. FlashAttention is explained rather than implemented. Fully masked rows are deliberately rejected; causal mode is square self-attention.
+The original training dataset, loader and weights were not supplied; no original-dataset or PyTorch-retraining improvement is claimed. A separate handwritten NumPy experiment now supplies measured improvement on generated data. Fraud evaluation and learning-curve interventions remain documented designs, not a trained production fraud detector. FlashAttention is explained rather than implemented. Fully masked rows are deliberately rejected; causal mode is square self-attention.
 
 ## Moksh's remaining steps
 
