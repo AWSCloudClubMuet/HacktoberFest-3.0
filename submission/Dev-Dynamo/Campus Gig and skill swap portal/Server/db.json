@@ -1,0 +1,730 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Ayesha Khan",
+      "major": "Computer Science",
+      "semester": 1,
+      "bio": "Ayesha is happy to collaborate on campus projects.",
+      "skills": [
+        "React",
+        "Node.js"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Bilal Ahmed",
+      "major": "Software Engineering",
+      "semester": 2,
+      "bio": "Bilal is happy to collaborate on campus projects.",
+      "skills": [
+        "Python",
+        "Data Analysis"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Hira Malik",
+      "major": "Electrical Eng.",
+      "semester": 3,
+      "bio": "Hira is happy to collaborate on campus projects.",
+      "skills": [
+        "Figma",
+        "Illustrator"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Usman Tariq",
+      "major": "Design",
+      "semester": 4,
+      "bio": "Usman is happy to collaborate on campus projects.",
+      "skills": [
+        "Essay Writing",
+        "Proofreading"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Sana Iqbal",
+      "major": "English",
+      "semester": 5,
+      "bio": "Sana is happy to collaborate on campus projects.",
+      "skills": [
+        "Math Tutoring",
+        "Physics"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Hamza Ali",
+      "major": "Business",
+      "semester": 6,
+      "bio": "Hamza is happy to collaborate on campus projects.",
+      "skills": [
+        "Video Editing",
+        "Premiere"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Zainab Shah",
+      "major": "Computer Science",
+      "semester": 7,
+      "bio": "Zainab is happy to collaborate on campus projects.",
+      "skills": [
+        "Java",
+        "DSA"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Daniyal Raza",
+      "major": "Software Engineering",
+      "semester": 8,
+      "bio": "Daniyal is happy to collaborate on campus projects.",
+      "skills": [
+        "Photoshop",
+        "Branding"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Maryam Noor",
+      "major": "Electrical Eng.",
+      "semester": 1,
+      "bio": "Maryam is happy to collaborate on campus projects.",
+      "skills": [
+        "Copywriting",
+        "Blogging"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Faizan Qureshi",
+      "major": "Design",
+      "semester": 2,
+      "bio": "Faizan is happy to collaborate on campus projects.",
+      "skills": [
+        "C++",
+        "Algorithms"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Areeba Siddiqui",
+      "major": "English",
+      "semester": 3,
+      "bio": "Areeba is happy to collaborate on campus projects.",
+      "skills": [
+        "UI/UX",
+        "Prototyping"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Talha Mirza",
+      "major": "Business",
+      "semester": 4,
+      "bio": "Talha is happy to collaborate on campus projects.",
+      "skills": [
+        "Chemistry Tutoring",
+        "Biology"
+      ]
+    }
+  ],
+  "gigs": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "title": "Build a portfolio site",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 500,
+      "deadline": "2026-10-16",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-11T07:35:50.158Z"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "title": "Society logo design",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-16",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-10T07:35:50.158Z"
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "title": "Proofread my thesis",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-28",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-09T07:35:50.158Z"
+    },
+    {
+      "id": 4,
+      "user_id": 4,
+      "title": "Calculus tutoring",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 1250,
+      "deadline": "2026-10-29",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-08T07:35:50.158Z"
+    },
+    {
+      "id": 5,
+      "user_id": 5,
+      "title": "Fix Python scripts",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-30",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07T07:35:50.158Z"
+    },
+    {
+      "id": 6,
+      "user_id": 6,
+      "title": "Poster for tech fest",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-31",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-06T07:35:50.158Z"
+    },
+    {
+      "id": 7,
+      "user_id": 7,
+      "title": "Write blog articles",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 2000,
+      "deadline": "2026-11-01",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-05T07:35:50.158Z"
+    },
+    {
+      "id": 8,
+      "user_id": 8,
+      "title": "DSA crash course",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-02",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-04T07:35:50.158Z"
+    },
+    {
+      "id": 9,
+      "user_id": 9,
+      "title": "Android app bug fixing",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-03",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-03T07:35:50.158Z"
+    },
+    {
+      "id": 10,
+      "user_id": 10,
+      "title": "Figma app mockups",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 750,
+      "deadline": "2026-11-04",
+      "status": "In Progress",
+      "accepted_applicant_id": 1,
+      "created_at": "2026-10-02T07:35:50.158Z"
+    },
+    {
+      "id": 11,
+      "user_id": 11,
+      "title": "Resume & cover letter",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-05",
+      "status": "In Progress",
+      "accepted_applicant_id": 2,
+      "created_at": "2026-10-01T07:35:50.158Z"
+    },
+    {
+      "id": 12,
+      "user_id": 12,
+      "title": "Physics numericals help",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-06",
+      "status": "In Progress",
+      "accepted_applicant_id": 3,
+      "created_at": "2026-09-30T07:35:50.158Z"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "title": "Create REST API",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 1500,
+      "deadline": "2026-11-07",
+      "status": "In Progress",
+      "accepted_applicant_id": 4,
+      "created_at": "2026-09-29T07:35:50.158Z"
+    },
+    {
+      "id": 14,
+      "user_id": 2,
+      "title": "Brand colour palette",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-08",
+      "status": "In Progress",
+      "accepted_applicant_id": 5,
+      "created_at": "2026-09-28T07:35:50.158Z"
+    },
+    {
+      "id": 15,
+      "user_id": 3,
+      "title": "Report editing",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-09",
+      "status": "Completed",
+      "accepted_applicant_id": 6,
+      "created_at": "2026-09-27T07:35:50.158Z"
+    },
+    {
+      "id": 16,
+      "user_id": 4,
+      "title": "Intro to Java",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 2250,
+      "deadline": "2026-11-10",
+      "status": "Completed",
+      "accepted_applicant_id": 7,
+      "created_at": "2026-09-26T07:35:50.158Z"
+    },
+    {
+      "id": 17,
+      "user_id": 5,
+      "title": "Build a portfolio site",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-11",
+      "status": "Completed",
+      "accepted_applicant_id": 8,
+      "created_at": "2026-09-25T07:35:50.158Z"
+    },
+    {
+      "id": 18,
+      "user_id": 6,
+      "title": "Society logo design",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-12",
+      "status": "Completed",
+      "accepted_applicant_id": 9,
+      "created_at": "2026-09-24T07:35:50.158Z"
+    },
+    {
+      "id": 19,
+      "user_id": 7,
+      "title": "Proofread my thesis",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 1000,
+      "deadline": "2026-11-13",
+      "status": "Completed",
+      "accepted_applicant_id": 10,
+      "created_at": "2026-09-23T07:35:50.158Z"
+    },
+    {
+      "id": 20,
+      "user_id": 8,
+      "title": "Calculus tutoring",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-14",
+      "status": "Completed",
+      "accepted_applicant_id": 11,
+      "created_at": "2026-09-22T07:35:50.158Z"
+    },
+    {
+      "id": 21,
+      "user_id": 9,
+      "title": "Fix Python scripts",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-15",
+      "status": "Completed",
+      "accepted_applicant_id": 12,
+      "created_at": "2026-09-21T07:35:50.158Z"
+    },
+    {
+      "id": 22,
+      "user_id": 10,
+      "title": "Poster for tech fest",
+      "description": "Offering help with design work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 1750,
+      "deadline": "2026-11-16",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-09-20T07:35:50.158Z"
+    },
+    {
+      "id": 23,
+      "user_id": 11,
+      "title": "Write blog articles",
+      "description": "Requesting help with writing work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-17",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-09-19T07:35:50.158Z"
+    },
+    {
+      "id": 24,
+      "user_id": 12,
+      "title": "DSA crash course",
+      "description": "Offering help with tutoring work. Message me with details and availability.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-18",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-09-18T07:35:50.158Z"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "title": "Android app bug fixing",
+      "description": "Requesting help with programming work. Message me with details and availability.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 500,
+      "deadline": "2026-11-19",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-09-17T07:35:50.158Z"
+    },
+    {
+      "id": 26,
+      "user_id": 5,
+      "title": "Umama",
+      "description": "I am a developer",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 3000,
+      "deadline": "2026-10-30",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-21T09:22:30.090Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "gig_id": 3,
+      "applicant_id": 6,
+      "message": "Hi! I would love to help with this.",
+      "status": "Pending",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 2,
+      "gig_id": 4,
+      "applicant_id": 7,
+      "message": "Hi! I would love to help with this.",
+      "status": "Pending",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 3,
+      "gig_id": 5,
+      "applicant_id": 8,
+      "message": "Hi! I would love to help with this.",
+      "status": "Pending",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 4,
+      "gig_id": 6,
+      "applicant_id": 9,
+      "message": "Hi! I would love to help with this.",
+      "status": "Pending",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 5,
+      "gig_id": 10,
+      "applicant_id": 1,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 6,
+      "gig_id": 10,
+      "applicant_id": 3,
+      "message": "I am interested, please consider me.",
+      "status": "Rejected",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 7,
+      "gig_id": 11,
+      "applicant_id": 2,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 8,
+      "gig_id": 11,
+      "applicant_id": 4,
+      "message": "I am interested, please consider me.",
+      "status": "Rejected",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 9,
+      "gig_id": 12,
+      "applicant_id": 3,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 10,
+      "gig_id": 12,
+      "applicant_id": 5,
+      "message": "I am interested, please consider me.",
+      "status": "Rejected",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 11,
+      "gig_id": 13,
+      "applicant_id": 4,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 12,
+      "gig_id": 13,
+      "applicant_id": 6,
+      "message": "I am interested, please consider me.",
+      "status": "Rejected",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 13,
+      "gig_id": 14,
+      "applicant_id": 5,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 14,
+      "gig_id": 15,
+      "applicant_id": 6,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 15,
+      "gig_id": 16,
+      "applicant_id": 7,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 16,
+      "gig_id": 17,
+      "applicant_id": 8,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 17,
+      "gig_id": 18,
+      "applicant_id": 9,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 18,
+      "gig_id": 19,
+      "applicant_id": 10,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 19,
+      "gig_id": 20,
+      "applicant_id": 11,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    },
+    {
+      "id": 20,
+      "gig_id": 21,
+      "applicant_id": 12,
+      "message": "I have done similar work before and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18T07:35:50.158Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "gig_id": 15,
+      "reviewer_id": 3,
+      "reviewee_id": 6,
+      "rating": 4,
+      "comment": "Delivered on time, great work!"
+    },
+    {
+      "id": 2,
+      "gig_id": 15,
+      "reviewer_id": 6,
+      "reviewee_id": 3,
+      "rating": 5,
+      "comment": "Clear requirements and smooth collaboration."
+    },
+    {
+      "id": 3,
+      "gig_id": 16,
+      "reviewer_id": 4,
+      "reviewee_id": 7,
+      "rating": 5,
+      "comment": "Delivered on time, great work!"
+    },
+    {
+      "id": 4,
+      "gig_id": 16,
+      "reviewer_id": 7,
+      "reviewee_id": 4,
+      "rating": 3,
+      "comment": "Clear requirements and smooth collaboration."
+    },
+    {
+      "id": 5,
+      "gig_id": 17,
+      "reviewer_id": 5,
+      "reviewee_id": 8,
+      "rating": 4,
+      "comment": "Delivered on time, great work!"
+    },
+    {
+      "id": 6,
+      "gig_id": 17,
+      "reviewer_id": 8,
+      "reviewee_id": 5,
+      "rating": 4,
+      "comment": "Clear requirements and smooth collaboration."
+    },
+    {
+      "id": 7,
+      "gig_id": 18,
+      "reviewer_id": 6,
+      "reviewee_id": 9,
+      "rating": 5,
+      "comment": "Delivered on time, great work!"
+    },
+    {
+      "id": 8,
+      "gig_id": 18,
+      "reviewer_id": 9,
+      "reviewee_id": 6,
+      "rating": 5,
+      "comment": "Clear requirements and smooth collaboration."
+    }
+  ]
+}
