@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api, getToken, setToken } from './api.js';
+import logoUrl from './assets/logo.svg';
 import { Link, buttonClass, secondaryButtonClass } from './components.jsx';
+import { initials } from './format.js';
 import { AppContext, AuthContext } from './context.js';
 import { SECTIONS, parseSearch, readSection, sectionFromPath, toQuery, writeSection } from './section.js';
 import { SearchDock, SectionTabs } from './ui.jsx';
@@ -84,6 +86,75 @@ function navClass(active) {
   return `flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold transition duration-150 ${active ? 'bg-white/15 text-on-night' : 'text-on-night-muted hover:bg-white/10 hover:text-on-night'}`;
 }
 
+function menuItemClass(active) {
+  return `flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-semibold ${active ? 'bg-canvas text-ink' : 'text-muted hover:bg-canvas'}`;
+}
+
+function Brand({ to }) {
+  return (
+    <Link to={to} className="flex h-11 min-w-0 shrink-0 items-center gap-2 text-on-night lg:h-14 lg:gap-2.5">
+      <img src={logoUrl} alt="" width="48" height="48" className="h-10 w-10 shrink-0 lg:h-12 lg:w-12" />
+      <span className="min-w-0 leading-none">
+        <span className="block whitespace-nowrap font-display text-xl font-bold tracking-tight lg:text-2xl xl:text-[1.7rem]">
+          Campus Gig
+          <span className="hidden font-medium text-offer-soft sm:inline"> & SkillSwap</span>
+        </span>
+        <span className="mt-1 hidden text-xs font-medium tracking-wide text-on-night-muted xl:block">Learn. Offer. Earn.</span>
+      </span>
+    </Link>
+  );
+}
+
+function AccountMenu({ user, path, open, onToggle, onClose, onLogout }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    function onPointer(event) {
+      if (!ref.current?.contains(event.target)) onClose();
+    }
+    function onKey(event) {
+      if (event.key === 'Escape') onClose();
+    }
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open, onClose]);
+
+  const first = user.name.split(' ')[0];
+
+  return (
+    <div ref={ref} className="header-account relative hidden lg:block">
+      <button
+        type="button"
+        className="inline-flex h-11 items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1 pl-1 pr-1 text-on-night xl:pr-3"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls="account-menu"
+        onClick={onToggle}
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-offer-soft text-sm font-bold text-offer-deep" aria-hidden="true">{initials(user.name)}</span>
+        <span className="sr-only">{user.name}</span>
+        <span className="hidden max-w-28 truncate text-sm font-semibold xl:inline" aria-hidden="true">{first}</span>
+      </button>
+      {open ? (
+        <div id="account-menu" role="menu" className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-line bg-surface p-2 text-ink shadow-pop">
+          <p className="truncate px-3 py-2 text-sm font-semibold text-ink">{user.name}</p>
+          {nav.map((item) => (
+            <Link key={item.to} to={item.to} className={menuItemClass(path === item.to)}>
+              {item.label}
+            </Link>
+          ))}
+          <button type="button" role="menuitem" className={`${menuItemClass(false)} text-danger`} onClick={onLogout}>Log out</button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function App() {
   const { path, query, navigate } = useRoute();
   const [users, setUsers] = useState([]);
@@ -91,6 +162,7 @@ export function App() {
   const [booting, setBooting] = useState(true);
   const [toasts, setToasts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [section, setSection] = useState(() => sectionFromPath(normalize(window.location.pathname)) || readSection());
   const userId = user?.id || '';
@@ -161,6 +233,7 @@ export function App() {
 
   useEffect(() => {
     setMenuOpen(false);
+    setAccountOpen(false);
     setSearchOpen(false);
   }, [path, query]);
 
@@ -198,56 +271,52 @@ export function App() {
     <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
       <div className="min-h-screen">
         <header className="site-header sticky top-0 z-40 border-b border-white/10">
-          <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 sm:px-6">
-            <Link to={user ? `/${section}` : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-on-night">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl fill-offer text-sm text-white" aria-hidden="true">CG</span>
-              <span className="truncate">Campus Gig</span>
-            </Link>
+          <div className="header-bar mx-auto w-full max-w-7xl gap-x-2 px-3 sm:px-4 lg:gap-x-3 lg:px-6">
+            <div className="header-brand flex h-16 items-center lg:h-20">
+              <Brand to={user ? `/${section}` : '/'} />
+            </div>
             {user && !isPublic ? (
-              <SearchDock
-                section={section}
-                filters={parseSearch(query)}
-                open={searchOpen}
-                onOpen={() => setSearchOpen(true)}
-                onClose={() => setSearchOpen(false)}
-                onApply={(draft) => {
-                  setSearchOpen(false);
-                  navigate(`/${section}${toQuery({ ...draft, group: '' })}`);
-                }}
-                onClear={() => {
-                  setSearchOpen(false);
-                  navigate(`/${section}`);
-                }}
-              />
+              <div className="header-search">
+                <SearchDock
+                  section={section}
+                  filters={parseSearch(query)}
+                  open={searchOpen}
+                  onOpen={() => setSearchOpen(true)}
+                  onClose={() => setSearchOpen(false)}
+                  onApply={(draft) => {
+                    setSearchOpen(false);
+                    navigate(`/${section}${toQuery({ ...draft, group: '' })}`);
+                  }}
+                  onClear={() => {
+                    setSearchOpen(false);
+                    navigate(`/${section}`);
+                  }}
+                />
+              </div>
             ) : null}
             {user && !isPublic ? (
-              <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`${buttonClass} hidden px-4 sm:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
+              <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`${buttonClass} header-post hidden shrink-0 whitespace-nowrap px-3 text-sm lg:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
                 {SECTIONS[section].post}
               </Link>
             ) : null}
             {user ? (
-              <nav className="ml-3 hidden items-center gap-1 lg:flex" aria-label="Primary">
-                {nav.map((item) => (
-                  <Link key={item.to} to={item.to} className={navClass(path === item.to)}>
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
+              <AccountMenu
+                user={user}
+                path={path}
+                open={accountOpen}
+                onToggle={() => setAccountOpen((open) => !open)}
+                onClose={() => setAccountOpen(false)}
+                onLogout={logout}
+              />
             ) : (
-              <nav className="ml-auto hidden items-center gap-1 lg:flex" aria-label="Account">
+              <nav className="header-account hidden items-center gap-1 lg:flex" aria-label="Account">
                 <Link to="/login" className={navClass(path === '/login')}>Log in</Link>
                 <Link to="/signup" className={navClass(path === '/signup')}>Sign up</Link>
               </nav>
             )}
-            {user ? (
-              <div className="ml-auto hidden min-w-0 items-center gap-3 lg:flex">
-                <span className="max-w-40 truncate text-sm font-semibold text-on-night">{user.name}</span>
-                <button type="button" className={secondaryButtonClass} onClick={logout}>Log out</button>
-              </div>
-            ) : null}
             <button
               type="button"
-              className="ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night lg:hidden"
+              className="header-menu inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night lg:hidden"
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               onClick={() => setMenuOpen((open) => !open)}
@@ -263,10 +332,20 @@ export function App() {
                 </svg>
               )}
             </button>
+            {user && !isPublic ? (
+              <div className="header-tabs border-t border-white/10 py-2 lg:border-t-0 lg:py-0">
+                <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
+              </div>
+            ) : null}
           </div>
           <div id="site-menu" className="menu-panel lg:hidden" data-open={menuOpen ? 'true' : 'false'} inert={menuOpen ? undefined : true}>
             <div>
               <nav className="flex flex-col gap-1 px-4 pb-4 sm:px-6" aria-label={user ? 'Primary' : 'Account'}>
+                {user && !isPublic ? (
+                  <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={navClass(path === '/gigs/new')}>
+                    {SECTIONS[section].post}
+                  </Link>
+                ) : null}
                 {user ? nav.map((item) => (
                   <Link key={item.to} to={item.to} className={navClass(path === item.to)}>
                     {item.label}
@@ -286,11 +365,6 @@ export function App() {
               </nav>
             </div>
           </div>
-          {user && !isPublic ? (
-            <div className="mx-auto w-full max-w-7xl px-4 pb-2 sm:px-6">
-              <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
-            </div>
-          ) : null}
         </header>
         <main className="mx-auto w-full min-w-0 max-w-7xl px-4 py-4 sm:px-6 sm:py-6">{page}</main>
         <footer className="bg-night text-on-night-muted">

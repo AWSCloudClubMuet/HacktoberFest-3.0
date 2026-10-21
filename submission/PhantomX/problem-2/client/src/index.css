@@ -134,9 +134,42 @@
 
 .site-header {
   padding-top: env(safe-area-inset-top);
-  background-image: linear-gradient(90deg, var(--color-night-deep) 0%, var(--color-night) 55%, var(--color-night-mid) 100%);
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-night-deep) 92%, transparent),
+    color-mix(in srgb, var(--color-night) 90%, transparent) 55%,
+    color-mix(in srgb, var(--color-night-mid) 86%, transparent)
+  );
   color: var(--color-on-night);
   border-color: transparent;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--color-night) 28%, transparent);
+}
+
+.header-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "brand search menu"
+    "tabs tabs tabs";
+  align-items: center;
+}
+
+.header-brand { grid-area: brand; }
+.header-search { grid-area: search; justify-self: end; min-width: 0; }
+.header-menu { grid-area: menu; }
+.header-tabs { grid-area: tabs; }
+.header-post { grid-area: post; }
+.header-account { grid-area: account; }
+
+@media (min-width: 1024px) {
+  .header-bar {
+    height: 5rem;
+    grid-template-columns: auto auto minmax(7.5rem, 1fr) auto auto;
+    grid-template-areas: "brand tabs search post account";
+  }
+
+  .header-search { justify-self: stretch; }
 }
 
 .toast-stack {

@@ -37,7 +37,7 @@ export function SectionTabs({ value, onChange }) {
     <div
       role="tablist"
       aria-label="Service sections"
-      className="grid w-full grid-cols-2 gap-1 rounded-3xl border border-line bg-surface/80 p-1 shadow-card"
+      className="grid w-full grid-cols-2 gap-1 rounded-3xl border border-line bg-surface/90 p-1 shadow-card lg:w-max lg:rounded-full"
       onKeyDown={onKeyDown}
     >
       <SectionTab
@@ -74,11 +74,11 @@ function SectionTab({ buttonRef, id, controls, selected, onSelect, icon: Icon, l
       aria-selected={selected}
       aria-controls={controls}
       tabIndex={selected ? 0 : -1}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl px-2 text-sm font-semibold transition duration-150 sm:px-4 sm:text-base ${selected ? activeClass : 'text-muted hover:bg-canvas'}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl px-3 text-sm font-semibold transition duration-150 sm:px-4 sm:text-base lg:rounded-full lg:px-2.5 lg:text-sm xl:px-3 ${selected ? activeClass : 'text-muted hover:bg-canvas'}`}
       onClick={onSelect}
     >
-      <Icon size={18} aria-hidden="true" />
-      <span className="text-balance">{label}</span>
+      <Icon size={18} aria-hidden="true" className="lg:hidden xl:inline" />
+      <span>{label}</span>
     </button>
   );
 }
@@ -219,10 +219,10 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative min-w-0 md:flex-1">
+    <div ref={rootRef} className="relative w-full min-w-0">
       <button
         type="button"
-        className="hidden h-11 w-full items-center gap-2 rounded-full border border-line bg-surface px-4 text-left text-sm text-muted shadow-sm md:inline-flex"
+        className="hidden h-11 w-full items-center gap-2 rounded-full border border-line bg-surface px-4 text-left text-sm text-muted shadow-sm lg:inline-flex"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => (open ? onClose() : onOpen())}
@@ -232,7 +232,7 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
       </button>
       <button
         type="button"
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink md:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink lg:hidden"
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={`Search gigs in ${copy.short}`}
