@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "808793986977",
+    "project_id": "kisanmandi-sindh",
+    "storage_bucket": "kisanmandi-sindh.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808793986977:android:3e203f13f5ef70ab601de0",
+        "android_client_info": {
+          "package_name": "com.example.kisanmandi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfw58Uf8zz3TFOOS5h7Me8ocPGFHzTsyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
