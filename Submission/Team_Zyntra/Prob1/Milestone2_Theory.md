@@ -1,187 +1,95 @@
-# Milestone 2: Up Next Queue & Playback History — Theoretical Foundations & Architecture
-
-## 1. Executive Summary & Problem Formulation
-In high-tier streaming services like **TuneWave**, user listening sessions are rarely purely linear. Listeners routinely:
-1. Interject high-priority songs into an **Up Next queue** without disrupting their active playlist progression.
-2. Revisit tracks they just experienced using a **back / history** mechanism.
-
-### Formal Problem Rules & Requirements:
-1. **Queue Priority Invariant:** Songs in the *Up Next* queue play strictly **before** the normal playlist continues.
-2. **Cursor Decoupling Invariant:** Playing a song from *Up Next* or via `back()` from *history* **must not move the playlist position**.
-3. **Bounded History Invariant:** The playback history retains at most the **last 10 songs** played. When the 11th song is recorded, the oldest song is dropped ($O(1)$ bottom eviction).
-4. **History Replay & Eviction:** Calling `back()` replays the top song from the history stack and **removes it from history**, without altering the playlist cursor.
-5. **Required Operations:**
-   - `addToUpNext(songId)`
-   - `playNext()`
-   - `back()`
+# Milestone 2: Up Next & Play History (Queue + Stack)
+**Team Zyntra | TuneWave Music Player**
 
 ---
 
-## 2. Theoretical Data Structure Selection
+## 1. Problem Overview
+In real-world music apps like Spotify or Apple Music, listening isn't strictly linear. You often want to queue up a track to hear next without losing your place in the album or playlist you were playing. You also want to hit a `back` button to replay whatever song you just heard.
 
-```
-                                  +-----------------------+
-                                  |   TuneWave Player     |
-                                  +-----------------------+
-                                              |
-               +------------------------------+------------------------------+
-               |                                                             |
-               v                                                             v
-    [ UP NEXT (FIFO Queue) ]                                     [ HISTORY (LIFO Bounded Stack) ]
-    Enqueue tail, Dequeue head                                   Push top, Pop top, Max Size = 10
-    
-        [In] ---> [S5] [S4] ---> [Out]                               [Top (Most Recent)]
-                   Queue (FIFO)                                              |
-                                                                             v
-                                                                        +---------+
-                                                                        | Song S3 | (popped by back())
-                                                                        +---------+
-                                                                        | Song S2 |
-                                                                        +---------+
-                                                                        | Song S1 |
-                                                                        +---------+
-                                                                             |
-                                                                      [Bottom (Oldest)]
-                                                                      (evicted if > 10)
-```
-
-### A. Up Next Queue: FIFO (First-In, First-Out)
-- **Semantics:** Songs queued by the user must play in the order of their submission.
-- **Why Queue?** A FIFO queue naturally orders requests chronologically:
-  $$\text{Enqueue}(x): \text{tail} \leftarrow x, \quad \text{Dequeue}(): \text{head} \rightarrow x$$
-- **Complexity:** $O(1)$ amortized insertion and extraction via a circular buffer or doubly-linked list (`collections.deque`).
-
-### B. History: Bounded LIFO Stack with Bottom Eviction
-- **Semantics:** When a user invokes `back()`, they expect to rewind through their most recently played tracks in reverse chronological order:
-  $$\text{Most Recent} \rightarrow \text{Second Most Recent} \rightarrow \dots$$
-- **Why Bounded Stack?**
-  - Standard stacks permit unbounded growth, leaking memory during prolonged sessions.
-  - The requirement dictates that *history keeps the last 10 songs played and drops the oldest*.
-  - A double-ended queue bounded to capacity $C = 10$ provides $O(1)$ LIFO push/pop at the right boundary while automatically dropping the oldest element at the left boundary in $O(1)$ when $|H| = 10$.
-
-### C. Playlist Decoupling (Cursor Invariant)
-A critical requirement in TuneWave is that:
-$$\text{Playlist Position } \mathbf{P}_{\text{curr}} \text{ is invariant under UpNext and History playback.}$$
-If a user is listening to Track 2 of an album, enqueues 3 independent singles into Up Next, and listens to them, the album must resume seamlessly at Track 3 once Up Next is exhausted.
+For Milestone 2, we had to implement these playback rules:
+1. **Up Next priority:** Songs in the *Up Next* queue must play **before** the normal playlist continues.
+2. **Playlist position invariant:** Playing from *Up Next* or from *history* **must not move the playlist position**.
+3. **Bounded history:** History only holds the last **10 songs** played. When an 11th song is played, the oldest song is dropped ($O(1)$).
+4. **Back button:** `back()` replays the most recent song and removes it from history, without changing the playlist position.
 
 ---
 
-## 3. Playback Controller & Arbitration Logic
+## 2. Choosing the Right Data Structures
 
-### State Transition Diagram for `playNext()`
-```mermaid
-flowchart TD
-    Start([Invoke playNext]) --> CheckQueue{Is Up Next Queue<br/>Empty?}
-    
-    CheckQueue -- No --> Dequeue[Dequeue song from Up Next]
-    Dequeue --> PushQueueHistory[Push previous active song to History<br/>Drop oldest if history size > 10]
-    PushQueueHistory --> SetActiveQueue[Set currently_playing = song]
-    SetActiveQueue --> RetainCursor["CRITICAL: Keep playlist.current UNCHANGED"]
-    RetainCursor --> ReturnQueue[Return song]
-    
-    CheckQueue -- Yes --> CheckPlaylist[Call playlist.next]
-    CheckPlaylist --> IsEnd{Did playlist.next<br/>return 'end'?}
-    IsEnd -- Yes --> ReturnEnd[Return 'end']
-    IsEnd -- No --> PushPlayHistory[Push previous active song to History<br/>Drop oldest if history size > 10]
-    PushPlayHistory --> SetActivePlay[Set currently_playing = playlist.current.song]
-    SetActivePlay --> ReturnPlay[Return currently_playing]
+### A. FIFO Queue for "Up Next"
+- When a user adds songs to play next, they expect them to play in the exact order they added them (First-In, First-Out).
+- We used a queue (`collections.deque` in Python).
+  - Enqueue (`append`): $O(1)$
+  - Dequeue (`popleft`): $O(1)$
+
+### B. Bounded LIFO Stack (Max 10) for History
+- When you click `back()`, you want the song you heard *most recently* (Last-In, First-Out). That's a textbook stack.
+- But standard stacks can grow infinitely and eat memory. The requirement states: *"History keeps the last 10 songs played and drops the oldest."*
+- Python's `collections.deque(maxlen=10)` fits this perfectly:
+  - Pushing (`append`): $O(1)$. When length reaches 10, adding another song automatically drops the oldest item on the other end in $O(1)$.
+  - Popping (`pop`): $O(1)$ pops from the top of the stack.
+
+### Visual Architecture:
 ```
-
-### State Transition Diagram for `back()`
-```mermaid
-flowchart TD
-    StartBack([Invoke back]) --> CheckHist{Is History Stack<br/>Empty?}
-    CheckHist -- Yes --> ReturnNone[Return None / 'No history']
-    CheckHist -- No --> PopHist[Pop top song from History stack]
-    PopHist --> RetainCursor2["CRITICAL: Keep playlist.current UNCHANGED"]
-    RetainCursor2 --> SetActiveBack[Set currently_playing = popped song]
-    SetActiveBack --> ReturnBack[Return popped song]
+                     [ TuneWave Player ]
+                              |
+        +---------------------+---------------------+
+        |                                           |
+        v                                           v
+ [ Up Next Queue ]                           [ History Stack ]
+   (FIFO, deque)                               (LIFO, maxlen=10)
+   
+  [In] -> [Song U2] [Song U1] -> [Out]          [ Top: most recent ]
+                                                        |
+                                                        v
+                                                   +---------+
+                                                   | Song P2 |  <- popped by back()
+                                                   +---------+
+                                                   | Song P1 |
+                                                   +---------+
+                                                [ Bottom: oldest (dropped if >10) ]
 ```
 
 ---
 
-## 4. Algorithmic Specifications
+## 3. How the Operations Work
 
-### 1. `addToUpNext(songId)`
-- **Input:** Unique identifier `songId` (or `Song` object).
-- **Steps:**
-  1. Resolve `songId` to a `Song` instance via catalog or playlist lookup.
-  2. If resolved, append to `self.up_next` queue:
-     $$\text{up\_next.append}(\text{song})$$
-  3. Return `True` (or `False` if song cannot be found).
-- **Time Complexity:** $O(1)$.
-- **Space Complexity:** $O(1)$ per queued item.
+### `addToUpNext(songId)`
+- Takes a `songId` (or song object), resolves it from the catalog or playlist, and enqueues it to `self.up_next`.
+- Time Complexity: **$O(1)$**.
 
-### 2. `playNext()`
-- **Steps:**
-  1. Check if `len(self.up_next) > 0`:
-     - If true:
-       - Dequeue `song = self.up_next.popleft()`.
-       - Record current playing song to `history`:
-         $$\text{if self.currently\_playing is not None: push\_history(self.currently\_playing)}$$
-       - Set `self.currently_playing = song`.
-       - **Do NOT advance `self.playlist.current`**.
-       - Return `song`.
-  2. If `self.up_next` is empty:
-     - Advance playlist: `res = self.playlist.next()`.
-     - If `res == "end"`:
-       - Return `"end"`.
-     - Else:
-       - Record current playing song to `history`.
-       - Set `self.currently_playing = res`.
-       - Return `self.currently_playing`.
-- **Time Complexity:** $O(1)$.
-- **Space Complexity:** $O(1)$.
+### `playNext()`
+- **Step 1: Check Up Next:** If `self.up_next` has songs, dequeue the front song (`popleft()`).
+  - Push the currently playing song into `self.history`.
+  - Set `currently_playing = song`.
+  - **Important:** `self.playlist.current` does **not** move. It stays frozen on whatever playlist song was playing!
+- **Step 2: Resume Playlist:** If Up Next is empty:
+  - Advance the playlist using `playlist.next()`.
+  - If it returns `"end"`, return `"end"`.
+  - Otherwise, push previous song to `history` and play the new song.
+- Time Complexity: **$O(1)$**.
 
-### 3. `back()`
-- **Steps:**
-  1. Check if `len(self.history) == 0`:
-     - Return `None` (no previous song in history).
-  2. Pop the most recent track:
-     $$\text{song} = \text{self.history.pop()}$$
-  3. Set `self.currently_playing = song`.
-  4. **Do NOT advance or retreat `self.playlist.current`**.
-  5. Return `song`.
-- **Time Complexity:** $O(1)$.
-- **Space Complexity:** $O(1)$.
-
-### 4. Bounded History Invariant (`push_history`)
-- **Capacity:** $K = 10$.
-- **Mechanism:**
-  - Let $H$ be a double-ended deque with `maxlen=10`.
-  - When $H$ contains $[s_1, s_2, \dots, s_{10}]$ and $s_{11}$ is pushed:
-    $$H \leftarrow [s_2, s_3, \dots, s_{10}, s_{11}]$$
-  - The oldest item $s_1$ is discarded automatically in $O(1)$ time.
+### `back()`
+- If `self.history` is empty, return `None`.
+- Pop the top song from `self.history` (`pop()`).
+- Set `currently_playing = song`.
+- **Important:** The playlist position does **not** change.
+- Time Complexity: **$O(1)$**.
 
 ---
 
-## 5. Formal Edge-Case Verification Matrix
-
-| Scenario | State Before Operation | Operation | Expected State & Verification |
-| :--- | :--- | :--- | :--- |
-| **Empty Up Next & History** | `up_next=[]`, `hist=[]`, `curr=P1` | `playNext()` | Advances playlist to `P2`. `hist=[P1]`. `playlist.curr=P2`. |
-| **Up Next Preemption** | `up_next=[U1, U2]`, `curr=P1` | `playNext()` | Plays `U1`. `hist=[P1]`. **`playlist.curr` remains `P1`**. |
-| **Exhausting Up Next** | `up_next=[U2]`, `curr=P1` | `playNext()` $\times 2$ | 1st: plays `U2` (`curr=P1`). 2nd: plays `P2` (`curr=P2`). Seamless return to playlist! |
-| **History Replay (`back()`)** | `hist=[P1, P2]`, `curr=P3` | `back()` | Plays `P2`. `hist=[P1]`. **`playlist.curr` remains `P3`**. |
-| **Consecutive Back Calls** | `hist=[P1, P2]`, `curr=P3` | `back()`, then `back()` | 1st returns `P2` (`hist=[P1]`). 2nd returns `P1` (`hist=[]`). |
-| **Back on Empty History** | `hist=[]` | `back()` | Returns `None` gracefully without crashing. |
-| **History Capacity Overflow**| 12 songs played sequentially | 12 $\times$ `playNext()` | `len(hist) == 10`. Songs 1 and 2 dropped; songs 3 to 12 retained. |
-| **Terminal Playlist with Up Next**| `curr=P_last`, `up_next=[U1]` | `playNext()` | Plays `U1` even though playlist is at the end. |
+## 4. Tricky Edge Cases We Handled
+- **Interleaving Up Next and Playlist:** If you are playing track 2 in an album, enqueue 2 bonus tracks, and play them, the album cursor remains locked on track 2. As soon as the bonus tracks finish, `playNext()` cleanly resumes track 3.
+- **Multiple `back()` calls in a row:** Each call steps back one track through history until the stack is empty.
+- **History limit:** Tested playing 15 tracks in a row; verified that history length never exceeded 10, and the oldest 5 tracks were cleanly dropped.
 
 ---
 
-## 6. Algorithmic Complexity Summary
+## 5. Complexity Summary
 
-$$\begin{array}{|l|c|c|l|}
-\hline
-\textbf{Operation} & \textbf{Time Complexity} & \textbf{Space Complexity} & \textbf{Justification} \\
-\hline
-\text{addToUpNext} & O(1) & O(1) & \text{Amortized FIFO queue push at tail} \\
-\text{playNext (from Up Next)} & O(1) & O(1) & \text{FIFO queue popleft } O(1) + \text{bounded history push } O(1) \\
-\text{playNext (from Playlist)} & O(1) & O(1) & \text{DLL pointer dereference } O(1) + \text{history push } O(1) \\
-\text{back} & O(1) & O(1) & \text{LIFO stack pop from right boundary in } O(1) \\
-\text{History Eviction} & O(1) & O(1) & \text{Bounded ring buffer / deque capacity trim } O(1) \\
-\hline
-\end{array}$$
-
-The combination of a FIFO queue, a bounded LIFO stack, and an isolated playlist pointer achieves strict adherence to all TuneWave playback specifications.
+| Method | Data Structure | Time | Space | Notes |
+| :--- | :--- | :---: | :---: | :--- |
+| `addToUpNext` | FIFO Queue (`deque`) | $O(1)$ | $O(1)$ | Fast queue push |
+| `playNext` | Queue / DLL + Stack Push | $O(1)$ | $O(1)$ | Up Next takes priority; playlist cursor frozen |
+| `back` | LIFO Stack (`pop`) | $O(1)$ | $O(1)$ | Rewinds last played song; cursor frozen |
+| Eviction | Bounded deque (`maxlen=10`) | $O(1)$ | $O(1)$ | Automatic drop of bottom element |
