@@ -22,7 +22,6 @@ import {
   Heart,
   LayoutDashboard,
   LogOut,
-  MessageCircle,
   Plus,
   Search,
   Send,
@@ -325,7 +324,6 @@ export default function Page() {
           <span className="nav-label">Workspace</span>
           <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
           <button className={`nav-item ${view === 'My activity' ? 'active' : ''}`} onClick={() => setView('My activity')}><LayoutDashboard />My activity{(myApplications.length + reviewableGigs.length) > 0 && <span className="nav-count">{myApplications.length + reviewableGigs.length}</span>}</button>
-          <button className="nav-item" onClick={() => notify('Messaging is not part of this portal yet')}><MessageCircle />Messages</button>
           <span className="nav-label nav-label-spaced">Your space</span>
           <button className="nav-item" onClick={() => { setActivityTab('my-gigs'); setView('My activity') }}><BriefcaseBusiness />My gigs{myGigs.length > 0 && <span className="nav-count">{myGigs.length}</span>}</button>
           <button className="nav-item" onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
