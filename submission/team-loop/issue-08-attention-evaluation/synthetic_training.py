@@ -1,4 +1,3 @@
-"""Controlled synthetic experiment; NumPy equivalent of the supplied MLP, not PyTorch."""
 import os
 for _name in ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS'):
     os.environ[_name] = '1'
@@ -9,7 +8,6 @@ import json
 from pathlib import Path
 import time
 import numpy as np
-
 VARIANTS = {
     'faulty_baseline': set(),
     'only_pairing_fixed': {'pairing'},
@@ -22,7 +20,6 @@ VARIANTS = {
     'all_except_eval': {'pairing', 'scaler', 'scheduler'},
     'all_except_scheduler': {'pairing', 'scaler', 'eval'}
 }
-
 def make_dataset(rows=10000, features=40, seed=2026, split_seed=773):
     if rows < 20 or features < 6:
         raise ValueError('need at least 20 rows and 6 features')
@@ -39,7 +36,6 @@ def make_dataset(rows=10000, features=40, seed=2026, split_seed=773):
     order = np.random.default_rng(split_seed).permutation(rows)
     a, b = int(rows * 0.6), int(rows * 0.8)
     return {'x': x, 'y': y, 'train': order[:a], 'validation': order[a:b], 'test': order[b:]}
-
 def scale_data(data, train_only=True):
     ids = data['train'] if train_only else np.r_[data['train'], data['validation']]
     mean = data['x'][ids].mean(axis=0, dtype=np.float64)
@@ -47,9 +43,7 @@ def scale_data(data, train_only=True):
     std = np.where(std == 0, 1, std)
     x = ((data['x'] - mean) / std).astype(np.float32)
     return x, mean, std
-
 class MLP:
-    """Linear -> ReLU -> Dropout -> BatchNorm -> Linear; Adam is applied separately."""
     def __init__(self, features=40, hidden=128, seed=7, dropout=0.5, dtype=np.float32):
         if not 0 <= dropout < 1:
             raise ValueError('dropout must be in [0,1)')
@@ -67,7 +61,6 @@ class MLP:
         self.m = {name: np.zeros_like(p) for name, p in self.p.items()}
         self.v = {name: np.zeros_like(p) for name, p in self.p.items()}
         self.step = 0
-
     def forward(self, x, training=False, rng=None, update_stats=True):
         p = self.p
         z = x @ p['w1'] + p['b1']
@@ -92,20 +85,20 @@ class MLP:
         bn = norm * p['gamma'] + p['beta']
         logits = bn @ p['w2'] + p['b2']
         return logits, (x, z, drop, norm, inv, bn)
-
     @staticmethod
     def metrics(logits, y):
         shifted = logits - logits.max(axis=1, keepdims=True)
         exps = np.exp(shifted)
         loss = np.mean(np.log(exps.sum(axis=1)) - shifted[np.arange(len(y)), y])
         return {'loss': float(loss), 'accuracy': float(np.mean(logits.argmax(axis=1) == y))}
-
     def loss_and_gradients(self, x, y, rng=None, update_stats=True):
         logits, cache = self.forward(x, training=True, rng=rng, update_stats=update_stats)
         x, z, drop, norm, inv, bn = cache
         shifted = logits - logits.max(axis=1, keepdims=True)
         probs = np.exp(shifted)
-        probs /= probs.sum(axis=1, keepdims=True)
+        total = probs.sum(axis=1, keepdims=True)
+        loss = float(np.mean(np.log(total[:, 0]) - shifted[np.arange(len(y)), y]))
+        probs /= total
         dz = probs.copy()
         dz[np.arange(len(y)), y] -= 1
         dz /= len(y)
@@ -117,8 +110,7 @@ class MLP:
         da = inv * (dn - dn.mean(axis=0) - norm * (dn * norm).mean(axis=0))
         dz1 = da * drop * (z > 0)
         grads['w1'], grads['b1'] = x.T @ dz1, dz1.sum(axis=0)
-        return self.metrics(logits, y)['loss'], grads
-
+        return loss, grads
     def update(self, grads, lr):
         self.step += 1
         for name in self.p:
@@ -127,7 +119,6 @@ class MLP:
             m = self.m[name] / (1 - 0.9 ** self.step)
             v = self.v[name] / (1 - 0.999 ** self.step)
             self.p[name] -= lr * m / (np.sqrt(v) + 1e-8)
-
 def train_variant(data, name, seed, epochs=50, batch_size=256):
     fixes = VARIANTS[name]
     x, _, _ = scale_data(data, train_only='scaler' in fixes)
@@ -152,7 +143,6 @@ def train_variant(data, name, seed, epochs=50, batch_size=256):
                 lr *= 0.9
         if 'scheduler' in fixes:
             lr *= 0.9
-        # Intentionally faulty validation updates BatchNorm and uses dropout.
         reported, _ = model.forward(vx, training='eval' not in fixes, rng=validation_rng)
         row = {'epoch': epoch + 1, 'learning_rate_after_epoch': lr,
                'train_loss': train_loss / len(tx)}
@@ -160,7 +150,6 @@ def train_variant(data, name, seed, epochs=50, batch_size=256):
         canonical, _ = model.forward(vx)
         row.update({'canonical_validation_' + k: v for k, v in model.metrics(canonical, vy).items()})
         history.append(row)
-    # Common, read-only evaluation for all variants; no per-epoch test access.
     train_logits, _ = model.forward(tx)
     validation_logits, _ = model.forward(vx)
     test_logits, _ = model.forward(x[data['test']])
@@ -171,7 +160,6 @@ def train_variant(data, name, seed, epochs=50, batch_size=256):
               'validation': model.metrics(validation_logits, vy),
               'test': model.metrics(test_logits, data['y'][data['test']])}
     return result, history
-
 def run_experiment(output, epochs=50, seeds=(7, 19, 42)):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -230,20 +218,9 @@ def run_experiment(output, epochs=50, seeds=(7, 19, 42)):
         writer = csv.DictWriter(file, fieldnames=list(curves[0]))
         writer.writeheader()
         writer.writerows(curves)
-    lines = ['# Synthetic training experiment results', '',
-             'Actual locally executed results; not the organizer\'s original 55% experiment.', '',
-             '| Variant | Train mean | Validation mean +/- seed SD | Test mean +/- seed SD |',
-             '| --- | ---: | ---: | ---: |']
-    for r in summary:
-        lines.append(f"| {r['variant']} | {r['train_mean_accuracy']:.2%} | {r['validation_mean_accuracy']:.2%} +/- {r['validation_std_accuracy']:.2%} | {r['test_mean_accuracy']:.2%} +/- {r['test_std_accuracy']:.2%} |")
-    lines += ['', 'SD is sample standard deviation over initialization/training seeds; it is not a confidence interval.',
-              f"Validation majority baseline: {results['majority_baselines']['validation']:.2%}. Test majority baseline: {results['majority_baselines']['test']:.2%}.",
-              '', 'See training_results.json for each run, dataset_metadata.json for generation/split details, and learning_curves.csv for all reported validation epochs.']
-    (output / 'SUMMARY.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
     return results
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description='Run the synthetic training experiment.')
     parser.add_argument('--output', default=str(Path(__file__).parent / 'experiment_results'))
     parser.add_argument('--epochs', type=int, default=50)
     args = parser.parse_args()

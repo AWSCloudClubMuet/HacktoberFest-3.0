@@ -1,4 +1,3 @@
-"""Validate saved experiment evidence; optionally reproduce one paired seed."""
 from synthetic_training import VARIANTS, make_dataset, train_variant
 import argparse
 import csv
@@ -6,7 +5,6 @@ import hashlib
 import json
 from pathlib import Path
 import numpy as np
-
 def check_saved_results(folder=None, rerun_seed=None):
     folder = Path(folder) if folder else Path(__file__).parent / 'experiment_results'
     result = json.loads((folder / 'training_results.json').read_text(encoding='utf-8'))
@@ -67,9 +65,8 @@ def check_saved_results(folder=None, rerun_seed=None):
     return {'passed': True, 'dataset_rows': 10000, 'features': 40, 'recorded_runs': len(keys),
             'epochs_per_run': meta['epochs'], 'split_overlap': False,
             'dataset_checksum_matches': True, 'summaries_recalculated': True, 'replay': replay}
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description='Check the saved training experiment.')
     parser.add_argument('--folder')
     parser.add_argument('--rerun-seed', type=int)
     args = parser.parse_args()

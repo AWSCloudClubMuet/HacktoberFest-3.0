@@ -32,6 +32,6 @@ test_eval_is_repeatable_and_does_not_update_buffers (test_synthetic_training.Syn
 test_even_faulty_scaler_never_uses_test (test_synthetic_training.SyntheticTrainingTests.test_even_faulty_scaler_never_uses_test) ... ok
 
 ----------------------------------------------------------------------
-Ran 32 tests in 0.200s
+Ran 32 tests in 0.376s
 
 OK

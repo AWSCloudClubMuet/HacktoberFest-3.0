@@ -1,4 +1,3 @@
-"""Run local verification. --write-results records actual output for review."""
 import argparse
 import io
 import json
@@ -9,7 +8,6 @@ import numpy as np
 from check_gradients import run_checks
 from evaluation import scenario
 from verify_experiment import check_saved_results
-
 def verify(write_results=False):
     root = Path(__file__).resolve().parent
     stream = io.StringIO()
@@ -34,9 +32,8 @@ def verify(write_results=False):
         print('Actual results saved in results/.')
     print(json.dumps(result, indent=2))
     return result['passed']
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description='Run the issue 8 checks.')
     parser.add_argument('--write-results', action='store_true')
     args = parser.parse_args()
     raise SystemExit(0 if verify(args.write_results) else 1)
