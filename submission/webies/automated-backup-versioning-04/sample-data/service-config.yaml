@@ -1,0 +1,19 @@
+service: orders-api
+environment: demo
+version: 1.4.2
+region: us-east-1
+database:
+  host: orders-db.example.internal
+  port: 5432
+  name: orders
+  maxConnections: 20
+features:
+  asyncInvoices: true
+  fraudChecks: true
+  maintenanceBanner: false
+logging:
+  level: info
+  destination: stdout
+retention:
+  applicationLogDays: 14
+  auditLogDays: 365

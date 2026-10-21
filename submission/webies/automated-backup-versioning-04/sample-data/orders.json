@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-20T01:30:00Z",
+  "orders": [
+    {
+      "orderId": "ORD-2026-0041",
+      "customerId": "C-1001",
+      "items": 3,
+      "total": 249.5,
+      "currency": "USD",
+      "status": "paid"
+    },
+    {
+      "orderId": "ORD-2026-0042",
+      "customerId": "C-1002",
+      "items": 1,
+      "total": 89.0,
+      "currency": "USD",
+      "status": "paid"
+    },
+    {
+      "orderId": "ORD-2026-0043",
+      "customerId": "C-1005",
+      "items": 7,
+      "total": 612.75,
+      "currency": "USD",
+      "status": "processing"
+    },
+    {
+      "orderId": "ORD-2026-0044",
+      "customerId": "C-1006",
+      "items": 2,
+      "total": 178.25,
+      "currency": "EUR",
+      "status": "refunded"
+    },
+    {
+      "orderId": "ORD-2026-0045",
+      "customerId": "C-1008",
+      "items": 4,
+      "total": 431.0,
+      "currency": "USD",
+      "status": "paid"
+    }
+  ]
+}
