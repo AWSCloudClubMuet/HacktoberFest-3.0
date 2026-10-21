@@ -15,6 +15,95 @@ App.registerModule({
   id: 'inventory', title: 'Inventory', icon: '📦', order: 2,
   subtitle: 'Warehouse stock and reorder levels',
   async render() {
-    return UI.h('p', { class: 'empty' }, 'Inventory module — pending implementation by Eshaal.');
+    const items = await API.list('inventory');
+    const canEdit = App.canEdit();
+    const root = UI.h('div');
+
+    function openItemForm(item) {
+      const fields = [
+        { name: 'name', label: 'Item Name', placeholder: 'e.g. Mineral Water Bottles (1.5L)' },
+        { name: 'category', label: 'Category', options: ['Food & Water', 'Medicine', 'Shelter', 'Hygiene', 'Clothing', 'Energy'] },
+        { name: 'unit', label: 'Unit', placeholder: 'e.g. carton, box, kit' },
+        { name: 'stock', label: 'Stock', type: 'number', min: 0, placeholder: '0' },
+        { name: 'reorder_level', label: 'Reorder Level', type: 'number', min: 0, placeholder: '0' },
+      ];
+      const form = UI.form(fields);
+
+      /* Prefill on edit (UI.form has no initial-values option). */
+      if (item) {
+        const els = form.el.querySelectorAll('input, select');
+        fields.forEach((f, i) => { els[i].value = item[f.name]; });
+      }
+
+      async function save() {
+        const v = form.getValues();
+        if (!v) return;
+        try {
+          if (item) await API.update('inventory', item.id, v);
+          else await API.create('inventory', v);
+          m.close();
+          UI.toast(`Item "${v.name}" ${item ? 'updated' : 'added'}`, 'success');
+          App.render();
+        } catch (err) {
+          UI.toast('Could not save item: ' + err.message, 'error');
+        }
+      }
+
+      const body = UI.h('div', {}, [
+        form.el,
+        UI.h('div', { class: 'form-actions' }, [
+          UI.h('button', { class: 'btn btn-primary', onclick: save }, item ? 'Save Changes' : 'Add Item'),
+          UI.h('button', { class: 'btn btn-ghost', onclick: () => m.close() }, 'Cancel'),
+        ]),
+      ]);
+      const m = UI.modal(item ? 'Edit Inventory Item' : 'New Inventory Item', body);
+    }
+
+    async function removeItem(item) {
+      if (!UI.confirm(`Delete "${item.name}" from inventory? This cannot be undone.`)) return;
+      try {
+        await API.remove('inventory', item.id);
+        UI.toast(`Item "${item.name}" deleted`, 'success');
+        App.render();
+      } catch (err) {
+        UI.toast('Could not delete item: ' + err.message, 'error');
+      }
+    }
+
+    function stockBadge(i) {
+      const low = +i.stock <= +i.reorder_level;
+      if (!low) return UI.badge('In Stock', 'ok');
+      return UI.badge('Low Stock', +i.stock === 0 ? 'bad' : 'warn');
+    }
+
+    const columns = [
+      { key: 'name', label: 'Item' },
+      { key: 'category', label: 'Category', render: i => UI.badge(i.category, 'info') },
+      { key: 'unit', label: 'Unit' },
+      { key: 'stock', label: 'Stock', render: i => (+i.stock).toLocaleString() },
+      { key: 'reorder_level', label: 'Reorder Level', render: i => (+i.reorder_level).toLocaleString() },
+      { label: 'Stock Status', render: stockBadge },
+    ];
+    if (canEdit) {
+      columns.push({
+        label: 'Actions',
+        render: i => UI.h('div', { class: 'row-actions' }, [
+          UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openItemForm(i) }, 'Edit'),
+          UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeItem(i) }, 'Delete'),
+        ]),
+      });
+    }
+
+    if (canEdit) {
+      root.append(UI.h('div', { class: 'toolbar' }, [
+        UI.h('button', { class: 'btn btn-primary', onclick: () => openItemForm(null) }, '+ Add Item'),
+      ]));
+    }
+
+    root.append(UI.table(columns, items, canEdit
+      ? 'No inventory items yet — add the first one.'
+      : 'No inventory items registered yet.'));
+
+    return root;
   },
 });
