@@ -9,7 +9,7 @@
 | Recovery point objective (RPO) - scheduled target | 24 hours | Daily backup at 02:00 UTC. A failure at 01:59 UTC can lose almost 24 hours of changes. |
 | Recovery point objective (RPO) - demo actual | Last successful backup | The hackathon demo has no deployed scheduler, so the RPO is the time of the last manual successful run. |
 | Noncurrent version recovery window | 7 days | Lifecycle expiry is set to 7 days for the demo. After that, noncurrent versions are gone. |
-| Alert detection | 5 minutes after a failed run / next queue poll | SNS publishes immediately and the SQS queue makes the alert inspectable. |
+| Alert detection | After SNS publication and the next queue poll | SNS publishes when configured; the SQS alert is inspectable when `poll-alerts.mjs` runs. |
 
 These targets are commitments for the demo scenario, not a production SLA.
 They must be re-approved if the dataset, schedule, region or retention window
