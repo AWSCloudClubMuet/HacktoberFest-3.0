@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/store.dart';
 import '../theme.dart';
+import '../widgets.dart';
 import 'alerts.dart';
 import 'marketplace.dart';
 import 'onboarding.dart';
@@ -26,31 +27,23 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.spa, size: 23, color: leaf),
-            SizedBox(width: 8),
-            Text(
-              'kisanmandi',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -.8,
-              ),
-            ),
-          ],
+        toolbarHeight: 72,
+        titleSpacing: 22,
+        title: const Wordmark(),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: line),
         ),
         actions: [
           PopupMenuButton<String>(
             tooltip: 'Profile & connection',
             icon: CircleAvatar(
               radius: 18,
-              backgroundColor: forest,
+              backgroundColor: paleGold,
               child: Text(
                 user.name.characters.first.toUpperCase(),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: midnight,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
@@ -126,53 +119,70 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 width: double.infinity,
-                color: cream,
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                color: parchment,
+                padding: const EdgeInsets.symmetric(vertical: 7),
                 child: const Text(
                   'FICTIONAL DEMO DATA · PKR / 40 KG MAUND',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: muted, fontSize: 9, letterSpacing: 1),
+                  style: TextStyle(
+                    color: muted,
+                    fontSize: 8,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: (v) => setState(() => index = v),
-        destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Prices',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.storefront_outlined),
-            selectedIcon: Icon(Icons.storefront),
-            label: 'Marketplace',
-          ),
-          if (user.isFarmer)
-            NavigationDestination(
-              icon: Badge(
-                isLabelVisible: s.triggeredCount > 0,
-                label: Text('${s.triggeredCount}'),
-                child: const Icon(Icons.notifications_none),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Center(
+          heightFactor: 1,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: NavigationBar(
+                selectedIndex: index,
+                onDestinationSelected: (v) => setState(() => index = v),
+                destinations: [
+                  const NavigationDestination(
+                    icon: Icon(Icons.bar_chart_outlined),
+                    selectedIcon: Icon(Icons.bar_chart),
+                    label: 'Prices',
+                  ),
+                  const NavigationDestination(
+                    icon: Icon(Icons.storefront_outlined),
+                    selectedIcon: Icon(Icons.storefront),
+                    label: 'Marketplace',
+                  ),
+                  if (user.isFarmer)
+                    NavigationDestination(
+                      icon: Badge(
+                        isLabelVisible: s.triggeredCount > 0,
+                        label: Text('${s.triggeredCount}'),
+                        child: const Icon(Icons.notifications_none),
+                      ),
+                      selectedIcon: Badge(
+                        isLabelVisible: s.triggeredCount > 0,
+                        label: Text('${s.triggeredCount}'),
+                        child: const Icon(Icons.notifications),
+                      ),
+                      label: 'Alerts',
+                    ),
+                  if (user.isFarmer)
+                    const NavigationDestination(
+                      icon: Icon(Icons.inventory_2_outlined),
+                      selectedIcon: Icon(Icons.inventory_2),
+                      label: 'My listings',
+                    ),
+                ],
               ),
-              selectedIcon: Badge(
-                isLabelVisible: s.triggeredCount > 0,
-                label: Text('${s.triggeredCount}'),
-                child: const Icon(Icons.notifications),
-              ),
-              label: 'Alerts',
             ),
-          if (user.isFarmer)
-            const NavigationDestination(
-              icon: Icon(Icons.inventory_2_outlined),
-              selectedIcon: Icon(Icons.inventory_2),
-              label: 'My listings',
-            ),
-        ],
+          ),
+        ),
       ),
     );
   }

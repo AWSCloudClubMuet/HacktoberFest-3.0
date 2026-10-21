@@ -13,7 +13,7 @@ Future<void> showAlertForm(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  backgroundColor: cream,
+  backgroundColor: parchment,
   builder: (_) => AlertForm(store: store, initialCropId: cropId, alert: alert),
 );
 
@@ -48,32 +48,29 @@ class _AlertsScreenState extends State<AlertsScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(22),
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'A price worth\nwaiting for.',
-                  style: Theme.of(context).textTheme.headlineMedium,
+          PageIntro(
+            label: 'YOUR PRICE WATCH',
+            title: 'Patience,\nwith a target.',
+            description: 'Your rules. Checked against prices on every refresh.',
+            action: IconButton.filled(
+              tooltip: 'Create price alert',
+              style: IconButton.styleFrom(
+                backgroundColor: rust,
+                padding: const EdgeInsets.all(14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              IconButton.filled(
-                tooltip: 'Create price alert',
-                onPressed: () => showAlertForm(context, s),
-                icon: const Icon(Icons.add),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'We check your targets every time you refresh.',
-            style: TextStyle(color: muted),
+              onPressed: () => showAlertForm(context, s),
+              icon: const Icon(Icons.add),
+            ),
           ),
           const SizedBox(height: 22),
           Paper(
-            color: const Color(0xFFEAF0E1),
+            color: paleGold,
             child: Row(
               children: [
-                const Icon(Icons.notifications_active_outlined, color: leaf),
+                const Icon(Icons.notifications_active_outlined, color: rust),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -148,10 +145,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     const SizedBox(height: 16),
                     Text(
                       '${a.condition == 'Above' ? 'At or above' : 'At or below'} ${money(a.target)}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: figures.copyWith(fontSize: 20),
                     ),
                     const SizedBox(height: 7),
                     Text(
@@ -170,8 +164,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                           color: !a.active
                               ? muted
                               : a.triggered
-                              ? leaf
-                              : amber,
+                              ? positive
+                              : rust,
                         ),
                         const Spacer(),
                         IconButton(

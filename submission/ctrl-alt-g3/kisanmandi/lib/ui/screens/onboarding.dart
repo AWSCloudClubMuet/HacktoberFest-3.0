@@ -48,7 +48,7 @@ class _ConnectionDialogState extends State<_ConnectionDialog> {
           if (error != null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: Text(error!, style: const TextStyle(color: Colors.red)),
+              child: Text(error!, style: const TextStyle(color: rust)),
             ),
         ],
       ),
@@ -164,16 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.spa, color: forest),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'kisanmandi',
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -.8,
-                    ),
-                  ),
+                  const Wordmark(),
                   const Spacer(),
                   IconButton(
                     tooltip: 'API connection',
@@ -185,24 +176,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 25),
               Container(
-                height: 145,
+                height: 172,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8EDD9),
-                  borderRadius: BorderRadius.circular(25),
+                  color: paleBlue,
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: const FieldLandscape(),
               ),
               const SizedBox(height: 28),
-              const Tag('MADE FOR SINDH'),
+              const Eyebrow('ROOTED IN SINDH', color: rust),
               const SizedBox(height: 14),
               Text(
-                'Better prices.\nStronger harvests.',
+                'Your harvest.\nA wider horizon.',
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 12),
               const Text(
-                'Know your mandi. Find your buyer.\nA little clarity before your next sale.',
+                'Market clarity, direct connections, and a better plan for your next sale.',
                 style: TextStyle(color: muted, height: 1.5),
               ),
               const SizedBox(height: 24),
@@ -211,12 +202,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ButtonSegment(
                     value: 'Farmer',
                     icon: Icon(Icons.grass),
-                    label: Text('I’m a farmer'),
+                    label: Text('Farmer'),
                   ),
                   ButtonSegment(
                     value: 'Buyer',
                     icon: Icon(Icons.shopping_bag_outlined),
-                    label: Text('I’m a buyer'),
+                    label: Text('Buyer'),
                   ),
                 ],
                 selected: {role},
@@ -264,7 +255,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               const SizedBox(height: 22),
               FilledButton(
                 onPressed: busy ? null : () => submit(),
-                child: Text(busy ? 'Connecting…' : 'Let’s get growing  →'),
+                child: Text(busy ? 'Connecting…' : 'Enter the mandi  →'),
               ),
               const SizedBox(height: 10),
               OutlinedButton(
@@ -282,7 +273,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     widget.store.error!,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: rust),
                   ),
                 ),
             ],

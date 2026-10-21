@@ -13,7 +13,7 @@ Future<void> showListingForm(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  backgroundColor: cream,
+  backgroundColor: parchment,
   builder: (_) => ListingForm(store: store, listing: listing),
 );
 
@@ -66,30 +66,28 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(22),
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  widget.ownOnly
-                      ? 'Your harvest.\nYour listings.'
-                      : 'Fresh from\nSindh’s fields.',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ),
-              if (s.user!.isFarmer)
-                IconButton.filled(
-                  tooltip: 'Post produce listing',
-                  onPressed: () => showListingForm(context, s),
-                  icon: const Icon(Icons.add),
-                ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            widget.ownOnly
-                ? 'Manage what you’re selling. Keep buyers in the loop.'
-                : 'Good produce. Direct conversations. No middlemen.',
-            style: const TextStyle(color: muted),
+          PageIntro(
+            label: widget.ownOnly ? 'YOUR STOREFRONT' : 'THE PRODUCE EXCHANGE',
+            title: widget.ownOnly
+                ? 'Grown by you.\nFound here.'
+                : 'From the field.\nTo your hands.',
+            description: widget.ownOnly
+                ? 'Your produce, prices and availability in one place.'
+                : 'Meet the growers. Find your next good harvest.',
+            action: s.user!.isFarmer
+                ? IconButton.filled(
+                    tooltip: 'Post produce listing',
+                    style: IconButton.styleFrom(
+                      backgroundColor: rust,
+                      padding: const EdgeInsets.all(14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () => showListingForm(context, s),
+                    icon: const Icon(Icons.add),
+                  )
+                : null,
           ),
           const SizedBox(height: 22),
           TextField(
@@ -112,7 +110,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: paper,
               border: Border.all(color: line),
               borderRadius: BorderRadius.circular(16),
             ),
@@ -196,10 +194,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 14),
               child: Material(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
+                color: paper,
+                borderRadius: BorderRadius.circular(16),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(16),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute<void>(
@@ -241,7 +239,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                               const Tag('Sold', color: muted),
                           ],
                         ),
-                        const SizedBox(height: 18),
+                        const Divider(height: 30),
                         Row(
                           children: [
                             Expanded(
@@ -250,11 +248,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 children: [
                                   Text(
                                     '${money(l.askingPrice)} / maund',
-                                    style: const TextStyle(
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: -.4,
-                                    ),
+                                    style: figures.copyWith(fontSize: 17),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -269,7 +263,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             ),
                             const Icon(
                               Icons.arrow_outward,
-                              color: leaf,
+                              color: positive,
                               size: 20,
                             ),
                           ],
@@ -290,8 +284,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                         s.averagePrice(l.cropId),
                                       ) ==
                                       'Above market'
-                                  ? amber
-                                  : leaf,
+                                  ? rust
+                                  : positive,
                             ),
                             Tag('From ${l.availableFrom}', color: muted),
                           ],
@@ -388,8 +382,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 Container(
                   height: 160,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8EDD9),
-                    borderRadius: BorderRadius.circular(24),
+                    color: paleBlue,
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(child: CropIcon(c.name, size: 110)),
                 ),
@@ -402,7 +396,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                     ),
-                    Tag(l.status, color: l.status == 'Sold' ? muted : leaf),
+                    Tag(l.status, color: l.status == 'Sold' ? muted : positive),
                   ],
                 ),
                 const SizedBox(height: 8),

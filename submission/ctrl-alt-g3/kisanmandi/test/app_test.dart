@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kisanmandi/main.dart';
+import 'package:kisanmandi/domain/models.dart';
 import 'package:kisanmandi/ui/screens/alerts.dart';
 import 'package:kisanmandi/ui/screens/marketplace.dart';
 import 'package:kisanmandi/ui/screens/onboarding.dart';
@@ -14,12 +15,18 @@ import 'package:kisanmandi/ui/theme.dart';
 import 'support.dart';
 
 void main() {
+  final captureKey = GlobalKey();
   setUpAll(() async {
-    final loader = FontLoader('Roboto');
-    for (final name in ['Regular', 'Medium', 'Bold', 'Black']) {
-      loader.addFont(rootBundle.load('assets/fonts/Roboto-$name.ttf'));
+    for (final family in ['Manrope', 'Fraunces']) {
+      final loader = FontLoader(family);
+      for (final weight
+          in family == 'Manrope'
+              ? [400, 500, 600, 700, 800]
+              : [400, 500, 600]) {
+        loader.addFont(rootBundle.load('assets/fonts/$family-$weight.ttf'));
+      }
+      await loader.load();
     }
-    await loader.load();
     await (FontLoader(
       'MaterialIcons',
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
@@ -36,9 +43,8 @@ void main() {
   Future<void> shot(WidgetTester t, String name) async {
     if (!const bool.fromEnvironment('SCREENSHOTS')) return;
     await t.pumpAndSettle();
-    final boundary = t.firstRenderObject<RenderRepaintBoundary>(
-      find.byType(RepaintBoundary),
-    );
+    final boundary =
+        captureKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     await t.runAsync(() async {
       final image = await boundary.toImage(pixelRatio: 2);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -54,7 +60,7 @@ void main() {
     await t.pumpWidget(
       MaterialApp(
         theme: appTheme(),
-        home: RepaintBoundary(child: w),
+        home: RepaintBoundary(key: captureKey, child: w),
       ),
     );
     await t.pumpAndSettle();
@@ -63,13 +69,22 @@ void main() {
   testWidgets('farmer four tabs, buyer two tabs and refresh badge', (t) async {
     await size(t, 390);
     final s = TestStore();
-    await t.pumpWidget(RepaintBoundary(child: KisanMandiApp(store: s)));
+    await t.pumpWidget(
+      RepaintBoundary(
+        key: captureKey,
+        child: KisanMandiApp(store: s),
+      ),
+    );
     await t.pumpAndSettle();
     expect(find.byType(NavigationDestination), findsNWidgets(4));
-    expect(find.text('Your mandi, today.'), findsOneWidget);
+    expect(find.text('The market,\nin focus.'), findsOneWidget);
     await shot(t, 'prices');
+    await t.tap(find.text('Marketplace').last);
+    await t.pumpAndSettle();
+    await shot(t, 'marketplace');
     await t.tap(find.text('Alerts').last);
     await t.pumpAndSettle();
+    await shot(t, 'alerts');
     expect(find.text('1 target reached'), findsOneWidget);
     await t.tap(find.byType(Switch).first);
     await t.pumpAndSettle();
@@ -140,19 +155,106 @@ void main() {
   testWidgets('marketplace and alerts fit a phone', (t) async {
     await size(t, 390);
     await screen(t, Scaffold(body: MarketplaceScreen(store: TestStore())));
-    await shot(t, 'marketplace');
     expect(t.takeException(), isNull);
     await screen(t, Scaffold(body: AlertsScreen(store: TestStore())));
-    await shot(t, 'alerts');
     expect(t.takeException(), isNull);
   });
   testWidgets('onboarding and narrow layouts do not overflow', (t) async {
     await size(t, 320, height: 740);
     await screen(t, OnboardingScreen(store: TestStore()));
+    await shot(t, 'onboarding');
     expect(t.takeException(), isNull);
     await screen(t, Scaffold(body: PricesScreen(store: TestStore())));
     expect(t.takeException(), isNull);
     await screen(t, Scaffold(body: AlertForm(store: TestStore())));
     expect(t.takeException(), isNull);
+  });
+  testWidgets('all feature screens fit a narrow phone and a wide window', (
+    t,
+  ) async {
+    final s = TestStore();
+    for (final width in [320.0, 900.0]) {
+      t.view.devicePixelRatio = 1;
+      t.view.physicalSize = Size(width, 844);
+      for (final page in <Widget>[
+        KisanMandiApp(key: UniqueKey(), store: s),
+        Scaffold(body: MarketplaceScreen(store: s)),
+        Scaffold(body: AlertsScreen(store: s)),
+        ProfitScreen(store: s),
+        CropDetailScreen(store: s, cropId: 'c1'),
+        ListingDetailScreen(store: s, listingId: 'l2'),
+      ]) {
+        if (page is KisanMandiApp) {
+          await t.pumpWidget(page);
+          await t.pumpAndSettle();
+        } else {
+          await screen(t, page);
+        }
+        expect(
+          t.takeException(),
+          isNull,
+          reason: '${page.runtimeType} at $width px',
+        );
+      }
+    }
+    t.view.resetPhysicalSize();
+    t.view.resetDevicePixelRatio();
+  });
+
+  testWidgets('market pulse follows the selected market and price refresh', (
+    t,
+  ) async {
+    await size(t, 390);
+    final s = TestStore();
+    final last = s.latest('c1', 'm2')!;
+    s.prices = [
+      for (final p in s.prices)
+        if (p.id == last.id)
+          Price.fromJson({
+            'id': p.id,
+            'crop_id': p.cropId,
+            'market_id': p.marketId,
+            'date': p.date,
+            'price': p.price - 100,
+          })
+        else
+          p,
+    ];
+    await t.pumpWidget(KisanMandiApp(store: s));
+    await t.pumpAndSettle();
+    expect(find.text('8 rising'), findsOneWidget);
+    await t.tap(find.byType(DropdownButtonFormField<String>));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Sukkur Mandi').last);
+    await t.pumpAndSettle();
+    expect(s.marketId, 'm2');
+    expect(find.text('7 rising'), findsOneWidget);
+    expect(find.text('1 falling'), findsOneWidget);
+    await s.refresh();
+    await t.pumpAndSettle();
+    expect(find.text('8 rising'), findsOneWidget);
+    expect(find.text('0 falling'), findsOneWidget);
+    expect(t.takeException(), isNull);
+  });
+  testWidgets('larger system text preserves phone layouts', (t) async {
+    await size(t, 390);
+    t.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(t.platformDispatcher.clearTextScaleFactorTestValue);
+    final s = TestStore();
+    for (final page in <Widget>[
+      OnboardingScreen(store: s),
+      Scaffold(body: PricesScreen(store: s)),
+      Scaffold(body: MarketplaceScreen(store: s)),
+      Scaffold(body: AlertsScreen(store: s)),
+      ProfitScreen(store: s),
+      CropDetailScreen(store: s, cropId: 'c1'),
+    ]) {
+      await screen(t, page);
+      expect(
+        t.takeException(),
+        isNull,
+        reason: '${page.runtimeType} with larger text',
+      );
+    }
   });
 }

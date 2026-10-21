@@ -56,18 +56,53 @@ class _ProfitScreenState extends State<ProfitScreen> {
           child: ListView(
             padding: const EdgeInsets.all(22),
             children: [
-              const Tag('PLAN YOUR NEXT SALE'),
-              const SizedBox(height: 16),
-              Text(
-                'Make the numbers\nwork for you.',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'A quick estimate using the latest mock market price.',
-                style: TextStyle(color: muted),
+              const PageIntro(
+                label: 'BEFORE YOU SELL',
+                title: 'A little foresight.\nA better return.',
+                description:
+                    'Plan with the latest price from your selected market.',
               ),
               const SizedBox(height: 24),
+              if (estimate != null)
+                Paper(
+                  color: midnight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        estimate.profit >= 0
+                            ? 'ESTIMATED PROFIT'
+                            : 'ESTIMATED LOSS',
+                        style: const TextStyle(
+                          color: saffron,
+                          fontSize: 10,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        money(estimate.profit),
+                        style: const TextStyle(
+                          fontSize: 36,
+                          color: paper,
+                          fontFamily: 'Fraunces',
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _result('Revenue', money(estimate.revenue)),
+                      _result('Total cost', money(estimate.cost)),
+                      _result(
+                        'Profit margin',
+                        '${estimate.margin.toStringAsFixed(1)}%',
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 24),
+              const Eyebrow('YOUR SALE DETAILS'),
+              const SizedBox(height: 16),
               DropField(
                 label: 'Crop',
                 value: cropId,
@@ -108,7 +143,7 @@ class _ProfitScreenState extends State<ProfitScreen> {
                   padding: EdgeInsets.only(top: 10),
                   child: Text(
                     'Enter quantity > 0 and cost ≥ 0. Use finite numbers up to 10 billion.',
-                    style: TextStyle(color: Colors.red, fontSize: 12),
+                    style: TextStyle(color: rust, fontSize: 12),
                   ),
                 ),
               const SectionTitle('What if the price changes?'),
@@ -160,42 +195,6 @@ class _ProfitScreenState extends State<ProfitScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              if (estimate != null)
-                Paper(
-                  color: forest,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        estimate.profit >= 0
-                            ? 'ESTIMATED PROFIT'
-                            : 'ESTIMATED LOSS',
-                        style: const TextStyle(
-                          color: Color(0xFFC5D4B0),
-                          fontSize: 10,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        money(estimate.profit),
-                        style: const TextStyle(
-                          fontSize: 36,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      _result('Revenue', money(estimate.revenue)),
-                      _result('Total cost', money(estimate.cost)),
-                      _result(
-                        'Profit margin',
-                        '${estimate.margin.toStringAsFixed(1)}%',
-                      ),
-                    ],
-                  ),
-                ),
               const SizedBox(height: 16),
               const Text(
                 'Margin = profit ÷ revenue × 100. Production cost is per 40 kg maund. Transport, commission and other selling costs are excluded.',
@@ -213,14 +212,11 @@ class _ProfitScreenState extends State<ProfitScreen> {
     child: Row(
       children: [
         Expanded(
-          child: Text(label, style: const TextStyle(color: Color(0xFFCDDBB6))),
+          child: Text(label, style: const TextStyle(color: saffron)),
         ),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(color: paper, fontWeight: FontWeight.w700),
         ),
       ],
     ),

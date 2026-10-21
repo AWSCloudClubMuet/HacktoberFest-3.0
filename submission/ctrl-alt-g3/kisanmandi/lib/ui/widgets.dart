@@ -3,6 +3,132 @@ import 'package:flutter/material.dart';
 import '../domain/models.dart';
 import 'theme.dart';
 
+class Wordmark extends StatelessWidget {
+  const Wordmark({super.key});
+  @override
+  Widget build(BuildContext context) => const Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(width: 30, height: 30, child: TextileMark()),
+      SizedBox(width: 10),
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: 'kisan',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            TextSpan(
+              text: 'mandi',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        style: TextStyle(
+          fontFamily: 'Manrope',
+          fontSize: 21,
+          letterSpacing: -1.1,
+          color: midnight,
+        ),
+      ),
+    ],
+  );
+}
+
+class Eyebrow extends StatelessWidget {
+  final String text;
+  final Color color;
+  const Eyebrow(this.text, {super.key, this.color = muted});
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(
+      fontSize: 9,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1.7,
+      color: color,
+    ),
+  );
+}
+
+class PageIntro extends StatelessWidget {
+  final String label, title;
+  final String? description;
+  final Widget? action;
+  const PageIntro({
+    super.key,
+    required this.label,
+    required this.title,
+    this.description,
+    this.action,
+  });
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Eyebrow(label, color: rust),
+      const SizedBox(height: 10),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ),
+          if (action != null) ...[const SizedBox(width: 12), action!],
+        ],
+      ),
+      if (description != null) ...[
+        const SizedBox(height: 12),
+        Text(description!, style: const TextStyle(color: muted)),
+      ],
+    ],
+  );
+}
+
+// An eight-point rosette, drawn as vectors so the mark stays crisp at any size.
+class TextileMark extends StatelessWidget {
+  final Color color;
+  const TextileMark({super.key, this.color = rust});
+  @override
+  Widget build(BuildContext context) =>
+      CustomPaint(painter: _TextilePainter(color));
+}
+
+class _TextilePainter extends CustomPainter {
+  final Color color;
+  const _TextilePainter(this.color);
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    final radius = math.min(size.width, size.height) * .45;
+    final star = Path();
+    for (var i = 0; i < 16; i++) {
+      final angle = i * math.pi / 8;
+      final r = radius * (i.isEven ? 1 : .59);
+      final x = math.cos(angle) * r, y = math.sin(angle) * r;
+      if (i == 0) {
+        star.moveTo(x, y);
+      } else {
+        star.lineTo(x, y);
+      }
+    }
+    star.close();
+    star.addOval(Rect.fromCircle(center: Offset.zero, radius: radius * .29));
+    star.fillType = PathFillType.evenOdd;
+    canvas.drawPath(star, Paint()..color = color);
+    canvas.drawCircle(Offset.zero, radius * .11, Paint()..color = color);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _TextilePainter oldDelegate) =>
+      oldDelegate.color != color;
+}
+
 class Paper extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -11,15 +137,15 @@ class Paper extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(20),
-    this.color = Colors.white,
+    this.color = paper,
   });
   @override
   Widget build(BuildContext context) => Container(
     padding: padding,
     decoration: BoxDecoration(
       color: color,
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: line),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: color == midnight ? midnight : line),
     ),
     child: child,
   );
@@ -37,8 +163,17 @@ class SectionTitle extends StatelessWidget {
         Expanded(
           child: Text(title, style: Theme.of(context).textTheme.titleLarge),
         ),
-        if (note != null)
-          Text(note!, style: const TextStyle(fontSize: 12, color: muted)),
+        if (note != null) ...[
+          const SizedBox(width: 12),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 100),
+            child: Text(
+              note!,
+              textAlign: TextAlign.end,
+              style: const TextStyle(fontSize: 10, color: muted),
+            ),
+          ),
+        ],
       ],
     ),
   );
@@ -47,13 +182,13 @@ class SectionTitle extends StatelessWidget {
 class Tag extends StatelessWidget {
   final String text;
   final Color color;
-  const Tag(this.text, {super.key, this.color = leaf});
+  const Tag(this.text, {super.key, this.color = positive});
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
     decoration: BoxDecoration(
       color: color.withValues(alpha: .09),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(5),
     ),
     child: Text(
       text,
@@ -78,7 +213,7 @@ class EmptyState extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 52, horizontal: 16),
     child: Column(
       children: [
-        Icon(icon, size: 42, color: leaf),
+        Icon(icon, size: 42, color: positive),
         const SizedBox(height: 16),
         Text(
           title,
@@ -130,6 +265,15 @@ class DropField extends StatelessWidget {
   );
 }
 
+Color cropPaper(String name) => switch (name) {
+  'Wheat' || 'Rice' => const Color(0xFFF4E8CC),
+  'Cotton' => const Color(0xFFE5E9F0),
+  'Sugarcane' => const Color(0xFFE4EADD),
+  'Onion' => const Color(0xFFF0E0E5),
+  'Tomato' => const Color(0xFFF8E2D6),
+  _ => const Color(0xFFF8ECCB),
+};
+
 class CropIcon extends StatelessWidget {
   final String name;
   final double size;
@@ -139,8 +283,8 @@ class CropIcon extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: const Color(0xFFF2F4EA),
-      borderRadius: BorderRadius.circular(15),
+      color: cropPaper(name),
+      borderRadius: BorderRadius.circular(12),
     ),
     alignment: Alignment.center,
     child: SizedBox(
@@ -158,9 +302,9 @@ class _CropPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.save();
     canvas.scale(size.width / 40, size.height / 40);
-    final green = Paint()..color = leaf;
+    final green = Paint()..color = positive;
     final stalk = Paint()
-      ..color = leaf
+      ..color = positive
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -356,7 +500,7 @@ class _ChartPainter extends CustomPainter {
     final tp = TextPainter(
       text: TextSpan(
         text: text,
-        style: TextStyle(color: color, fontSize: 10, fontFamily: 'Roboto'),
+        style: TextStyle(color: color, fontSize: 10, fontFamily: 'Manrope'),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
@@ -402,18 +546,21 @@ class _ChartPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [leaf.withValues(alpha: .19), leaf.withValues(alpha: .01)],
+          colors: [
+            saffron.withValues(alpha: .35),
+            saffron.withValues(alpha: .02),
+          ],
         ).createShader(Rect.fromLTWH(left, top, width, height)),
     );
     canvas.drawPath(
       path,
       Paint()
-        ..color = leaf
-        ..strokeWidth = 3
+        ..color = midnight
+        ..strokeWidth = 2.5
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round,
     );
-    canvas.drawCircle(point(data.length - 1), 5, Paint()..color = leaf);
+    canvas.drawCircle(point(data.length - 1), 5, Paint()..color = rust);
     for (final i in {0, data.length ~/ 2, data.length - 1}) {
       final d = data[i].date.substring(5);
       label(
@@ -442,41 +589,63 @@ class _FieldPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
+    canvas.drawRect(Offset.zero & size, Paint()..color = midnight);
     canvas.drawCircle(
-      Offset(w * .8, h * .23),
-      h * .13,
-      Paint()..color = const Color(0xFFE5C874),
+      Offset(w * .76, h * .34),
+      h * .23,
+      Paint()..color = saffron,
     );
-    final hill = Path()
-      ..moveTo(0, h * .7)
-      ..quadraticBezierTo(w * .45, h * .18, w, h * .65)
+    final back = Path()
+      ..moveTo(0, h * .78)
+      ..quadraticBezierTo(w * .45, h * .2, w, h * .64)
       ..lineTo(w, h)
       ..lineTo(0, h)
       ..close();
-    canvas.drawPath(hill, Paint()..color = const Color(0xFF71956A));
+    canvas.drawPath(back, Paint()..color = const Color(0xFFA65F45));
     final front = Path()
-      ..moveTo(0, h * .68)
-      ..quadraticBezierTo(w * .5, h * .55, w, h * .83)
+      ..moveTo(0, h * .65)
+      ..quadraticBezierTo(w * .55, h * .62, w, h * .9)
       ..lineTo(w, h)
       ..lineTo(0, h)
       ..close();
-    canvas.drawPath(front, Paint()..color = const Color(0xFFB1C18B));
-    for (var i = 0; i < 7; i++) {
+    canvas.drawPath(front, Paint()..color = const Color(0xFFD4A676));
+    for (var i = 0; i < 9; i++) {
       final p = Path()
-        ..moveTo(w * .5 + i * 9, h * .7)
+        ..moveTo(w * (.18 + i * .05), h * .68)
         ..quadraticBezierTo(
-          w * (i / 6),
+          w * (i / 7),
           h * .82,
-          w * (i / 5) - w * .2,
+          w * (i / 6) - w * .15,
           h * 1.1,
         );
       canvas.drawPath(
         p,
         Paint()
-          ..color = forest.withValues(alpha: .35)
+          ..color = midnight.withValues(alpha: .5)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
+          ..strokeWidth = 1.3,
       );
+    }
+    final stroke = Paint()
+      ..color = saffron
+      ..strokeWidth = 1.4
+      ..style = PaintingStyle.stroke;
+    for (var i = 0; i < 3; i++) {
+      final x = w * .08 + i * 15;
+      final y = h * .55 - i * 9;
+      canvas.drawLine(Offset(x, h), Offset(x + 8, y), stroke);
+      for (var j = 0; j < 4; j++) {
+        canvas.drawLine(
+          Offset(x + 6 - j, y + 7 + j * 8),
+          Offset(x - 2, y + j * 8),
+          stroke,
+        );
+        canvas.drawLine(
+          Offset(x + 6 - j, y + 7 + j * 8),
+          Offset(x + 15, y + 1 + j * 8),
+          stroke,
+        );
+      }
     }
   }
 

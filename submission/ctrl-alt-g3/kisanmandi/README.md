@@ -2,7 +2,19 @@
 
 **Know your mandi. Find your buyer.** A Flutter app for Sindh farmers and buyers, built by **CTRL + ALT + G3** for [HacktoberFest issue #11](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/11).
 
-The app implements all six challenge milestones with an HTTP mock API. All crop prices, profiles and seed phone numbers are fictional. The interface uses a forest-green and cream palette, offline bundled Roboto fonts, vector crop illustrations and a custom Flutter chart. There is no hosted price service or account setup to purchase.
+The app implements all six challenge milestones with an HTTP mock API. All crop prices, profiles and seed phone numbers are fictional. The interface pairs indigo, saffron and warm ivory with offline bundled Fraunces and Manrope fonts. An Ajrak-inspired rosette, vector crop illustrations, a live market pulse and history sparklines give it a consistent identity across all screens. There is no hosted price service or account setup to purchase.
+
+## Interface
+
+- **Indigo / saffron / ivory**, with rust actions and restrained teal for rising prices.
+- **Fraunces** display typography and **Manrope** controls and tabular prices, all bundled locally.
+- An Ajrak-inspired eight-point rosette, original vector field artwork and matching Android, iOS, Windows and web icons.
+- A market pulse computed from the selected market’s actual mock prices; crop rows show real 14-day sparklines where space permits.
+- The same simple navigation, role permissions, API flow and milestone features, with layouts checked at 320 px, 390 px, 900 px and larger system text.
+
+[Prices](docs/screenshots/prices.png) · [Marketplace](docs/screenshots/marketplace.png) · [Alerts](docs/screenshots/alerts.png) · [Crop report](docs/screenshots/crop-detail.png) · [Profit](docs/screenshots/profit.png) · [Welcome](docs/screenshots/onboarding.png)
+
+When updating an existing checkout, run `flutter pub get`, then stop and restart `flutter run` to pick up the new bundled fonts and launcher assets.
 
 ## Run in two terminals
 
@@ -94,4 +106,4 @@ The seed date follows the API computer’s date; a later refresh rolls prices fo
 
 Muhammad Kahaf — 25SW043 · Muhammad Haseeb — 25SW079 · Muhammad Waris — 25SW141.
 
-Packages: [http](https://pub.dev/packages/http), [shared_preferences](https://pub.dev/packages/shared_preferences), [url_launcher](https://pub.dev/packages/url_launcher). Networking follows the [Flutter networking cookbook](https://docs.flutter.dev/cookbook/networking). Roboto’s Apache 2.0 license is included in `assets/fonts/Roboto_LICENSE.txt`.
+Packages: [http](https://pub.dev/packages/http), [shared_preferences](https://pub.dev/packages/shared_preferences), [url_launcher](https://pub.dev/packages/url_launcher). Networking follows the [Flutter networking cookbook](https://docs.flutter.dev/cookbook/networking). Fraunces and Manrope are distributed under the SIL Open Font License; both licenses are included in `assets/fonts`. Static font instances are generated from the Google Fonts variable sources (Fraunces optical size 72, softness 30).
