@@ -554,12 +554,6 @@ Let:
 
 ---
 
-## AI Usage Disclosure
-
-AI assistance was used to review the requirements, strengthen edge-case tests, improve documentation, and polish the final implementation. All resulting behavior was checked with automated tests and additional randomized validation.
-
----
-
 ## Project Status
 
 <div align="center">
