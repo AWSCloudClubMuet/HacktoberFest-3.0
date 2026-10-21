@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Gig &amp; SkillSwap Portal</title>
+<script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light';</script>
+<style>
+:root{--bg:#f7f4f0;--panel:#fff;--text:#1f1b1a;--muted:#6f6862;--line:#e9e3dc;--bar1:#4e0f20;--bar2:#7a1f33;--brand:#7a1f33;--btn:#7a1f33;--btn2:#a02a47;--head:#f3eee8;--hover:#fbf8f5;--gold:#c8962e;
+--ok:#2b7a4b;--warn:#a86a00;--info:#2a5d9f;--bad:#b3262e;--neu:#5d646c;--ring:rgba(122,31,51,.22);--shadow:0 1px 2px rgba(40,20,20,.05),0 8px 24px rgba(40,20,20,.06);--shadow2:0 2px 4px rgba(40,20,20,.06),0 14px 34px rgba(122,31,51,.14);
+--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23706a64' stroke-width='1.6'/%3E%3C/svg%3E")}
+:root[data-theme=dark]{--bg:#121315;--panel:#1b1d21;--text:#e8e6e4;--muted:#9a9791;--line:#2d3036;--bar1:#1b1d21;--bar2:#2a1a20;--brand:#e58aa0;--btn:#9a3049;--btn2:#c04262;--head:#22252a;--hover:#212429;--gold:#e0b25a;
+--ok:#7fc794;--warn:#e0b25a;--info:#8bb6e4;--bad:#ef8a8f;--neu:#aab1ba;--ring:rgba(229,138,160,.3);--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);--shadow2:0 2px 4px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.45);
+--chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23aab1ba' stroke-width='1.6'/%3E%3C/svg%3E")}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+h1,h2.sec{font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;font-weight:700;letter-spacing:-.01em}
+h1{font-size:28px;margin:0 0 4px;line-height:1.2}
+h2{font-size:15px;font-weight:700;margin:0 0 12px}
+h2.sec{font-size:20px;margin:34px 0 14px;display:flex;align-items:center;gap:12px}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}.sub{font-size:13px;color:var(--muted)}
+
+/* header */
+.top{background:linear-gradient(120deg,var(--bar1),var(--bar2));color:#fff;position:sticky;top:0;z-index:40;box-shadow:0 2px 14px rgba(0,0,0,.18)}
+.bar{max-width:1160px;margin:0 auto;padding:11px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px}
+.site{color:#fff;font-weight:700;font-size:17px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:Georgia,serif}
+.site::before{content:"CG";display:inline-flex;width:30px;height:30px;border-radius:8px;background:var(--gold);color:#3b0d19;font:800 13px "Segoe UI",sans-serif;align-items:center;justify-content:center;letter-spacing:.5px}
+#nav{display:flex;flex-wrap:wrap;gap:4px}
+#nav a{color:rgba(255,255,255,.78);text-decoration:none;font-size:14px;font-weight:500;padding:7px 13px;border-radius:8px;transition:.15s}
+#nav a:hover{color:#fff;background:rgba(255,255,255,.1)}
+#nav a.active{color:#fff;background:rgba(255,255,255,.18)}
+.who{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:13px}
+.who label{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.8)}
+.who select{padding:6px 30px 6px 10px;font-size:13px;border-radius:8px;background-color:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.who select option{color:var(--text);background:var(--panel)}
+.lnk{background:rgba(255,255,255,.1);border:0;color:#fff;font:inherit;font-size:12.5px;cursor:pointer;padding:6px 11px;border-radius:7px;transition:.15s}.lnk:hover{background:rgba(255,255,255,.2)}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px;animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* page headers */
+.pagehead{margin-bottom:22px}.pagehead p{margin:2px 0 0}
+.pagehead.hero{background:linear-gradient(125deg,var(--bar1),var(--bar2) 60%,#9b3550);color:#fff;border-radius:16px;padding:26px 28px;box-shadow:var(--shadow2);position:relative;overflow:hidden}
+.pagehead.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(200,150,46,.35),transparent 70%)}
+.pagehead.hero h1{color:#fff;font-size:31px}.pagehead.hero p{color:rgba(255,255,255,.8)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:18px;position:relative;z-index:1}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow)}
+.tile b{display:block;font:700 24px Georgia,serif;line-height:1.1}.tile span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hero .tile{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);box-shadow:none;backdrop-filter:blur(4px)}
+.hero .tile b{color:#fff}.hero .tile span{color:rgba(255,255,255,.75)}
+.profhead{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.avatar{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 0 0 2px var(--panel)}
+
+/* panels */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.cols{display:grid;grid-template-columns:250px 1fr;gap:24px;align-items:start}
+.side{position:sticky;top:76px}
+.side label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin:0 0 12px;text-transform:uppercase;letter-spacing:.06em}
+.side input,.side select{width:100%;margin-top:5px;text-transform:none;letter-spacing:0;font-weight:400}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toplist{margin:0;padding:0;list-style:none;font-size:14px;counter-reset:t}
+.toplist li{counter-increment:t;display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.toplist li::before{content:counter(t);width:22px;height:22px;border-radius:50%;background:var(--head);font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0}
+.toplist li:first-child{border-top:0}.toplist li:first-child::before{background:var(--gold);color:#3b0d19}
+.resbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:14px;font-weight:600}
+.resbar label{display:flex;align-items:center;gap:8px;color:var(--muted);font-weight:400}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.chips:empty{display:none}
+.chip{background:color-mix(in srgb,var(--brand) 10%,transparent);color:var(--brand);font-size:13px;font-weight:600;padding:3px 5px 3px 11px;border-radius:99px}
+.chip button{border:0;background:none;color:inherit;cursor:pointer;font-size:16px;line-height:1;padding:0 6px;opacity:.7}.chip button:hover{opacity:1}
+
+/* gig cards */
+.gcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:16px}
+.gcard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;overflow:hidden;transition:transform .18s,box-shadow .18s,border-color .18s}
+.gcard::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--st,var(--line))}
+.gcard:hover{transform:translateY(-3px);box-shadow:var(--shadow2);border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
+.gcard .title{font-size:17px;line-height:1.3;font-family:Georgia,serif}
+.gcard .title::after{content:"";position:absolute;inset:0}
+.gdesc{font-size:13.5px;color:var(--muted);margin:0}
+.gtags{display:flex;gap:6px;flex-wrap:wrap}
+.gowner{display:flex;gap:10px;align-items:center;margin-top:2px}
+.gfoot{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:auto;padding-top:11px;border-top:1px dashed var(--line)}
+.price{font:700 19px Georgia,serif;color:var(--brand)}.price small{font:600 11px "Segoe UI",sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block}
+.gdue{text-align:right;font-size:13px}
+.gcard.faded{opacity:.62}
+.s-Open{--st:var(--ok)}.s-InProgress{--st:var(--warn)}.s-Completed{--st:var(--info)}.s-Expired{--st:var(--bad)}.s-Cancelled{--st:var(--neu)}
+
+/* tables */
+.tw{overflow-x:auto;margin-bottom:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}
+table.list{width:100%;border-collapse:collapse;font-size:14px}
+table.list th{background:var(--head);text-align:left;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:11px 14px;white-space:nowrap}
+table.list td{padding:13px 14px;border-top:1px solid var(--line);vertical-align:top}
+table.list tbody tr{transition:background .12s}table.list tbody tr:hover{background:var(--hover)}
+tr.faded td{opacity:.6}
+a.title{font-weight:700;text-decoration:none;color:var(--text)}a.title:hover{color:var(--brand)}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;white-space:nowrap;margin-right:4px;background:color-mix(in srgb,currentColor 13%,transparent)}
+.tag.Open,.tag.Accepted,.tag.Paid,.tag.green{color:var(--ok)}.tag.InProgress,.tag.Pending,.tag.Free{color:var(--warn)}
+.tag.Completed,.tag.SkillSwap,.tag.blue{color:var(--info)}.tag.Expired,.tag.Rejected{color:var(--bad)}.tag.Cancelled,.tag.neu{color:var(--neu)}.tag.gold{color:var(--gold);background:color-mix(in srgb,var(--gold) 16%,transparent)}
+.due{font-size:12px;color:var(--muted)}.due.amber{color:var(--warn);font-weight:700}.due.red{color:var(--bad);font-weight:700}
+.rate{white-space:nowrap}.match{font-size:12.5px;color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent);display:inline-block;padding:2px 9px;border-radius:7px}
+.stars{color:var(--gold);letter-spacing:1px}
+.skills{display:flex;gap:6px;flex-wrap:wrap}.skill{background:var(--head);border:1px solid var(--line);font-size:13px;padding:2px 11px;border-radius:99px}
+.facts{display:grid;grid-template-columns:130px 1fr;gap:9px 16px;margin:0 0 16px;font-size:14px}.facts dt{color:var(--muted);font-weight:600}.facts dd{margin:0}
+.desc{border-top:1px solid var(--line);padding-top:14px;margin:0;font-size:15.5px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+
+/* forms & buttons */
+.form{max-width:680px}.form label{display:block;font-size:13px;font-weight:700;margin-bottom:14px}
+.form input,.form select,.form textarea{display:block;width:100%;margin-top:5px;font-weight:400}
+input,select,textarea{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:14px;background:var(--panel);color:var(--text);transition:border-color .15s,box-shadow .15s}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:32px;background-image:var(--chev);background-repeat:no-repeat;background-position:right 11px center;background-size:11px}
+select option{background:var(--panel);color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+.btn{background:linear-gradient(135deg,var(--btn),var(--btn2));color:#fff;border:0;padding:9px 18px;border-radius:9px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 2px 8px rgba(122,31,51,.25);transition:transform .12s,filter .12s}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}.btn:active{transform:none}.btn.small{padding:5px 12px;font-size:13px}
+.btn.outline{background:transparent;color:var(--brand);box-shadow:inset 0 0 0 1.5px var(--brand)}
+.btn.green{background:linear-gradient(135deg,#2b7a4b,#35945c);box-shadow:0 2px 8px rgba(43,122,75,.25)}
+.btn.danger{background:linear-gradient(135deg,#9d1f27,#c0303a);box-shadow:0 2px 8px rgba(179,38,46,.25)}
+.btn.gray{background:#666d75;box-shadow:none}
+.error,.success{padding:11px 14px;border-radius:10px;margin-bottom:14px;font-size:14px;font-weight:600}
+.error{color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}.success{color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.empty{padding:26px 16px;color:var(--muted);text-align:center;border:1.5px dashed var(--line);border-radius:14px;background:var(--panel)}
+.panel .empty{border:0;padding:6px}
+.rev{border-top:1px solid var(--line);padding:12px 0}.rev:first-child{border-top:0;padding-top:0}.rev:last-child{padding-bottom:0}.rev p{margin:4px 0 0;color:var(--muted)}
+.starpick{display:flex;gap:2px;margin-top:4px}.starpick button{background:none;border:0;font-size:32px;color:var(--line);cursor:pointer;padding:0 1px;line-height:1;transition:transform .1s}
+.starpick button:hover{transform:scale(1.15)}
+.starpick button.on{color:var(--gold)}.starpick:hover button{color:var(--gold)}.starpick button:hover~button{color:var(--line)}
+
+/* stepper */
+.stepper{display:flex;align-items:flex-start;gap:8px;margin-bottom:18px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow)}
+.step{display:flex;gap:11px;font-size:14px;font-weight:700;color:var(--muted)}.step small{display:block;font-weight:400;font-size:12px}
+.dot{width:28px;height:28px;border:2px solid var(--line);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--panel)}
+.step.current{color:var(--text)}.step.current .dot{border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+.step.done{color:var(--ok)}.step.done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.line{flex:1;min-width:24px;height:2px;background:var(--line);margin-top:13px;border-radius:2px}.line.done{background:var(--ok)}
+
+/* toasts & modal */
+.toasts{position:fixed;right:22px;bottom:22px;z-index:90;display:flex;flex-direction:column;gap:9px;align-items:flex-end}
+.toast{padding:12px 18px;border-radius:11px;color:#fff;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:90vw;animation:rise .25s ease}
+.toast.success{background:#2b7a4b}.toast.error{background:#a8242c}
+.modal-bg{position:fixed;inset:0;background:rgba(20,10,12,.55);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;max-width:440px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.4);animation:rise .2s ease}
+.modal h2{font:700 19px Georgia,serif}.modal .actions{justify-content:flex-end}
+.filter-toggle{display:none;margin-bottom:14px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}.side{display:none;position:static}.side.open{display:block}.filter-toggle{display:inline-block}.who{margin-left:0;flex-wrap:wrap}.facts{grid-template-columns:100px 1fr}.pagehead.hero{padding:20px}.bar{padding:10px 14px}.wrap{padding:18px 14px 50px}}
+/* ===== custom themed dropdowns ===== */
+select[data-enh]{display:none!important}
+.cs{position:relative;display:block;width:100%;margin-top:5px}
+.cs-btn{position:relative;width:100%;text-align:left;padding:9px 36px 9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font:inherit;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:border-color .15s,box-shadow .15s,background .15s}
+.cs-btn::after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;opacity:.55;transform:translateY(-70%) rotate(45deg);transition:transform .18s}
+.cs-btn:hover{border-color:color-mix(in srgb,var(--brand) 45%,var(--line))}
+.cs.open .cs-btn,.cs-btn:focus-visible{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+.cs.open .cs-btn::after{transform:translateY(-25%) rotate(-135deg)}
+.cs-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:70;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow2);padding:5px;max-height:260px;overflow-y:auto;animation:rise .15s ease}
+.cs-opt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 11px;border-radius:8px;font-size:14px;font-weight:400;color:var(--text);cursor:pointer;text-transform:none;letter-spacing:0;white-space:nowrap}
+.cs-opt.hl{background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand)}
+.cs-opt.sel{font-weight:700;color:var(--brand)}
+.cs-opt.sel::after{content:"✓";font-size:13px}
+/* header user switcher */
+.who .cs{margin-top:0;width:auto;min-width:180px}
+.who .cs-btn{padding:6px 32px 6px 11px;font-size:13px;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);color:#fff}
+.who .cs-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4)}
+.who .cs-menu{left:auto;right:0;min-width:100%;width:max-content}
+/* sort dropdown */
+.resbar .cs{margin-top:0;width:auto;min-width:190px}
+.resbar .cs-btn{padding:7px 34px 7px 12px}
+.resbar .cs-menu{left:auto;right:0;min-width:100%;width:max-content}
+
+
+</style>
+</head>
+<body>
+<header class="top"><div class="bar"><a class="site" href="#/">Campus Gig &amp; SkillSwap</a><nav id="nav"></nav><div class="who" id="who"></div></div></header>
+<main class="wrap" id="app">Loading…</main>
+<script>
+const CATS = ['Programming', 'Design', 'Writing', 'Tutoring'];
+const STATUSES = ['Open', 'In Progress', 'Completed', 'Expired', 'Cancelled'];
+const PAYL = { Paid: 'Paid', SkillSwap: 'Skill Swap', Free: 'Free' };
+let uid = Number(localStorage.getItem('uid')) || 1;
+let users = [], me = null, curGig = null, timer = null, SORT = 'new';
+
+/* ---------- helpers ---------- */
+async function req(path, method = 'GET', body) {
+  const res = await fetch(path, { method, headers: { 'Content-Type': 'application/json', 'x-user-id': uid }, body: body ? JSON.stringify(body) : undefined });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+const qs = (p) => '?' + new URLSearchParams(Object.entries(p).filter(([, v]) => v !== '' && v != null));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = (id) => document.getElementById(id);
+const fmt = (d) => new Date(String(d).slice(0, 10) + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const tag = (t, k) => `<span class="tag ${k || String(t).replace(/\s/g, '')}">${esc(t)}</span>`;
+const payTag = (p) => tag(PAYL[p], p);
+const payText = (g) => g.payment_type === 'Paid' ? 'Paid, $' + g.budget : PAYL[g.payment_type];
+const stars = (n) => `<span class="stars">${'★'.repeat(n)}${'☆'.repeat(5 - n)}</span>`;
+const flash = (k, t) => { const m = $('msg'); if (m) m.innerHTML = `<div class="${k}">${esc(t)}</div>`; };
+const opts = (a, sel) => a.map(([v, l]) => `<option value="${v}" ${v === sel ? 'selected' : ''}>${l}</option>`).join('');
+const empty = (t, cta = '') => `<p class="empty">${esc(t)} ${cta}</p>`;
+const loading = '<p class="muted">Loading…</p>';
+const avatar = (n, s = 28) => { const i = String(n).split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase(); let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return `<span class="avatar" style="width:${s}px;height:${s}px;font-size:${Math.round(s * 0.38)}px;background:linear-gradient(135deg,hsl(${h} 55% 48%),hsl(${(h + 35) % 360} 60% 36%))">${esc(i)}</span>`; };
+function toast(t, k = 'success') { const el = document.createElement('div'); el.className = 'toast ' + k; el.textContent = t; let box = $('toasts'); if (!box) { box = document.createElement('div'); box.id = 'toasts'; box.className = 'toasts'; document.body.appendChild(box); } box.appendChild(el); setTimeout(() => el.remove(), 3200); }
+const dueNote = (d, status) => {
+  if (['Completed', 'Cancelled'].includes(status)) return '';
+  const n = Math.ceil((new Date(d + 'T00:00:00') - new Date().setHours(0, 0, 0, 0)) / 864e5);
+  if (n < 0) return `<div class="due red">${status === 'Expired' ? 'Expired' : 'Overdue'}</div>`;
+  if (n === 0) return '<div class="due amber">Due today</div>';
+  return `<div class="due ${n <= 3 ? 'amber' : ''}">Due in ${n} day${n > 1 ? 's' : ''}</div>`;
+};
+const rate = (id) => { const u = users.find((x) => x.id === id);
+  return u && u.average_rating != null ? `<span class="rate"><span class="stars">★</span> ${u.average_rating.toFixed(1)} (${u.review_count})</span>` : '<span class="rate muted">no reviews yet</span>'; };
+const skillLine = (g) => { if (!me || g.user_id === me.id) return '';
+  const t = `${g.title} ${g.description} ${g.category}`.toLowerCase();
+  const hit = (me.skills || []).filter((k) => k.length >= 3 && t.includes(k.toLowerCase()));
+  return hit.length ? `<div class="match">Matches your skills: ${esc(hit.join(', '))}</div>` : ''; };
+const repTags = (u) => { const b = [];
+  if (u.average_rating >= 4.5 && u.review_count >= 3) b.push(['Top Rated', 'gold']); else if (u.average_rating >= 4 && u.review_count >= 1) b.push(['Well Reviewed', 'gold']);
+  if (u.gigs_completed >= 5) b.push(['Reliable', 'blue']);
+  if (u.gigs_posted >= 3) b.push(['Active Poster', 'green']);
+  return b.map(([t, c]) => tag(t, c)).join(''); };
+function toggleTheme() { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = t; localStorage.setItem('theme', t); renderNav(); }
+function confirmBox(title, msg, ok = 'Confirm', cls = '') {
+  return new Promise((res) => {
+    const bg = document.createElement('div'); bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><h2>${esc(title)}</h2><p class="muted">${esc(msg)}</p><div class="actions"><button class="btn gray" data-v="0">Cancel</button><button class="btn ${cls}" data-v="1">${esc(ok)}</button></div></div>`;
+    const key = (e) => e.key === 'Escape' && done(false);
+    const done = (v) => { bg.remove(); document.removeEventListener('keydown', key); res(v); };
+    bg.onclick = (e) => { if (e.target === bg) done(false); else if (e.target.dataset.v) done(e.target.dataset.v === '1'); };
+    document.addEventListener('keydown', key); document.body.appendChild(bg); bg.querySelector('[data-v="1"]').focus();
+  });
+}
+function setStar(n) { $('r_rating').value = n; document.querySelectorAll('#r_stars button').forEach((b, i) => b.classList.toggle('on', i < n)); $('r_hint').textContent = n + ' of 5'; }
+
+/* ---------- nav + user switch ---------- */
+function renderNav() {
+  const dark = document.documentElement.dataset.theme === 'dark', cur = location.hash || '#/';
+  $('nav').innerHTML = [['#/', 'Browse'], ['#/dashboard', 'Dashboard'], ['#/create', 'Post a Gig'], ['#/apps', 'My Applications'], ['#/profile/' + me.id, 'My Profile']]
+    .map(([h, t]) => `<a href="${h}" class="${h === cur ? 'active' : ''}">${t}</a>`).join('');
+  $('who').innerHTML = `<label>${avatar(me.name, 26)}<select onchange="switchUser(this.value)">${users.map((u) => `<option value="${u.id}" ${u.id === me.id ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select></label>
+    <button class="lnk" onclick="toggleTheme()">${dark ? 'Light' : 'Dark'} mode</button><button class="lnk" onclick="resetData()">Reset data</button>`;
+}
+function switchUser(id) { uid = Number(id); localStorage.setItem('uid', uid); me = users.find((u) => u.id === uid); renderNav(); route(); }
+async function resetData() {
+  if (!(await confirmBox('Reset all data?', 'Everything returns to the original seed data. This cannot be undone.', 'Reset', 'danger'))) return;
+  try { await req('/reset', 'POST'); location.hash = '#/'; location.reload(); } catch (e) { toast(e.message, 'error'); }
+}
+
+/* ---------- router ---------- */
+async function route() {
+  const [, page, id] = (location.hash.slice(1) || '/').split('/');
+  $('app').innerHTML = loading;
+  try {
+    if (!page) await browse();
+    else if (page === 'create') createPage();
+    else if (page === 'gig') await gigPage(id);
+    else if (page === 'edit') await editGigPage(id);
+    else if (page === 'profile') await profilePage(id);
+    else if (page === 'apps') await appsPage();
+    else if (page === 'dashboard') await dashboardPage();
+    else $('app').innerHTML = '<p>Page not found.</p>';
+  } catch (e) { $('app').innerHTML = `<div class="error">${esc(e.message)}</div>`; }
+}
+
+/* ---------- Browse (M2) ---------- */
+const F0 = { q: '', category: '', type: '', payment_type: '', status: '', min_budget: '', max_budget: '' };
+const FL = { q: 'Search', category: 'Category', type: 'Type', payment_type: 'Payment', status: 'Status', min_budget: 'Min budget', max_budget: 'Max budget' };
+let F = { ...F0 };
+const gigCard = (g) => `<article class="gcard s-${g.status.replace(/\s/g, '')} ${['Expired', 'Cancelled'].includes(g.status) ? 'faded' : ''}">
+  <div class="gtags">${tag(g.status)}${tag(g.type, 'neu')}${tag(g.category, 'neu')}</div>
+  <a class="title" href="#/gig/${g.id}">${esc(g.title)}</a>
+  <p class="gdesc">${esc(g.description.length > 105 ? g.description.slice(0, 105) + '…' : g.description)}</p>
+  ${skillLine(g)}
+  <div class="gowner">${avatar(g.owner.name, 30)}<div><div style="font-size:13.5px;font-weight:600">${esc(g.owner.name)}</div><div class="sub">${rate(g.user_id)} · ${g.application_count} applicant${g.application_count === 1 ? '' : 's'}</div></div></div>
+  <div class="gfoot"><div class="price"><small>${PAYL[g.payment_type]}</small>${g.payment_type === 'Paid' ? '$' + g.budget : (g.payment_type === 'Free' ? 'Free' : 'Swap')}</div><div class="gdue">${fmt(g.deadline)}${dueNote(g.deadline, g.status)}</div></div></article>`;
+const gigTable = (list) => `<div class="gcards">${list.map(gigCard).join('')}</div>`;
+function sortGigs(list) {
+  const a = [...list];
+  if (SORT === 'budget_desc') a.sort((x, y) => (y.budget ?? -1) - (x.budget ?? -1));
+  else if (SORT === 'budget_asc') a.sort((x, y) => (x.budget ?? Infinity) - (y.budget ?? Infinity));
+  else if (SORT === 'deadline') a.sort((x, y) => x.deadline.localeCompare(y.deadline));
+  else a.sort((x, y) => y.created_at.localeCompare(x.created_at));
+  return a;
+}
+function clearF(k) { F[k] = ''; $('f_' + k).value = ''; loadList(); }
+function resetF() { F = { ...F0 }; SORT = 'new'; browse(); }
+async function loadList() {
+  try {
+    const gigs = sortGigs(await req('/gigs' + qs(F)));
+    if (!$('list')) return;
+    $('chips').innerHTML = Object.keys(FL).filter((k) => F[k] !== '').map((k) => `<span class="chip">${FL[k]}: ${esc(F[k])}<button title="Remove filter" onclick="clearF('${k}')">×</button></span>`).join('');
+    $('rescount').textContent = `${gigs.length} gig${gigs.length === 1 ? '' : 's'} found`;
+    $('list').innerHTML = gigs.length ? gigTable(gigs) : empty('No gigs match the selected filters.', '<a href="javascript:resetF()">Clear filters</a>');
+  } catch (e) { if ($('list')) $('list').innerHTML = `<div class="error">${esc(e.message)}</div>`; }
+}
+async function browse() {
+  let all = [], revs = [];
+  try { [users, all, revs] = await Promise.all([req('/users'), req('/gigs'), req('/reviews')]); me = users.find((u) => u.id === uid) || me; } catch (e) { /* keep old */ }
+  const avg = revs.length ? (revs.reduce((s, r) => s + r.rating, 0) / revs.length).toFixed(1) : 'n/a';
+  const top = [...users].filter((u) => u.average_rating != null).sort((a, b) => b.average_rating - a.average_rating || b.review_count - a.review_count).slice(0, 5);
+  $('app').innerHTML = `<div class="pagehead hero"><h1>Find a gig. Share a skill.</h1>
+    <p>Your campus marketplace for paid work, skill swaps and free help.</p>
+    <div class="tiles"><div class="tile"><b>${all.filter((g) => g.status === 'Open').length}</b><span>Open gigs</span></div><div class="tile"><b>${all.filter((g) => g.status === 'Completed').length}</b><span>Completed</span></div><div class="tile"><b>${avg}</b><span>Avg rating</span></div><div class="tile"><b>${users.length}</b><span>Students</span></div></div></div>
+    <button class="btn outline small filter-toggle" onclick="$('side').classList.toggle('open')">Show or hide filters</button>
+    <div class="cols"><aside class="panel side" id="side"><h2>Filter gigs</h2>
+      <label>Keyword<input id="f_q" placeholder="Title or description"></label>
+      <label>Category<select id="f_category"><option value="">All</option>${opts(CATS.map((c) => [c, c]))}</select></label>
+      <label>Type<select id="f_type"><option value="">All</option>${opts([['Offering', 'Offering'], ['Requesting', 'Requesting']])}</select></label>
+      <label>Payment type<select id="f_payment_type"><option value="">All</option>${opts([['Paid', 'Paid'], ['SkillSwap', 'Skill Swap'], ['Free', 'Free']])}</select></label>
+      <label>Status<select id="f_status"><option value="">All</option>${opts(STATUSES.map((s) => [s, s]))}</select></label>
+      <div class="two"><label>Min budget<input id="f_min_budget" type="number" min="0"></label><label>Max budget<input id="f_max_budget" type="number" min="0"></label></div>
+      <button class="btn outline small" onclick="resetF()">Clear filters</button>
+      ${top.length ? `<h2 style="margin-top:24px">Top rated students</h2><ol class="toplist">${top.map((u) => `<li><a href="#/profile/${u.id}" style="text-decoration:none;font-weight:600">${esc(u.name)}</a> <span class="sub" style="margin-left:auto"><span class="stars">★</span> ${u.average_rating.toFixed(1)} (${u.review_count})</span></li>`).join('')}</ol>` : ''}
+    </aside>
+    <section><div class="resbar"><span id="rescount"></span><label>Sort by <select id="f_sort">${opts([['new', 'Newest first'], ['budget_desc', 'Budget, high to low'], ['budget_asc', 'Budget, low to high'], ['deadline', 'Deadline, soonest']], SORT)}</select></label></div>
+      <div class="chips" id="chips"></div><div id="list">${loading}</div></section></div>`;
+  Object.keys(F0).forEach((k) => { const el = $('f_' + k); el.value = F[k]; el.oninput = el.onchange = () => { F[k] = el.value; clearTimeout(timer); timer = setTimeout(loadList, 250); }; });
+  $('f_sort').onchange = (e) => { SORT = e.target.value; loadList(); };
+  await loadList();
+}
+
+/* ---------- Create / edit gig (M1) ---------- */
+const gigForm = (p, g = {}) => `<div id="msg"></div>
+  <label>Title<input id="${p}_title" value="${esc(g.title)}"></label>
+  <label>Description<textarea id="${p}_description" rows="4">${esc(g.description)}</textarea></label>
+  <div class="two"><label>Type<select id="${p}_type">${opts([['Offering', 'Offering (I can do this)'], ['Requesting', 'Requesting (I need help)']], g.type)}</select></label>
+  <label>Category<select id="${p}_category">${opts(CATS.map((c) => [c, c]), g.category)}</select></label>
+  <label>Payment type<select id="${p}_payment_type" onchange="$('${p}_budget_wrap').style.display = this.value === 'Paid' ? '' : 'none'">${opts([['Paid', 'Paid'], ['SkillSwap', 'Skill Swap'], ['Free', 'Free']], g.payment_type)}</select></label>
+  <label id="${p}_budget_wrap" style="display:${!g.payment_type || g.payment_type === 'Paid' ? '' : 'none'}">Budget ($)<input id="${p}_budget" type="number" min="1" value="${g.budget ?? ''}"></label>
+  <label>Deadline<input id="${p}_deadline" type="date" value="${esc(g.deadline)}"></label></div>`;
+const gigBody = (p) => { const b = {}; ['title', 'description', 'type', 'category', 'payment_type', 'budget', 'deadline'].forEach((k) => (b[k] = $(p + '_' + k).value)); if (b.payment_type !== 'Paid') b.budget = ''; return b; };
+function createPage() {
+  $('app').innerHTML = `<div class="pagehead"><h1>Post a Gig</h1><p class="muted">Offer a skill or request help from other students.</p></div><div class="panel form">${gigForm('c')}<button class="btn" onclick="submitGig()">Publish gig</button></div>`;
+}
+async function submitGig() {
+  try { const g = await req('/gigs', 'POST', gigBody('c')); location.hash = '#/gig/' + g.id; toast('Gig published'); }
+  catch (e) { flash('error', e.message); toast(e.message, 'error'); }
+}
+async function editGigPage(id) {
+  const g = await req('/gigs/' + id);
+  if (g.user_id !== me.id) throw new Error('Only the gig owner can edit this gig');
+  if (g.status !== 'Open') throw new Error('Only Open gigs can be edited');
+  $('app').innerHTML = `<div class="pagehead"><h1>Edit Gig</h1></div><div class="panel form">${gigForm('e', g)}<div class="actions"><button class="btn" onclick="saveGig(${g.id})">Save changes</button><a class="btn outline" href="#/gig/${g.id}">Cancel</a></div></div>`;
+}
+async function saveGig(id) {
+  try { await req('/gigs/' + id, 'PATCH', gigBody('e')); location.hash = '#/gig/' + id; toast('Gig updated'); }
+  catch (e) { flash('error', e.message); toast(e.message, 'error'); }
+}
+
+/* ---------- Gig detail: apply / accept / status / reviews (M2-M4) ---------- */
+async function act(fn, ok) { try { await fn(); await gigPage(curGig); toast(ok); } catch (e) { toast(e.message, 'error'); } }
+const doApply = (id) => act(() => req('/applications', 'POST', { gig_id: id, message: $('a_msg').value }), 'Application sent');
+const doAccept = async (id) => { if (await confirmBox('Accept this applicant?', 'The gig moves to In Progress, all other Pending applications are automatically rejected, and the gig closes to new applicants.', 'Accept applicant', 'green')) act(() => req('/applications/' + id, 'PATCH', { status: 'Accepted' }), 'Applicant accepted. Gig is now In Progress.'); };
+const doReject = (id) => act(() => req('/applications/' + id, 'PATCH', { status: 'Rejected' }), 'Application rejected');
+const setStatus = async (id, s) => {
+  const t = { Cancelled: ['Cancel this gig?', 'Pending applications will be rejected and the gig will be closed. This cannot be undone.', 'Cancel gig', 'danger'], Completed: ['Mark as completed?', 'Both parties will then be able to leave a review.', 'Mark completed', 'green'] }[s];
+  if (t && !(await confirmBox(...t))) return;
+  act(() => req('/gigs/' + id, 'PATCH', { status: s }), 'Gig marked ' + s);
+};
+const doReview = (id) => !Number($('r_rating').value) ? toast('Please select a star rating', 'error')
+  : act(() => req('/reviews', 'POST', { gig_id: id, rating: Number($('r_rating').value), comment: $('r_comment').value }), 'Review submitted');
+async function delGig(id) {
+  if (!(await confirmBox('Delete this gig?', 'It will be permanently removed together with its applications.', 'Delete', 'danger'))) return;
+  try { await req('/gigs/' + id, 'DELETE'); location.hash = '#/'; toast('Gig deleted'); } catch (e) { toast(e.message, 'error'); }
+}
+function stepper(g) {
+  const steps = ['Open', 'In Progress', 'Completed'], idx = steps.indexOf(g.status);
+  if (idx < 0) return `<div class="stepper"><span>This gig is ${tag(g.status)} and the workflow has ended.</span></div>`;
+  const acc = users.find((u) => u.id === g.accepted_applicant_id);
+  const sub = ['Posted ' + fmt(g.created_at), acc ? 'Assigned to ' + acc.name : 'Awaiting applicant', 'Deadline ' + fmt(g.deadline)];
+  let h = '<div class="stepper">';
+  steps.forEach((s, i) => {
+    const done = i < idx || idx === 2, cur = i === idx && idx !== 2;
+    h += `<div class="step ${done ? 'done' : ''} ${cur ? 'current' : ''}"><span class="dot">${done ? '✓' : i + 1}</span><span>${s}<small>${esc(sub[i])}</small></span></div>`;
+    if (i < 2) h += `<div class="line ${i < idx ? 'done' : ''}"></div>`;
+  });
+  return h + '</div>';
+}
+async function gigPage(id) {
+  curGig = id;
+  try { users = await req('/users'); me = users.find((u) => u.id === uid) || me; } catch (e) { /* keep */ }
+  const gig = await req('/gigs/' + id);
+  const isOwner = gig.user_id === me.id, isAcc = gig.accepted_applicant_id === me.id;
+  const apps = isOwner ? await req('/applications' + qs({ gig_id: id })) : (await req('/applications' + qs({ applicant_id: me.id }))).filter((a) => a.gig_id === Number(id));
+  const reviews = await req('/reviews' + qs({ gig_id: id }));
+  const myApp = apps.find((a) => a.applicant_id === me.id), myRev = reviews.find((r) => r.reviewer_id === me.id);
+  const acc = users.find((u) => u.id === gig.accepted_applicant_id);
+  let h = `<div class="pagehead"><div style="margin-bottom:8px">${tag(gig.status)}${tag(gig.type, 'neu')}${tag(gig.category, 'neu')}${payTag(gig.payment_type)}</div><h1>${esc(gig.title)}</h1></div><div id="msg"></div>${stepper(gig)}
+  <div class="panel"><dl class="facts"><dt>Posted by</dt><dd style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${avatar(gig.owner.name, 26)}<a href="#/profile/${gig.owner.id}">${esc(gig.owner.name)}</a>, ${esc(gig.owner.major)} · ${rate(gig.owner.id)}</dd>
+    <dt>Payment</dt><dd>${esc(payText(gig))}</dd><dt>Deadline</dt><dd>${fmt(gig.deadline)}${dueNote(gig.deadline, gig.status)}</dd><dt>Date posted</dt><dd>${fmt(gig.created_at)}</dd>
+    ${acc ? `<dt>Assigned to</dt><dd><a href="#/profile/${acc.id}">${esc(acc.name)}</a></dd>` : ''}</dl>
+    <p class="desc">${esc(gig.description)}</p>${skillLine(gig)}`;
+  if (isOwner) {
+    h += '<div class="actions">';
+    if (gig.status === 'In Progress') h += `<button class="btn green" onclick="setStatus(${gig.id}, 'Completed')">Mark as completed</button>`;
+    if (gig.status === 'Open') h += `<a class="btn outline" href="#/edit/${gig.id}">Edit gig</a>`;
+    if (['Open', 'In Progress'].includes(gig.status)) h += `<button class="btn danger" onclick="setStatus(${gig.id}, 'Cancelled')">Cancel gig</button>`;
+    if (!['In Progress', 'Completed'].includes(gig.status)) h += `<button class="btn outline" onclick="delGig(${gig.id})">Delete gig</button>`;
+    h += '</div>';
+  }
+  h += '</div>';
+  if (gig.status === 'Open') h += `<div class="panel form"><h2>Apply to this gig</h2><label>Short message<textarea id="a_msg" rows="3" placeholder="Describe why you are a good fit"></textarea></label><button class="btn" onclick="doApply(${gig.id})">Submit application</button></div>`;
+  if (!isOwner && myApp) h += `<div class="panel">Your application: ${tag(myApp.status)}<p class="muted" style="margin:6px 0 0">${esc(myApp.message)}</p></div>`;
+  if (!isOwner && !myApp && gig.status !== 'Open') h += `<p class="muted">This gig is ${esc(gig.status)} and is not accepting applications.</p>`;
+  if (isOwner) {
+    h += `<h2 class="sec">Applications (${apps.length})</h2>`;
+    h += apps.length ? `<div class="tw"><table class="list"><thead><tr><th>Applicant</th><th>Message</th><th>Applied</th><th>Status</th><th></th></tr></thead><tbody>${apps.map((a) => `<tr>
+      <td><div style="display:flex;gap:9px;align-items:center">${avatar(a.applicant_name, 30)}<div><a class="title" href="#/profile/${a.applicant_id}">${esc(a.applicant_name)}</a><div class="sub">${rate(a.applicant_id)}</div></div></div></td><td>${esc(a.message)}</td><td>${fmt(a.created_at)}</td><td>${tag(a.status)}</td>
+      <td>${a.status === 'Pending' && gig.status === 'Open' ? `<button class="btn green small" onclick="doAccept(${a.id})">Accept</button> <button class="btn danger small" onclick="doReject(${a.id})">Reject</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+      : empty('No applications have been received yet.');
+  }
+  if (gig.status === 'Completed') {
+    h += '<h2 class="sec">Reviews</h2><div class="panel">';
+    h += reviews.length ? reviews.map((r) => `<div class="rev">${stars(r.rating)} <b>${esc(r.reviewer_name)}</b> <span class="muted">reviewed</span> <b>${esc(r.reviewee_name)}</b><p>${esc(r.comment)}</p></div>`).join('') : empty('No reviews have been submitted for this gig yet.');
+    h += '</div>';
+    if ((isOwner || isAcc) && !myRev) h += `<div class="panel form"><h2>Leave a review</h2><label>Rating<div class="starpick" id="r_stars">${[1, 2, 3, 4, 5].map((n) => `<button type="button" onclick="setStar(${n})" title="${n} of 5">★</button>`).join('')}</div><input type="hidden" id="r_rating" value="0"><span id="r_hint" class="sub" style="font-weight:400">Select a rating</span></label>
+      <label>Comment<textarea id="r_comment" rows="3"></textarea></label><button class="btn" onclick="doReview(${gig.id})">Submit review</button></div>`;
+    if (myRev) h += '<p class="muted">You have already reviewed this gig.</p>';
+  }
+  $('app').innerHTML = h;
+}
+
+/* ---------- Profile ---------- */
+async function profilePage(id) { await profileView(id, false); }
+async function profileView(id, editing) {
+  try { users = await req('/users'); me = users.find((x) => x.id === uid) || me; } catch (e) { /* keep */ }
+  const u = await req('/users/' + id);
+  let h = `<div class="pagehead"><div class="profhead">${avatar(u.name, 76)}<div><h1>${esc(u.name)}</h1><p class="muted">${esc(u.major)} · Semester ${u.semester}</p><div style="margin-top:6px">${repTags(u)}</div></div></div>
+    <div class="tiles" style="max-width:520px"><div class="tile"><b>${u.gigs_posted}</b><span>Posted</span></div><div class="tile"><b>${u.gigs_completed}</b><span>Completed</span></div><div class="tile"><b>${u.average_rating != null ? '<span class="stars">★</span> ' + u.average_rating.toFixed(1) : '–'}</b><span>${u.review_count} review${u.review_count === 1 ? '' : 's'}</span></div></div></div><div id="msg"></div><div class="panel">`;
+  if (editing) h += `<div class="form"><label>Bio<textarea id="p_bio" rows="3">${esc(u.bio)}</textarea></label><label>Skills (comma separated)<input id="p_skills" value="${esc(u.skills.join(', '))}"></label>
+    <div class="actions"><button class="btn" onclick="saveProfile(${u.id})">Save profile</button><button class="btn outline" onclick="profileView(${u.id})">Cancel</button></div></div>`;
+  else h += `<dl class="facts"><dt>About</dt><dd>${esc(u.bio)}</dd><dt>Skills</dt><dd><div class="skills">${u.skills.map((s) => `<span class="skill">${esc(s)}</span>`).join('')}</div></dd>
+    <dt>Average rating</dt><dd>${u.average_rating != null ? `${u.average_rating.toFixed(1)} out of 5 (${u.review_count} review${u.review_count === 1 ? '' : 's'})` : 'No reviews yet'}</dd></dl>${me.id === u.id ? `<button class="btn outline small" onclick="profileView(${u.id}, true)">Edit profile</button>` : ''}`;
+  h += '</div><h2 class="sec">Reviews received</h2>';
+  h += u.reviews.length ? `<div class="panel">${u.reviews.map((r) => `<div class="rev">${stars(r.rating)} <span class="muted">from</span> <b>${esc(r.reviewer_name)}</b><p>${esc(r.comment)}</p></div>`).join('')}</div>` : empty('No reviews received yet.');
+  h += '<h2 class="sec">Gigs posted</h2>' + (u.gigs.length ? gigTable(u.gigs) : empty('No gigs posted yet.', me.id === u.id ? '<a href="#/create">Post a gig</a>' : ''));
+  $('app').innerHTML = h;
+}
+async function saveProfile(id) {
+  try { await req('/users/' + id, 'PATCH', { bio: $('p_bio').value, skills: $('p_skills').value.split(',') }); toast('Profile saved'); profileView(id); }
+  catch (e) { flash('error', e.message); }
+}
+
+/* ---------- My applications + dashboard ---------- */
+async function withdraw(id, back) {
+  if (!(await confirmBox('Withdraw application?', 'The gig owner will no longer see this application.', 'Withdraw', 'danger'))) return;
+  try { await req('/applications/' + id, 'DELETE'); toast('Application withdrawn'); back(); } catch (e) { toast(e.message, 'error'); }
+}
+const appTable = (apps, back) => `<div class="tw"><table class="list"><thead><tr><th>Gig</th><th>My message</th><th>Applied</th><th>Application</th><th>Gig status</th><th></th></tr></thead><tbody>${apps.map((a) => `<tr class="${['Expired', 'Cancelled'].includes(a.gig_status) ? 'faded' : ''}">
+  <td><a class="title" href="#/gig/${a.gig_id}">${esc(a.gig_title)}</a></td><td>${esc(a.message)}</td><td>${fmt(a.created_at)}</td><td>${tag(a.status)}</td><td>${tag(a.gig_status)}</td>
+  <td>${a.status === 'Pending' ? `<button class="btn outline small" onclick="withdraw(${a.id}, ${back})">Withdraw</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+async function appsPage() {
+  const apps = await req('/applications' + qs({ applicant_id: me.id }));
+  $('app').innerHTML = `<div class="pagehead"><h1>My Applications</h1></div>` + (apps.length ? appTable(apps, 'appsPage') : empty("You have not applied to any gigs yet.", '<a href="#/">Browse gigs</a>'));
+}
+async function dashboardPage() {
+  const [mine, apps, done, revs] = await Promise.all([req('/gigs' + qs({ user_id: me.id })), req('/applications' + qs({ applicant_id: me.id })), req('/gigs' + qs({ status: 'Completed' })), req('/reviews')]);
+  const pend = Object.fromEntries(await Promise.all(mine.filter((g) => g.status === 'Open').map(async (g) => [g.id, (await req('/applications' + qs({ gig_id: g.id }))).filter((a) => a.status === 'Pending').length])));
+  const totalPend = Object.values(pend).reduce((t, n) => t + n, 0);
+  const reviewed = new Set(revs.filter((r) => r.reviewer_id === me.id).map((r) => r.gig_id));
+  const due = done.filter((g) => (g.user_id === me.id || g.accepted_applicant_id === me.id) && !reviewed.has(g.id));
+  const other = (g) => g.user_id === me.id ? users.find((u) => u.id === g.accepted_applicant_id) : g.owner;
+  let h = `<div class="pagehead"><div class="profhead">${avatar(me.name, 52)}<div><h1>Dashboard</h1><p class="muted">Welcome back, ${esc(me.name)}</p></div></div>
+    <div class="tiles"><div class="tile"><b>${mine.length}</b><span>Gigs posted</span></div><div class="tile"><b>${totalPend}</b><span>Awaiting decision</span></div><div class="tile"><b>${apps.length}</b><span>Applications sent</span></div><div class="tile"><b>${due.length}</b><span>Reviews waiting</span></div></div></div>`;
+  h += '<h2 class="sec" style="margin-top:0">Reviews waiting</h2>' + (due.length ? `<div class="tw"><table class="list"><thead><tr><th>Completed gig</th><th>Review for</th><th></th></tr></thead><tbody>${due.map((g) => `<tr><td><a class="title" href="#/gig/${g.id}">${esc(g.title)}</a></td><td>${esc(other(g)?.name || '')}</td><td><a class="btn outline small" href="#/gig/${g.id}">Leave review</a></td></tr>`).join('')}</tbody></table></div>` : empty('You have no reviews outstanding.'));
+  h += '<h2 class="sec">Gigs I posted</h2>' + (mine.length ? `<div class="tw"><table class="list"><thead><tr><th>Gig</th><th>Payment</th><th>Deadline</th><th>Applications</th><th>Status</th></tr></thead><tbody>${mine.map((g) => `<tr class="${['Expired', 'Cancelled'].includes(g.status) ? 'faded' : ''}"><td><a class="title" href="#/gig/${g.id}">${esc(g.title)}</a></td><td>${esc(payText(g))}</td><td>${fmt(g.deadline)}${dueNote(g.deadline, g.status)}</td><td>${g.application_count}${pend[g.id] ? ` <span class="tag Pending">${pend[g.id]} pending</span>` : ''}</td><td>${tag(g.status)}</td></tr>`).join('')}</tbody></table></div>` : empty('You have not posted any gigs.', '<a href="#/create">Post a gig</a>'));
+  h += '<h2 class="sec">My applications</h2>' + (apps.length ? appTable(apps, 'dashboardPage') : empty('You have not applied to any gigs.', '<a href="#/">Browse gigs</a>'));
+  $('app').innerHTML = h;
+}
+
+/* ---------- init ---------- */
+(async function init() {
+  try { users = await req('/users'); } catch (e) { $('app').innerHTML = `<div class="error">Cannot reach the API: ${esc(e.message)}</div>`; return; }
+  me = users.find((u) => u.id === uid) || users[0]; uid = me.id;
+  renderNav();
+  window.addEventListener('hashchange', () => { renderNav(); route(); });
+  route();
+})();
+</script>
+<script>
+(function () {
+  const valueDesc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+  function closeAll() {
+    document.querySelectorAll('.cs.open').forEach((c) => {
+      c.classList.remove('open');
+      c.querySelector('.cs-menu')?.remove();
+      c.querySelector('.cs-btn').setAttribute('aria-expanded', 'false');
+    });
+  }
+  function enhance(sel) {
+    if (sel.dataset.enh) return;
+    sel.dataset.enh = '1';
+    const wrap = document.createElement('div'); wrap.className = 'cs';
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'cs-btn';
+    btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
+    wrap.appendChild(btn); sel.after(wrap);
+
+    const sync = () => { const o = sel.options[sel.selectedIndex]; btn.textContent = o ? o.textContent : ''; };
+    // keep the label in sync when app code sets select.value programmatically
+    Object.defineProperty(sel, 'value', {
+      configurable: true,
+      get() { return valueDesc.get.call(sel); },
+      set(v) { valueDesc.set.call(sel, v); sync(); },
+    });
+    sync();
+
+    let hl = -1;
+    const mark = () => wrap.querySelectorAll('.cs-opt').forEach((d, i) => d.classList.toggle('hl', i === hl));
+    const choose = (i) => {
+      sel.selectedIndex = i; sync(); closeAll();
+      sel.dispatchEvent(new Event('change', { bubbles: true }));   // triggers existing onchange logic
+      btn.focus();
+    };
+    const open = () => {
+      closeAll(); wrap.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+      const menu = document.createElement('div'); menu.className = 'cs-menu'; menu.setAttribute('role', 'listbox');
+      [...sel.options].forEach((o, i) => {
+        const d = document.createElement('div');
+        d.className = 'cs-opt' + (i === sel.selectedIndex ? ' sel' : '');
+        d.setAttribute('role', 'option'); d.textContent = o.textContent;
+        d.onmousedown = (e) => { e.preventDefault(); choose(i); };
+        menu.appendChild(d);
+      });
+      wrap.appendChild(menu);
+      hl = sel.selectedIndex; mark();
+      menu.querySelector('.sel')?.scrollIntoView({ block: 'nearest' });
+    };
+    btn.onclick = (e) => { e.stopPropagation(); wrap.classList.contains('open') ? closeAll() : open(); };
+    btn.onkeydown = (e) => {
+      const isOpen = wrap.classList.contains('open');
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!isOpen) return open();
+        hl = Math.max(0, Math.min(sel.options.length - 1, hl + (e.key === 'ArrowDown' ? 1 : -1)));
+        mark(); wrap.querySelectorAll('.cs-opt')[hl]?.scrollIntoView({ block: 'nearest' });
+      } else if ((e.key === 'Enter' || e.key === ' ') && isOpen) { e.preventDefault(); choose(hl); }
+      else if (e.key === 'Escape' && isOpen) closeAll();
+    };
+  }
+  const enhanceAll = () => document.querySelectorAll('select:not([data-enh])').forEach(enhance);
+  document.addEventListener('click', closeAll);
+  // pages are re-rendered via innerHTML, so watch for new selects
+  new MutationObserver(enhanceAll).observe(document.body, { childList: true, subtree: true });
+  enhanceAll();
+})();
+</script>
+</body>
+</html>

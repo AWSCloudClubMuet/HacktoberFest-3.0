@@ -1,0 +1,19 @@
+# Compiled Java files (rebuilt with: javac *.java)
+*.class
+
+# Packaged copies of the project
+*.zip
+
+# IDE and editor settings
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+out/
+bin/
+
+# OS junk
+.DS_Store
+Thumbs.db
