@@ -66,5 +66,8 @@ A pure Java 17 core music streaming player built with zero external dependencies
 
 Includes an interactive console player (`com.tunewave.Main`) and a standalone test runner verifying 49 unit and integration tests with a 100% pass rate.
 
+### Verified Terminal Run
+![TuneWave Terminal Demo](./issue-13-tunewave-music-player/docs/demo.png)
+
 For complete details, see the **[Issue #13 Technical README](./issue-13-tunewave-music-player/README.md)**.
 
