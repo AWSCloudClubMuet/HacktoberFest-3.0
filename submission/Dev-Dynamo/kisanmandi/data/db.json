@@ -1,0 +1,3026 @@
+{
+  "users": [
+    {
+      "id": "user-1",
+      "name": "Demo Farmer",
+      "phone": "03001234567",
+      "district": "Matiari",
+      "role": "Farmer"
+    },
+    {
+      "id": "user-2",
+      "name": "Ali Raza",
+      "phone": "03111234501",
+      "district": "Hyderabad",
+      "role": "Farmer"
+    },
+    {
+      "id": "user-3",
+      "name": "Sana Memon",
+      "phone": "03211234502",
+      "district": "Sukkur",
+      "role": "Farmer"
+    },
+    {
+      "id": "user-4",
+      "name": "Imran Buriro",
+      "phone": "03331234503",
+      "district": "Larkana",
+      "role": "Farmer"
+    },
+    {
+      "id": "user-5",
+      "name": "Demo Buyer",
+      "phone": "03451234504",
+      "district": "Karachi",
+      "role": "Buyer"
+    },
+    {
+      "id": "user-6",
+      "name": "Hira Traders",
+      "phone": "03011234505",
+      "district": "Hyderabad",
+      "role": "Buyer"
+    }
+  ],
+  "crops": [
+    {
+      "id": "crop-wheat",
+      "name": "Wheat",
+      "category": "Grains",
+      "unit": "maund",
+      "basePrice": 3200
+    },
+    {
+      "id": "crop-rice",
+      "name": "Rice",
+      "category": "Grains",
+      "unit": "maund",
+      "basePrice": 4800
+    },
+    {
+      "id": "crop-cotton",
+      "name": "Cotton",
+      "category": "Cash Crops",
+      "unit": "maund",
+      "basePrice": 8500
+    },
+    {
+      "id": "crop-sugarcane",
+      "name": "Sugarcane",
+      "category": "Cash Crops",
+      "unit": "maund",
+      "basePrice": 450
+    },
+    {
+      "id": "crop-onion",
+      "name": "Onion",
+      "category": "Vegetables",
+      "unit": "maund",
+      "basePrice": 2400
+    },
+    {
+      "id": "crop-tomato",
+      "name": "Tomato",
+      "category": "Vegetables",
+      "unit": "maund",
+      "basePrice": 1900
+    },
+    {
+      "id": "crop-mango",
+      "name": "Mango",
+      "category": "Fruits",
+      "unit": "maund",
+      "basePrice": 6200
+    },
+    {
+      "id": "crop-chickpea",
+      "name": "Chickpea",
+      "category": "Pulses",
+      "unit": "maund",
+      "basePrice": 9000
+    }
+  ],
+  "markets": [
+    {
+      "id": "market-hyderabad",
+      "name": "Hyderabad Mandi",
+      "district": "Hyderabad"
+    },
+    {
+      "id": "market-sukkur",
+      "name": "Sukkur Mandi",
+      "district": "Sukkur"
+    },
+    {
+      "id": "market-karachi",
+      "name": "Karachi Sabzi Mandi",
+      "district": "Karachi"
+    }
+  ],
+  "prices": [
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-08",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 3135.12,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-09",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 3145.0,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-10",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 3215.13,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-11",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 3152.9,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-12",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 3112.8,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-13",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 3137.88,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-14",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 3155.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-15",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 3212.55,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-16",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 3229.03,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-17",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 3278.05,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-18",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 3334.58,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-19",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 3388.96,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-20",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 3413.56,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-hyderabad-2026-10-21",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 3373.26,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-08",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 2971.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-09",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 3030.54,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-10",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 3029.72,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-11",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 3089.75,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-12",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 3128.94,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-13",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 3167.63,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-14",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 3125.07,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-15",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 3090.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-16",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 3179.46,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-17",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 3262.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-18",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 3325.39,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-19",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 3425.09,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-20",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 3436.21,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-sukkur-2026-10-21",
+      "cropId": "crop-wheat",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 3364.73,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-08",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 3442.28,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-09",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 3411.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-10",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 3412.07,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-11",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 3491.25,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-12",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 3539.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-13",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 3563.07,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-14",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 3478.84,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-15",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 3527.88,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-16",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 3510.22,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-17",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 3503.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-18",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 3493.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-19",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 3518.43,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-20",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 3526.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-wheat-market-karachi-2026-10-21",
+      "cropId": "crop-wheat",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 3461.35,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-08",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 4879.9,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-09",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 4918.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-10",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 4928.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-11",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 5054.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-12",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 4999.7,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-13",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 4990.19,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-14",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 5119.65,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-15",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 5126.59,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-16",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 5144.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-17",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 5023.04,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-18",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 4959.5,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-19",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 4870.7,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-20",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 4762.03,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-hyderabad-2026-10-21",
+      "cropId": "crop-rice",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 4827.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-08",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 4527.35,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-09",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 4569.12,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-10",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 4573.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-11",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 4579.95,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-12",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 4523.12,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-13",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 4630.43,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-14",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 4674.27,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-15",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 4674.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-16",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 4678.67,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-17",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 4800.88,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-18",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 4941.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-19",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 4966.29,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-20",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 4995.03,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-sukkur-2026-10-21",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 5054.16,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-08",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 5221.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-09",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 5235.07,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-10",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 5242.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-11",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 5366.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-12",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 5359.69,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-13",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 5312.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-14",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 5258.27,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-15",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 5136.39,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-16",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 5193.2,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-17",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 5233.96,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-18",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 5235.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-19",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 5254.7,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-20",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 5264.81,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-rice-market-karachi-2026-10-21",
+      "cropId": "crop-rice",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 5400.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-08",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 8391.95,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-09",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 8418.13,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-10",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 8590.19,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-11",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 8757.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-12",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 8806.92,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-13",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 9026.21,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-14",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 9213.3,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-15",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 9143.42,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-16",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 9375.89,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-17",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 9192.22,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-18",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 9310.92,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-19",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 9480.19,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-20",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 9511.81,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-hyderabad-2026-10-21",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 9510.96,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-08",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 8444.66,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-09",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 8624.82,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-10",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 8636.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-11",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 8451.11,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-12",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 8363.69,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-13",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 8383.87,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-14",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 8218.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-15",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 8351.3,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-16",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 8331.44,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-17",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 8329.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-18",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 8127.28,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-19",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 7924.2,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-20",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 7979.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-sukkur-2026-10-21",
+      "cropId": "crop-cotton",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 8188.76,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-08",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 9117.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-09",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 9013.69,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-10",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 9096.25,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-11",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 9244.99,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-12",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 9500.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-13",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 9611.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-14",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 9707.55,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-15",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 9547.49,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-16",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 9473.39,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-17",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 9540.36,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-18",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 9705.63,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-19",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 9970.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-20",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 9990.61,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-cotton-market-karachi-2026-10-21",
+      "cropId": "crop-cotton",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 10136.73,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-08",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 434.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-09",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 437.72,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-10",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 449.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-11",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 460.28,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-12",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 461.55,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-13",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 452.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-14",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 457.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-15",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 469.56,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-16",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 478.06,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-17",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 490.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-18",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 486.16,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-19",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 485.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-20",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 494.45,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-hyderabad-2026-10-21",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 496.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-08",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 405.24,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-09",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 397.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-10",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 406.95,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-11",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 397.92,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-12",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 395.57,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-13",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 393.37,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-14",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 400.18,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-15",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 390.75,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-16",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 391.95,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-17",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 389.21,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-18",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 385.99,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-19",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 383.26,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-20",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 376.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-sukkur-2026-10-21",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 386.46,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-08",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 497.49,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-09",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 489.27,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-10",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 491.02,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-11",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 490.45,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-12",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 487.27,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-13",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 491.12,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-14",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 497.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-15",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 486.64,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-16",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 485.16,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-17",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 478.24,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-18",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 490.52,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-19",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 479.48,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-20",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 481.86,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-sugarcane-market-karachi-2026-10-21",
+      "cropId": "crop-sugarcane",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 492.05,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-08",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 2432.57,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-09",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 2396.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-10",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 2430.78,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-11",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 2487.37,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-12",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 2442.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-13",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 2452.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-14",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 2497.62,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-15",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 2506.18,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-16",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 2575.38,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-17",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 2533.71,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-18",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 2588.04,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-19",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 2578.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-20",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 2574.71,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-hyderabad-2026-10-21",
+      "cropId": "crop-onion",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 2568.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-08",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 2180.87,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-09",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 2167.62,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-10",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 2144.84,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-11",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 2149.91,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-12",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 2188.43,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-13",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 2183.76,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-14",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 2185.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-15",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 2169.86,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-16",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 2173.14,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-17",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 2133.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-18",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 2173.3,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-19",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 2214.2,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-20",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 2258.24,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-sukkur-2026-10-21",
+      "cropId": "crop-onion",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 2307.09,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-08",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 2620.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-09",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 2681.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-10",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 2709.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-11",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 2702.59,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-12",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 2751.46,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-13",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 2811.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-14",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 2844.6,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-15",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 2923.87,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-16",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 2907.37,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-17",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 2859.75,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-18",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 2876.66,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-19",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 2895.29,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-20",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 2908.64,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-onion-market-karachi-2026-10-21",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 2853.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-08",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 1935.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-09",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 1947.42,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-10",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 1921.71,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-11",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 1904.81,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-12",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 1885.28,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-13",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 1895.77,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-14",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 1858.96,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-15",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 1839.44,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-16",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 1890.06,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-17",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 1860.62,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-18",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 1884.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-19",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 1915.71,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-20",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 1943.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-hyderabad-2026-10-21",
+      "cropId": "crop-tomato",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 1915.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-08",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 1805.1,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-09",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 1787.45,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-10",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 1825.09,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-11",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 1808.67,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-12",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 1794.75,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-13",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 1775.63,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-14",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 1737.38,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-15",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 1733.28,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-16",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 1775.56,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-17",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 1807.03,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-18",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 1803.05,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-19",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 1759.51,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-20",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 1724.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-sukkur-2026-10-21",
+      "cropId": "crop-tomato",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 1683.91,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-08",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 2031.1,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-09",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 2044.72,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-10",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 2098.88,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-11",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 2086.84,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-12",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 2124.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-13",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 2142.01,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-14",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 2165.59,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-15",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 2184.72,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-16",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 2241.22,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-17",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 2224.15,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-18",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 2194.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-19",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 2195.91,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-20",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 2259.26,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-tomato-market-karachi-2026-10-21",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 2311.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-08",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 6409.62,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-09",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 6489.59,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-10",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 6657.06,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-11",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 6633.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-12",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 6812.76,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-13",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 6775.95,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-14",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 6880.62,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-15",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 6873.88,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-16",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 6710.98,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-17",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 6799.84,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-18",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 6738.14,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-19",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 6924.82,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-20",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 7056.33,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-hyderabad-2026-10-21",
+      "cropId": "crop-mango",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 6927.39,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-08",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 5877.49,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-09",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 6022.45,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-10",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 6051.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-11",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 6014.17,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-12",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 6049.34,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-13",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 6138.22,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-14",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 6022.77,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-15",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 6077.24,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-16",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 5964.85,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-17",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 5856.96,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-18",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 5824.58,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-19",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 5886.52,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-20",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 5951.68,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-sukkur-2026-10-21",
+      "cropId": "crop-mango",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 5812.31,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-08",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 6690.92,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-09",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 6664.99,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-10",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 6586.09,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-11",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 6573.94,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-12",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 6488.97,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-13",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 6371.44,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-14",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 6402.41,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-15",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 6475.31,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-16",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 6646.3,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-17",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 6730.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-18",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 6708.73,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-19",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 6635.09,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-20",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 6523.11,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-mango-market-karachi-2026-10-21",
+      "cropId": "crop-mango",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 6368.41,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-08",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-08",
+      "price": 8891.36,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-09",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-09",
+      "price": 8798.08,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-10",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-10",
+      "price": 8730.44,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-11",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-11",
+      "price": 8965.57,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-12",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-12",
+      "price": 9034.16,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-13",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-13",
+      "price": 9225.46,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-14",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-14",
+      "price": 9275.41,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-15",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-15",
+      "price": 9375.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-16",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-16",
+      "price": 9636.53,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-17",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-17",
+      "price": 9668.07,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-18",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-18",
+      "price": 9567.4,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-19",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-19",
+      "price": 9661.31,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-20",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-20",
+      "price": 9820.71,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-hyderabad-2026-10-21",
+      "cropId": "crop-chickpea",
+      "marketId": "market-hyderabad",
+      "date": "2026-10-21",
+      "price": 9746.69,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-08",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-08",
+      "price": 8331.99,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-09",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-09",
+      "price": 8571.93,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-10",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-10",
+      "price": 8579.47,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-11",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-11",
+      "price": 8822.79,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-12",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-12",
+      "price": 8931.78,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-13",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-13",
+      "price": 9131.99,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-14",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-14",
+      "price": 9369.4,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-15",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-15",
+      "price": 9602.06,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-16",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-16",
+      "price": 9572.77,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-17",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-17",
+      "price": 9847.41,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-18",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-18",
+      "price": 10116.29,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-19",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-19",
+      "price": 9992.75,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-20",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-20",
+      "price": 10198.58,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-sukkur-2026-10-21",
+      "cropId": "crop-chickpea",
+      "marketId": "market-sukkur",
+      "date": "2026-10-21",
+      "price": 10136.4,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-08",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-08",
+      "price": 9495.51,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-09",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-09",
+      "price": 9590.8,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-10",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-10",
+      "price": 9640.52,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-11",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-11",
+      "price": 9650.86,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-12",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-12",
+      "price": 9828.2,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-13",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-13",
+      "price": 9896.32,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-14",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-14",
+      "price": 9751.19,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-15",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-15",
+      "price": 9844.23,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-16",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-16",
+      "price": 9681.38,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-17",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-17",
+      "price": 9915.27,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-18",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-18",
+      "price": 10185.7,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-19",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-19",
+      "price": 10386.94,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-20",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-20",
+      "price": 10604.32,
+      "unit": "maund"
+    },
+    {
+      "id": "price-crop-chickpea-market-karachi-2026-10-21",
+      "cropId": "crop-chickpea",
+      "marketId": "market-karachi",
+      "date": "2026-10-21",
+      "price": 10748.85,
+      "unit": "maund"
+    }
+  ],
+  "listings": [
+    {
+      "id": "listing-1",
+      "userId": "user-1",
+      "cropId": "crop-wheat",
+      "quantity": 100,
+      "askingPrice": 3306,
+      "district": "Matiari",
+      "grade": "A",
+      "availableFrom": "2026-10-22",
+      "contactPhone": "03001234567",
+      "status": "active",
+      "createdAt": "2026-10-20"
+    },
+    {
+      "id": "listing-2",
+      "userId": "user-1",
+      "cropId": "crop-onion",
+      "quantity": 60,
+      "askingPrice": 2672,
+      "district": "Matiari",
+      "grade": "B",
+      "availableFrom": "2026-10-23",
+      "contactPhone": "03001234567",
+      "status": "active",
+      "createdAt": "2026-10-19"
+    },
+    {
+      "id": "listing-3",
+      "userId": "user-1",
+      "cropId": "crop-cotton",
+      "quantity": 40,
+      "askingPrice": 9226,
+      "district": "Matiari",
+      "grade": "A",
+      "availableFrom": "2026-10-24",
+      "contactPhone": "03001234567",
+      "status": "sold",
+      "createdAt": "2026-10-18"
+    },
+    {
+      "id": "listing-4",
+      "userId": "user-2",
+      "cropId": "crop-rice",
+      "quantity": 80,
+      "askingPrice": 4634,
+      "district": "Hyderabad",
+      "grade": "A",
+      "availableFrom": "2026-10-21",
+      "contactPhone": "03111234501",
+      "status": "active",
+      "createdAt": "2026-10-17"
+    },
+    {
+      "id": "listing-5",
+      "userId": "user-2",
+      "cropId": "crop-tomato",
+      "quantity": 30,
+      "askingPrice": 2068,
+      "district": "Hyderabad",
+      "grade": "C",
+      "availableFrom": "2026-10-22",
+      "contactPhone": "03111234501",
+      "status": "active",
+      "createdAt": "2026-10-16"
+    },
+    {
+      "id": "listing-6",
+      "userId": "user-2",
+      "cropId": "crop-mango",
+      "quantity": 50,
+      "askingPrice": 7066,
+      "district": "Hyderabad",
+      "grade": "A",
+      "availableFrom": "2026-10-23",
+      "contactPhone": "03111234501",
+      "status": "active",
+      "createdAt": "2026-10-21"
+    },
+    {
+      "id": "listing-7",
+      "userId": "user-3",
+      "cropId": "crop-wheat",
+      "quantity": 200,
+      "askingPrice": 3129,
+      "district": "Sukkur",
+      "grade": "B",
+      "availableFrom": "2026-10-24",
+      "contactPhone": "03211234502",
+      "status": "active",
+      "createdAt": "2026-10-20"
+    },
+    {
+      "id": "listing-8",
+      "userId": "user-3",
+      "cropId": "crop-chickpea",
+      "quantity": 25,
+      "askingPrice": 10238,
+      "district": "Sukkur",
+      "grade": "A",
+      "availableFrom": "2026-10-21",
+      "contactPhone": "03211234502",
+      "status": "active",
+      "createdAt": "2026-10-19"
+    },
+    {
+      "id": "listing-9",
+      "userId": "user-3",
+      "cropId": "crop-sugarcane",
+      "quantity": 500,
+      "askingPrice": 383,
+      "district": "Sukkur",
+      "grade": "B",
+      "availableFrom": "2026-10-22",
+      "contactPhone": "03211234502",
+      "status": "sold",
+      "createdAt": "2026-10-18"
+    },
+    {
+      "id": "listing-10",
+      "userId": "user-4",
+      "cropId": "crop-cotton",
+      "quantity": 70,
+      "askingPrice": 9987,
+      "district": "Larkana",
+      "grade": "B",
+      "availableFrom": "2026-10-23",
+      "contactPhone": "03331234503",
+      "status": "active",
+      "createdAt": "2026-10-17"
+    },
+    {
+      "id": "listing-11",
+      "userId": "user-4",
+      "cropId": "crop-onion",
+      "quantity": 90,
+      "askingPrice": 2441,
+      "district": "Larkana",
+      "grade": "A",
+      "availableFrom": "2026-10-24",
+      "contactPhone": "03331234503",
+      "status": "active",
+      "createdAt": "2026-10-16"
+    },
+    {
+      "id": "listing-12",
+      "userId": "user-4",
+      "cropId": "crop-rice",
+      "quantity": 120,
+      "askingPrice": 4828,
+      "district": "Larkana",
+      "grade": "B",
+      "availableFrom": "2026-10-21",
+      "contactPhone": "03331234503",
+      "status": "active",
+      "createdAt": "2026-10-21"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "alert-1",
+      "userId": "user-1",
+      "cropId": "crop-wheat",
+      "marketId": "market-hyderabad",
+      "direction": "Above",
+      "targetPrice": 3270.0,
+      "isActive": true,
+      "triggered": false,
+      "triggerCount": 0
+    },
+    {
+      "id": "alert-2",
+      "userId": "user-1",
+      "cropId": "crop-onion",
+      "marketId": "market-karachi",
+      "direction": "Below",
+      "targetPrice": 3420.0,
+      "isActive": true,
+      "triggered": false,
+      "triggerCount": 0
+    },
+    {
+      "id": "alert-3",
+      "userId": "user-1",
+      "cropId": "crop-rice",
+      "marketId": "market-sukkur",
+      "direction": "Above",
+      "targetPrice": 5560.0,
+      "isActive": true,
+      "triggered": false,
+      "triggerCount": 0
+    },
+    {
+      "id": "alert-4",
+      "userId": "user-2",
+      "cropId": "crop-cotton",
+      "marketId": "market-hyderabad",
+      "direction": "Below",
+      "targetPrice": 8560.0,
+      "isActive": true,
+      "triggered": false,
+      "triggerCount": 0
+    },
+    {
+      "id": "alert-5",
+      "userId": "user-5",
+      "cropId": "crop-tomato",
+      "marketId": "market-karachi",
+      "direction": "Above",
+      "targetPrice": 2660.0,
+      "isActive": true,
+      "triggered": false,
+      "triggerCount": 0
+    }
+  ]
+}

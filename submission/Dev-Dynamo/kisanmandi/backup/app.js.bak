@@ -1,0 +1,252 @@
+(() => {
+"use strict";
+const API = "/api";
+const DEMO_USER_ID = "user-1";
+const $ = id => document.getElementById(id);
+const state = { users: [], crops: [], markets: [], prices: [], listings: [], alerts: [], role: "Farmer", chart: null };
+const money = value => "PKR " + Number(value || 0).toLocaleString("en-PK", { maximumFractionDigits: 2 });
+const dateText = value => value ? new Date(value + "T00:00:00").toLocaleDateString("en-PK", { day:"numeric", month:"short", year:"numeric" }) : "—";
+const todayString = () => new Date().toISOString().slice(0,10);
+const escapeText = value => String(value ?? "");
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API}/${path}`, {
+    ...options,
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+  });
+  if (!response.ok) {
+    let message = `API error ${response.status}`;
+    try { const body = await response.json(); message = body.error || message; } catch {}
+    throw new Error(message);
+  }
+  if (response.status === 204) return null;
+  return response.json();
+}
+function byId(items, id) { return items.find(item => String(item.id) === String(id)); }
+function cropName(id) { return byId(state.crops,id)?.name || "Unknown crop"; }
+function marketName(id) { const m=byId(state.markets,id); return m ? m.name : "Unknown market"; }
+function latestPrice(cropId, marketId) {
+  return state.prices.filter(p => p.cropId === cropId && p.marketId === marketId).sort((a,b)=>b.date.localeCompare(a.date))[0] || null;
+}
+function latestByCropMarket() {
+  const map = new Map();
+  [...state.prices].sort((a,b)=>a.date.localeCompare(b.date)).forEach(p=>map.set(`${p.cropId}|${p.marketId}`,p));
+  return [...map.values()];
+}
+function fillSelect(select, records, label, getValue, getLabel) {
+  if (!select) return;
+  const previous = select.value;
+  select.replaceChildren();
+  const first = document.createElement("option"); first.value=""; first.textContent=label; select.append(first);
+  records.forEach(record=>{const option=document.createElement("option");option.value=getValue(record);option.textContent=getLabel(record);select.append(option);});
+  if (records.some(r=>String(getValue(r))===previous)) select.value=previous;
+  else if(records.length) select.value=String(getValue(records[0]));
+}
+function el(tag, className, text) { const node=document.createElement(tag); if(className) node.className=className; if(text!==undefined) node.textContent=String(text); return node; }
+function setStatus(message, isError=false) { $("status-message").textContent=message; $("status-message").style.color=isError?"#b93f36":""; }
+function updateStats() {
+  $("crop-count").textContent=state.crops.length;
+  $("market-count").textContent=state.markets.length;
+  $("price-count").textContent=state.prices.length;
+}
+function renderPrices() {
+  const query=$("search-input").value.trim().toLowerCase(), category=$("category-filter").value, market=$("market-filter").value;
+  const latest=latestByCropMarket().filter(p=>{
+    const c=byId(state.crops,p.cropId);
+    return c && (!query||c.name.toLowerCase().includes(query)) && (!category||c.category===category) && (!market||p.marketId===market);
+  }).sort((a,b)=>cropName(a.cropId).localeCompare(cropName(b.cropId))||marketName(a.marketId).localeCompare(marketName(b.marketId)));
+  const grid=$("price-grid"); grid.replaceChildren();
+  if(!latest.length){grid.append(el("p","empty-state","No prices match these filters."));return;}
+  latest.forEach(p=>{
+    const card=el("article","price-card");
+    const top=el("div","price-card-top");
+    top.append(el("span","category-tag",byId(state.crops,p.cropId)?.category||"Crop"));
+    const previous=state.prices.filter(x=>x.cropId===p.cropId&&x.marketId===p.marketId&&x.date<p.date).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    let change=previous?((Number(p.price)-Number(previous.price))/Number(previous.price))*100:0;
+    const changeTag=el("span",`change-pill ${change>0.05?"change-up":change<-.05?"change-down":"change-flat"}`,`${change>0?"+":""}${change.toFixed(1)}%`);
+    top.append(changeTag);card.append(top);
+    card.append(el("h3","",cropName(p.cropId)));
+    card.append(el("div","price-market",marketName(p.marketId)));
+    const price=el("div","price-value",money(p.price));price.append(el("span","price-unit"," / kg"));card.append(price);
+    card.append(el("div","price-date",`Latest: ${dateText(p.date)} · ${change>0?"up":change<0?"down":"unchanged"} vs. previous day`));
+    grid.append(card);
+  });
+  setStatus(`Showing ${latest.length} crop-market prices. Daily change compares with the previous available record.`);
+}
+function setupDashboardFilters() {
+  const categories=[...new Set(state.crops.map(c=>c.category))].sort().map(category=>({id:category,name:category}));
+  fillSelect($("category-filter"),categories,"All categories",x=>x.id,x=>x.name);
+  fillSelect($("market-filter"),state.markets,"All markets",x=>x.id,x=>x.name);
+  ["trend-crop","compare-crop","alert-crop","listing-crop","profit-crop"].forEach(id=>fillSelect($(id),state.crops,"Select crop",x=>x.id,x=>x.name));
+  ["trend-market","alert-market","profit-market"].forEach(id=>fillSelect($(id),state.markets,"Select market",x=>x.id,x=>x.name));
+}
+function drawTrendChart(canvas, records) {
+  const ctx=canvas.getContext("2d"), width=canvas.clientWidth||500, height=220, dpr=window.devicePixelRatio||1;
+  canvas.width=width*dpr;canvas.height=height*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,width,height);
+  const pad={l:48,r:14,t:16,b:28}, cw=width-pad.l-pad.r,ch=height-pad.t-pad.b;
+  if(!records.length){ctx.fillStyle="#728075";ctx.font="12px sans-serif";ctx.fillText("No trend data available",pad.l,100);return;}
+  const vals=records.map(p=>Number(p.price)), min=Math.min(...vals),max=Math.max(...vals), range=max-min||1;
+  ctx.font="10px sans-serif";ctx.strokeStyle="#e8ede5";ctx.fillStyle="#728075";ctx.lineWidth=1;
+  for(let i=0;i<4;i++){const y=pad.t+ch*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(width-pad.r,y);ctx.stroke();ctx.fillText(Math.round(max-(range*i/3)).toLocaleString(),2,y+3);}
+  const points=records.map((p,i)=>({x:pad.l+(records.length===1?cw/2:i*cw/(records.length-1)),y:pad.t+ch-(Number(p.price)-min)/range*ch,p}));
+  ctx.beginPath();points.forEach((pt,i)=>i?ctx.lineTo(pt.x,pt.y):ctx.moveTo(pt.x,pt.y));ctx.strokeStyle="#34774e";ctx.lineWidth=2.5;ctx.stroke();
+  points.forEach(pt=>{ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);ctx.fillStyle="#34774e";ctx.fill();});
+  ctx.fillStyle="#728075";ctx.textAlign="center";
+  [0,Math.floor((records.length-1)/2),records.length-1].forEach(i=>{if(records[i])ctx.fillText(records[i].date.slice(5),points[i].x,height-8);});
+  ctx.textAlign="left";
+}
+function renderAnalytics() {
+  const cropId=$("trend-crop").value||state.crops[0]?.id, marketId=$("trend-market").value||state.markets[0]?.id;
+  const history=state.prices.filter(p=>p.cropId===cropId&&p.marketId===marketId).sort((a,b)=>a.date.localeCompare(b.date)).slice(-14);
+  const summary=$("trend-summary");summary.replaceChildren();
+  if(history.length){
+    const vals=history.map(p=>Number(p.price)),avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    [["Average",money(avg)],["14-day low",money(Math.min(...vals))],["14-day high",money(Math.max(...vals))]].forEach(([label,value])=>{const item=el("div","summary-item");item.append(el("span","",label),el("strong","",value));summary.append(item);});
+  }
+  drawTrendChart($("trend-chart"),history);
+  const compareId=$("compare-crop").value||state.crops[0]?.id;
+  const rows=state.markets.map(m=>({market:m,price:latestPrice(compareId,m.id),history:state.prices.filter(p=>p.cropId===compareId&&p.marketId===m.id)})).filter(x=>x.price);
+  const body=$("comparison-body");body.replaceChildren();
+  const avgAll=rows.length?rows.reduce((sum,row)=>sum+Number(row.price.price),0)/rows.length:0;
+  rows.sort((a,b)=>Number(b.price.price)-Number(a.price.price));
+  rows.forEach((row,i)=>{const tr=el("tr",i===0?"best-market":"");const vals=[row.market.name,`${money(row.price.price)} / kg`,`${avgAll?((Number(row.price.price)-avgAll)/avgAll*100).toFixed(1):"0.0"}%`];vals.forEach((v,j)=>{const td=el("td","",v);if(j===0&&i===0)td.append(el("span","best-badge","BEST CURRENT PRICE"));tr.append(td);});body.append(tr);});
+  $("comparison-summary").textContent=rows.length?`Best current listed price: ${rows[0].market.name}. Transport, quality, and selling fees are not included.`:"No comparison data available.";
+}
+function setupAnalytics() {
+  ["trend-crop","trend-market","compare-crop"].forEach(id=>$(id).addEventListener("change",renderAnalytics));
+  $("trend-crop").addEventListener("change",renderAnalytics);
+}
+function currentAlerts() { return state.alerts.filter(a=>a.userId===DEMO_USER_ID); }
+async function evaluateAlerts() {
+  for(const alert of state.alerts){
+    if(!alert.isActive)continue;
+    const p=latestPrice(alert.cropId,alert.marketId);if(!p)continue;
+    const target=Number(alert.targetPrice), reached=alert.direction==="Above"?Number(p.price)>=target:Number(p.price)<=target;
+    if(Boolean(alert.triggered)!==reached){
+      try {const updated=await apiRequest(`alerts/${encodeURIComponent(alert.id)}`,{method:"PATCH",body:JSON.stringify({triggered:reached})});Object.assign(alert,updated||{triggered:reached});} catch(e){console.warn("Alert evaluation:",e.message);}
+    }
+  }
+}
+function renderAlerts() {
+  const list=$("alerts-list");list.replaceChildren();
+  const alerts=currentAlerts();
+  $("triggered-count").textContent=alerts.filter(a=>a.isActive&&a.triggered).length;
+  if(!alerts.length){list.append(el("p","empty-state","No alerts yet. Create one to track a target price."));return;}
+  alerts.forEach(a=>{
+    const item=el("div","alert-item"),left=el("div","");left.append(el("div","alert-title",`${cropName(a.cropId)} · ${marketName(a.marketId)}`));
+    left.append(el("div","alert-detail",`${a.direction==="Above"?"At or above":"At or below"} ${money(a.targetPrice)} / kg`));
+    left.append(el("div",`alert-status ${a.triggered&&a.isActive?"alert-triggered":""}`,a.triggered&&a.isActive?"Target reached":a.isActive?"Monitoring":"Paused"));
+    const actions=el("div","alert-actions");
+    const toggle=el("button","small-btn",a.isActive?"Pause":"Activate");toggle.type="button";toggle.addEventListener("click",()=>updateAlert(a.id,{isActive:!a.isActive}));actions.append(toggle);
+    const del=el("button","small-btn","Delete");del.type="button";del.addEventListener("click",async()=>{if(confirm("Delete this price alert?")){try{await apiRequest(`alerts/${encodeURIComponent(a.id)}`,{method:"DELETE"});await loadAlerts();}catch(e){alert(e.message);}}});actions.append(del);
+    item.append(left,actions);list.append(item);
+  });
+}
+async function loadAlerts() { state.alerts=await apiRequest("alerts");await evaluateAlerts();renderAlerts(); }
+async function updateAlert(id,changes) {try{await apiRequest(`alerts/${encodeURIComponent(id)}`,{method:"PATCH",body:JSON.stringify(changes)});await loadAlerts();}catch(e){alert(`Could not update alert: ${e.message}`);} }
+$("alert-form").addEventListener("submit",async event=>{
+  event.preventDefault();const target=Number($("alert-target").value);
+  if(!Number.isFinite(target)||target<=0){$("alert-message").textContent="Enter a target price greater than zero.";return;}
+  try{await apiRequest("alerts",{method:"POST",body:JSON.stringify({userId:DEMO_USER_ID,cropId:$("alert-crop").value,marketId:$("alert-market").value,direction:$("alert-direction").value,targetPrice:target,isActive:true,triggered:false})});$("alert-form").reset();$("alert-message").textContent="Alert created.";await loadAlerts();}catch(e){$("alert-message").textContent=`Could not create alert: ${e.message}`;}
+});
+function averageMarketPrice(cropId) {
+  const latest=state.markets.map(m=>latestPrice(cropId,m.id)).filter(Boolean);
+  return latest.length?latest.reduce((s,p)=>s+Number(p.price),0)/latest.length:null;
+}
+function marketLabel(listing) {
+  const avg=averageMarketPrice(listing.cropId);if(avg===null)return "Market price unavailable";
+  const price=Number(listing.askingPrice);
+  return price<avg*.95?"Below market":price>avg*1.05?"Above market":"At market";
+}
+function populateDistricts() {
+  const select=$("listing-district-filter"),old=select.value;
+  select.replaceChildren();const all=el("option","","All districts");all.value="";select.append(all);
+  [...new Set(state.listings.filter(l=>l.status==="active").map(l=>l.district).filter(Boolean))].sort().forEach(d=>{const o=el("option","",d);o.value=d;select.append(o);});
+  select.value=[...select.options].some(o=>o.value===old)?old:"";
+}
+function renderListings() {
+  const q=$("listing-search").value.trim().toLowerCase(),district=$("listing-district-filter").value,grade=$("listing-grade-filter").value,sort=$("listing-sort").value;
+  let listings=state.listings.filter(l=>l.status==="active"&&(!district||l.district===district)&&(!grade||l.grade===grade)&&`${cropName(l.cropId)} ${l.district} ${l.grade}`.toLowerCase().includes(q));
+  listings.sort(sort==="price-asc"?(a,b)=>Number(a.askingPrice)-Number(b.askingPrice):(a,b)=>(b.createdAt||"").localeCompare(a.createdAt||""));
+  $("listing-count").textContent=`${listings.length} listing${listings.length===1?"":"s"}`;
+  const grid=$("listings-grid");grid.replaceChildren();
+  if(!listings.length){grid.append(el("p","empty-state","No matching active listings found."));return;}
+  listings.forEach(l=>{
+    const card=el("article","listing-card");card.append(el("h4","",cropName(l.cropId)),el("div","listing-price",`${money(l.askingPrice)} / kg`),el("span","market-price-label",marketLabel(l)));
+    card.append(el("p","",`Quantity: ${Number(l.quantity).toLocaleString("en-PK")} kg`),el("p","",`District: ${l.district}`),el("p","",`Grade ${l.grade} · Available ${dateText(l.availableFrom)}`));
+    const actions=el("div","listing-actions"),phone=String(l.contactPhone||""),digits=phone.replace(/\D/g,""),wa=digits.startsWith("0")?"92"+digits.slice(1):digits;
+    const call=el("a","","Call seller");call.href=`tel:${phone}`;actions.append(call);
+    const whats=el("a","","WhatsApp");whats.href=`https://wa.me/${wa}?text=${encodeURIComponent("Hello, I am interested in your "+cropName(l.cropId)+" listing.")}`;whats.target="_blank";whats.rel="noopener noreferrer";actions.append(whats);
+    if(l.userId===DEMO_USER_ID){
+      const edit=el("button","","Edit");edit.type="button";edit.addEventListener("click",()=>editListing(l));actions.append(edit);
+      const sold=el("button","","Mark sold");sold.type="button";sold.addEventListener("click",()=>updateListing(l.id,{status:"sold"}));actions.append(sold);
+      const del=el("button","","Delete");del.type="button";del.addEventListener("click",()=>deleteListing(l));actions.append(del);
+    }
+    card.append(actions);grid.append(card);
+  });
+}
+async function loadListings() {state.listings=await apiRequest("listings");populateDistricts();renderListings();}
+async function updateListing(id,changes) {try{await apiRequest(`listings/${encodeURIComponent(id)}`,{method:"PATCH",body:JSON.stringify(changes)});await loadListings();}catch(e){alert(`Could not update listing: ${e.message}`);}}
+async function editListing(listing) {
+  const quantity=prompt("New quantity in kg:",listing.quantity);if(quantity===null)return;
+  const price=prompt("New asking price per kg (PKR):",listing.askingPrice);if(price===null)return;
+  if(!Number.isFinite(Number(quantity))||Number(quantity)<=0||!Number.isFinite(Number(price))||Number(price)<=0){alert("Quantity and price must be positive numbers.");return;}
+  await updateListing(listing.id,{quantity:Number(quantity),askingPrice:Number(price)});
+}
+async function deleteListing(listing) {if(!confirm(`Delete ${cropName(listing.cropId)} listing?`))return;try{await apiRequest(`listings/${encodeURIComponent(listing.id)}`,{method:"DELETE"});await loadListings();}catch(e){alert(`Could not delete listing: ${e.message}`);}}
+$("listing-form").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const quantity=Number($("listing-quantity").value),price=Number($("listing-price").value),available=$("listing-date").value;
+  if(quantity<=0||price<=0){$("listing-message").textContent="Quantity and price must be greater than zero.";return;}
+  if(!available||available<todayString()){$("listing-message").textContent="Choose today or a future date.";return;}
+  const payload={userId:DEMO_USER_ID,cropId:$("listing-crop").value,quantity,askingPrice:price,district:$("listing-district").value.trim(),grade:$("listing-grade").value,availableFrom:available,contactPhone:$("listing-phone").value.trim(),status:"active",createdAt:todayString()};
+  if(!payload.district||!payload.contactPhone){$("listing-message").textContent="Complete every field.";return;}
+  try{await apiRequest("listings",{method:"POST",body:JSON.stringify(payload)});$("listing-form").reset();$("listing-date").min=todayString();$("listing-message").textContent="Listing published.";await loadListings();}catch(e){$("listing-message").textContent=`Could not publish listing: ${e.message}`;}
+});
+["listing-search","listing-district-filter","listing-grade-filter","listing-sort"].forEach(id=>$(id).addEventListener(id==="listing-search"?"input":"change",renderListings));
+function profitCalc() {
+  const cropId=$("profit-crop").value,marketId=$("profit-market").value,q=Number($("profit-quantity").value),cost=Number($("profit-cost").value),p=latestPrice(cropId,marketId);
+  if(!p||!Number.isFinite(q)||q<=0||!Number.isFinite(cost)||cost<0){$("profit-price-note").textContent="Select valid sale details to calculate.";return;}
+  const price=Number(p.price),revenue=price*q,total=cost*q,net=revenue-total,margin=revenue?net/revenue*100:0;
+  $("profit-price-note").textContent=`Based on ${cropName(cropId)} at ${marketName(marketId)} using the latest demo price (${dateText(p.date)}).`;
+  $("profit-market-price").textContent=`${money(price)} / kg`;$("profit-revenue").textContent=money(revenue);$("profit-total-cost").textContent=money(total);
+  $("profit-net").textContent=money(net);$("profit-net").style.color=net<0?"#b93f36":"#245c3c";$("profit-margin").textContent=`${margin.toFixed(2)}%`;
+  $("profit-low").textContent=money(price*.8*q-total);$("profit-high").textContent=money(price*1.2*q-total);
+}
+$("profit-form").addEventListener("submit",event=>{event.preventDefault();profitCalc();});
+["profit-crop","profit-market","profit-quantity","profit-cost"].forEach(id=>$(id).addEventListener("change",profitCalc));
+function setRole(role) {
+  state.role=role;
+  const isFarmer=role==="Farmer";
+  $("listing-form-panel").hidden=!isFarmer;
+  $("alerts-section").hidden=!isFarmer;
+  document.querySelectorAll(".owner-only").forEach(node=>node.hidden=!isFarmer);
+}
+$("role-select").addEventListener("change",event=>setRole(event.target.value));
+$("search-input").addEventListener("input",renderPrices);
+$("category-filter").addEventListener("change",renderPrices);
+$("market-filter").addEventListener("change",renderPrices);
+$("refresh-btn").addEventListener("click",loadAll);
+let resizeTimer;
+window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderAnalytics,120);});
+async function loadAll() {
+  const btn=$("refresh-btn");btn.disabled=true;btn.textContent="Refreshing…";
+  try{
+    const [crops,markets,prices,users]=await Promise.all([apiRequest("crops"),apiRequest("markets"),apiRequest("prices"),apiRequest("users")]);
+    state.crops=crops;state.markets=markets;state.prices=prices;state.users=users;
+    updateStats();setupDashboardFilters();
+    renderPrices();renderAnalytics();profitCalc();
+    await Promise.all([loadAlerts(),loadListings()]);
+    setStatus(`Loaded ${state.crops.length} crops, ${state.markets.length} markets, and ${state.prices.length} price records.`);
+  }catch(error){
+    console.error(error);setStatus(`Could not load the app data: ${error.message}. Check that server.py is running and seed.py has been run.`,true);
+    $("price-grid").replaceChildren(el("p","empty-state","API data unavailable."));
+  }finally{btn.disabled=false;btn.textContent="↻ Refresh data";}
+}
+function initialSetup() {
+  $("listing-date").min=todayString();$("listing-date").value=todayString();
+  setupAnalytics();
+  setRole($("role-select").value);
+}
+initialSetup();
+loadAll();
+})();

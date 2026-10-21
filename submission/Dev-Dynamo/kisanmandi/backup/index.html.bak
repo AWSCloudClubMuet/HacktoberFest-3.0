@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245c3c">
+  <meta name="description" content="KisanMandi helps Sindh farmers compare crop prices, track alerts, estimate returns, and connect with buyers.">
+  <title>KisanMandi — Crop Prices & Produce Marketplace</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="KisanMandi home"><span class="brand-mark">K</span><span>Kisan<span class="brand-light">Mandi</span></span></a>
+    <div class="header-actions">
+      <span class="demo-pill">DEMO DATA</span>
+      <label class="role-switch">View as
+        <select id="role-select" aria-label="Choose demo role">
+          <option value="Farmer">Farmer</option>
+          <option value="Buyer">Buyer</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">SINDH CROP MARKETPLACE</p>
+        <h1>Better prices.<br><span>Stronger harvests.</span></h1>
+        <p class="hero-copy">Crop prices, market comparisons, and direct connections between farmers and buyers — in one place.</p>
+        <div class="hero-meta"><span>● Fictional demo data</span><span>● Local API</span></div>
+      </div>
+      <div class="hero-illustration" aria-hidden="true"><div class="sun"></div><div class="field field-one"></div><div class="field field-two"></div><div class="field field-three"></div><div class="crop-icon">🌾</div></div>
+    </section>
+
+    <section class="stats-grid" aria-label="Dashboard summary">
+      <article class="stat-card"><span class="stat-icon">🌱</span><span class="stat-label">Crop varieties</span><strong id="crop-count">—</strong></article>
+      <article class="stat-card"><span class="stat-icon">🏪</span><span class="stat-label">Markets tracked</span><strong id="market-count">—</strong></article>
+      <article class="stat-card"><span class="stat-icon">📈</span><span class="stat-label">Price records</span><strong id="price-count">—</strong></article>
+      <article class="stat-card"><span class="stat-icon">🔔</span><span class="stat-label">My alerts triggered</span><strong id="triggered-count">—</strong></article>
+    </section>
+
+    <section class="section" id="prices">
+      <div class="section-heading"><div><p class="eyebrow">MARKET SNAPSHOT</p><h2>Today's Crop Prices</h2><p>Compare the latest available prices across local markets.</p></div><button class="btn btn-secondary" id="refresh-btn" type="button">↻ Refresh data</button></div>
+      <div class="filter-bar">
+        <input id="search-input" type="search" placeholder="Search crops..." aria-label="Search crops">
+        <select id="category-filter" aria-label="Filter by category"><option value="">All categories</option></select>
+        <select id="market-filter" aria-label="Filter by market"><option value="">All markets</option></select>
+      </div>
+      <p id="status-message" class="status-message" role="status">Loading market data…</p>
+      <div id="price-grid" class="price-grid"></div>
+    </section>
+
+    <section class="section" id="analytics">
+      <div class="section-heading"><div><p class="eyebrow">MAKE INFORMED DECISIONS</p><h2>Price Trends & Comparison</h2><p>Review the last 14 days and compare markets for the same crop.</p></div></div>
+      <div class="analytics-grid">
+        <article class="panel"><div class="panel-heading"><div><h3>14-day price trend</h3><p class="muted">Latest 14 daily records</p></div></div><div class="filter-row"><select id="trend-crop" aria-label="Trend crop"></select><select id="trend-market" aria-label="Trend market"></select></div><div class="chart-wrap"><canvas id="trend-chart" aria-label="Price trend chart" role="img"></canvas></div><div id="trend-summary" class="summary-strip"></div></article>
+        <article class="panel"><div class="panel-heading"><div><h3>Compare markets</h3><p class="muted">Highest current price first</p></div></div><select id="compare-crop" aria-label="Crop to compare"></select><div class="table-wrap"><table><thead><tr><th>Market</th><th>Latest price</th><th>vs. 14-day avg.</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p id="comparison-summary" class="muted"></p></article>
+      </div>
+    </section>
+
+    <section class="section" id="alerts-section">
+      <div class="section-heading"><div><p class="eyebrow">STAY INFORMED</p><h2>Price Alerts</h2><p>Set a target and check whether the latest price meets it.</p></div></div>
+      <div class="alerts-layout">
+        <article class="panel"><h3>Create an alert</h3><form id="alert-form" class="stack-form"><label for="alert-crop">Crop</label><select id="alert-crop" required></select><label for="alert-market">Market</label><select id="alert-market" required></select><div class="two-fields"><div><label for="alert-direction">Condition</label><select id="alert-direction"><option value="Above">At or above</option><option value="Below">At or below</option></select></div><div><label for="alert-target">Target price (PKR/kg)</label><input id="alert-target" type="number" min="0.01" step="0.01" required placeholder="e.g. 3200"></div></div><button class="btn btn-primary" type="submit">Create price alert</button><p id="alert-message" class="form-message" role="status"></p></form></article>
+        <article class="panel"><div class="panel-heading"><div><h3>Your alerts</h3><p class="muted">Demo profile: Demo Farmer</p></div></div><div id="alerts-list" class="alerts-list"><p class="muted">Loading alerts…</p></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="marketplace">
+      <div class="section-heading"><div><p class="eyebrow">BUY & SELL</p><h2>Produce Marketplace</h2><p>Connect farmers and buyers directly.</p></div></div>
+      <div class="marketplace-layout">
+        <article class="panel" id="listing-form-panel"><h3>List your produce</h3><p class="muted">Create a listing buyers can discover.</p><form id="listing-form" class="stack-form"><label for="listing-crop">Crop</label><select id="listing-crop" required></select><div class="two-fields"><div><label for="listing-quantity">Quantity (kg)</label><input id="listing-quantity" type="number" min="0.01" step="0.01" required placeholder="500"></div><div><label for="listing-price">Asking price (PKR/kg)</label><input id="listing-price" type="number" min="0.01" step="0.01" required placeholder="250"></div></div><label for="listing-district">District</label><input id="listing-district" required placeholder="Matiari"><div class="two-fields"><div><label for="listing-grade">Grade</label><select id="listing-grade"><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option></select></div><div><label for="listing-date">Available from</label><input id="listing-date" type="date" required></div></div><label for="listing-phone">Contact phone</label><input id="listing-phone" type="tel" required placeholder="03001234567"><button class="btn btn-primary" type="submit">Publish listing</button><p id="listing-message" class="form-message" role="status"></p></form></article>
+        <article class="panel"><div class="panel-heading"><div><h3>Available produce</h3><p class="muted">Browse active listings</p></div><span id="listing-count" class="count-pill">0 listings</span></div><div class="listing-filters"><input id="listing-search" type="search" placeholder="Search crops or districts" aria-label="Search listings"><select id="listing-district-filter" aria-label="Filter district"><option value="">All districts</option></select><select id="listing-grade-filter" aria-label="Filter grade"><option value="">All grades</option><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option></select><select id="listing-sort" aria-label="Sort listings"><option value="newest">Newest first</option><option value="price-asc">Price: low to high</option></select></div><div id="listings-grid" class="listings-grid"><p class="muted">Loading listings…</p></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="profit-calculator">
+      <div class="section-heading"><div><p class="eyebrow">PLAN YOUR SALE</p><h2>Profit Calculator</h2><p>Estimate revenue and profit before selling.</p></div></div>
+      <div class="profit-layout">
+        <article class="panel"><h3>Sale details</h3><form id="profit-form" class="stack-form"><label for="profit-crop">Crop</label><select id="profit-crop" required></select><label for="profit-market">Target market</label><select id="profit-market" required></select><label for="profit-quantity">Quantity (kg)</label><input id="profit-quantity" type="number" min="0.01" step="0.01" value="1000" required><label for="profit-cost">Production cost (PKR/kg)</label><input id="profit-cost" type="number" min="0" step="0.01" value="50" required><button class="btn btn-primary" type="submit">Calculate profit</button></form></article>
+        <article class="panel profit-results"><h3>Estimated results</h3><p class="muted" id="profit-price-note">Select a crop and market.</p><div class="profit-metric"><span>Market price/kg</span><strong id="profit-market-price">—</strong></div><div class="profit-metric"><span>Expected revenue</span><strong id="profit-revenue">—</strong></div><div class="profit-metric"><span>Total production cost</span><strong id="profit-total-cost">—</strong></div><div class="profit-metric"><span>Estimated profit/loss</span><strong id="profit-net">—</strong></div><div class="profit-metric"><span>Profit margin</span><strong id="profit-margin">—</strong></div><h3 class="scenario-heading">Price scenarios</h3><div class="profit-metric"><span>Price drops by 20%</span><strong id="profit-low">—</strong></div><div class="profit-metric"><span>Price rises by 20%</span><strong id="profit-high">—</strong></div><p class="muted small-note">Estimates exclude transport, commissions, and other selling expenses. Demo prices are fictional.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><a class="brand footer-brand" href="#"><span class="brand-mark">K</span><span>Kisan<span class="brand-light">Mandi</span></span></a><p>Built for the Sindh farming community · Hackathon demo</p><p class="muted">All sample data is fictional and for demonstration only.</p></footer>
+  <script src="js/app.js"></script>
+</body>
+</html>
