@@ -24,10 +24,39 @@ export function getAwsRegion() {
   return process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1";
 }
 
+const ENDPOINT_OVERRIDE_KEYS = [
+  "AWS_ENDPOINT_URL",
+  "AWS_ENDPOINT_URL_S3",
+  "AWS_ENDPOINT_URL_SNS",
+  "AWS_ENDPOINT_URL_SQS",
+];
+
+/**
+ * Reject endpoint environment variables so a stale LocalStack setting cannot
+ * redirect a run that is recorded as real AWS.
+ */
+function assertNoEndpointOverrides() {
+  const configured = ENDPOINT_OVERRIDE_KEYS.filter((key) => process.env[key]);
+  if (configured.length > 0) {
+    throw new Error(
+      `AWS endpoint overrides are not supported. Unset ${configured.join(", ")} and use the standard AWS endpoints.`,
+    );
+  }
+}
+
+/**
+ * Build shared client configuration for the real-AWS-only workflow.
+ *
+ * `ignoreConfiguredEndpointUrls` also prevents endpoint_url entries in the
+ * shared AWS config or profile from overriding the regional AWS endpoint.
+ */
 export function baseClientConfig() {
+  assertNoEndpointOverrides();
+
   return {
     region: getAwsRegion(),
     maxAttempts: Number.parseInt(process.env.AWS_MAX_ATTEMPTS || "3", 10),
+    ignoreConfiguredEndpointUrls: true,
   };
 }
 

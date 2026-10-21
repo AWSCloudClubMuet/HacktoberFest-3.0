@@ -130,8 +130,12 @@ report is `reports/backup-status.md`. Both are ignored by Git. Pass
 - Terraform 1.6 or newer (`terraform version`).
 - AWS credentials with permission to create S3, IAM, SNS and SQS resources.
   Use a profile, SSO session or role; do not put access keys in this folder.
-- The AWS CLI is optional and is used only for read-only inspection commands
-  in `docs/evidence.md`.
+- The AWS CLI is optional. It is used only for the optional identity check
+  below and the read-only inspection commands in `docs/evidence.md`.
+- Do not set `AWS_ENDPOINT_URL`, `AWS_ENDPOINT_URL_S3`,
+  `AWS_ENDPOINT_URL_SNS` or `AWS_ENDPOINT_URL_SQS`. The scripts reject these
+  overrides and ignore endpoint settings from the AWS profile so a backup
+  cannot be redirected away from real AWS.
 
 ## Deploy to AWS
 
@@ -143,7 +147,6 @@ npm install
 
 export AWS_PROFILE='<your-profile>'
 export AWS_REGION=us-east-1
-aws sts get-caller-identity
 
 terraform -chdir=infra init
 terraform -chdir=infra fmt -check
@@ -154,6 +157,13 @@ terraform -chdir=infra apply \
 export BUCKET_NAME="$(terraform -chdir=infra output -raw bucket_name)"
 export BACKUP_ALERTS_TOPIC_ARN="$(terraform -chdir=infra output -raw sns_topic_arn)"
 export ALERT_QUEUE_URL="$(terraform -chdir=infra output -raw sqs_queue_url)"
+```
+
+If the AWS CLI is installed, optionally verify which identity Terraform will
+use:
+
+```bash
+aws sts get-caller-identity
 ```
 
 `alert_email` is optional. If it is set, confirm the SNS subscription from the
@@ -368,6 +378,7 @@ attached to compute.
 | Symptom | Fix |
 | --- | --- |
 | `CredentialsProviderError` | Configure a real AWS profile, SSO session or role, then confirm with `aws sts get-caller-identity`. |
+| `AWS endpoint overrides are not supported` | Unset the `AWS_ENDPOINT_URL*` variables named in the error. This workflow uses standard AWS endpoints only. |
 | `NoSuchBucket` | The demo bucket was destroyed. Apply Terraform again and re-export `BUCKET_NAME`. |
 | `AccessDenied` | Check the active credentials, bucket policy and IAM policy. The TLS policy only allows HTTPS. |
 | SNS message not in SQS | Confirm the SNS subscription exists; SQS messages may be invisible during the visibility timeout. |

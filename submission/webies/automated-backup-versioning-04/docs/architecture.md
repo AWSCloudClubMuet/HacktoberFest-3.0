@@ -125,7 +125,9 @@ matching service principal.
 Terraform uses the standard AWS provider and the standard credential chain.
 Set `AWS_PROFILE`, `AWS_REGION` or the corresponding role/session environment
 before running `terraform` or the Node scripts. There is one code path for
-real AWS; no endpoint override or path-style switch is needed.
+real AWS; no endpoint override or path-style switch is needed. The scripts
+reject `AWS_ENDPOINT_URL*` overrides and ignore endpoint settings from the
+AWS profile.
 
 ## Failure and alert design
 
