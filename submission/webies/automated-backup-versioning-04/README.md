@@ -63,7 +63,7 @@ member names.
  +----------------+   +----------------+   +----------------------+
  | verify.mjs     |   | SNS topic      |-->| SQS queue (local)    |
  | restore.mjs    |   |                |-->| email (real AWS)     |
- | report.mjs     |   | optional alarm |   +----------------------+
+ | report.mjs     |   |                |   +----------------------+
  +----------------+   +----------------+
 ```
 
@@ -73,9 +73,9 @@ data flow and key layout.
 ## Technologies
 
 - Terraform `>= 1.6, < 2.0` with the AWS provider `~> 5.60`.
-- AWS S3, SNS, SQS, IAM, optional CloudWatch.
+- AWS S3, SNS, SQS and IAM.
 - Node.js 20+ with AWS SDK v3 (`@aws-sdk/client-s3`, `client-sns`,
-  `client-sqs`, optional `client-cloudwatch`).
+  `client-sqs`).
 - LocalStack Pro 2026.10 (validated) at `http://localhost:4566`.
 - `node:fs/promises`, `node:crypto` and `node:path`; no other runtime
   libraries.
@@ -91,7 +91,7 @@ automated-backup-versioning-04/
     versions.tf               Terraform and provider pins
     providers.tf              LocalStack / real-AWS switch
     variables.tf              Inputs and validation
-    main.tf                   S3, lifecycle, IAM, SNS, SQS, alarm
+    main.tf                   S3, lifecycle, IAM, SNS, SQS
     outputs.tf                Bucket, topic, role, region, queue
     terraform.tfvars.example  Copy for local overrides
     .terraform.lock.hcl       Provider checksums (commit this file)
@@ -105,7 +105,7 @@ automated-backup-versioning-04/
     lib/
       s3.mjs                  S3 client, checksum, manifest helpers
       cli.mjs                 Dependency-free argument parser
-      alerts.mjs              SNS and optional CloudWatch helpers
+      alerts.mjs              SNS failure-alert helpers
   sample-data/                Five synthetic files, including a subdirectory
   manifests/
     sample-manifest.json      Synthetic data for offline report rendering
@@ -126,8 +126,8 @@ automated-backup-versioning-04/
 - Node.js 20 or newer (`node --version`).
 - Terraform 1.6 or newer (`terraform version`).
 - Docker and a LocalStack Pro license for the local path.
-- AWS credentials with permission to create S3, IAM, SNS, SQS and CloudWatch
-  resources for the real-AWS path.
+- AWS credentials with permission to create S3, IAM, SNS and SQS resources
+  for the real-AWS path.
 
 The AWS CLI is optional. It is used only for read-only inspection commands in
 `docs/evidence.md`; all backup, verification, restore and reporting operations
@@ -277,35 +277,16 @@ node scripts/check-freshness.mjs --max-age-hours 1 \
   --now 2030-01-01T00:00:00Z --no-alert || echo "expected exit code 1"
 ```
 
-### 7. Optional CloudWatch alarm
-
-The alarm is disabled by default. To exercise it locally:
-
-```bash
-terraform -chdir=infra apply -auto-approve -var="enable_cloudwatch_alarm=true"
-export CLOUDWATCH_NAMESPACE="$(terraform -chdir=infra output -raw cloudwatch_metric_namespace)"
-
-node scripts/backup.mjs --simulate-failure || true
-```
-
-`backup.mjs` publishes the custom `BackupFailures` metric when
-`CLOUDWATCH_NAMESPACE` is set. LocalStack creates the alarm, but alarm state
-transitions and actions are not reliable enough to be the demo's proof. The
-SQS message is the required local alert evidence. On real AWS the alarm sends
-to the same SNS topic.
-
-### 8. Clean up LocalStack
+### 7. Clean up LocalStack
 
 ```bash
 terraform -chdir=infra destroy -auto-approve
 sudo docker rm -f webies-localstack
 ```
 
-If you enabled the optional alarm, use
-`terraform -chdir=infra destroy -auto-approve -var="enable_cloudwatch_alarm=true"`
-so the destroy input matches the applied state. Confirm the bucket is gone with
-the `head-bucket` command in `docs/evidence.md`. The local report and manifest
-remain as historical evidence.
+Confirm the bucket is gone with the `head-bucket` command in
+`docs/evidence.md`. The local report and manifest remain as historical
+evidence.
 
 ## Real AWS: final evidence run
 
@@ -325,8 +306,7 @@ aws sts get-caller-identity
 terraform -chdir=infra init
 terraform -chdir=infra apply -auto-approve \
   -var="use_localstack=false" \
-  -var="alert_email=you@example.com" \
-  -var="enable_cloudwatch_alarm=false"
+  -var="alert_email=you@example.com"
 
 export BUCKET_NAME="$(terraform -chdir=infra output -raw bucket_name)"
 export BACKUP_ALERTS_TOPIC_ARN="$(terraform -chdir=infra output -raw sns_topic_arn)"
@@ -344,23 +324,18 @@ node scripts/poll-alerts.mjs --queue-url "$ALERT_QUEUE_URL" --wait 20 --delete
 ```
 
 To test the failure path, run `node scripts/backup.mjs --simulate-failure`,
-poll the queue, then run a clean backup. To enable the optional alarm, re-apply
-with `-var="enable_cloudwatch_alarm=true"`, export `CLOUDWATCH_NAMESPACE` from
-the output, and confirm the alarm in CloudWatch. Real email delivery and alarm
-state transitions are the two items that cannot be proven locally.
+poll the queue, then run a clean backup. Real email delivery is the item that
+cannot be proven locally.
 
 ### Real AWS cleanup
 
 ```bash
 terraform -chdir=infra destroy -auto-approve \
   -var="use_localstack=false" \
-  -var="alert_email=you@example.com" \
-  -var="enable_cloudwatch_alarm=false"
+  -var="alert_email=you@example.com"
 ```
 
-Use the same `-var` values you applied with. If you enabled the optional
-alarm for the real-AWS run, add `-var="enable_cloudwatch_alarm=true"` to the
-destroy command.
+Use the same `-var` values you applied with.
 
 `force_destroy = true` lets Terraform delete every object version. That is
 convenient for the demo and dangerous for real backups; set it to `false` for
@@ -399,7 +374,7 @@ access key, secret key or license token.
 | 4. Backup automation | `scripts/backup.mjs`, manifest schema | Backup output + manifest |
 | 5. Backup verification | `scripts/verify.mjs` | PASS summary and corruption simulation |
 | 6. Recovery simulation | `scripts/restore.mjs` | Restore PASS with matching SHA-256 |
-| 7. Monitoring and alerts | SNS topic, SQS subscriber, optional alarm, failure events, `scripts/check-freshness.mjs`, `scripts/poll-alerts.mjs` | SQS alert JSON plus freshness PASS/stale check |
+| 7. Monitoring and alerts | SNS topic, SQS subscriber, failure events, `scripts/check-freshness.mjs`, `scripts/poll-alerts.mjs` | SQS alert JSON plus freshness PASS/stale check |
 | 8. Disaster recovery planning | `docs/disaster-recovery.md` | RTO/RPO and residual risks |
 | 9. Visualization and reporting | `scripts/report.mjs`, `reports/backup-status.md` | Report summary screenshot |
 | 10. AWS integration bonus | Documented only in `docs/architecture.md` and `docs/limitations.md` | Written design, no implementation claim |
@@ -411,9 +386,7 @@ access key, secret key or license token.
 - Sample data is measured in kilobytes. The whole LocalStack demo costs
   nothing beyond the existing LocalStack Pro license.
 - On real AWS, expect pennies for S3 requests and free-tier SNS/SQS usage.
-  The optional CloudWatch alarm adds roughly USD 0.10 per alarm-month and the
-  custom metric roughly USD 0.30 per metric-month. The demo stays comfortably
-  under USD 1 if destroyed at the end.
+  The demo stays comfortably under USD 1 if destroyed at the end.
 - `force_destroy = true` is demo-only.
 - The TLS-only bucket policy is enforced on real AWS. LocalStack serves HTTP
   on localhost and may not evaluate `aws:SecureTransport`; see
@@ -433,7 +406,7 @@ The checks below passed in this workspace:
 | --- | --- |
 | `terraform -chdir=infra fmt -check` | Pass |
 | `terraform -chdir=infra init` / `validate` | Pass |
-| `terraform -chdir=infra apply` | Pass; 14 resources with the default alarm disabled |
+| `terraform -chdir=infra apply` | Pass; 14 resources with no email subscription |
 | Bucket settings read back from S3 | Versioning `Enabled`; SSE `AES256`; all four public-access flags `true`; `BucketOwnerEnforced`; lifecycle noncurrent 7 days; TLS-only policy present |
 | Backup run 1 | 5/5 files uploaded, SHA-256 recorded |
 | Backup run 2 with changed `service-config.yaml` | 5/5 uploaded; the `latest/` key gained a second version |
@@ -443,11 +416,10 @@ The checks below passed in this workspace:
 | Verification of the failed run | Exited 1 with 4/5 files and 8/10 objects; published `backup.verification_failed`; SQS received the second alert |
 | Missed-backup freshness check | Fresh manifest passed; a forced future clock with a 1-hour limit exited 1 and sent one `backup.missed` SNS publish with the expected payload in a local protocol mock. The SQS delivery path is shared with the proven failure alerts |
 | Corrupt-manifest test | A temporary manifest with a zeroed expected hash was rejected with `sha256 mismatch`; the real manifest was not changed |
-| Optional CloudWatch alarm | Alarm resource and `BackupFailures` metric were created; LocalStack reported the alarm state as `OK` rather than evaluating the metric, so the SQS alert is the local proof |
 | Report generation | `reports/backup-status.md` rendered 4 jobs (3 success, 1 failed), last verification PASS, last recovery PASS and live S3 version counts; the sample manifest also renders offline |
 | `npm run check` | All `.mjs` files passed `node --check` |
 | ASCII scan | No non-ASCII characters in source or documentation |
-| `terraform destroy` | Passed for both the 15-resource alarm-enabled stack and the 14-resource default stack |
+| `terraform destroy` | Passed for the 14-resource stack |
 
 The validation stack and LocalStack container are destroyed after capture, so
 the bucket name and version IDs in `manifests/manifest.json` are historical
@@ -455,9 +427,9 @@ evidence rather than a live endpoint. Re-run the commands in this README to
 reproduce them.
 
 The following still require the real-AWS evidence run: SNS email confirmation
-and delivery, CloudWatch alarm state transitions and actions, IAM enforcement,
-actual lifecycle expiration after 7 days, and HTTPS-only enforcement. The
-LocalStack setup cannot prove those items; see `docs/limitations.md`.
+and delivery, IAM enforcement, actual lifecycle expiration after 7 days, and
+HTTPS-only enforcement. The LocalStack setup cannot prove those items; see
+`docs/limitations.md`.
 
 ## Troubleshooting
 

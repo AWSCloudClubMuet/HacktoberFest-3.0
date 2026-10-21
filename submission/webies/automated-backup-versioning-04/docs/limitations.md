@@ -18,22 +18,10 @@ Evidence that is valid locally: the SNS publish call succeeds and the SQS
 queue contains the expected JSON. Evidence that is not valid locally: an inbox
 screenshot or a claim that email works.
 
-### CloudWatch alarm evaluation
-
-LocalStack can store a metric alarm, and `backup.mjs` can publish the custom
-`BackupFailures` metric. LocalStack's alarm evaluation, state transitions and
-alarm actions are not reliable enough to be the demo's proof, so the alarm is
-disabled by default. The demo proves the core SNS -> SQS path instead.
-
-On real AWS, create the alarm with
-`-var="enable_cloudwatch_alarm=true"`, export `CLOUDWATCH_NAMESPACE`, trigger a
-failure, and capture the alarm state change and notification. Do not claim the
-alarm fired locally unless the LocalStack console actually shows it.
-
 ### IAM enforcement
 
 LocalStack commonly accepts the conventional `test`/`test` credentials and may
-not enforce the least-privilege IAM policy for S3, SNS and CloudWatch calls.
+not enforce the least-privilege IAM policy for S3 and SNS calls.
 The Terraform policy is still created and can be inspected, but a successful
 local upload does not prove that the role is sufficient or that an
 over-permissioned role would fail.
@@ -78,8 +66,6 @@ not client-side encryption and not a KMS customer-managed key.
 - SNS/SQS quotas, retry behavior and visibility-timeout edge cases differ.
 - SQS queue URLs may use a LocalStack host-style name; the poller rewrites
   the host to the configured edge endpoint.
-- CloudWatch metric retention and alarm action delivery are not production
-  equivalents.
 - IAM policy simulation and AWS Organizations controls are out of scope.
 - S3 event notifications, Object Lock, MFA delete and replication are not
   exercised.
@@ -108,7 +94,6 @@ The following items require real AWS and are intentionally left for the final
 manual evidence run:
 
 - Real SNS email delivery and subscription confirmation.
-- Real CloudWatch alarm state transitions and alarm action delivery.
 - Actual IAM enforcement of the least-privilege policy.
 - Real lifecycle expiration after the retention period.
 - TLS-only enforcement against an HTTP client.

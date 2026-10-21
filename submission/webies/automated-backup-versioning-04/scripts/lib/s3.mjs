@@ -233,10 +233,6 @@ export function getTopicArn(args = {}) {
   );
 }
 
-export function getMetricNamespace(args = {}) {
-  return args["metric-namespace"] || process.env.CLOUDWATCH_NAMESPACE || null;
-}
-
 export function getRetentionDays() {
   const parsed = Number.parseInt(process.env.NONCURRENT_RETENTION_DAYS || "7", 10);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : 7;

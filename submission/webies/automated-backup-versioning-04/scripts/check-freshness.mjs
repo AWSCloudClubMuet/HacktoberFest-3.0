@@ -11,7 +11,6 @@
 import {
   DEFAULT_MANIFEST,
   formatIso,
-  getMetricNamespace,
   getTopicArn,
   readManifest,
   resolveInputPath,
@@ -30,7 +29,6 @@ Options:
   --max-age-hours N      Maximum allowed age in hours (default: 26)
   --now ISO              Override the current time for a deterministic test
   --topic-arn ARN        SNS topic override (default: BACKUP_ALERTS_TOPIC_ARN)
-  --metric-namespace NS  CloudWatch namespace override (default: CLOUDWATCH_NAMESPACE)
   --no-alert             Do not publish an SNS alert
   --help                 Show this help
 
@@ -61,7 +59,6 @@ async function main() {
     "max-age-hours",
     "now",
     "topic-arn",
-    "metric-namespace",
     "no-alert",
     "help",
   ]);
@@ -141,8 +138,6 @@ async function main() {
         ageHours: ageHours === null ? null : Number(ageHours.toFixed(2)),
         manifest: toDisplayPath(manifestPath),
       },
-      metricNamespace: getMetricNamespace(args),
-      failureCount: 1,
     });
     printNotificationResult(notification);
   }

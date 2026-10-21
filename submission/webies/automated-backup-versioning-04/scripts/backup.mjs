@@ -24,7 +24,6 @@ import {
   friendlyAwsError,
   getBucketName,
   getEndpoint,
-  getMetricNamespace,
   getTopicArn,
   guessContentType,
   latestKeyFor,
@@ -50,12 +49,11 @@ Options:
   --manifest FILE        Manifest path (default: manifests/manifest.json)
   --simulate-failure     Skip the first upload to demonstrate the alert path
   --topic-arn ARN        SNS topic override (default: BACKUP_ALERTS_TOPIC_ARN)
-  --metric-namespace NS  CloudWatch namespace override (default: CLOUDWATCH_NAMESPACE)
   --help                 Show this help
 
 Environment:
   AWS_REGION, AWS_ENDPOINT_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-  BUCKET_NAME, BACKUP_ALERTS_TOPIC_ARN, CLOUDWATCH_NAMESPACE
+  BUCKET_NAME, BACKUP_ALERTS_TOPIC_ARN
 
 Exit codes:
   0  every file uploaded successfully
@@ -72,7 +70,6 @@ async function main() {
     "manifest",
     "simulate-failure",
     "topic-arn",
-    "metric-namespace",
     "help",
   ]);
 
@@ -248,8 +245,6 @@ async function main() {
         manifest: toDisplayPath(manifestPath),
         failures: failedFiles,
       },
-      metricNamespace: getMetricNamespace(args),
-      failureCount: run.counts.failed,
     });
     printNotificationResult(notification);
 

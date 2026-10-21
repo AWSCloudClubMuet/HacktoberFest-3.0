@@ -43,7 +43,7 @@ terraform -chdir=infra state list
 
 Capture:
 
-- `Apply complete` with 14 resources (or 15 when the optional alarm is on).
+- `Apply complete` with 14 resources (15 when an email subscription is configured).
 - Outputs for `bucket_name`, `sns_topic_arn`, `iam_role_arn`, `region`,
   `sqs_queue_url`, `noncurrent_version_retention_days`.
 - The state list showing the bucket, versioning, lifecycle, encryption,
@@ -224,19 +224,6 @@ Run `verify.mjs` on the failed run to show a second event,
 LocalStack does not deliver real email. On real AWS, add
 `-var="alert_email=you@example.com"`, confirm the subscription email, and
 capture the received message plus the SNS subscription confirmation.
-
-Optional alarm evidence:
-
-```bash
-terraform -chdir=infra apply -auto-approve -var="enable_cloudwatch_alarm=true"
-export CLOUDWATCH_NAMESPACE="$(terraform -chdir=infra output -raw cloudwatch_metric_namespace)"
-node scripts/backup.mjs --simulate-failure || true
-```
-
-Capture the alarm resource in Terraform and the `BackupFailures` metric
-publish. Do not claim that LocalStack evaluated the alarm state or delivered
-the alarm action unless the console actually shows it. Real AWS alarm state
-transition and email delivery are the final external checks.
 
 ### Missed or stale backup check
 

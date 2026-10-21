@@ -15,11 +15,10 @@ provider "aws" {
   # A single boolean switches the provider between LocalStack and real AWS.
   # Null endpoint values tell the provider to use the standard AWS endpoints.
   endpoints {
-    s3         = var.use_localstack ? var.localstack_endpoint : null
-    sns        = var.use_localstack ? var.localstack_endpoint : null
-    sqs        = var.use_localstack ? var.localstack_endpoint : null
-    iam        = var.use_localstack ? var.localstack_endpoint : null
-    sts        = var.use_localstack ? var.localstack_endpoint : null
-    cloudwatch = var.use_localstack ? var.localstack_endpoint : null
+    s3  = var.use_localstack ? var.localstack_endpoint : null
+    sns = var.use_localstack ? var.localstack_endpoint : null
+    sqs = var.use_localstack ? var.localstack_endpoint : null
+    iam = var.use_localstack ? var.localstack_endpoint : null
+    sts = var.use_localstack ? var.localstack_endpoint : null
   }
 }

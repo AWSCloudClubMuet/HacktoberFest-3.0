@@ -11,7 +11,7 @@ variable "use_localstack" {
 }
 
 variable "localstack_endpoint" {
-  description = "LocalStack edge endpoint for S3, SNS, SQS, IAM, STS and CloudWatch."
+  description = "LocalStack edge endpoint for S3, SNS, SQS, IAM and STS."
   type        = string
   default     = "http://localhost:4566"
 
@@ -68,23 +68,6 @@ variable "alert_email" {
   validation {
     condition     = var.alert_email == "" || can(regex("^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$", var.alert_email))
     error_message = "alert_email must be empty or look like name@example.com."
-  }
-}
-
-variable "enable_cloudwatch_alarm" {
-  description = "Create the optional CloudWatch alarm on the custom BackupFailures metric."
-  type        = bool
-  default     = false
-}
-
-variable "cloudwatch_metric_namespace" {
-  description = "Namespace used by backup.mjs for the optional failure metric."
-  type        = string
-  default     = "WebiesBackup"
-
-  validation {
-    condition     = can(regex("^[A-Za-z0-9._-]{1,255}$", var.cloudwatch_metric_namespace))
-    error_message = "cloudwatch_metric_namespace contains invalid characters."
   }
 }
 

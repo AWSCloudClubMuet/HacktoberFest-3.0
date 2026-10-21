@@ -9,7 +9,7 @@
 | Recovery point objective (RPO) - scheduled target | 24 hours | Daily backup at 02:00 UTC. A failure at 01:59 UTC can lose almost 24 hours of changes. |
 | Recovery point objective (RPO) - demo actual | Last successful backup | The hackathon demo has no deployed scheduler, so the RPO is the time of the last manual successful run. |
 | Noncurrent version recovery window | 7 days | Lifecycle expiry is set to 7 days for the demo. After that, noncurrent versions are gone. |
-| Alert detection | 5 minutes after a failed run / next queue poll | SNS publishes immediately; the optional CloudWatch alarm evaluates a 5-minute period. |
+| Alert detection | 5 minutes after a failed run / next queue poll | SNS publishes immediately and the SQS queue makes the alert inspectable. |
 
 These targets are commitments for the demo scenario, not a production SLA.
 They must be re-approved if the dataset, schedule, region or retention window
@@ -214,7 +214,7 @@ Record the bucket name and run ID in the incident notes.
 | Accidental `terraform destroy` | Bucket and all versions removed | Demo uses `force_destroy = true` intentionally | Demo-only setting. Real buckets need `false`, deletion protection and approvals. |
 | Source data changed during a run | Mixed versions in one run | Files are read one at a time and hashed before upload | Take a consistent snapshot or quiesce writers for production. |
 | Missed schedule | No backup, no failure event | Manual run, report and `check-freshness.mjs` | Invoke the check from a scheduler. Add an external dead-man's-switch if the scheduler itself can fail silently. |
-| LocalStack fidelity | Local tests pass but AWS behavior differs | Real-AWS checklist and explicit limitations | Run the final evidence in real AWS; do not claim email, IAM enforcement or alarm transitions from LocalStack. |
+| LocalStack fidelity | Local tests pass but AWS behavior differs | Real-AWS checklist and explicit limitations | Run the final evidence in real AWS; do not claim email or IAM enforcement from LocalStack. |
 | SSE-S3 only | Account-level readers can decrypt | Bucket policy, IAM, encryption at rest | A customer-managed KMS key with tighter key policy is a production option; deliberately not used to stay under budget. |
 | No MFA delete | A compromised root/admin can delete versions | IAM scope and approvals | Enable MFA delete or Object Lock for high-value buckets. |
 
