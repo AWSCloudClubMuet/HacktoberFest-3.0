@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "dataset_rows": 10000,
+  "features": 40,
+  "recorded_runs": 30,
+  "epochs_per_run": 50,
+  "split_overlap": false,
+  "dataset_checksum_matches": true,
+  "summaries_recalculated": true,
+  "replay": [
+    {
+      "variant": "faulty_baseline",
+      "seed": 7,
+      "test_accuracy": 0.48,
+      "matched": true
+    },
+    {
+      "variant": "all_fixed",
+      "seed": 7,
+      "test_accuracy": 0.8965,
+      "matched": true
+    }
+  ]
+}

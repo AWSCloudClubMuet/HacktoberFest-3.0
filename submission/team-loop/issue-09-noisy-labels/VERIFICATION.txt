@@ -1,0 +1,23 @@
+test_invalid_probabilities (test_calculations.AccuracyTests.test_invalid_probabilities) ... ok
+test_issue_answer_exact_rational (test_calculations.AccuracyTests.test_issue_answer_exact_rational) ... ok
+test_round_trip (test_calculations.AccuracyTests.test_round_trip) ... ok
+test_unidentifiable_or_impossible (test_calculations.AccuracyTests.test_unidentifiable_or_impossible) ... ok
+test_uniform_noise_ceiling (test_calculations.AccuracyTests.test_uniform_noise_ceiling) ... ok
+test_equal_and_degenerate_rates (test_calculations.ComparisonTests.test_equal_and_degenerate_rates) ... ok
+test_fisher_against_exhaustive_assignments (test_calculations.ComparisonTests.test_fisher_against_exhaustive_assignments) ... ok
+test_fisher_known_small_table (test_calculations.ComparisonTests.test_fisher_known_small_table) ... ok
+test_tier_swap_invariance (test_calculations.ComparisonTests.test_tier_swap_invariance) ... ok
+test_z_against_independent_chi_square_statistic (test_calculations.ComparisonTests.test_z_against_independent_chi_square_statistic) ... ok
+test_audit_interval (test_calculations.IntervalTests.test_audit_interval) ... ok
+test_invalid_counts_and_confidence (test_calculations.IntervalTests.test_invalid_counts_and_confidence) ... ok
+test_wilson_known_reference (test_calculations.IntervalTests.test_wilson_known_reference) ... ok
+test_wilson_symmetry_and_bounds (test_calculations.IntervalTests.test_wilson_symmetry_and_bounds) ... ok
+test_scope_and_weighting (test_calculations.ScenarioTests.test_scope_and_weighting) ... ok
+test_source_totals_and_review_budget (test_calculations.ScenarioTests.test_source_totals_and_review_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.004s
+
+OK
+PASS: recorded calculations match freshly computed results.
+Scope: aggregate-data analysis only; no training or review experiment was run.

@@ -1,0 +1,41 @@
+{
+  "synthetic": true,
+  "rows": 10000,
+  "features": 40,
+  "classes": 2,
+  "generation_seed": 2026,
+  "split_seed": 773,
+  "dataset_array_sha256": "5c5fb4ecfdc3071613fc869137fdaa3f63bd5dd6da7313a18fd598077426ff8e",
+  "formula_before_feature_scaling": "2*z0-1.5*z1+0.9*z2+0.8*z3*z4+0.5*sin(z5)>0.3",
+  "independent_label_flip_probability": 0.02,
+  "feature_transform": "40 geometric scales from 0.01 to 100 plus seeded random offsets",
+  "splits": {
+    "train": {
+      "rows": 6000,
+      "positive_rate": 0.45816666666666667
+    },
+    "validation": {
+      "rows": 2000,
+      "positive_rate": 0.4765
+    },
+    "test": {
+      "rows": 2000,
+      "positive_rate": 0.463
+    }
+  },
+  "baseline_scaler_fit": "train+validation only; never test",
+  "corrected_scaler_fit": "train only",
+  "architecture": "40 -> Linear(128) -> ReLU -> Dropout(0.5) -> BatchNorm -> Linear(2)",
+  "framework": "handwritten NumPy, not PyTorch",
+  "numpy": "2.4.6",
+  "optimizer": "Adam lr=0.001, beta1=0.9, beta2=0.999, eps=1e-8",
+  "initialization": "He normal w1; normal with std=1/sqrt(hidden) w2; fixed per training seed",
+  "schedule": "gamma=0.9 per batch if faulty; per epoch if fixed",
+  "seeds": [
+    7,
+    19,
+    42
+  ],
+  "epochs": 50,
+  "checkpoint_rule": "final epoch; no tuning or test-based selection"
+}

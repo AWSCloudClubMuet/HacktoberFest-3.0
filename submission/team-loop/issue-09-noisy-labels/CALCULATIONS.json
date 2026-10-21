@@ -1,0 +1,70 @@
+{
+  "billing_refund_share_of_disagreements": 0.43333333333333335,
+  "crowd_disagreement": {
+    "audited": 400,
+    "count": 60,
+    "projected_count_of_45000": 6750.0,
+    "rate": 0.15,
+    "wilson_95": [
+      0.11834499530337546,
+      0.18831361073063213
+    ]
+  },
+  "naive_symmetric_flip_model": {
+    "classes": 6,
+    "flip_rate": 0.15,
+    "maximum_noisy_accuracy_at_perfect_true_accuracy": 0.85,
+    "observed_accuracy": 0.82,
+    "true_accuracy": 0.9634146341463414
+  },
+  "proposed_review_allocation": {
+    "expert_validation": 300,
+    "locked_expert_test": 500,
+    "random_training_audit": 400,
+    "targeted_training_diversity": 100,
+    "targeted_training_tier_a": 200,
+    "targeted_training_tier_b": 500
+  },
+  "review_total": 2000,
+  "scope": "Supplied aggregate audit; no model training or ticket-level experiment",
+  "sensitivity": {
+    "poststratified_crowd_rate": 0.15084175084175083,
+    "whole_dataset_formula": "0.9 * crowd_noise + 0.1 * expert_noise",
+    "whole_dataset_rate_if_expert_noise_zero": 0.135
+  },
+  "technical_account_share_of_disagreements": 0.25,
+  "tier_a": {
+    "rate": 0.06666666666666667,
+    "wilson_95": [
+      0.0385440749357026,
+      0.11289868992969535
+    ]
+  },
+  "tier_b": {
+    "rate": 0.21818181818181817,
+    "wilson_95": [
+      0.16869719124939697,
+      0.27733929969695215
+    ]
+  },
+  "tier_comparison": {
+    "difference_b_minus_a": 0.1515151515151515,
+    "fisher_two_sided_p": 1.8300686282168922e-05,
+    "null_standard_error": 0.035887028128263665,
+    "pooled_rate": 0.15,
+    "risk_ratio_b_over_a": 3.2727272727272725,
+    "two_sided_p": 2.4214055405277224e-05,
+    "z_a_minus_b": -4.222003309207491
+  },
+  "transition_counts": {
+    "Account Access -> Technical": 6,
+    "Billing -> Other": 3,
+    "Billing -> Refund": 14,
+    "Other -> Shipping": 3,
+    "Refund -> Billing": 12,
+    "Shipping -> Other": 8,
+    "Technical -> Account Access": 9,
+    "Technical -> Other": 5
+  },
+  "transition_total": 60
+}
