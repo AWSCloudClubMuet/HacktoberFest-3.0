@@ -575,11 +575,22 @@ app.get('/reviews', (req, res) => {
 });
 
 // Start Express Server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 Campus Gig & SkillSwap Portal Server running on http://localhost:${PORT}`);
   console.log(`📡 Endpoints: /health, /debug/counts, /gigs, /users, /applications, /reviews`);
   console.log(`=======================================================`);
+});
+
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`\n❌ Error: Port ${PORT} is already in use by another process.`);
+    console.error(`💡 Tip: Run the following command in PowerShell to free port ${PORT}:`);
+    console.error(`   Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
+    process.exit(1);
+  } else {
+    console.error('Server error:', e);
+  }
 });
 
 export default app;
