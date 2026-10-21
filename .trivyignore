@@ -1,0 +1,7 @@
+# Documented exceptions - node:24-alpine base image internals only (2026-10-21).
+# None of these are dependencies of the app (the npm audit job is clean);
+# they ship inside node/npm in the base image and clear on the next base update.
+# review-by: 2027-01-21 - remove these lines once node:24-alpine ships the fixes.
+CVE-2026-102276
+CVE-2026-102278
+CVE-2026-19534
