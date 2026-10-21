@@ -13,6 +13,12 @@
  * green, strained 30-59% amber, critical <30% red, using the same
  * sum(fulfilled)/sum(required) rule as the dashboard's Overall Fulfilment KPI.
  * A believable stylization, not survey-accurate.
+ *  - Hover or focus a marker (or a row in the side list) for a tooltip with
+ *    camp name, families x/y, fulfilment % and status; hover highlights sync
+ *    between map and list; click/Enter goes to the camps registry. Everything
+ *    is read-only for every role.
+ *  - Works unchanged in demo mode: it only calls API.list, which falls back
+ *    to the bundled db.json when the API is asleep.
  */
 (function () {
   if (!document.getElementById('opsmap-module-css')) {
@@ -47,7 +53,7 @@
       '  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease),',
       '              transform var(--dur-2) cubic-bezier(0.19, 1, 0.22, 1);',
       '}',
-      '.ops-row:hover, .ops-row:focus-visible {',
+      '.ops-row:hover, .ops-row:focus-visible, .ops-row.hot {',
       '  border-color: var(--brand-strong); box-shadow: 0 0 0 3px rgba(16, 185, 129, .16);',
       '  transform: translateX(3px); outline: none;',
       '}',
@@ -58,7 +64,9 @@
       '.ops-row-pct { margin-left: auto; flex: none; }',
       '.ops-marker .core, .ops-marker .ring { transform-box: fill-box; transform-origin: center;',
       '  transition: transform var(--dur-2) var(--ease); }',
-      '.ops-marker:hover .core { transform: scale(1.22); }',
+      '.ops-marker:hover .core, .ops-marker:focus-visible .core, .ops-marker.m-hot .core { transform: scale(1.22); }',
+      '.ops-marker:hover .ring, .ops-marker:focus-visible .ring, .ops-marker.m-hot .ring { transform: scale(1.3); }',
+      '.ops-marker:focus-visible .ring { stroke: #d1fae5; stroke-width: 2; }',
       '.ops-marker text { font-family: var(--font-body, sans-serif); font-size: 11.5px; font-weight: 600;',
       '  fill: #d1fae5; paint-order: stroke; stroke: rgba(5, 42, 31, .85); stroke-width: 3px; pointer-events: none; }',
       '.ops-marker.tone-bad .core { animation: ops-pulse 2.2s var(--ease) infinite; }',
@@ -70,6 +78,19 @@
       '.ops-explainer { margin: var(--sp-3) 0 0; color: var(--muted); font-size: var(--fs-sm); }',
       '.ops-note { margin-left: auto; font-size: var(--fs-2xs); color: var(--muted); font-variant-numeric: tabular-nums; }',
       '@media (max-width: 860px) { .ops-note { margin-left: 0; width: 100%; } }',
+      '.ops-tip {',
+      '  position: absolute; z-index: 6; min-width: 175px; pointer-events: none;',
+      '  background: #052a1f; color: #d1fae5; border: 1px solid rgba(52, 211, 153, .4);',
+      '  border-radius: var(--r-sm); padding: 9px 12px; box-shadow: 0 14px 28px -12px rgba(0, 0, 0, .55);',
+      '  opacity: 0; transform: translate(-50%, calc(-100% - 12px)) translateY(4px);',
+      '  transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) cubic-bezier(0.19, 1, 0.22, 1);',
+      '}',
+      '.ops-tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 12px)) translateY(0); }',
+      '.ops-tip.below { transform: translate(-50%, 16px); }',
+      '.ops-tip.show.below { transform: translate(-50%, 16px); }',
+      '.ops-tip-name { font-size: var(--fs-sm); font-weight: 700; margin-bottom: 3px; padding-right: 8px; }',
+      '.ops-tip-row { font-size: var(--fs-2xs); color: #a7f3d0; display: flex; justify-content: space-between; gap: 14px; }',
+      '.ops-tip .badge { margin-top: 6px; }',
     ].join('\n');
     document.head.append(style);
   }
@@ -182,6 +203,18 @@ App.registerModule({
       };
     }).sort((a, b) => (a.health.pct ?? 101) - (b.health.pct ?? 101)); /* worst first in the list */
 
+    const root = UI.h('div');
+
+    /* Shared hover-sync: highlight the matching marker AND list row. */
+    let mapSvg = null, tip = null;
+    function setHot(campId, on) {
+      const id = String(campId);
+      if (mapSvg) mapSvg.querySelectorAll('.ops-marker').forEach(g =>
+        g.classList.toggle('m-hot', on && g.dataset.camp === id));
+      root.querySelectorAll('.ops-row').forEach(b =>
+        b.classList.toggle('hot', on && b.dataset.camp === id));
+    }
+
     const outlineD = this.smoothPath(this.OUTLINE, true);
     const riverD = this.smoothPath(this.RIVER, false, 0.22);
 
@@ -209,8 +242,18 @@ App.registerModule({
     const markers = this.S('g');
     for (const row of rows) {
       const { camp, health, x, y, r, anchor, closed } = row;
-      markers.append(this.S('g', {
+      const go = () => { location.hash = '#/camps'; };
+      const g = this.S('g', {
         class: 'ops-marker tone-' + health.tone, 'data-camp': String(camp.id),
+        tabindex: '0', role: 'link',
+        'aria-label': `${camp.name}, ${camp.district}: ${camp.current_families} of ${camp.capacity} families, ` +
+          (health.pct == null ? 'no open needs' : health.pct + '% fulfilled') + `, status ${camp.status}. Opens the camps page.`,
+        onclick: go,
+        onkeydown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } },
+        onpointerenter: () => { setHot(camp.id, true); showTip(row, g); },
+        onpointerleave: () => { setHot(camp.id, false); hideTip(); },
+        onfocus: () => { setHot(camp.id, true); showTip(row, g); },
+        onblur: () => { setHot(camp.id, false); hideTip(); },
       }, [
         this.S('circle', { class: 'hit', cx: x, cy: y, r: r + 10, fill: 'transparent' }),
         this.S('circle', {
@@ -226,25 +269,62 @@ App.registerModule({
           x: anchor === 'end' ? x - r - 7 : x + r + 7, y: y + 4,
           'text-anchor': anchor,
         }, camp.district),
-      ]));
+      ]);
+      markers.append(g);
     }
 
-    const mapSvg = this.S('svg', {
+    mapSvg = this.S('svg', {
       viewBox: '0 0 600 520', role: 'img',
       'aria-label': 'Stylized map of Sindh province with one marker per relief camp, sized by families sheltered and coloured by fulfilment health.',
     }, [clip, shape, grid, this.S('path', { class: 'ops-river', d: riverD, 'aria-hidden': 'true' }), markers]);
 
+    /* ---- tooltip (lives over the map panel) ---- */
+    tip = UI.h('div', { class: 'ops-tip', 'aria-hidden': 'true' }, [
+      UI.h('div', { class: 'ops-tip-name' }),
+      UI.h('div', { class: 'ops-tip-row ops-tip-fam' }),
+      UI.h('div', { class: 'ops-tip-row ops-tip-ful' }),
+      UI.h('div', { class: 'ops-tip-badge' }),
+    ]);
+    function showTip(row, g) {
+      const wrap = g.closest('.ops-map-panel');
+      const wr = wrap.getBoundingClientRect();
+      const mr = g.querySelector('.core').getBoundingClientRect();
+      tip.querySelector('.ops-tip-name').textContent = row.camp.name;
+      tip.querySelector('.ops-tip-fam').innerHTML = '';
+      tip.querySelector('.ops-tip-fam').append('Families', UI.h('b', {}, ` ${row.camp.current_families} / ${row.camp.capacity}`));
+      tip.querySelector('.ops-tip-ful').innerHTML = '';
+      tip.querySelector('.ops-tip-ful').append('Fulfilment', UI.h('b', {}, ` ${row.health.pct == null ? '—' : row.health.pct + '%'}`));
+      tip.querySelector('.ops-tip-badge').innerHTML = '';
+      tip.querySelector('.ops-tip-badge').append(
+        UI.statusBadge(row.camp.status),
+        ' ', UI.badge(row.health.label, row.health.tone));
+      const cx = mr.left - wr.left + mr.width / 2;
+      const cy = mr.top - wr.top;
+      tip.classList.toggle('below', cy < 120); /* near the top edge: flip under the marker */
+      tip.style.left = Math.max(100, Math.min(cx, wr.width - 100)) + 'px';
+      tip.style.top = cy + 'px';
+      tip.classList.add('show');
+    }
+    function hideTip() { tip.classList.remove('show'); }
+
     const mapPanel = UI.h('div', { class: 'ops-map-panel reveal' }, [
       UI.h('span', { class: 'ops-plate' }, 'Sindh · Flood Response 2026'),
-      compass, mapSvg,
+      compass, mapSvg, tip,
     ]);
 
-    /* ---- side list (mirrors the markers; helps on small screens) ---- */
+    /* ---- side list (mirrors the markers; accessible + small screens) ---- */
     const listBox = UI.h('div', { class: 'ops-side reveal', style: '--d:110ms' }, [
       UI.h('h3', { class: 'ops-side-title' }, 'All camps, worst fulfilment first'),
-      ...rows.map(row => UI.h('button', {
-        class: 'ops-row', type: 'button', 'data-camp': String(row.camp.id),
-      }, [
+      ...rows.map(row => {
+        const open = () => { location.hash = '#/camps'; };
+        return UI.h('button', {
+          class: 'ops-row', type: 'button', 'data-camp': String(row.camp.id),
+          onclick: open,
+          onpointerenter: () => setHot(row.camp.id, true),
+          onpointerleave: () => setHot(row.camp.id, false),
+          onfocus: () => setHot(row.camp.id, true),
+          onblur: () => setHot(row.camp.id, false),
+        }, [
         UI.h('span', { class: 'ops-dot', style: `background:${row.health.color}` }),
         UI.h('span', { class: 'ops-row-main' }, [
           UI.h('span', { class: 'ops-row-name' }, row.camp.name),
@@ -253,7 +333,8 @@ App.registerModule({
         ]),
         UI.h('span', { class: 'ops-row-pct' },
           UI.badge(row.health.pct == null ? 'stable' : row.health.pct + '%', row.health.tone)),
-      ])),
+        ]);
+      }),
     ]);
 
     /* ---- legend + one-line explainer (dashboard panel style) ---- */
