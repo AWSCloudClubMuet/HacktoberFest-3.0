@@ -70,7 +70,7 @@ function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
   )
 }
 
-type View = 'Discover' | 'My activity' | 'Profile'
+type View = 'Discover' | 'My activity' | 'Saved' | 'Profile'
 
 export default function Page() {
   const [view, setView] = useState<View>('Discover')
@@ -97,7 +97,6 @@ export default function Page() {
   const [minBudget, setMinBudget] = useState('')
   const [maxBudget, setMaxBudget] = useState('')
   const [mode, setMode] = useState('All gigs')
-  const [savedOnly, setSavedOnly] = useState(false)
   const [savedIds, setSavedIds] = useState<number[]>(() => {
     if (typeof window === 'undefined') return []
     try { return JSON.parse(window.localStorage.getItem('cg-saved') || '[]') } catch { return [] }
@@ -209,12 +208,32 @@ export default function Page() {
     setView('Profile')
   }
 
+  const renderGigCard = (gig: Gig) => (
+    <article className="gig-card" key={gig.id} onClick={() => setSelectedGigId(gig.id)}>
+                          <div className="gig-card-top">
+                            <span className="type-status">
+                              <span className={`type-label type-${gig.type.toLowerCase()}`}>{gig.type === 'Offering' ? 'Offering help' : 'Looking for help'}</span>
+                              {gig.display_status !== 'Open' && <StatusBadge status={gig.display_status} />}
+                            </span>
+                            <button className={`save-button ${savedIds.includes(gig.id) ? 'saved' : ''}`} aria-label="Save gig" onClick={(e) => { e.stopPropagation(); setSavedIds((ids) => ids.includes(gig.id) ? ids.filter((id) => id !== gig.id) : [...ids, gig.id]) }}><Heart /></button>
+                          </div>
+                          <h3>{gig.title}</h3>
+                          <p className="gig-description">{gig.description}</p>
+                          <p className="gig-meta-line">{gig.category} · {paymentText(gig)}{(gig.applications_count ?? 0) > 0 ? ` · ${gig.applications_count} applicant${gig.applications_count === 1 ? '' : 's'}` : ''}</p>
+                          <div className="gig-card-footer">
+                            <div className="person"><Avatar name={gig.owner_name} id={gig.user_id} size="sm" /><div><strong>{gig.owner_name}</strong><span>{gig.owner_major}</span></div></div>
+                            <span className="deadline"><Clock3 />{deadlineInfo(gig.deadline).label}</span>
+                          </div>
+                        </article>
+  )
+
   const myApplications = useMemo(() => applications.filter((a) => a.applicant_id === me?.id), [applications, me])
   const myGigs = useMemo(() => allGigs.filter((g) => g.user_id === me?.id), [allGigs, me])
   const appsForGig = useCallback((gigId: number) => applications.filter((a) => a.gig_id === gigId), [applications])
   const myAppFor = useCallback((gigId: number) => applications.find((a) => a.gig_id === gigId && a.applicant_id === me?.id), [applications, me])
   const myReviewFor = useCallback((gigId: number) => reviews.find((r) => r.gig_id === gigId && r.reviewer_id === me?.id), [reviews, me])
-  const visibleGigs = savedOnly ? discoverGigs.filter((g) => savedIds.includes(g.id)) : discoverGigs
+  const visibleGigs = discoverGigs
+  const savedGigs = useMemo(() => allGigs.filter((g) => savedIds.includes(g.id)), [allGigs, savedIds])
 
   const reviewableGigs = useMemo(
     () => allGigs.filter((g) => g.display_status === 'Completed' && (g.user_id === me?.id || g.accepted_applicant_id === me?.id) && !myReviewFor(g.id)),
@@ -347,11 +366,11 @@ export default function Page() {
         <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
         <nav className="main-nav" aria-label="Main navigation">
           <span className="nav-label">Workspace</span>
-          <button className={`nav-item ${view === 'Discover' && !savedOnly ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
+          <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => setView('Discover')}><Compass />Discover</button>
           <button className={`nav-item ${view === 'My activity' ? 'active' : ''}`} onClick={() => setView('My activity')}><LayoutDashboard />My activity{(myApplications.length + reviewableGigs.length) > 0 && <span className="nav-count">{myApplications.length + reviewableGigs.length}</span>}</button>
           <span className="nav-label nav-label-spaced">Your space</span>
           <button className="nav-item" onClick={() => { setActivityTab('my-gigs'); setView('My activity') }}><BriefcaseBusiness />My gigs{myGigs.length > 0 && <span className="nav-count">{myGigs.length}</span>}</button>
-          <button className={`nav-item ${savedOnly ? 'active' : ''}`} onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
+          <button className={`nav-item ${view === 'Saved' ? 'active' : ''}`} onClick={() => setView('Saved')}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
         </nav>
         <div className="sidebar-bottom">
           {me && (
@@ -379,8 +398,9 @@ export default function Page() {
         </header>
 
         <nav className="mobile-nav" aria-label="Mobile navigation">
-          <button className={view === 'Discover' ? 'active' : ''} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
+          <button className={view === 'Discover' ? 'active' : ''} onClick={() => setView('Discover')}><Compass />Discover</button>
           <button className={view === 'My activity' ? 'active' : ''} onClick={() => setView('My activity')}><LayoutDashboard />My activity</button>
+          <button className={view === 'Saved' ? 'active' : ''} onClick={() => setView('Saved')}><Heart />Saved</button>
           <button className={view === 'Profile' ? 'active' : ''} onClick={() => me && openProfile(me.id)}><Users />Profile</button>
         </nav>
 
@@ -401,7 +421,7 @@ export default function Page() {
 
 
               <div className="section-heading solo">
-                <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs'); setSavedOnly(false) }}>View all <ArrowRight /></button>
+                <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs') }}>View all <ArrowRight /></button>
               </div>
 
               <div className="filters">
@@ -433,30 +453,29 @@ export default function Page() {
                 <div className="empty-state"><Search /><h3>Loading gigs…</h3><p>Fetching the latest from the campus board.</p></div>
               ) : (
                 <div className="gig-grid">
-                  {visibleGigs.map((gig) => (
-                    <article className="gig-card" key={gig.id} onClick={() => setSelectedGigId(gig.id)}>
-                      <div className="gig-card-top">
-                        <span className="type-status">
-                          <span className={`type-label type-${gig.type.toLowerCase()}`}>{gig.type === 'Offering' ? 'Offering help' : 'Looking for help'}</span>
-                          {gig.display_status !== 'Open' && <StatusBadge status={gig.display_status} />}
-                        </span>
-                        <button className={`save-button ${savedIds.includes(gig.id) ? 'saved' : ''}`} aria-label="Save gig" onClick={(e) => { e.stopPropagation(); setSavedIds((ids) => ids.includes(gig.id) ? ids.filter((id) => id !== gig.id) : [...ids, gig.id]) }}><Heart /></button>
-                      </div>
-                      <h3>{gig.title}</h3>
-                      <p className="gig-description">{gig.description}</p>
-                      <p className="gig-meta-line">{gig.category} · {paymentText(gig)}{(gig.applications_count ?? 0) > 0 ? ` · ${gig.applications_count} applicant${gig.applications_count === 1 ? '' : 's'}` : ''}</p>
-                      <div className="gig-card-footer">
-                        <div className="person"><Avatar name={gig.owner_name} id={gig.user_id} size="sm" /><div><strong>{gig.owner_name}</strong><span>{gig.owner_major}</span></div></div>
-                        <span className="deadline"><Clock3 />{deadlineInfo(gig.deadline).label}</span>
-                      </div>
-                    </article>
-                  ))}
+                  {visibleGigs.map((gig) => renderGigCard(gig))}
                 </div>
               )}
-              {!loading && visibleGigs.length === 0 && (savedOnly
-                ? <div className="empty-state"><Heart /><h3>No saved gigs yet</h3><p>Tap the heart on any gig and it will be kept here.</p></div>
-                : <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>)}
+              {!loading && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
 
+            </>
+          )}
+
+          {view === 'Saved' && (
+            <>
+              <div className="section-heading view-heading">
+                <div><h2>Saved gigs</h2><p>Gigs you bookmarked with the heart. Only you can see this list.</p></div>
+                <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
+              </div>
+              {loading ? (
+                <div className="empty-state"><Search /><h3>Loading gigs…</h3><p>Fetching the latest from the campus board.</p></div>
+              ) : savedGigs.length === 0 ? (
+                <div className="empty-state"><Heart /><h3>No saved gigs yet</h3><p>Tap the heart on any gig and it will be kept here.</p></div>
+              ) : (
+                <div className="gig-grid">
+                  {savedGigs.map((gig) => renderGigCard(gig))}
+                </div>
+              )}
             </>
           )}
 
