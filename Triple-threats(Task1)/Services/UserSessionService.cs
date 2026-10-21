@@ -64,9 +64,22 @@ namespace CampusGigPortal.Services
                 .Include(u => u.ReviewsReceived)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            return user ?? await _context.Users.FirstAsync();
+            if (user != null)
+            {
+                return user;
+            }
+
+            var fallback = await _context.Users.FirstOrDefaultAsync();
+            return fallback ?? new User
+            {
+                Id = 1,
+                Name = "Guest Student",
+                Major = "Computer Science",
+                Semester = "Semester 1"
+            };
         }
 
+        // Implementation of GetAllUsersAsync
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await _context.Users.OrderBy(u => u.Name).ToListAsync();

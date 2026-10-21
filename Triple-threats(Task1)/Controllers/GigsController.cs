@@ -126,6 +126,46 @@ namespace CampusGigPortal.Controllers
             return View(new GigCreateViewModel { Deadline = DateTime.Today.AddDays(7) });
         }
 
+        //// POST: /Gigs/Create
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(GigCreateViewModel model)
+        //{
+        //    if (model.PaymentType == "Paid" && (!model.Budget.HasValue || model.Budget <= 0))
+        //    {
+        //        ModelState.AddModelError(nameof(model.Budget), "A valid budget amount is required for Paid gigs.");
+        //    }
+
+        //    if (model.Deadline <= DateTime.Today)
+        //    {
+        //        ModelState.AddModelError(nameof(model.Deadline), "Deadline must be a future date.");
+        //    }
+
+        //    if (!ModelState.IsValid) return View(model);
+
+        //    var currentUserId = _userSession.GetCurrentUserId();
+
+        //    var gig = new Gig
+        //    {
+        //        UserId = currentUserId,
+        //        Title = model.Title.Trim(),
+        //        Description = model.Description.Trim(),
+        //        Type = model.Type,
+        //        Category = model.Category,
+        //        PaymentType = model.PaymentType,
+        //        Budget = model.PaymentType == "Paid" ? model.Budget : null,
+        //        Deadline = model.Deadline,
+        //        Status = "Open",
+        //        CreatedAt = DateTime.Now
+        //    };
+
+        //    _context.Gigs.Add(gig);
+        //    await _context.SaveChangesAsync();
+
+        //    TempData["Success"] = "Your gig has been posted successfully!";
+        //    return RedirectToAction(nameof(Details), new { id = gig.Id });
+        //}
+
         // POST: /Gigs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -141,10 +181,42 @@ namespace CampusGigPortal.Controllers
                 ModelState.AddModelError(nameof(model.Deadline), "Deadline must be a future date.");
             }
 
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
+            // 1. Get or create a guaranteed valid User in DB to satisfy FK_Gigs_Users_UserId
             var currentUserId = _userSession.GetCurrentUserId();
+            var userExists = await _context.Users.AnyAsync(u => u.Id == currentUserId);
 
+            if (!userExists)
+            {
+                var existingAnyUser = await _context.Users.FirstOrDefaultAsync();
+                if (existingAnyUser != null)
+                {
+                    currentUserId = existingAnyUser.Id;
+                    _userSession.SetCurrentUserId(currentUserId);
+                }
+                else
+                {
+                    // If table has zero users, create user 1 on the fly
+                    var defaultUser = new User
+                    {
+                        Name = "Sarah Chen",
+                        Major = "Computer Science",
+                        Semester = "Semester 7",
+                        Bio = "Full-stack developer skilled in React, C# .NET, and Python.",
+                        SkillsRaw = "C#, .NET, React, TypeScript, SQL Server, Python"
+                    };
+                    _context.Users.Add(defaultUser);
+                    await _context.SaveChangesAsync();
+                    currentUserId = defaultUser.Id;
+                    _userSession.SetCurrentUserId(currentUserId);
+                }
+            }
+
+            // 2. Insert the gig
             var gig = new Gig
             {
                 UserId = currentUserId,
