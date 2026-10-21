@@ -14,10 +14,104 @@
  * Available helpers: API.list/create/update/remove('camps', ...), UI.table/form/
  * badge/statusBadge/confirm/toast, UI.pct(). Status values: Active | Full | Closed.
  */
+(function () {
+  /* Load my little extra stylesheet once (styles.css itself is the lead's). */
+  if (!document.getElementById('eshaal-module-css')) {
+    const link = document.createElement('link');
+    link.id = 'eshaal-module-css';
+    link.rel = 'stylesheet';
+    link.href = 'js/modules/eshaal.css';
+    document.head.append(link);
+  }
+})();
+
 App.registerModule({
   id: 'camps', title: 'Camps', icon: '⛺', order: 1,
   subtitle: 'Camp registry — search, status and capacity management',
   async render() {
-    return UI.h('p', { class: 'empty' }, 'Camps module — pending implementation by Eshaal.');
+    const camps = await API.list('camps');
+    const canEdit = App.canEdit();
+    const root = UI.h('div');
+
+    function openCampForm(camp) {
+      const fields = [
+        { name: 'name', label: 'Camp Name', placeholder: 'e.g. Jamshoro Relief Camp' },
+        { name: 'district', label: 'District', placeholder: 'e.g. Jamshoro' },
+        { name: 'capacity', label: 'Capacity (families)', type: 'number', min: 1, placeholder: '0' },
+        { name: 'current_families', label: 'Current Families', type: 'number', min: 0, placeholder: '0' },
+        { name: 'status', label: 'Status', options: ['Active', 'Full', 'Closed'] },
+      ];
+      const form = UI.form(fields);
+
+      /* UI.form doesn't take initial values, so prefill its inputs by field order. */
+      if (camp) {
+        const els = form.el.querySelectorAll('input, select');
+        fields.forEach((f, i) => { els[i].value = camp[f.name]; });
+      }
+
+      async function save() {
+        const v = form.getValues();
+        if (!v) return;
+        /* Full/Active is derived from capacity, Closed is a manual choice. */
+        v.status = v.status === 'Closed' ? 'Closed' : (v.current_families >= v.capacity ? 'Full' : 'Active');
+        try {
+          if (camp) await API.update('camps', camp.id, v);
+          else await API.create('camps', v);
+          m.close();
+          UI.toast(`Camp "${v.name}" ${camp ? 'updated' : 'added'}`, 'success');
+          App.render();
+        } catch (err) {
+          UI.toast('Could not save camp: ' + err.message, 'error');
+        }
+      }
+
+      const body = UI.h('div', {}, [
+        form.el,
+        UI.h('div', { class: 'form-actions' }, [
+          UI.h('button', { class: 'btn btn-primary', onclick: save }, camp ? 'Save Changes' : 'Add Camp'),
+          UI.h('button', { class: 'btn btn-ghost', onclick: () => m.close() }, 'Cancel'),
+        ]),
+      ]);
+      const m = UI.modal(camp ? 'Edit Camp' : 'New Camp', body);
+    }
+
+    async function removeCamp(camp) {
+      if (!UI.confirm(`Delete camp "${camp.name}"? This cannot be undone.`)) return;
+      try {
+        await API.remove('camps', camp.id);
+        UI.toast(`Camp "${camp.name}" deleted`, 'success');
+        App.render();
+      } catch (err) {
+        UI.toast('Could not delete camp: ' + err.message, 'error');
+      }
+    }
+
+    if (canEdit) {
+      root.append(UI.h('div', { class: 'toolbar' }, [
+        UI.h('button', { class: 'btn btn-primary', onclick: () => openCampForm(null) }, '+ Add Camp'),
+      ]));
+    }
+
+    const columns = [
+      { key: 'name', label: 'Camp Name' },
+      { key: 'district', label: 'District' },
+      { key: 'current_families', label: 'Families (current / capacity)', render: c => `${c.current_families} / ${c.capacity}` },
+      { key: 'status', label: 'Status', render: c => UI.statusBadge(c.status) },
+    ];
+    if (canEdit) {
+      columns.push({
+        label: 'Actions',
+        render: c => UI.h('div', { class: 'row-actions' }, [
+          UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openCampForm(c) }, 'Edit'),
+          UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeCamp(c) }, 'Delete'),
+        ]),
+      });
+    }
+
+    root.append(UI.table(columns, camps, canEdit
+      ? 'No camps yet — add the first one.'
+      : 'No camps registered yet.'));
+
+    return root;
   },
 });
