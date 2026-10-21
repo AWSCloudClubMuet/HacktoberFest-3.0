@@ -1,0 +1,230 @@
+
+/* Elegant Cherry Red + Black + Blush Pink */
+
+:root {
+  --primary: #c2183a;
+  --primary-dark: #94112b;
+  --primary-light: #f9e6eb;
+  --background: #fff9fa;
+  --surface: #ffffff;
+  --text: #21151a;
+  --muted: #82747a;
+  --border: #eee1e5;
+  --danger: #c2183a;
+  --radius: 16px;
+  --shadow: 0 5px 22px rgba(60, 15, 30, 0.055);
+}
+
+body {
+  background: #fff9fa;
+  color: #21151a;
+}
+
+/* Clean premium navigation */
+.navbar {
+  background: rgba(255, 255, 255, .96);
+  border-bottom: 1px solid #eee1e5;
+  box-shadow: 0 2px 12px rgba(40, 10, 20, .025);
+}
+
+.brand {
+  color: #21151a;
+}
+
+.brand::before {
+  color: #c2183a;
+}
+
+.links a:hover {
+  background: #f9e6eb;
+  color: #a51432;
+}
+
+/* Deep cherry hero */
+.hero {
+  background: linear-gradient(
+    120deg,
+    #211116 0%,
+    #4b1526 48%,
+    #8e203d 100%
+  );
+  color: #fff;
+  border: 1px solid #5a2030;
+  box-shadow: 0 12px 30px rgba(80, 20, 40, .12);
+}
+
+.hero::before {
+  border-color: rgba(255, 220, 230, .12);
+}
+
+.hero h1 {
+  color: #fffafc;
+}
+
+.hero p {
+  color: #f0dce2;
+}
+
+.hero-stats span {
+  color: #e4cbd2;
+}
+
+/* Refined search */
+.hero-search {
+  background: #fff;
+  border: 1px solid #e8cbd4;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .12);
+}
+
+.hero-search input {
+  color: #21151a;
+}
+
+.hero-search input::placeholder {
+  color: #a2969b;
+}
+
+/* Filter section */
+.filter-bar {
+  background: #fff;
+  border: 1px solid #eee1e5;
+  box-shadow: 0 4px 18px rgba(60, 15, 30, .035);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #c2183a;
+  box-shadow: 0 0 0 3px rgba(194, 24, 58, .09);
+}
+
+/* Elegant buttons */
+button,
+.filter-bar button:not(.secondary) {
+  background: #b71938;
+  color: #fff;
+  box-shadow: none;
+}
+
+button:hover,
+.filter-bar button:not(.secondary):hover {
+  background: #90132c;
+}
+
+button.secondary {
+  background: #f9e6eb;
+  border: 1px solid #efd0d9;
+  color: #a51432;
+}
+
+button.secondary:hover {
+  background: #f3d4de;
+}
+
+/* White cards with a fine cherry accent */
+.gig-card {
+  background: #fff;
+  border: 1px solid #eee1e5;
+  box-shadow: 0 4px 18px rgba(40, 10, 20, .035);
+}
+
+.gig-card::before {
+  background: #b71938;
+}
+
+.gig-card:hover {
+  border-color: #dfb2bf;
+  box-shadow: 0 12px 26px rgba(80, 20, 40, .075);
+}
+
+.gig-title a {
+  color: #21151a;
+}
+
+.gig-title a:hover,
+.poster:hover {
+  color: #b71938;
+}
+
+.gig-desc {
+  color: #82747a;
+}
+
+/* Soft, coordinated category colors */
+.cat-Programming {
+  background: #e8e9f8;
+}
+
+.cat-Design {
+  background: #f8e1ec;
+}
+
+.cat-Writing {
+  background: #faedda;
+}
+
+.cat-Tutoring {
+  background: #e0f1e8;
+}
+
+/* Balanced badges */
+.badge {
+  background: #f9e6eb;
+  border: 1px solid #f0d4dd;
+  color: #a51432;
+}
+
+.badge.Open {
+  background: #e4f3e9;
+  border-color: #d0e9d9;
+  color: #287449;
+}
+
+.badge.InProgress {
+  background: #fbf0d8;
+  border-color: #f2e3bc;
+  color: #89651a;
+}
+
+.badge.Completed {
+  background: #e7edfa;
+  border-color: #d7e1f5;
+  color: #365a9b;
+}
+
+.badge.Expired,
+.badge.Cancelled {
+  background: #fae5e7;
+  border-color: #f1cfd4;
+  color: #a42b3e;
+}
+
+/* Profile avatars */
+.avatar {
+  background: #f4dce4;
+  color: #a51432;
+  box-shadow: none;
+}
+
+/* Price labels */
+.price {
+  background: #f9e6eb;
+  color: #a51432;
+}
+
+.price.free {
+  background: #e4f3e9;
+  color: #287449;
+}
+
+.gig-footer {
+  border-top-color: #f0e7ea;
+}
+
+.deadline {
+  color: #82747a;
+}
+
+.error {
+  color: #c2183a;
+}
