@@ -25,8 +25,8 @@ import {
   Pencil,
   Plus,
   Search,
-  Send,
   Settings,
+  Send,
   Star,
   Users,
   X,
@@ -41,7 +41,7 @@ const colorFor = (id: number) => COLORS[(id - 1) % COLORS.length]
 const yearLabel = (semester: number) => (semester <= 2 ? 'Freshman' : semester <= 4 ? 'Sophomore' : semester <= 6 ? 'Junior' : 'Senior')
 const majorLine = (name: string, major: string, semester?: number) => (semester ? `${major} · ${yearLabel(semester)}` : major)
 const paymentLabel = (p: Gig['payment_type']) => (p === 'SkillSwap' ? 'Skill swap' : p)
-const paymentText = (gig: Gig) => (gig.payment_type === 'Paid' ? `Paid · $${Number(gig.budget)}` : paymentLabel(gig.payment_type))
+const paymentText = (gig: Gig) => (gig.payment_type === 'Paid' ? `Paid · PKR ${Number(gig.budget).toLocaleString('en-US')}` : paymentLabel(gig.payment_type))
 
 function deadlineInfo(deadline: string) {
   const date = new Date(`${deadline.slice(0, 10)}T00:00:00`)
@@ -414,9 +414,9 @@ export default function Page() {
               </div>
               <div className="filters filters-budget">
                 <span className="budget-label"><Filter /> Budget</span>
-                <Input type="number" min="0" value={minBudget} onChange={(e) => setMinBudget(e.target.value)} placeholder="Min $" aria-label="Minimum budget" className="budget-input" />
+                <Input type="number" min="0" value={minBudget} onChange={(e) => setMinBudget(e.target.value)} placeholder="Min PKR" aria-label="Minimum budget" className="budget-input" />
                 <span className="budget-dash">–</span>
-                <Input type="number" min="0" value={maxBudget} onChange={(e) => setMaxBudget(e.target.value)} placeholder="Max $" aria-label="Maximum budget" className="budget-input" />
+                <Input type="number" min="0" value={maxBudget} onChange={(e) => setMaxBudget(e.target.value)} placeholder="Max PKR" aria-label="Maximum budget" className="budget-input" />
                 {(minBudget || maxBudget) && <button className="text-button" onClick={() => { setMinBudget(''); setMaxBudget('') }}><X /> Clear</button>}
               </div>
 
@@ -498,7 +498,7 @@ export default function Page() {
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status={gig.display_status} />
                           </div>
-                          <span className="activity-meta">{gig.type} · {gig.category} · {paymentLabel(gig.payment_type)}{gig.budget ? ` · $${Number(gig.budget)}` : ''} · Deadline {deadlineInfo(gig.deadline).full}</span>
+                          <span className="activity-meta">{gig.type} · {gig.category} · {paymentLabel(gig.payment_type)}{gig.budget ? ` · PKR ${Number(gig.budget).toLocaleString('en-US')}` : ''} · Deadline {deadlineInfo(gig.deadline).full}</span>
                           {accepted && <p className="activity-message">Working with <button className="link-inline" onClick={() => openProfile(accepted.applicant_id)}>{accepted.applicant_name}</button></p>}
                           {gigApps.length > 0 && (
                             <div className="applicant-list">
@@ -615,7 +615,7 @@ export default function Page() {
                           <button className="link-title" onClick={() => setSelectedGigId(g.id)}>{g.title}</button>
                           <StatusBadge status={g.display_status} />
                         </div>
-                        <span className="activity-meta">{g.type} · {g.category} · {paymentLabel(g.payment_type)}{g.budget ? ` · $${Number(g.budget)}` : ''} · Deadline {deadlineInfo(g.deadline).full}</span>
+                        <span className="activity-meta">{g.type} · {g.category} · {paymentLabel(g.payment_type)}{g.budget ? ` · PKR ${Number(g.budget).toLocaleString('en-US')}` : ''} · Deadline {deadlineInfo(g.deadline).full}</span>
                       </Card>
                     ))}
                   </div>
@@ -646,7 +646,7 @@ export default function Page() {
               <p className="modal-description">{selectedGig.description}</p>
               <div className="modal-details">
                 <div><span>Category</span><strong>{selectedGig.category}</strong></div>
-                <div><span>Compensation</span><strong>{paymentLabel(selectedGig.payment_type)}{selectedGig.budget && ` · $${Number(selectedGig.budget)}`}</strong></div>
+                <div><span>Compensation</span><strong>{paymentLabel(selectedGig.payment_type)}{selectedGig.budget && ` · PKR ${Number(selectedGig.budget).toLocaleString('en-US')}`}</strong></div>
                 <div><span>Deadline</span><strong>{deadlineInfo(selectedGig.deadline).full}</strong></div>
               </div>
 
@@ -776,7 +776,7 @@ export default function Page() {
               </div>
               {postForm.payment_type === 'Paid' ? (
                 <div>
-                  <Label htmlFor="post-budget">Budget ($)</Label>
+                  <Label htmlFor="post-budget">Budget (PKR)</Label>
                   <Input id="post-budget" type="number" min="1" value={postForm.budget} onChange={(e) => setPostForm({ ...postForm, budget: e.target.value })} placeholder="e.g. 100" />
                 </div>
               ) : (
