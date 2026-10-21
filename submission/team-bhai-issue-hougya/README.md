@@ -1,16 +1,16 @@
 # Team Bhai Issue Hougya — Hackathon Submission
 
-This folder contains our team's project submissions for the hackathon. Each team member worked in their own dedicated issue directory so work could proceed independently without merge conflicts.
+This folder contains our team's completed submissions for the hackathon. Each team member worked in their own dedicated directory so development, tests, and documentation proceeded independently without merge conflicts.
 
 ---
 
 ## Team Members & Contributions
 
-| Member | Assigned Issue / Work | Key Deliverables | Detailed Docs |
+| Member | Assigned Issue | Key Deliverables | Detailed Docs |
 | :--- | :--- | :--- | :--- |
-| **Hamza Ali** | **Issue #2:** Automated Security Vulnerability Scanning in a CI/CD Pipeline | Core security pipeline (SAST, SCA, Secrets, Container) + **Bonus:** Azure ACR Cloud Delivery | [Issue #2 README](./issue2_Automated_Security_Vulnerability_Scanning/README.md) |
-| **Team Member** | **Issue #13:** TuneWave Music Player (DSA) | Pure Java player core: DLL + HashMap, Queue + Stack, BST + Graph (49 passing tests) | [Issue #13 README](./issue-13-tunewave-music-player/README.md) |
-| *[Teammate Name]* | *[Issue / Feature Title]* | *[Summary of deliverables]* | *[Link to folder]* |
+| **Hamza Ali** | **Issue #2:** Automated Security Vulnerability Scanning in a CI/CD Pipeline | End-to-end DevSecOps quality gate (Semgrep, npm audit, Gitleaks, Trivy) + **Bonus:** Azure ACR Cloud Delivery | [Issue #2 README](./issue2_Automated_Security_Vulnerability_Scanning/README.md) |
+| **Syed Abdullah Ali** | **Issue #8:** ML Debugging, Attention Gradients & Evaluation | 7-bug training fix (95.4% val acc), analytical attention backward in NumPy (1.6e-8 grad error), fraud evaluation & drift framework | [Issue #8 README](./issue8_Debugging,%20Attention%20Gradients%20&%20Evaluation/README.md) |
+| **Team Member** | **Issue #13:** TuneWave Music Player (DSA) | Pure Java audio streaming core: DLL + HashMap, Queue + Stack, BST + 2-hop Graph (49 passing tests) | [Issue #13 README](./issue-13-tunewave-music-player/README.md) |
 
 ---
 
@@ -42,15 +42,24 @@ A common question in GitHub security setups is whether to export results as SARI
 
 Instead, we built our reporting around GitHub Actions Step Summaries (`$GITHUB_STEP_SUMMARY`) and archived JSON/Markdown artifacts. It gives everyone an immediate visual breakdown of every finding on the run summary page, works across all repository types (public, private, student accounts), and doesn't rely on paid add-ons.
 
-For complete technical logs, scan commands, rules, and local reproduction instructions, see the **[Issue #2 Technical README](./issue2_Automated_Security_Vulnerability_Scanning/README.md)**.
-
----
-
-## Verified Pipeline Proof
-
+### Verified Pipeline Proof
 The screenshot below shows Run #5 on GitHub Actions (`cb6e5f3`): the security gate verified zero Critical/High vulnerabilities, approved the build, and pushed the container image to Azure Container Registry in 1m 29s.
 
 ![Verified Pipeline Run](./issue2_Automated_Security_Vulnerability_Scanning/docs/pipeline-success.png)
+
+---
+
+## Issue #8 Summary: ML Debugging, Attention Gradients & Evaluation
+
+**Owner:** Syed Abdullah Ali
+**Directory:** [`issue8_Debugging, Attention Gradients & Evaluation/`](./issue8_Debugging,%20Attention%20Gradients%20&%20Evaluation/)
+
+### What was built
+A mathematically rigorous machine learning investigation solving four core problems in model training, attention mechanism calculus, production metric design, and learning curve diagnostics:
+- **Milestone 1 — Training Debugging:** Diagnosed 7 distinct bugs causing a model to train on decoupled labels while validation stalled at 55%. The corrected implementation (`m1_train_fixed.py`) reaches **95.4%** validation accuracy with early stopping.
+- **Milestone 2 — Attention Gradients in NumPy:** Derived and implemented analytical backward passes for scaled dot-product attention without auto-diff. Verified with central difference gradient checks in float64 (`gradcheck.py`) showing relative error of `1.6e-8` (passing the `1e-7` threshold). Implemented online softmax tiled attention matching FlashAttention to `1e-15` precision.
+- **Milestone 3 — Production Fraud Evaluation:** Designed an evaluation framework for severe class imbalance (0.1% fraud rate) with delayed labels. Replaced naive accuracy with PR-AUC, cost-optimal decision thresholding (`p > 2.44%`), and drift monitoring via Population Stability Index (PSI).
+- **Milestone 4 — Learning Curve Diagnostics:** Provided remediation protocols for underfitting, overfitting, and leakage, plus a concrete pooled re-split experiment to definitively separate distribution shift from label noise.
 
 ---
 
@@ -60,7 +69,7 @@ The screenshot below shows Run #5 on GitHub Actions (`cb6e5f3`): the security ga
 
 ### What was built
 A pure Java 17 core music streaming player built with zero external dependencies (no Maven, Gradle, or JUnit), implementing all operations across three DSA milestones:
-- **Milestone 1 — Playlist**: Doubly Linked List (`SongNode`) + `HashMap<String, SongNode>` for $O(1)$ operations (`addSong`, `removeSong`, `next`, `previous`, `toggleRepeat`).
+- **Milestone 1 — Playlist**: Doubly Linked List (`SongNode`) + `HashMap<String, SongNode>` for O(1) operations (`addSong`, `removeSong`, `next`, `previous`, `toggleRepeat`).
 - **Milestone 2 — Up Next & History**: FIFO Queue (`ArrayDeque`) + bounded 10-item LIFO Stack (`ArrayDeque`), enforcing cursor freezing during queue and back playback.
 - **Milestone 3 — Search & Artist Recommendations**: Custom Binary Search Tree with alphabetical prefix pruning and duplicate title support + Undirected Graph for 2-hop recommendations (excluding direct collaborators and self).
 
@@ -68,6 +77,3 @@ Includes an interactive console player (`com.tunewave.Main`) and a standalone te
 
 ### Verified Terminal Run
 ![TuneWave Terminal Demo](./issue-13-tunewave-music-player/docs/demo.png)
-
-For complete details, see the **[Issue #13 Technical README](./issue-13-tunewave-music-player/README.md)**.
-
