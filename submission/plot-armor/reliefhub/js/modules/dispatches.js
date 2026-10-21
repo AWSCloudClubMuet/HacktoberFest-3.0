@@ -171,6 +171,7 @@
 
       campSelect.addEventListener('change', loadNeeds);
       needSelect.addEventListener('change', refreshHint);
+      qtyInput.addEventListener('input', () => qtyInput.classList.remove('invalid'));
       loadNeeds();
 
       async function submit(close) {

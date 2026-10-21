@@ -119,6 +119,8 @@
         kindFields.style.display = cash ? 'none' : '';
       }
       typeSelect.addEventListener('change', syncFields);
+      amountInput.addEventListener('input', () => amountInput.classList.remove('invalid'));
+      qtyInput.addEventListener('input', () => qtyInput.classList.remove('invalid'));
       syncFields();
 
       async function submit(close) {
