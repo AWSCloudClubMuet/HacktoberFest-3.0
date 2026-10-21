@@ -11,9 +11,13 @@ const dummyRows = [
 ];
 
 // supports parameterized calls: query(sql, params)
-// and (for the unsafe demo routes in server.js) raw interpolated sql
+// remediated: the mock only accepts ? placeholders now - raw interpolated sql
+// from the caller is treated as an error, values always travel as bound params
 async function query(sql, params = []) {
   console.log('[mock-db] executing:', sql, JSON.stringify(params));
+  if (/(\$\{|'%\+|\+'\s*%\?)/.test(sql)) {
+    throw new Error('interpolated sql rejected - use ? placeholders');
+  }
 
   const idParam = /WHERE id = \?/i.exec(sql);
   if (idParam && params.length > 0) {
@@ -21,15 +25,9 @@ async function query(sql, params = []) {
     return dummyRows.filter((r) => r.id === id);
   }
 
-  const idRaw = /WHERE id = (\d+)/i.exec(sql);
-  if (idRaw) {
-    const id = Number(idRaw[1]);
-    return dummyRows.filter((r) => r.id === id);
-  }
-
-  const nameLike = /LIKE '%(.*)%'/i.exec(sql);
+  const nameLike = /LIKE/i.test(sql) && params.length > 0;
   if (nameLike) {
-    const name = nameLike[1].toLowerCase();
+    const name = String(params[0]).toLowerCase();
     return dummyRows.filter((r) => r.name.toLowerCase().includes(name));
   }
 
