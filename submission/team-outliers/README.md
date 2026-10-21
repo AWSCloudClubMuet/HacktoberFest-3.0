@@ -135,7 +135,7 @@ To test both sides of the marketplace (posting vs applying and mutual reviewing)
 
 # Debugging, Attention Gradients & Evaluation
 
-## Team Member 2
+## Team Member 3
 
 This submission is a collection of four Jupyter notebooks exploring practical
 machine-learning engineering topics. Together, they cover how to debug a
