@@ -18,6 +18,11 @@
 4. recommendArtists returns artists exactly two links away who are not already directly related, in alphabetical order.
 
 ### 2. Anzalna - Kisan Mandi
+Coded kisan mandi, and used npm for running the code. 
+It has one requirement of npm.
+
+``` npm install``
+```npm start```
 
 ### 3. Anas - FloodReliefHub
 
@@ -28,6 +33,3 @@
 
 # Requirements
 npm for running KisanMandi
-
-``` npm install``
-```npm start```
