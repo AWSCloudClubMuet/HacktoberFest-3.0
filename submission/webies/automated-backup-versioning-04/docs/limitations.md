@@ -90,13 +90,19 @@ not client-side encryption and not a KMS customer-managed key.
 
 ## What was not validated locally
 
-The following items require real AWS and are intentionally left for the final
-manual evidence run:
+The following items cannot be proven by the LocalStack run. The 2026-10-21
+real-AWS run covered the first three where noted:
 
-- Real SNS email delivery and subscription confirmation.
-- Actual IAM enforcement of the least-privilege policy.
-- Real lifecycle expiration after the retention period.
-- TLS-only enforcement against an HTTP client.
+- SNS email subscription confirmation and a test publish. The subscription was
+  confirmed and SNS accepted the publish; actual inbox receipt remains
+  external.
+- TLS-only enforcement. HTTPS returned 200 and the same presigned URL over
+  HTTP returned 403.
+- IAM least-privilege policy. Policy simulation allowed List/Get/Put and SNS
+  and denied Delete; actual role assumption remains untested because the role
+  is not attached to compute.
+- Real lifecycle expiration after the retention period. The 7-day rule was
+  captured but not waited for.
 - Cross-region behavior, AWS Backup and replication (not implemented).
 - AWS service quotas, billing and account-level guardrails.
 

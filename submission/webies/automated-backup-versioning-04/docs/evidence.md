@@ -5,6 +5,13 @@ prove the requirement, not just show that a command ran. Save files under
 `docs/evidence/` with the suggested names, or paste the annotated output into
 the final submission document.
 
+The 2026-10-21 real-AWS run is recorded in
+`manifests/real-aws-manifest.json` and `reports/real-aws-backup-status.md`.
+It covers the 15-resource apply, bucket readback, two-version restore,
+verification, SNS -> SQS failure/verification/missed alerts, confirmed email
+subscription, TLS-only enforcement, IAM policy simulation and destroy. See the
+"Real AWS validation" table in the README for the results and remaining gaps.
+
 Suggested naming:
 
 ```text

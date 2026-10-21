@@ -40,6 +40,7 @@ Thumbs.db
 reports/*.tmp
 
 # Keep the generated evidence reports required by issue #4. The team-level
-# .gitignore excludes generated reports; these two are intentional evidence.
+# .gitignore excludes generated reports; these are intentional evidence.
 !reports/backup-status.md
 !reports/backup-status.sample.md
+!reports/real-aws-backup-status.md

@@ -1,0 +1,823 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-21T09:06:03.327Z",
+  "runs": [
+    {
+      "runId": "20261021T090603327Z-9dc6f3af",
+      "startedAt": "2026-10-21T09:06:03.327Z",
+      "finishedAt": "2026-10-21T09:06:06.168Z",
+      "durationMs": 2841,
+      "status": "success",
+      "environment": "aws",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261021T090603327Z-9dc6f3af/",
+      "counts": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+      },
+      "archiveBytes": 2624,
+      "uploadedBytes": 5248,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261021T090603327Z-9dc6f3af/archive/2026-Q3-summary.csv",
+          "archiveVersionId": "3iXOswqVwkGJmPVcx5gZZdOjQmGP7.E0",
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": "kjpZpiZYfjdY0jPWXO2VzyO63hrhM3AM",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261021T090603327Z-9dc6f3af/customers.csv",
+          "archiveVersionId": "NeuXOcYs_FhBP5.BsHxuZEttwbVEc95c",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "TdG4lESJuooceoyXytuLoDXmWmzBbPyT",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261021T090603327Z-9dc6f3af/incident-notes.md",
+          "archiveVersionId": "6JZbtUdb6idNqaiBqj_0WRVc1sFqCrOd",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "dH4DH.WaCl_TAQkMai23RQSE3TbmVinf",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261021T090603327Z-9dc6f3af/orders.json",
+          "archiveVersionId": "ZP0.KzI_bpZ3P.1hjh2zyNQZ5jbbXd5F",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "rE5g9CycE3NqEXxWyGgc8b_gTcV2QHYk",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 345,
+          "sha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+          "archiveKey": "backups/20261021T090603327Z-9dc6f3af/service-config.yaml",
+          "archiveVersionId": "1wVuxnRVxfl9PrTL5SFA5nu4e1VqGP4b",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "ashBEwKTXum743ZlNGlQy1tjvG1raCVM",
+          "status": "success",
+          "error": null
+        }
+      ]
+    },
+    {
+      "runId": "20261021T090637281Z-109b299d",
+      "startedAt": "2026-10-21T09:06:37.281Z",
+      "finishedAt": "2026-10-21T09:06:40.121Z",
+      "durationMs": 2840,
+      "status": "success",
+      "environment": "aws",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261021T090637281Z-109b299d/",
+      "counts": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+      },
+      "archiveBytes": 2625,
+      "uploadedBytes": 5250,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261021T090637281Z-109b299d/archive/2026-Q3-summary.csv",
+          "archiveVersionId": "2oPf.CZ7ESveRSzZj4sCGw9l6bj6C3ua",
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": "aCHNsk8cZEnQ4kIJlg7Sm4O_bpl6U6bJ",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261021T090637281Z-109b299d/customers.csv",
+          "archiveVersionId": "fV7wpyiwNUq9jKrLxc4WfHlJaYw9j1Dc",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "ALdW5_nNtPYMypp8RztPWHru5X1x4Res",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261021T090637281Z-109b299d/incident-notes.md",
+          "archiveVersionId": "xGYkLLt_Cu5mNusWt8TaOsptipcAWhUS",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "obKIeWKaBsUiThJw.TfdCTTSVX3ChRhe",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261021T090637281Z-109b299d/orders.json",
+          "archiveVersionId": "Yo7GkiawJZWCvDEaF8YrIrX9pprO40IQ",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "BNEci2oFGjoxLtyIn2JdzKY9DFlBZgwp",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 346,
+          "sha256": "7ff2896b344c213dd0703af23b692b184e05f977e00ca7e81e7541de2a1bad9c",
+          "archiveKey": "backups/20261021T090637281Z-109b299d/service-config.yaml",
+          "archiveVersionId": "u5g0LrDSKz6z6ragxKHpXdarXtjW7V3P",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "Bm9ezq1gav0WJ4hZ9IajQzW2tPnZWiMw",
+          "status": "success",
+          "error": null
+        }
+      ]
+    },
+    {
+      "runId": "20261021T090650777Z-e8a64ced",
+      "startedAt": "2026-10-21T09:06:50.777Z",
+      "finishedAt": "2026-10-21T09:06:53.107Z",
+      "durationMs": 2330,
+      "status": "failed",
+      "environment": "aws",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261021T090650777Z-e8a64ced/",
+      "counts": {
+        "total": 5,
+        "successful": 4,
+        "failed": 1
+      },
+      "archiveBytes": 2498,
+      "uploadedBytes": 4996,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261021T090650777Z-e8a64ced/archive/2026-Q3-summary.csv",
+          "archiveVersionId": null,
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": null,
+          "status": "failed",
+          "error": "simulated upload failed: Error: Simulated upload failure requested by --simulate-failure."
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261021T090650777Z-e8a64ced/customers.csv",
+          "archiveVersionId": "moMM2Zv.v1KsRJK5o0WNqtw4YI2R23Lh",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "4c6k.wc79dSuirsCkJsrRxcT7BlqIGMB",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261021T090650777Z-e8a64ced/incident-notes.md",
+          "archiveVersionId": "fUk.gR_Him6D56kInOuDvBCbgIj0j8uZ",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "JH8RIGDzuEG174VNUGqX7.0YdjPbmxv9",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261021T090650777Z-e8a64ced/orders.json",
+          "archiveVersionId": "YMOJ_JcJSvcaTcA6X9ahX0MFhAosIXly",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "unoWI4fD7BCLoBJHQmntt65IVU1x1dK4",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 345,
+          "sha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+          "archiveKey": "backups/20261021T090650777Z-e8a64ced/service-config.yaml",
+          "archiveVersionId": "SG8CH_E5SmR6lnFr3LCUSreUIdP5qC.q",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "RQ8NB4JTP30zGRzNnQU.lJLLdMAzac_X",
+          "status": "success",
+          "error": null
+        }
+      ]
+    },
+    {
+      "runId": "20261021T090708402Z-003d551b",
+      "startedAt": "2026-10-21T09:07:08.402Z",
+      "finishedAt": "2026-10-21T09:07:11.521Z",
+      "durationMs": 3119,
+      "status": "success",
+      "environment": "aws",
+      "region": "us-east-1",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "sourceRoot": "sample-data",
+      "archivePrefix": "backups/20261021T090708402Z-003d551b/",
+      "counts": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+      },
+      "archiveBytes": 2624,
+      "uploadedBytes": 5248,
+      "files": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "size": 126,
+          "sha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+          "archiveKey": "backups/20261021T090708402Z-003d551b/archive/2026-Q3-summary.csv",
+          "archiveVersionId": "cGvDB3Fbn9gGTfsRj9AyfLMAO7os7zQ2",
+          "latestKey": "latest/archive/2026-Q3-summary.csv",
+          "latestVersionId": "uosJ6ogbtSGC2B8UklbuCVZyL4THrgHp",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "customers.csv",
+          "size": 619,
+          "sha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+          "archiveKey": "backups/20261021T090708402Z-003d551b/customers.csv",
+          "archiveVersionId": "EWvVdQtj39XxK.F.VhagzjRrC_PVZt3C",
+          "latestKey": "latest/customers.csv",
+          "latestVersionId": "XXCH6DtjQwnodKPsxRVEHUDMYA4S3LmZ",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "size": 614,
+          "sha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+          "archiveKey": "backups/20261021T090708402Z-003d551b/incident-notes.md",
+          "archiveVersionId": "ePuCTRN_RoP1CdGIawgpYufe8LUVa.ra",
+          "latestKey": "latest/incident-notes.md",
+          "latestVersionId": "0tjBZep8Br21J29K3z.Bajkq2lm3dpIe",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "orders.json",
+          "size": 920,
+          "sha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+          "archiveKey": "backups/20261021T090708402Z-003d551b/orders.json",
+          "archiveVersionId": "v3kALLXreCnd4Uxqj68Tt1iFDR_SZmD2",
+          "latestKey": "latest/orders.json",
+          "latestVersionId": "_.Ikr0X8ZwbnTKpsZr_yUi_WjiN24jIh",
+          "status": "success",
+          "error": null
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "size": 345,
+          "sha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+          "archiveKey": "backups/20261021T090708402Z-003d551b/service-config.yaml",
+          "archiveVersionId": "YBcmR71ibgqrItfLebECmN.Jla4knY9y",
+          "latestKey": "latest/service-config.yaml",
+          "latestVersionId": "vtkDpvd3GiR22QuilQR21SIcPCzM5rwH",
+          "status": "success",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "verifications": [
+    {
+      "verifiedAt": "2026-10-21T09:06:09.341Z",
+      "runId": "20261021T090603327Z-9dc6f3af",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "status": "pass",
+      "expectedFiles": 5,
+      "passedFiles": 5,
+      "failedFiles": 0,
+      "objectsChecked": 10,
+      "objectsPassed": 10,
+      "totalArchiveBytes": 2624,
+      "results": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090603327Z-9dc6f3af/archive/2026-Q3-summary.csv",
+              "versionId": "3iXOswqVwkGJmPVcx5gZZdOjQmGP7.E0",
+              "status": "ok",
+              "expectedSize": 126,
+              "actualSize": 126,
+              "expectedSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "actualSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "returnedVersionId": "3iXOswqVwkGJmPVcx5gZZdOjQmGP7.E0",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/archive/2026-Q3-summary.csv",
+              "versionId": "kjpZpiZYfjdY0jPWXO2VzyO63hrhM3AM",
+              "status": "ok",
+              "expectedSize": 126,
+              "actualSize": 126,
+              "expectedSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "actualSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "returnedVersionId": "kjpZpiZYfjdY0jPWXO2VzyO63hrhM3AM",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "customers.csv",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090603327Z-9dc6f3af/customers.csv",
+              "versionId": "NeuXOcYs_FhBP5.BsHxuZEttwbVEc95c",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "NeuXOcYs_FhBP5.BsHxuZEttwbVEc95c",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/customers.csv",
+              "versionId": "TdG4lESJuooceoyXytuLoDXmWmzBbPyT",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "TdG4lESJuooceoyXytuLoDXmWmzBbPyT",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090603327Z-9dc6f3af/incident-notes.md",
+              "versionId": "6JZbtUdb6idNqaiBqj_0WRVc1sFqCrOd",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "6JZbtUdb6idNqaiBqj_0WRVc1sFqCrOd",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/incident-notes.md",
+              "versionId": "dH4DH.WaCl_TAQkMai23RQSE3TbmVinf",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "dH4DH.WaCl_TAQkMai23RQSE3TbmVinf",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "orders.json",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090603327Z-9dc6f3af/orders.json",
+              "versionId": "ZP0.KzI_bpZ3P.1hjh2zyNQZ5jbbXd5F",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "ZP0.KzI_bpZ3P.1hjh2zyNQZ5jbbXd5F",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/orders.json",
+              "versionId": "rE5g9CycE3NqEXxWyGgc8b_gTcV2QHYk",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "rE5g9CycE3NqEXxWyGgc8b_gTcV2QHYk",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090603327Z-9dc6f3af/service-config.yaml",
+              "versionId": "1wVuxnRVxfl9PrTL5SFA5nu4e1VqGP4b",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "1wVuxnRVxfl9PrTL5SFA5nu4e1VqGP4b",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/service-config.yaml",
+              "versionId": "ashBEwKTXum743ZlNGlQy1tjvG1raCVM",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "ashBEwKTXum743ZlNGlQy1tjvG1raCVM",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "verifiedAt": "2026-10-21T09:06:57.501Z",
+      "runId": "20261021T090650777Z-e8a64ced",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "status": "fail",
+      "expectedFiles": 5,
+      "passedFiles": 4,
+      "failedFiles": 1,
+      "objectsChecked": 10,
+      "objectsPassed": 8,
+      "totalArchiveBytes": 2498,
+      "results": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "status": "failed",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090650777Z-e8a64ced/archive/2026-Q3-summary.csv",
+              "versionId": null,
+              "status": "missing",
+              "expectedSize": null,
+              "actualSize": null,
+              "expectedSha256": null,
+              "actualSha256": null,
+              "returnedVersionId": null,
+              "message": "simulated upload failed: Error: Simulated upload failure requested by --simulate-failure."
+            },
+            {
+              "role": "latest",
+              "key": "latest/archive/2026-Q3-summary.csv",
+              "versionId": null,
+              "status": "missing",
+              "expectedSize": null,
+              "actualSize": null,
+              "expectedSha256": null,
+              "actualSha256": null,
+              "returnedVersionId": null,
+              "message": "simulated upload failed: Error: Simulated upload failure requested by --simulate-failure."
+            }
+          ]
+        },
+        {
+          "sourceFile": "customers.csv",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090650777Z-e8a64ced/customers.csv",
+              "versionId": "moMM2Zv.v1KsRJK5o0WNqtw4YI2R23Lh",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "moMM2Zv.v1KsRJK5o0WNqtw4YI2R23Lh",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/customers.csv",
+              "versionId": "4c6k.wc79dSuirsCkJsrRxcT7BlqIGMB",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "4c6k.wc79dSuirsCkJsrRxcT7BlqIGMB",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090650777Z-e8a64ced/incident-notes.md",
+              "versionId": "fUk.gR_Him6D56kInOuDvBCbgIj0j8uZ",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "fUk.gR_Him6D56kInOuDvBCbgIj0j8uZ",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/incident-notes.md",
+              "versionId": "JH8RIGDzuEG174VNUGqX7.0YdjPbmxv9",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "JH8RIGDzuEG174VNUGqX7.0YdjPbmxv9",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "orders.json",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090650777Z-e8a64ced/orders.json",
+              "versionId": "YMOJ_JcJSvcaTcA6X9ahX0MFhAosIXly",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "YMOJ_JcJSvcaTcA6X9ahX0MFhAosIXly",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/orders.json",
+              "versionId": "unoWI4fD7BCLoBJHQmntt65IVU1x1dK4",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "unoWI4fD7BCLoBJHQmntt65IVU1x1dK4",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090650777Z-e8a64ced/service-config.yaml",
+              "versionId": "SG8CH_E5SmR6lnFr3LCUSreUIdP5qC.q",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "SG8CH_E5SmR6lnFr3LCUSreUIdP5qC.q",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/service-config.yaml",
+              "versionId": "RQ8NB4JTP30zGRzNnQU.lJLLdMAzac_X",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "RQ8NB4JTP30zGRzNnQU.lJLLdMAzac_X",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "verifiedAt": "2026-10-21T09:07:14.770Z",
+      "runId": "20261021T090708402Z-003d551b",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "status": "pass",
+      "expectedFiles": 5,
+      "passedFiles": 5,
+      "failedFiles": 0,
+      "objectsChecked": 10,
+      "objectsPassed": 10,
+      "totalArchiveBytes": 2624,
+      "results": [
+        {
+          "sourceFile": "archive/2026-Q3-summary.csv",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090708402Z-003d551b/archive/2026-Q3-summary.csv",
+              "versionId": "cGvDB3Fbn9gGTfsRj9AyfLMAO7os7zQ2",
+              "status": "ok",
+              "expectedSize": 126,
+              "actualSize": 126,
+              "expectedSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "actualSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "returnedVersionId": "cGvDB3Fbn9gGTfsRj9AyfLMAO7os7zQ2",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/archive/2026-Q3-summary.csv",
+              "versionId": "uosJ6ogbtSGC2B8UklbuCVZyL4THrgHp",
+              "status": "ok",
+              "expectedSize": 126,
+              "actualSize": 126,
+              "expectedSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "actualSha256": "2226075f76c1013e9580a916920a6b3bcdfa69e5198dcd4d7da0fb0efcf63323",
+              "returnedVersionId": "uosJ6ogbtSGC2B8UklbuCVZyL4THrgHp",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "customers.csv",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090708402Z-003d551b/customers.csv",
+              "versionId": "EWvVdQtj39XxK.F.VhagzjRrC_PVZt3C",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "EWvVdQtj39XxK.F.VhagzjRrC_PVZt3C",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/customers.csv",
+              "versionId": "XXCH6DtjQwnodKPsxRVEHUDMYA4S3LmZ",
+              "status": "ok",
+              "expectedSize": 619,
+              "actualSize": 619,
+              "expectedSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "actualSha256": "25e7f74f50ad94c2d26e2a0e293522049f2e80f93aaa15b15670819f8928be44",
+              "returnedVersionId": "XXCH6DtjQwnodKPsxRVEHUDMYA4S3LmZ",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "incident-notes.md",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090708402Z-003d551b/incident-notes.md",
+              "versionId": "ePuCTRN_RoP1CdGIawgpYufe8LUVa.ra",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "ePuCTRN_RoP1CdGIawgpYufe8LUVa.ra",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/incident-notes.md",
+              "versionId": "0tjBZep8Br21J29K3z.Bajkq2lm3dpIe",
+              "status": "ok",
+              "expectedSize": 614,
+              "actualSize": 614,
+              "expectedSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "actualSha256": "9574bcd1be9ffc015765015a7d78de8554bb9c1e5637605f2717e7462b6e49e8",
+              "returnedVersionId": "0tjBZep8Br21J29K3z.Bajkq2lm3dpIe",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "orders.json",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090708402Z-003d551b/orders.json",
+              "versionId": "v3kALLXreCnd4Uxqj68Tt1iFDR_SZmD2",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "v3kALLXreCnd4Uxqj68Tt1iFDR_SZmD2",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/orders.json",
+              "versionId": "_.Ikr0X8ZwbnTKpsZr_yUi_WjiN24jIh",
+              "status": "ok",
+              "expectedSize": 920,
+              "actualSize": 920,
+              "expectedSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "actualSha256": "1acb396a995c46895b0a695c5693e170cbb5bfbf830bb33009dff240d5f79f63",
+              "returnedVersionId": "_.Ikr0X8ZwbnTKpsZr_yUi_WjiN24jIh",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        },
+        {
+          "sourceFile": "service-config.yaml",
+          "status": "ok",
+          "checks": [
+            {
+              "role": "archive",
+              "key": "backups/20261021T090708402Z-003d551b/service-config.yaml",
+              "versionId": "YBcmR71ibgqrItfLebECmN.Jla4knY9y",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "YBcmR71ibgqrItfLebECmN.Jla4knY9y",
+              "message": "SHA-256, size and version match."
+            },
+            {
+              "role": "latest",
+              "key": "latest/service-config.yaml",
+              "versionId": "vtkDpvd3GiR22QuilQR21SIcPCzM5rwH",
+              "status": "ok",
+              "expectedSize": 345,
+              "actualSize": 345,
+              "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+              "returnedVersionId": "vtkDpvd3GiR22QuilQR21SIcPCzM5rwH",
+              "message": "SHA-256, size and version match."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "recoveries": [
+    {
+      "restoredAt": "2026-10-21T09:06:41.894Z",
+      "bucket": "webies-backup-04-20261021090415438700000006",
+      "key": "latest/service-config.yaml",
+      "requestedVersionId": "ashBEwKTXum743ZlNGlQy1tjvG1raCVM",
+      "returnedVersionId": "ashBEwKTXum743ZlNGlQy1tjvG1raCVM",
+      "kind": "latest",
+      "sourceRunId": "20261021T090603327Z-9dc6f3af",
+      "sourceFile": "service-config.yaml",
+      "expectedSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+      "actualSha256": "f437f6a38da6aa4d0b15c4242e587fd39bd9fd5a06310816af39d148841e5871",
+      "expectedSize": 345,
+      "actualSize": 345,
+      "outputPath": "restored/real-aws-service-config.run1.yaml",
+      "status": "pass",
+      "message": "Restored bytes match the recorded version."
+    }
+  ]
+}

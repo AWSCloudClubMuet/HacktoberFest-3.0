@@ -421,15 +421,39 @@ The checks below passed in this workspace:
 | ASCII scan | No non-ASCII characters in source or documentation |
 | `terraform destroy` | Passed for the 14-resource stack |
 
-The validation stack and LocalStack container are destroyed after capture, so
-the bucket name and version IDs in `manifests/manifest.json` are historical
-evidence rather than a live endpoint. Re-run the commands in this README to
-reproduce them.
+The LocalStack stack and container and the real-AWS stack are destroyed after
+capture, so the bucket names and version IDs in `manifests/manifest.json` and
+`manifests/real-aws-manifest.json` are historical evidence rather than live
+endpoints. Re-run the commands in this README to reproduce them.
 
-The following still require the real-AWS evidence run: SNS email confirmation
-and delivery, IAM enforcement, actual lifecycle expiration after 7 days, and
-HTTPS-only enforcement. The LocalStack setup cannot prove those items; see
-`docs/limitations.md`.
+### Real AWS validation (2026-10-21)
+
+The stack was also applied to a real AWS account in `us-east-1` with the email
+subscription enabled. Evidence is in
+`manifests/real-aws-manifest.json` and `reports/real-aws-backup-status.md`.
+
+| Check | Result |
+| --- | --- |
+| `terraform apply` | 15 resources created: S3, IAM, SNS, SQS and the email subscription |
+| Bucket readback | Versioning `Enabled`; SSE `AES256`; all four public-access flags `true`; `BucketOwnerEnforced`; TLS-only policy; 7-day noncurrent lifecycle |
+| Backup | 5/5 files; two successful runs with different `service-config.yaml` content |
+| Versioning | At restore time `latest/service-config.yaml` had two versions; run 1's older version was restored by exact version ID |
+| Restore | `RESTORE PASS`; 345 B; expected and actual SHA-256 both `f437f6a38da6...` |
+| Verification | `VERIFICATION PASS` 5/5 files and 10/10 objects on the clean run |
+| Failure alert | Simulated upload failed; backup exited 1; SNS `backup.failed` received in SQS |
+| Verification alert | Failed run exited 1; SNS `backup.verification_failed` received in SQS |
+| Missed-backup alert | Forced stale clock exited 1; SNS `backup.missed` received in SQS |
+| Freshness | Normal check PASS; stale check FAIL as expected |
+| TLS-only | Presigned HTTPS GET returned 200; the same URL over HTTP returned 403 |
+| IAM policy simulation | List/Get/Put and SNS allowed; DeleteObject and DeleteObjectVersion implicit deny |
+| Email subscription | Confirmed; test SNS publish accepted and mirrored to SQS |
+| Report | 4 runs (3 success, 1 failed), 3 verifications, 1 recovery; live S3 24 current / 14 noncurrent versions |
+| `terraform destroy` | 15 resources destroyed; bucket, topic, queue and IAM resources confirmed gone; state empty |
+
+Remaining gaps: actual inbox receipt of the test email is external to the
+automation; lifecycle expiry after 7 days was not waited for (the rule was
+captured); and the IAM role is simulated rather than assumed because it is not
+attached to compute.
 
 ## Troubleshooting
 
