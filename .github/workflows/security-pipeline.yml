@@ -1,0 +1,241 @@
+name: DevSecOps Automated Security Scanning Pipeline
+
+on:
+  push:
+    paths:
+      - 'submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning/**'
+      - '.github/workflows/security-pipeline.yml'
+  pull_request:
+    paths:
+      - 'submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  security-gate:
+    name: Security Vulnerability Scanning & Quality Gate
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning
+
+    steps:
+      - name: 📥 Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Set up Node.js LTS (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning/package-lock.json
+
+      - name: 📦 Install application dependencies
+        run: npm ci
+
+      # -----------------------------------------------------------------------
+      # MILESTONE 2: Static Code Analysis (SAST) - Official Semgrep CLI
+      # -----------------------------------------------------------------------
+      - name: 🔍 Run Static Code Analysis (Official Semgrep)
+        run: |
+          echo "::group::1. Running Official Semgrep CLI Scanner..."
+          docker run --rm -v "${PWD}:/src" returntocorp/semgrep \
+            semgrep scan --config /src/semgrep-rules.yml /src/src || true
+          echo "::endgroup::"
+          
+          echo "::group::2. Generating Structured SAST Reports..."
+          npm run scan:sast
+          echo "::endgroup::"
+
+      # -----------------------------------------------------------------------
+      # MILESTONE 3: Dependency Scanning (SCA) - Official npm audit
+      # -----------------------------------------------------------------------
+      - name: 🛡️ Run Dependency Vulnerability Scan (Official npm audit)
+        run: |
+          echo "::group::1. Running Official npm audit CLI..."
+          npm audit || true
+          echo "::endgroup::"
+
+          echo "::group::2. Generating Structured SCA Reports..."
+          npm run scan:deps
+          echo "::endgroup::"
+
+      # -----------------------------------------------------------------------
+      # MILESTONE 4: Secret Detection - Official Gitleaks CLI
+      # -----------------------------------------------------------------------
+      - name: 🔑 Run Secret Detection (Official Gitleaks)
+        run: |
+          echo "::group::1. Running Official Gitleaks CLI Scanner..."
+          docker run --rm -v "${PWD}:/repo" zricethezav/gitleaks:latest \
+            detect --source="/repo/src" --config="/repo/gitleaks.toml" --verbose --no-git || true
+          echo "::endgroup::"
+
+          echo "::group::2. Generating Structured Secret Reports..."
+          npm run scan:secrets
+          echo "::endgroup::"
+
+      # -----------------------------------------------------------------------
+      # MILESTONE 5: Container Image Scanning - Docker & Official Trivy
+      # -----------------------------------------------------------------------
+      - name: 🐳 Build Docker Container Image
+        run: |
+          echo "::group::Building Docker Image..."
+          docker build -t vuln-scan-app:pipeline .
+          echo "::endgroup::"
+
+      - name: 🛡️ Scan Container Image (Official Trivy CLI)
+        run: |
+          echo "::group::1. Running Official Trivy Container Scanner..."
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image \
+            --severity CRITICAL,HIGH \
+            --format table \
+            vuln-scan-app:pipeline || true
+          echo "::endgroup::"
+
+          echo "::group::2. Generating Structured Container Reports..."
+          npm run scan:container
+          echo "::endgroup::"
+
+      # -----------------------------------------------------------------------
+      # MILESTONES 6 & 7: Consolidated Reporting & Security Quality Gate
+      # -----------------------------------------------------------------------
+      - name: 📊 Evaluate Security Quality Gate & Generate Dashboard
+        id: gate
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+
+            const sast = JSON.parse(fs.readFileSync("reports/sast-findings.json", "utf8"));
+            const deps = JSON.parse(fs.readFileSync("reports/dependency-findings.json", "utf8"));
+            const secrets = JSON.parse(fs.readFileSync("reports/secret-findings.json", "utf8"));
+            const container = JSON.parse(fs.readFileSync("reports/container-findings.json", "utf8"));
+
+            const totalCritical = (sast.severityBreakdown.CRITICAL || 0) +
+                                  (deps.severityBreakdown.CRITICAL || 0) +
+                                  (secrets.severityBreakdown.CRITICAL || 0) +
+                                  (container.severityBreakdown.CRITICAL || 0);
+
+            const totalHigh = (sast.severityBreakdown.HIGH || 0) +
+                              (deps.severityBreakdown.HIGH || 0) +
+                              (secrets.severityBreakdown.HIGH || 0) +
+                              (container.severityBreakdown.HIGH || 0);
+
+            const totalMedium = (sast.severityBreakdown.MEDIUM || 0) +
+                                (deps.severityBreakdown.MEDIUM || 0) +
+                                (secrets.severityBreakdown.MEDIUM || 0) +
+                                (container.severityBreakdown.MEDIUM || 0);
+
+            const isBlocked = (totalCritical > 0 || totalHigh > 0);
+            const verdictIcon = isBlocked ? "❌" : "✅";
+            const verdictText = isBlocked ? "FAILED (BLOCKED BY SECURITY GATE)" : "PASSED (APPROVED FOR DEPLOYMENT)";
+
+            let summary = `# 🛡️ DevSecOps Pipeline Security Dashboard\n\n`;
+            summary += `### Quality Gate Status: **${verdictIcon} ${verdictText}**\n\n`;
+            summary += `> **Security Policy:** Builds containing **CRITICAL** or **HIGH** severity security findings are automatically halted to prevent production security regressions.\n\n`;
+
+            summary += `## 📋 Vulnerability Summary Matrix\n\n`;
+            summary += `| Security Domain | Tool | Critical | High | Medium | Domain Status |\n`;
+            summary += `| :--- | :--- | :---: | :---: | :---: | :--- |\n`;
+            summary += `| **Static Analysis (SAST)** | Semgrep | ${sast.severityBreakdown.CRITICAL} | ${sast.severityBreakdown.HIGH} | ${sast.severityBreakdown.MEDIUM} | ${(sast.severityBreakdown.CRITICAL + sast.severityBreakdown.HIGH > 0) ? "❌ Violations Found" : "✅ Passed"} |\n`;
+            summary += `| **Dependencies (SCA)** | npm audit | ${deps.severityBreakdown.CRITICAL} | ${deps.severityBreakdown.HIGH} | ${deps.severityBreakdown.MEDIUM} | ${(deps.severityBreakdown.CRITICAL + deps.severityBreakdown.HIGH > 0) ? "❌ Violations Found" : "✅ Passed"} |\n`;
+            summary += `| **Secret Detection** | Gitleaks | ${secrets.severityBreakdown.CRITICAL} | ${secrets.severityBreakdown.HIGH} | ${secrets.severityBreakdown.MEDIUM} | ${(secrets.severityBreakdown.CRITICAL + secrets.severityBreakdown.HIGH > 0) ? "❌ Violations Found" : "✅ Passed"} |\n`;
+            summary += `| **Container Scan** | Trivy | ${container.severityBreakdown.CRITICAL} | ${container.severityBreakdown.HIGH} | ${container.severityBreakdown.MEDIUM} | ${(container.severityBreakdown.CRITICAL + container.severityBreakdown.HIGH > 0) ? "❌ Violations Found" : "✅ Passed"} |\n`;
+            summary += `| **TOTAL FINDINGS** | **All Scanners** | **${totalCritical}** | **${totalHigh}** | **${totalMedium}** | **${isBlocked ? "❌ FAILED" : "✅ PASSED"}** |\n\n`;
+
+            summary += `### 🎯 Next Steps:\n`;
+            if (isBlocked) {
+              summary += `- Review the attached scan reports under Workflow Artifacts.\n`;
+              summary += `- Resolve critical vulnerabilities before requesting a re-run.\n`;
+              summary += `- Run \`npm audit fix\` and eliminate hardcoded demo credentials.\n`;
+            } else {
+              summary += `- All security policies satisfied.\n`;
+              summary += `- Container image approved for registry push and cloud deployment.\n`;
+            }
+
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+
+            if (isBlocked) {
+              console.error("❌ Quality gate failed: Critical/High vulnerabilities detected.");
+              process.exit(1);
+            } else {
+              console.log("✅ Quality gate passed: Zero Critical/High vulnerabilities detected.");
+            }
+          '
+
+      # -----------------------------------------------------------------------
+      # Archive Reports as Workflow Artifacts
+      # -----------------------------------------------------------------------
+      - name: 📁 Archive Security Scan Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devsecops-security-reports
+          path: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning/reports/
+          retention-days: 7
+
+  # ===========================================================================
+  # MILESTONE 8: Cloud Integration (Microsoft Azure ACR Delivery)
+  # ===========================================================================
+  deploy-azure:
+    name: ☁️ Azure Cloud Integration (ACR Delivery)
+    needs: security-gate
+    if: success()
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning
+
+    steps:
+      - name: 📥 Check out repository code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Log in to Azure Container Registry (ACR)
+        uses: docker/login-action@v3
+        with:
+          registry: bhaiissuehougyasecscan.azurecr.io
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+      - name: 🐳 Build & Tag Production Image
+        run: |
+          IMAGE_NAME="bhaiissuehougyasecscan.azurecr.io/vuln-scan-app"
+          COMMIT_TAG="${{ github.sha }}"
+          echo "Building production image tagged with commit SHA: $COMMIT_TAG"
+          docker build -t "$IMAGE_NAME:$COMMIT_TAG" -t "$IMAGE_NAME:latest" .
+
+      - name: 🚀 Push Approved Image to Azure Container Registry
+        run: |
+          IMAGE_NAME="bhaiissuehougyasecscan.azurecr.io/vuln-scan-app"
+          COMMIT_TAG="${{ github.sha }}"
+          echo "Pushing verified image to Azure Container Registry..."
+          docker push "$IMAGE_NAME:$COMMIT_TAG"
+          docker push "$IMAGE_NAME:latest"
+
+      - name: 📋 Publish Azure Cloud Delivery Audit Summary
+        run: |
+          node -e '
+            const fs = require("fs");
+            let summary = `\n\n---\n\n## ☁️ Milestone 8: Microsoft Azure Cloud Delivery Report\n\n`;
+            summary += `> **Security Gate Verdict:** ✅ **APPROVED** (Passed all SAST, SCA, Secret, and Container checks)\n\n`;
+            summary += `| Cloud Property | Value |\n`;
+            summary += `| :--- | :--- |\n`;
+            summary += `| **Cloud Provider** | Microsoft Azure (Azure for Students) |\n`;
+            summary += `| **Resource Group** | \`rg-bhai-secscan\` |\n`;
+            summary += `| **Container Registry (ACR)** | \`bhaiissuehougyasecscan.azurecr.io\` (Basic SKU, Private) |\n`;
+            summary += `| **Image Repository** | \`vuln-scan-app\` |\n`;
+            summary += `| **Immutable Image Tag** | \`${{ github.sha }}\` |\n`;
+            summary += `| **Authentication** | Azure RBAC / Service Principal / ACR Admin Credentials |\n`;
+            summary += `| **Pull Command** | \`az acr login --name bhaiissuehougyasecscan && docker pull bhaiissuehougyasecscan.azurecr.io/vuln-scan-app:latest\` |\n\n`;
+            summary += `🎉 **Approved, vulnerability-free container image successfully pushed to Microsoft Azure!**\n`;
+
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          '
