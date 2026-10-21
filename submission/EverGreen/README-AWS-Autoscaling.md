@@ -12,7 +12,7 @@ customer-support classification.
 | **ML research dashboard** | [`HelpDeskNet-50K/`](HelpDeskNet-50K) | **HelpDeskNet-50K**: Python workflow for noisy-label analysis, robust text classification and review prioritization on customer-support tickets. |
 
 - Live workload (ALB): <http://scaleops-demo-hackathon-alb-559383597.us-east-1.elb.amazonaws.com> (`/api/health`, `/api/info`)
-- Live dashboard (Vercel): _add the Vercel URL here after deploying_
+- Live dashboard (Vercel): <https://scale-ops-iota.vercel.app/>
 
 ## Quick start by project
 

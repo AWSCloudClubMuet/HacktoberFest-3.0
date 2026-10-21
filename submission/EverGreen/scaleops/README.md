@@ -3,6 +3,8 @@
 Multi-user, read-only dashboard for an EC2 Auto Scaling group, its Application Load Balancer and CloudWatch.
 It never creates, scales or deletes anything. Original specs are in `docs/`.
 
+**Live dashboard:** <https://scale-ops-iota.vercel.app/>
+
 This submission contains two complementary projects:
 
 | Project | Location | Purpose |
