@@ -1,6 +1,8 @@
 # ReliefHub: Flood Relief Coordination Dashboard
 
 A web dashboard for relief organizations responding to the Sindh floods. It gives coordinators and field volunteers one shared view of camps, camp needs, warehouse inventory, dispatches, donations and volunteers, so deliveries are not duplicated and the camps lacking food, clean water or medicine are visible first.
+# Team Member
+Muhammad Tarique
 
 ## Features
 
