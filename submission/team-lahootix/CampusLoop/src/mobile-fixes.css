@@ -1,0 +1,7 @@
+.category-tabs {
+  scrollbar-width: none;
+}
+
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
