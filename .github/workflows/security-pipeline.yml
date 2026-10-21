@@ -180,3 +180,62 @@ jobs:
           name: devsecops-security-reports
           path: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning/reports/
           retention-days: 7
+
+  # ===========================================================================
+  # MILESTONE 8: Cloud Integration (Microsoft Azure ACR Delivery)
+  # ===========================================================================
+  deploy-azure:
+    name: ☁️ Azure Cloud Integration (ACR Delivery)
+    needs: security-gate
+    if: success()
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: submission/team-bhai-issue-hougya/issue2_Automated_Security_Vulnerability_Scanning
+
+    steps:
+      - name: 📥 Check out repository code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Log in to Azure Container Registry (ACR)
+        uses: docker/login-action@v3
+        with:
+          registry: bhaiissuehougyasecscan.azurecr.io
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+      - name: 🐳 Build & Tag Production Image
+        run: |
+          IMAGE_NAME="bhaiissuehougyasecscan.azurecr.io/vuln-scan-app"
+          COMMIT_TAG="${{ github.sha }}"
+          echo "Building production image tagged with commit SHA: $COMMIT_TAG"
+          docker build -t "$IMAGE_NAME:$COMMIT_TAG" -t "$IMAGE_NAME:latest" .
+
+      - name: 🚀 Push Approved Image to Azure Container Registry
+        run: |
+          IMAGE_NAME="bhaiissuehougyasecscan.azurecr.io/vuln-scan-app"
+          COMMIT_TAG="${{ github.sha }}"
+          echo "Pushing verified image to Azure Container Registry..."
+          docker push "$IMAGE_NAME:$COMMIT_TAG"
+          docker push "$IMAGE_NAME:latest"
+
+      - name: 📋 Publish Azure Cloud Delivery Audit Summary
+        run: |
+          node -e '
+            const fs = require("fs");
+            let summary = `\n\n---\n\n## ☁️ Milestone 8: Microsoft Azure Cloud Delivery Report\n\n`;
+            summary += `> **Security Gate Verdict:** ✅ **APPROVED** (Passed all SAST, SCA, Secret, and Container checks)\n\n`;
+            summary += `| Cloud Property | Value |\n`;
+            summary += `| :--- | :--- |\n`;
+            summary += `| **Cloud Provider** | Microsoft Azure (Azure for Students) |\n`;
+            summary += `| **Resource Group** | \`rg-bhai-secscan\` |\n`;
+            summary += `| **Container Registry (ACR)** | \`bhaiissuehougyasecscan.azurecr.io\` (Basic SKU, Private) |\n`;
+            summary += `| **Image Repository** | \`vuln-scan-app\` |\n`;
+            summary += `| **Immutable Image Tag** | \`${{ github.sha }}\` |\n`;
+            summary += `| **Authentication** | Azure RBAC / Service Principal / ACR Admin Credentials |\n`;
+            summary += `| **Pull Command** | \`az acr login --name bhaiissuehougyasecscan && docker pull bhaiissuehougyasecscan.azurecr.io/vuln-scan-app:latest\` |\n\n`;
+            summary += `🎉 **Approved, vulnerability-free container image successfully pushed to Microsoft Azure!**\n`;
+
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          '
