@@ -1,0 +1,25 @@
+{
+  "name": "tunewave",
+  "productName": "TuneWave",
+  "version": "1.0.0",
+  "description": "TuneWave music player core: playlist, queue, history, search and artist recommendations.",
+  "main": "main.js",
+  "author": "TuneWave",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.tunewave.player",
+    "productName": "TuneWave",
+    "files": ["main.js", "index.html", "package.json"],
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg", "category": "public.app-category.music" },
+    "linux": { "target": "AppImage", "category": "Audio" }
+  }
+}
