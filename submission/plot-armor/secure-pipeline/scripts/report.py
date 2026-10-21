@@ -79,14 +79,15 @@ def find_report(reports_dir, *names):
 
 
 def find_gitleaks_report(reports_dir):
-    """gitleaks-report.json if present; otherwise the SARIF artifact that
-    gitleaks-action@v2 actually uploads (gitleaks-results.sarif)."""
+    """gitleaks-report.json if present; otherwise any SARIF file - the
+    gitleaks-action@v2 artifact is named gitleaks-results.sarif but the file
+    inside it is results.sarif, and it is the only sarif producer here."""
     path = find_report(reports_dir, "gitleaks-report.json")
     if path:
         return path
     try:
-        for entry in os.listdir(reports_dir):
-            if entry.lower().endswith(".sarif") and "gitleaks" in entry.lower():
+        for entry in sorted(os.listdir(reports_dir)):
+            if entry.lower().endswith(".sarif"):
                 return os.path.join(reports_dir, entry)
     except OSError:
         pass
