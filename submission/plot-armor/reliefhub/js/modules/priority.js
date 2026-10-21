@@ -50,6 +50,25 @@ App.registerModule({
       + s.pressure * w.pressure + s.stock * w.stock) * 100);
   },
 
+  /* One-line "why", generated from the two heaviest signals (signal × weight),
+   * e.g. "High priority need, only 25% fulfilled at Badin Central Camp." */
+  whyFor(r) {
+    const w = this.weights, s = r.sig;
+    const phrases = {
+      urgency: r.need.priority + ' priority need',
+      deprivation: 'only ' + s.fulfilPct + '% fulfilled',
+      pressure: 'camp at ' + Math.round(s.pressure * 100) + '% capacity',
+      stock: s.stock >= 1 ? 'warehouse stock covers the whole gap'
+        : s.stock <= 0 ? 'no stock in the warehouse'
+          : 'warehouse covers ' + Math.round(s.stock * 100) + '% of the gap',
+    };
+    const top2 = ['urgency', 'deprivation', 'pressure', 'stock']
+      .sort((a, b) => s[b] * w[b] - s[a] * w[a]).slice(0, 2);
+    const sentence = top2.map(k => phrases[k]).join(', ');
+    const campName = (r.camp || {}).name || 'camp #' + r.need.camp_id;
+    return sentence.charAt(0).toUpperCase() + sentence.slice(1) + ' at ' + campName + '.';
+  },
+
   async render() {
     const [camps, items, needs] = await Promise.all([
       API.list('camps'), API.list('inventory'), API.list('needs'),
@@ -76,37 +95,85 @@ App.registerModule({
     }
 
     /* Build ranked rows: score desc, then biggest remaining gap first. */
-    function rankedRows() {
-      return openNeeds.filter(matches)
-        .map(n => {
-          const camp = campById[n.camp_id] || null;
-          const item = itemById[n.inventory_item_id] || null;
-          return { need: n, camp, item, sig: this.signals(n, camp, item), score: this.score(n, camp, item) };
-        }, this)
-        .sort((a, b) => b.score - a.score || b.sig.remaining - a.sig.remaining);
-    }
+    const rankedRows = () => openNeeds.filter(matches)
+      .map(n => {
+        const camp = campById[n.camp_id] || null;
+        const item = itemById[n.inventory_item_id] || null;
+        return { need: n, camp, item, sig: this.signals(n, camp, item), score: this.score(n, camp, item) };
+      })
+      .sort((a, b) => b.score - a.score || b.sig.remaining - a.sig.remaining);
 
-    function refresh() {
-      const rows = rankedRows.call(this);
+    const refresh = () => {
+      const rows = rankedRows();
       countNote.textContent = rows.length + ' open needs ranked'
         + (excluded ? ' · ' + excluded + ' fully fulfilled excluded' : '');
       rows.forEach((r, i) => { r.rank = i + 1; });
       tableBox.innerHTML = '';
-      tableBox.append(UI.table(buildColumns(), rows,
-        openNeeds.length ? 'No needs match your filters.' : 'No open needs to rank right now.'));
+      const table = UI.table(buildColumns(), rows,
+        openNeeds.length ? 'No needs match your filters.' : 'No open needs to rank right now.');
+      /* top 3 dispatches get a subtle brand accent so the eye lands there first */
+      table.querySelectorAll('tbody tr').forEach((tr, i) => {
+        if (i < 3) {
+          tr.style.background = 'var(--brand-soft)';
+          tr.style.boxShadow = 'inset 3px 0 0 var(--brand)';
+        }
+      });
+      tableBox.append(table);
+    };
+
+    /* Four tiny labelled progress bars — one per signal, 0-100 scaled, with a
+     * small mono readout. Color mirrors the semantic scale used elsewhere. */
+    function signalCell(r) {
+      const s = r.sig;
+      const defs = [
+        ['URG', s.urgency, s.urgency >= 1 ? 'var(--bad)' : s.urgency >= 0.6 ? 'var(--warn)' : 'var(--ok)'],
+        ['DEP', s.deprivation, s.deprivation >= 0.75 ? 'var(--bad)' : s.deprivation >= 0.5 ? 'var(--warn)' : 'var(--info)'],
+        ['PRES', s.pressure, s.pressure >= 0.9 ? 'var(--bad)' : s.pressure >= 0.6 ? 'var(--warn)' : 'var(--info)'],
+        ['STOCK', s.stock, s.stock >= 1 ? 'var(--ok)' : s.stock > 0 ? 'var(--warn)' : 'var(--bad)'],
+      ];
+      return UI.h('div', {
+        style: 'display:grid;grid-template-columns:46px 66px 32px;gap:3px 6px;align-items:center;'
+          + 'font-family:ui-monospace,Menlo,Consolas,monospace;font-size:var(--fs-2xs);color:var(--muted);',
+      }, defs.flatMap(([label, v, color]) => [
+        UI.h('span', {}, label),
+        UI.h('div', { class: 'progress', style: 'width:66px;height:6px;' },
+          UI.h('div', { style: 'width:' + Math.round(v * 100) + '%;background:' + color })),
+        UI.h('span', { style: 'text-align:right;font-variant-numeric:tabular-nums;' }, String(Math.round(v * 100))),
+      ]));
     }
 
-    function buildColumns() {
-      return [
-        { label: '#', key: 'rank' },
+    const buildColumns = () => [
+        { label: '#', render: r => UI.h('span', {
+          style: r.rank <= 3 ? 'font-weight:700;color:var(--brand-deep);' : '',
+        }, '#' + r.rank) },
         { label: 'Camp', render: r => (r.camp || {}).name || 'Camp #' + r.need.camp_id },
-        { label: 'Item', render: r => (r.item || {}).name || 'Item #' + r.need.inventory_item_id },
+        { label: 'Item', render: r => {
+          const name = (r.item || {}).name || 'Item #' + r.need.inventory_item_id;
+          /* a high score with nothing on the shelf must be visible, not silent */
+          const flag = r.sig.stockOnHand <= 0 ? UI.badge('uncoverable', 'bad')
+            : r.sig.stock < 1 ? UI.badge('partial cover', 'warn') : null;
+          return UI.h('span', { style: 'display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;' },
+            [name, flag]);
+        } },
         { label: 'Remaining', render: r => UI.h('span', { class: 'need-progress' },
           r.sig.remaining.toLocaleString() + ((r.item || {}).unit ? ' ' + r.item.unit : '')) },
+        { label: 'Signals', render: signalCell },
         { label: 'Score', render: r => UI.badge(r.score + '/100',
           r.score >= 75 ? 'bad' : r.score >= 50 ? 'warn' : 'info') },
+        { label: 'Why', render: r => UI.h('span', { class: 'muted', style: 'font-size:var(--fs-xs);' },
+          this.whyFor(r)) },
       ];
-    }
+
+    /* Explainer banner — the method behind the ranking, in one sentence. */
+    root.append(UI.h('div', {
+      class: 'panel',
+      style: 'background:var(--brand-soft);border-left:4px solid var(--brand);margin-bottom:var(--sp-4);',
+    }, [
+      UI.h('strong', { style: 'color:var(--brand-deep);' }, 'How this ranks: '),
+      "the same weighted multi-signal triage approach as the team's label-priority model "
+        + '(98.5% review yield) — four transparent signals per need combine into one 0-100 '
+        + 'dispatch score, and every row shows its why.',
+    ]));
 
     /* Weight chips row — the formula is part of the UI, not a secret. */
     const w = this.weights;
@@ -131,7 +198,7 @@ App.registerModule({
     ]));
 
     root.append(tableBox);
-    refresh.call(this);
+    refresh();
 
     return root;
   },
