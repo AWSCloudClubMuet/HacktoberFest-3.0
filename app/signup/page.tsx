@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { api } from '@/lib/api'
 
@@ -47,7 +47,7 @@ export default function SignupPage() {
     <div className="auth-shell">
       <Card className="auth-card">
         <div className="auth-brand">
-          <div className="brand-mark"><Sparkles /></div>
+          <img src="/logo.png" alt="campusloop logo" className="brand-logo" />
           <span>campus<span className="brand-accent">loop</span></span>
         </div>
         <h1 className="auth-title">Create your account</h1>

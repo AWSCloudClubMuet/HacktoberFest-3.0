@@ -283,7 +283,7 @@ export default function Page() {
   if (!authChecked || !authEmail) {
     return (
       <div className="auth-shell">
-        <div className="auth-loading"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+        <div className="auth-loading"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
       </div>
     )
   }
@@ -292,7 +292,7 @@ export default function Page() {
     return (
       <div className="auth-shell">
         <Card className="auth-card">
-          <div className="auth-brand"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+          <div className="auth-brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
           <h1 className="auth-title">Finish your profile</h1>
           <p className="modal-description">Signed in as {authEmail} — add the details other students will see.</p>
           <div className="dialog-form auth-form">
@@ -326,7 +326,7 @@ export default function Page() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+        <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
         <div className="campus-switcher"><div className="campus-icon">NU</div><div><strong>Northwestern</strong><span>Student community</span></div><ChevronDown className="muted-icon" /></div>
         <nav className="main-nav" aria-label="Main navigation">
           <span className="nav-label">WORKSPACE</span>
@@ -350,7 +350,7 @@ export default function Page() {
 
       <main className="main-content">
         <header className="topbar">
-          <div className="mobile-brand"><div className="brand-mark"><Sparkles /></div><span>campus<span className="brand-accent">loop</span></span></div>
+          <div className="mobile-brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
           <div className="topbar-actions">
             {me && <span className="acting-as-label signed-in-as">Signed in as {me.name}</span>}
             <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={doSignOut}><LogOut /></button>

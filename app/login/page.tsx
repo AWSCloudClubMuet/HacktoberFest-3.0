@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 
 const DEMO = [
@@ -42,7 +42,7 @@ export default function LoginPage() {
     <div className="auth-shell">
       <Card className="auth-card">
         <div className="auth-brand">
-          <div className="brand-mark"><Sparkles /></div>
+          <img src="/logo.png" alt="campusloop logo" className="brand-logo" />
           <span>campus<span className="brand-accent">loop</span></span>
         </div>
         <h1 className="auth-title">Welcome back</h1>
