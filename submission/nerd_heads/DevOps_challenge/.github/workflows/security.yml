@@ -7,10 +7,10 @@ on:
 
 defaults:
   run:
-    working-directory: "submission/nerd_heads/DevOps challenge"
+    working-directory: "submission/nerd_heads/DevOps_challenge"
 
 env:
-  APP_DIR: "submission/nerd_heads/DevOps challenge"
+  APP_DIR: "submission/nerd_heads/DevOps_challenge"
 
 jobs:
   security-scan:
