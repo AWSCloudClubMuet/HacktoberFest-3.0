@@ -1,0 +1,12 @@
+{
+  "name": "campus-gig",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Campus Gig & SkillSwap Portal",
+  "scripts": {
+    "setup": "npm --prefix server install",
+    "start": "npm --prefix server start",
+    "dev": "npm --prefix server run dev",
+    "reset": "node -e \"require('fs').rmSync('server/data',{recursive:true,force:true});console.log('Saved data deleted - seed data restored on next start')\""
+  }
+}

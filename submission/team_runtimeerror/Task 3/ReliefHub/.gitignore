@@ -1,0 +1,19 @@
+# Runtime data (server.js rewrites this on every change; seed.js recreates it)
+db.json
+
+# Dependencies (none today, but safe if you add any later)
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
