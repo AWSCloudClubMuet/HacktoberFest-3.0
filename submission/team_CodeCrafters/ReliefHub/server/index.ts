@@ -1127,8 +1127,19 @@ app.post('/api/ai/agent/:agentId/run', async (req, res) => {
   }
 });
 
+// SERVE STATIC ASSETS IN PRODUCTION
+const distPath = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 // START SERVER
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`ReliefHub API Server running at http://localhost:${PORT}`);
 });
+
