@@ -47,21 +47,17 @@ The project fully satisfies all specifications in `problemStatement.md`:
 
 ### 🧩 Milestone 5 — Mock API & Seed Data
 
-- ✅ **RESTful Mock API Endpoints:**
-  - `GET /api/gigs?category=...&type=...&q=...`
-  - `POST /api/gigs`
-  - `GET /api/gigs/:id`
-  - `PATCH /api/gigs/:id`
-  - `GET /api/applications?gig_id=...&applicant_id=...`
-  - `POST /api/applications`
-  - `PATCH /api/applications/:id` (actions: `accept`, `reject`)
-  - `GET /api/reviews?gig_id=...&user_id=...`
-  - `POST /api/reviews`
-- ✅ **Pre-populated Seed Data:**
-  - **12+ Student Profiles** with varied majors, avatars, bios, and skills
-  - **26+ Gigs** spanning Programming, Design, Writing, Tutoring, both types, and all statuses
-  - **21+ Applications** (Pending, Accepted, Rejected)
-  - **8+ Mutual Reviews** with ratings and comments
+The UI never touches storage directly: every read and write goes through `fetch()` to the mock REST API (Next.js route handlers backed by `src/lib/server/store.ts`). The server is the single source of truth; data is seeded on first start, kept in memory, and mirrored to `.data/db.json` for local runs (`POST /api/reset` restores the seed).
+
+- ✅ **Endpoints** (errors use proper status codes: 400 validation, 403 not allowed, 404 missing, 409 state conflict)
+  - `GET /api/gigs?category=&type=&payment_type=&status=&q=&min_budget=&max_budget=&user_id=`
+  - `POST /api/gigs` · `GET /api/gigs/:id` · `PATCH /api/gigs/:id` (`{ owner_id, status: "Completed" }`)
+  - `GET /api/applications?gig_id=&applicant_id=` · `POST /api/applications`
+  - `PATCH /api/applications/:id` (`{ owner_id, action: "accept" | "reject" }`)
+  - `GET /api/reviews?gig_id=&user_id=` · `POST /api/reviews`
+  - `GET /api/users` · `GET /api/users/:id` (profile + stats computed from stored reviews) · `POST /api/reset`
+- ✅ **Seed data:** 12 users, 26 gigs (all 5 statuses, all 4 categories, both types), 21 applications, 8 reviews
+- ✅ **Self-check:** with the server running, `node scripts/smoke-test.mjs` exercises every milestone rule over HTTP (32 checks)
 
 ---
 

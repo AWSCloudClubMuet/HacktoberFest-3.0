@@ -1,443 +1,121 @@
-import { User, Gig, Application, Review, UserStats, GigCategory, GigType, PaymentType, GigStatus } from "@/types";
-import { SEED_USERS, SEED_GIGS, SEED_APPLICATIONS, SEED_REVIEWS } from "./mockData";
+/**
+ * Client-side API layer. All data lives behind the mock REST API (/api/*);
+ * this module fetches it, keeps a small cache so components can read synchronously,
+ * and sends every mutation through fetch(). Only the "active demo user" is local.
+ */
+import { User, Gig, Application, Review, UserStats } from "@/types";
+import { GigFilterOptions, filterGigs, withExpiry, computeUserStats } from "./shared";
 
-// In-memory / localStorage store for the mock backend
-const STORAGE_KEY_USERS = "campus_portal_users";
-const STORAGE_KEY_GIGS = "campus_portal_gigs";
-const STORAGE_KEY_APPS = "campus_portal_applications";
-const STORAGE_KEY_REVIEWS = "campus_portal_reviews";
+export type { GigFilterOptions } from "./shared";
+
 const STORAGE_KEY_CURRENT_USER = "campus_portal_current_user_id";
+const DEFAULT_USER_ID = "usr_1";
 
-// Initialize state
-function isBrowser(): boolean {
-  return typeof window !== "undefined";
+let cache: { users: User[]; gigs: Gig[]; applications: Application[]; reviews: Review[] } = {
+  users: [], gigs: [], applications: [], reviews: [],
+};
+let started = 0;
+let applied = 0;
+
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, { cache: "no-store", headers: { "Content-Type": "application/json" }, ...init });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(body?.error || `Request failed (${res.status})`);
+  return body as T;
+}
+const send = <T,>(method: string, url: string, payload: unknown) => request<T>(url, { method, body: JSON.stringify(payload) });
+
+/** Pull the latest users/gigs/applications/reviews from the API into the cache. */
+export async function initializeStore(): Promise<void> {
+  const seq = ++started;
+  const [users, gigs, applications, reviews] = await Promise.all([
+    request<{ data: User[] }>("/api/users"),
+    request<{ data: Gig[] }>("/api/gigs"),
+    request<{ data: Application[] }>("/api/applications"),
+    request<{ data: Review[] }>("/api/reviews"),
+  ]);
+  if (seq < applied) return; // a newer refresh already landed; don't overwrite with older data
+  applied = seq;
+  cache = { users: users.data, gigs: gigs.data, applications: applications.data, reviews: reviews.data };
 }
 
-let inMemoryUsers: User[] = [...SEED_USERS];
-let inMemoryGigs: Gig[] = [...SEED_GIGS];
-let inMemoryApplications: Application[] = [...SEED_APPLICATIONS];
-let inMemoryReviews: Review[] = [...SEED_REVIEWS];
-let currentUserId: string = "usr_1"; // Default to Aiden Vance
-
-function loadFromStorage<T>(key: string, fallback: T): T {
-  if (!isBrowser()) return fallback;
-  try {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveToStorage<T>(key: string, data: T): void {
-  if (!isBrowser()) return;
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (err) {
-    console.error("Failed to save to localStorage", err);
-  }
-}
-
-// Auto-check expired gigs on load
-function normalizeGigStatuses(gigs: Gig[]): Gig[] {
-  const now = new Date().getTime();
-  return gigs.map((gig) => {
-    if (gig.status === "Open" && new Date(gig.deadline).getTime() < now) {
-      return { ...gig, status: "Expired" };
-    }
-    return gig;
-  });
-}
-
-export function initializeStore(): void {
-  if (isBrowser()) {
-    const storedUsers = loadFromStorage<User[]>(STORAGE_KEY_USERS, SEED_USERS);
-    const storedGigs = loadFromStorage<Gig[]>(STORAGE_KEY_GIGS, SEED_GIGS);
-    const storedApps = loadFromStorage<Application[]>(STORAGE_KEY_APPS, SEED_APPLICATIONS);
-    const storedRevs = loadFromStorage<Review[]>(STORAGE_KEY_REVIEWS, SEED_REVIEWS);
-    const storedCurrent = localStorage.getItem(STORAGE_KEY_CURRENT_USER);
-
-    inMemoryUsers = storedUsers;
-    inMemoryGigs = normalizeGigStatuses(storedGigs);
-    inMemoryApplications = storedApps;
-    inMemoryReviews = storedRevs;
-    if (storedCurrent) {
-      currentUserId = storedCurrent;
-    }
-    saveToStorage(STORAGE_KEY_GIGS, inMemoryGigs);
-  }
-}
-
-// Current User Switcher support
+// ---------- Mock auth: which demo student is active ----------
 export function getCurrentUserId(): string {
-  if (isBrowser()) {
-    return localStorage.getItem(STORAGE_KEY_CURRENT_USER) || currentUserId;
-  }
-  return currentUserId;
+  if (typeof window === "undefined") return DEFAULT_USER_ID;
+  return localStorage.getItem(STORAGE_KEY_CURRENT_USER) || DEFAULT_USER_ID;
 }
-
 export function setCurrentUserId(userId: string): void {
-  currentUserId = userId;
-  if (isBrowser()) {
-    localStorage.setItem(STORAGE_KEY_CURRENT_USER, userId);
-    window.dispatchEvent(new Event("user-changed"));
-  }
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY_CURRENT_USER, userId);
+  window.dispatchEvent(new Event("user-changed"));
 }
-
 export function getCurrentUser(): User | undefined {
-  const uid = getCurrentUserId();
-  return getUsers().find((u) => u.id === uid) || inMemoryUsers[0];
+  return getUsers().find((u) => u.id === getCurrentUserId()) || getUsers()[0];
 }
 
-// Users API
-export function getUsers(): User[] {
-  if (isBrowser()) {
-    return loadFromStorage<User[]>(STORAGE_KEY_USERS, inMemoryUsers);
-  }
-  return inMemoryUsers;
-}
-
-export function getUserById(id: string): User | undefined {
-  return getUsers().find((u) => u.id === id);
-}
-
-// Reputation / Stats computation
-export function getUserStats(userId: string): UserStats {
-  const gigs = getGigs();
-  const reviews = getReviews();
-
-  const gigsPosted = gigs.filter((g) => g.user_id === userId).length;
-  // Gig is completed if user is the owner or accepted applicant
-  const gigsCompleted = gigs.filter(
-    (g) => g.status === "Completed" && (g.user_id === userId || g.accepted_applicant_id === userId)
-  ).length;
-
-  // Reviews where this user is reviewee
-  const userReviews = reviews.filter((r) => r.reviewee_id === userId);
-  const reviewCount = userReviews.length;
-  const averageRating =
-    reviewCount > 0
-      ? Number((userReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount).toFixed(1))
-      : null;
-
-  return {
-    gigsPosted,
-    gigsCompleted,
-    averageRating,
-    reviewCount,
-  };
-}
-
-// Gigs API
-export interface GigFilterOptions {
-  category?: GigCategory | "All";
-  type?: GigType | "All";
-  payment_type?: PaymentType | "All";
-  status?: GigStatus | "All";
-  search?: string;
-  minBudget?: number;
-  maxBudget?: number;
-  userId?: string;
-}
+// ---------- Reads (served from the freshly fetched cache) ----------
+export const getUsers = (): User[] => cache.users;
+export const getUserById = (id: string): User | undefined => cache.users.find((u) => u.id === id);
+export const getUserStats = (userId: string): UserStats => computeUserStats(withExpiry(cache.gigs), cache.reviews, userId);
 
 export function getGigs(options?: GigFilterOptions): Gig[] {
-  let gigs = isBrowser()
-    ? loadFromStorage<Gig[]>(STORAGE_KEY_GIGS, inMemoryGigs)
-    : inMemoryGigs;
-
-  gigs = normalizeGigStatuses(gigs);
-
-  if (!options) return gigs;
-
-  return gigs.filter((gig) => {
-    if (options.category && options.category !== "All" && gig.category !== options.category) {
-      return false;
-    }
-    if (options.type && options.type !== "All" && gig.type !== options.type) {
-      return false;
-    }
-    if (options.payment_type && options.payment_type !== "All" && gig.payment_type !== options.payment_type) {
-      return false;
-    }
-    if (options.status && options.status !== "All" && gig.status !== options.status) {
-      return false;
-    }
-    if (options.userId && gig.user_id !== options.userId) {
-      return false;
-    }
-    if (options.minBudget !== undefined && (gig.budget === null || gig.budget < options.minBudget)) return false;
-    if (options.maxBudget !== undefined && (gig.budget === null || gig.budget > options.maxBudget)) return false;
-    if (options.search && options.search.trim() !== "") {
-      const q = options.search.toLowerCase().trim();
-      const titleMatch = gig.title.toLowerCase().includes(q);
-      const descMatch = gig.description.toLowerCase().includes(q);
-      if (!titleMatch && !descMatch) return false;
-    }
-    return true;
-  });
+  return filterGigs(withExpiry(cache.gigs), options);
 }
+export const getGigById = (id: string): Gig | undefined => getGigs().find((g) => g.id === id);
 
-export function getGigById(id: string): Gig | undefined {
-  const gigs = getGigs();
-  return gigs.find((g) => g.id === id);
-}
-
-export function createGig(gigData: Omit<Gig, "id" | "status" | "accepted_applicant_id" | "created_at">): Gig {
-  if (!gigData.title.trim() || gigData.title.trim().length < 5) {
-    throw new Error("Gig title must be at least 5 characters long.");
-  }
-  if (!gigData.description.trim() || gigData.description.trim().length < 20) {
-    throw new Error("Gig description must be at least 20 characters long.");
-  }
-  if (!getUserById(gigData.user_id)) {
-    throw new Error("Gig owner does not exist.");
-  }
-  if (gigData.payment_type === "Paid" && (!gigData.budget || gigData.budget <= 0)) {
-    throw new Error("Paid gigs require a positive budget.");
-  }
-  if (gigData.payment_type !== "Paid" && gigData.budget !== null) {
-    throw new Error("Only paid gigs can have a budget.");
-  }
-  if (Number.isNaN(new Date(gigData.deadline).getTime()) || new Date(gigData.deadline).getTime() <= Date.now()) {
-    throw new Error("Gig deadline must be a future date.");
-  }
-  const allGigs = getGigs();
-  const newGig: Gig = {
-    ...gigData,
-    id: `gig_${Date.now()}`,
-    status: "Open",
-    accepted_applicant_id: null,
-    created_at: new Date().toISOString(),
-  };
-
-  const updated = [newGig, ...allGigs];
-  inMemoryGigs = updated;
-  saveToStorage(STORAGE_KEY_GIGS, updated);
-  return newGig;
-}
-
-export function updateGig(id: string, updates: Partial<Gig>, ownerId?: string): Gig {
-  const allGigs = getGigs();
-  const index = allGigs.findIndex((g) => g.id === id);
-  if (index === -1) {
-    throw new Error(`Gig with id ${id} not found`);
-  }
-
-  const existing = allGigs[index];
-
-  if (ownerId && existing.user_id !== ownerId) {
-    throw new Error("Only the gig owner can update this gig.");
-  }
-
-  // Validation: Status flow rules
-  if (updates.status && updates.status === "Completed" && existing.status !== "In Progress") {
-    throw new Error("Gig can only be marked as Completed from In Progress state");
-  }
-  if (updates.status && !["In Progress", "Completed"].includes(updates.status)) {
-    throw new Error("Gig status can only move from Open to In Progress, then to Completed.");
-  }
-
-  const updatedGig: Gig = { ...existing, ...updates };
-  allGigs[index] = updatedGig;
-  inMemoryGigs = allGigs;
-  saveToStorage(STORAGE_KEY_GIGS, allGigs);
-  return updatedGig;
-}
-
-// Applications API
 export function getApplications(gigId?: string, applicantId?: string): Application[] {
-  let apps = isBrowser()
-    ? loadFromStorage<Application[]>(STORAGE_KEY_APPS, inMemoryApplications)
-    : inMemoryApplications;
-
-  if (gigId) {
-    apps = apps.filter((a) => a.gig_id === gigId);
-  }
-  if (applicantId) {
-    apps = apps.filter((a) => a.applicant_id === applicantId);
-  }
-  return apps;
+  return cache.applications.filter((a) => (!gigId || a.gig_id === gigId) && (!applicantId || a.applicant_id === applicantId));
 }
-
-export function createApplication(data: { gig_id: string; applicant_id: string; message: string }): Application {
-  const gig = getGigById(data.gig_id);
-  if (!gig) throw new Error("Gig does not exist");
-
-  // Rule: Cannot apply to user's own gig
-  if (gig.user_id === data.applicant_id) {
-    throw new Error("You cannot apply to your own gig.");
-  }
-
-  // Rule: Cannot apply to closed/expired/completed/in-progress gigs
-  if (gig.status !== "Open") {
-    throw new Error(`This gig is currently ${gig.status} and not accepting applications.`);
-  }
-
-  // Rule: Duplicate application check
-  const allApps = getApplications();
-  const existingApp = allApps.find((a) => a.gig_id === data.gig_id && a.applicant_id === data.applicant_id);
-  if (existingApp) {
-    throw new Error("You have already submitted an application to this gig.");
-  }
-
-  const newApp: Application = {
-    id: `app_${Date.now()}`,
-    gig_id: data.gig_id,
-    applicant_id: data.applicant_id,
-    message: data.message,
-    status: "Pending",
-    created_at: new Date().toISOString(),
-  };
-
-  const updated = [newApp, ...allApps];
-  inMemoryApplications = updated;
-  saveToStorage(STORAGE_KEY_APPS, updated);
-  return newApp;
-}
-
-// Milestone 3: Applicant Selection & Status
-export function acceptApplicant(gigId: string, applicationId: string, ownerId: string): { gig: Gig; application: Application } {
-  const gig = getGigById(gigId);
-  if (!gig) throw new Error("Gig not found");
-
-  // Rule: Only gig owners may accept applicants
-  if (gig.user_id !== ownerId) {
-    throw new Error("Only the gig owner can accept an applicant.");
-  }
-
-  if (gig.status !== "Open") {
-    throw new Error("Can only accept applicants when gig is in Open status.");
-  }
-
-  const allApps = getApplications();
-  const targetAppIndex = allApps.findIndex((a) => a.id === applicationId && a.gig_id === gigId);
-  if (targetAppIndex === -1) {
-    throw new Error("Application not found for this gig");
-  }
-
-  const acceptedApplicantId = allApps[targetAppIndex].applicant_id;
-
-  // Rule: Acceptance automatically changes gig to In Progress, rejects remaining Pending apps, and closes it to new apps
-  const updatedApps = allApps.map((app) => {
-    if (app.gig_id === gigId) {
-      if (app.id === applicationId) {
-        return { ...app, status: "Accepted" as const };
-      } else if (app.status === "Pending") {
-        return { ...app, status: "Rejected" as const };
-      }
-    }
-    return app;
-  });
-
-  inMemoryApplications = updatedApps;
-  saveToStorage(STORAGE_KEY_APPS, updatedApps);
-
-  const updatedGig = updateGig(gigId, {
-    status: "In Progress",
-    accepted_applicant_id: acceptedApplicantId,
-  }, ownerId);
-
-  return {
-    gig: updatedGig,
-    application: updatedApps[targetAppIndex],
-  };
-}
-
-export function rejectApplication(applicationId: string, ownerId: string): Application {
-  const allApps = getApplications();
-  const index = allApps.findIndex((a) => a.id === applicationId);
-  if (index === -1) throw new Error("Application not found");
-
-  const app = allApps[index];
-  const gig = getGigById(app.gig_id);
-  if (!gig) throw new Error("Gig not found");
-
-  if (gig.user_id !== ownerId) {
-    throw new Error("Only the gig owner can reject an application");
-  }
-
-  const updatedApp: Application = { ...app, status: "Rejected" };
-  allApps[index] = updatedApp;
-  inMemoryApplications = allApps;
-  saveToStorage(STORAGE_KEY_APPS, allApps);
-  return updatedApp;
-}
-
-// Milestone 4: Mutual Reviews & Reputation
 export function getReviews(gigId?: string, userId?: string): Review[] {
-  let reviews = isBrowser()
-    ? loadFromStorage<Review[]>(STORAGE_KEY_REVIEWS, inMemoryReviews)
-    : inMemoryReviews;
-
-  if (gigId) {
-    reviews = reviews.filter((r) => r.gig_id === gigId);
-  }
-  if (userId) {
-    reviews = reviews.filter((r) => r.reviewee_id === userId || r.reviewer_id === userId);
-  }
-  return reviews;
+  return cache.reviews.filter((r) => (!gigId || r.gig_id === gigId) && (!userId || r.reviewee_id === userId || r.reviewer_id === userId));
 }
 
-export function createReview(data: { gig_id: string; reviewer_id: string; rating: number; comment: string }): Review {
-  const gig = getGigById(data.gig_id);
-  if (!gig) throw new Error("Gig not found");
-
-  // Rule: After completion only
-  if (gig.status !== "Completed") {
-    throw new Error("Reviews can only be submitted after a gig is Completed.");
-  }
-
-  // Rule: Only the owner and accepted applicant can review each other
-  const isOwner = gig.user_id === data.reviewer_id;
-  const isApplicant = gig.accepted_applicant_id === data.reviewer_id;
-
-  if (!isOwner && !isApplicant) {
-    throw new Error("Only the gig owner or accepted applicant can review this gig.");
-  }
-
-  const reviewee_id = isOwner ? gig.accepted_applicant_id! : gig.user_id;
-
-  // Rule: Allow only one review per reviewer for that gig
-  const allReviews = getReviews();
-  const alreadyReviewed = allReviews.some(
-    (r) => r.gig_id === data.gig_id && r.reviewer_id === data.reviewer_id
-  );
-  if (alreadyReviewed) {
-    throw new Error("You have already submitted a review for this gig.");
-  }
-
-  // Rating 1-5 validation
-  if (data.rating < 1 || data.rating > 5) {
-    throw new Error("Rating must be between 1 and 5.");
-  }
-
-  const newReview: Review = {
-    id: `rev_${Date.now()}`,
-    gig_id: data.gig_id,
-    reviewer_id: data.reviewer_id,
-    reviewee_id: reviewee_id,
-    rating: data.rating,
-    comment: data.comment,
-    created_at: new Date().toISOString(),
-  };
-
-  const updated = [newReview, ...allReviews];
-  inMemoryReviews = updated;
-  saveToStorage(STORAGE_KEY_REVIEWS, updated);
-  return newReview;
+/** Milestone 2 search/filter, executed by the API: GET /api/gigs?category=&type=&payment_type=&status=&q=&min_budget=&max_budget= */
+export async function fetchGigs(o: GigFilterOptions = {}): Promise<Gig[]> {
+  const p = new URLSearchParams();
+  if (o.category && o.category !== "All") p.set("category", o.category);
+  if (o.type && o.type !== "All") p.set("type", o.type);
+  if (o.payment_type && o.payment_type !== "All") p.set("payment_type", o.payment_type);
+  if (o.status && o.status !== "All") p.set("status", o.status);
+  if (o.search?.trim()) p.set("q", o.search.trim());
+  if (o.minBudget !== undefined) p.set("min_budget", String(o.minBudget));
+  if (o.maxBudget !== undefined) p.set("max_budget", String(o.maxBudget));
+  if (o.userId) p.set("user_id", o.userId);
+  return (await request<{ data: Gig[] }>(`/api/gigs?${p}`)).data;
 }
 
-// Reset store to defaults if needed
-export function resetStore(): void {
-  inMemoryUsers = [...SEED_USERS];
-  inMemoryGigs = [...SEED_GIGS];
-  inMemoryApplications = [...SEED_APPLICATIONS];
-  inMemoryReviews = [...SEED_REVIEWS];
-  if (isBrowser()) {
-    localStorage.removeItem(STORAGE_KEY_USERS);
-    localStorage.removeItem(STORAGE_KEY_GIGS);
-    localStorage.removeItem(STORAGE_KEY_APPS);
-    localStorage.removeItem(STORAGE_KEY_REVIEWS);
-    initializeStore();
-  }
+// ---------- Mutations (all go through the API, then refresh the cache) ----------
+export async function createGig(data: Omit<Gig, "id" | "status" | "accepted_applicant_id" | "created_at">): Promise<Gig> {
+  const gig = await send<Gig>("POST", "/api/gigs", data);
+  await initializeStore();
+  return gig;
+}
+export async function updateGig(id: string, updates: Partial<Gig>, ownerId: string): Promise<Gig> {
+  const gig = await send<Gig>("PATCH", `/api/gigs/${id}`, { ...updates, owner_id: ownerId });
+  await initializeStore();
+  return gig;
+}
+export async function createApplication(data: { gig_id: string; applicant_id: string; message: string }): Promise<Application> {
+  const app = await send<Application>("POST", "/api/applications", data);
+  await initializeStore();
+  return app;
+}
+export async function acceptApplicant(gigId: string, applicationId: string, ownerId: string): Promise<{ gig: Gig; application: Application }> {
+  const result = await send<{ gig: Gig; application: Application }>("PATCH", `/api/applications/${applicationId}`, { action: "accept", gig_id: gigId, owner_id: ownerId });
+  await initializeStore();
+  return result;
+}
+export async function rejectApplication(applicationId: string, ownerId: string): Promise<Application> {
+  const result = await send<{ application: Application }>("PATCH", `/api/applications/${applicationId}`, { action: "reject", owner_id: ownerId });
+  await initializeStore();
+  return result.application;
+}
+export async function createReview(data: { gig_id: string; reviewer_id: string; rating: number; comment: string }): Promise<Review> {
+  const review = await send<Review>("POST", "/api/reviews", data);
+  await initializeStore();
+  return review;
+}
+export async function resetStore(): Promise<void> {
+  await send("POST", "/api/reset", {});
+  await initializeStore();
 }

@@ -51,8 +51,10 @@ export default function GigDetailPage() {
   // Feedback notifications
   const [actionMessage, setActionMessage] = React.useState<{ text: string; type: "success" | "error" } | null>(null);
 
-  const loadData = () => {
-    initializeStore();
+  const [loaded, setLoaded] = React.useState(false);
+
+  const loadData = async () => {
+    try { await initializeStore(); } catch (err) { console.error(err); }
     const current = getCurrentUser();
     setCurrentUser(current);
 
@@ -64,6 +66,7 @@ export default function GigDetailPage() {
       setApplications(getApplications(foundGig.id));
       setReviews(getReviews(foundGig.id));
     }
+    setLoaded(true);
   };
 
   React.useEffect(() => {
@@ -71,6 +74,10 @@ export default function GigDetailPage() {
     window.addEventListener("user-changed", loadData);
     return () => window.removeEventListener("user-changed", loadData);
   }, [gigId]);
+
+  if (!loaded) {
+    return <div className="mx-auto max-w-4xl px-4 py-16 text-center text-sm font-semibold text-stone-500">Loading gig…</div>;
+  }
 
   if (!gig) {
     return (
@@ -94,7 +101,7 @@ export default function GigDetailPage() {
   const hasReviewed = reviews.some((r) => r.reviewer_id === currentUser?.id);
 
   // Handle Application Submission
-  const handleApply = (e: React.FormEvent) => {
+  const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     setApplyError("");
     setApplySuccess("");
@@ -111,7 +118,7 @@ export default function GigDetailPage() {
 
     try {
       setIsApplying(true);
-      createApplication({
+      await createApplication({
         gig_id: gig.id,
         applicant_id: currentUser.id,
         message: applyMessage.trim(),
@@ -127,10 +134,10 @@ export default function GigDetailPage() {
   };
 
   // Handle Owner Accepting Applicant
-  const handleAcceptApplicant = (appId: string) => {
+  const handleAcceptApplicant = async (appId: string) => {
     if (!currentUser) return;
     try {
-      acceptApplicant(gig.id, appId, currentUser.id);
+      await acceptApplicant(gig.id, appId, currentUser.id);
       setActionMessage({
         type: "success",
         text: "Applicant accepted! Gig status updated to 'In Progress', pending applications closed.",
@@ -142,10 +149,10 @@ export default function GigDetailPage() {
   };
 
   // Handle Owner Rejecting Applicant
-  const handleRejectApplicant = (appId: string) => {
+  const handleRejectApplicant = async (appId: string) => {
     if (!currentUser) return;
     try {
-      rejectApplication(appId, currentUser.id);
+      await rejectApplication(appId, currentUser.id);
       setActionMessage({
         type: "success",
         text: "Application rejected.",
@@ -157,10 +164,10 @@ export default function GigDetailPage() {
   };
 
   // Handle Owner Marking as Completed
-  const handleCompleteGig = () => {
+  const handleCompleteGig = async () => {
     if (!currentUser || !isOwner) return;
     try {
-      updateGig(gig.id, { status: "Completed" }, currentUser.id);
+      await updateGig(gig.id, { status: "Completed" }, currentUser.id);
       setActionMessage({
         type: "success",
         text: "Congratulations! Gig marked as Completed. Both parties can now leave mutual reviews.",
@@ -172,7 +179,7 @@ export default function GigDetailPage() {
   };
 
   // Handle Mutual Review Submission
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setReviewError("");
     setReviewSuccess("");
@@ -185,7 +192,7 @@ export default function GigDetailPage() {
 
     try {
       setIsSubmittingReview(true);
-      createReview({
+      await createReview({
         gig_id: gig.id,
         reviewer_id: currentUser.id,
         rating: reviewRating,

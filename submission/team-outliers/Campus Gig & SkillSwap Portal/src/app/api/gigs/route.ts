@@ -1,35 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getGigs, createGig } from "@/lib/api";
-import { GigCategory, GigType, PaymentType, GigStatus } from "@/types";
+import { NextRequest } from "next/server";
+import { listGigs, createGig } from "@/lib/server/store";
+import { readJson, respond } from "@/lib/server/http";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const category = searchParams.get("category") as GigCategory | null;
-  const type = searchParams.get("type") as GigType | null;
-  const q = searchParams.get("q") || searchParams.get("search");
-  const payment_type = searchParams.get("payment_type") as PaymentType | null;
-  const status = searchParams.get("status") as GigStatus | null;
+const num = (v: string | null) => (v !== null && v.trim() !== "" && Number.isFinite(Number(v)) ? Number(v) : undefined);
 
-  const gigs = getGigs({
-    category: category || undefined,
-    type: type || undefined,
-    payment_type: payment_type || undefined,
-    status: status || undefined,
-    search: q || undefined,
-  });
-
-  return NextResponse.json({
-    total: gigs.length,
-    data: gigs,
+// GET /api/gigs?category=&type=&payment_type=&status=&q=&min_budget=&max_budget=&user_id=
+export function GET(request: NextRequest) {
+  const p = new URL(request.url).searchParams;
+  return respond(() => {
+    const data = listGigs({
+      category: (p.get("category") as any) || undefined,
+      type: (p.get("type") as any) || undefined,
+      payment_type: (p.get("payment_type") as any) || undefined,
+      status: (p.get("status") as any) || undefined,
+      search: p.get("q") || p.get("search") || undefined,
+      minBudget: num(p.get("min_budget")),
+      maxBudget: num(p.get("max_budget")),
+      userId: p.get("user_id") || undefined,
+    });
+    return { total: data.length, data };
   });
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const newGig = createGig(body);
-    return NextResponse.json(newGig, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to create gig" }, { status: 400 });
-  }
+// POST /api/gigs
+export function POST(request: NextRequest) {
+  return respond(async () => createGig(await readJson(request)), 201);
 }

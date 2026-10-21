@@ -1,3 +1,5 @@
+import { isDeadlinePassed } from "./shared";
+
 export type ClassValue =
   | string
   | number
@@ -53,10 +55,5 @@ export function formatDate(dateString: string): string {
 }
 
 export function isPastDeadline(deadlineString: string): boolean {
-  try {
-    const deadline = new Date(deadlineString);
-    return deadline.getTime() < Date.now();
-  } catch {
-    return false;
-  }
+  return isDeadlinePassed(deadlineString);
 }

@@ -15,8 +15,8 @@ export default function MyGigsPage() {
   const [myGigs, setMyGigs] = React.useState<Gig[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("All");
 
-  const loadData = () => {
-    initializeStore();
+  const loadData = async () => {
+    try { await initializeStore(); } catch (err) { console.error(err); }
     const user = getCurrentUser();
     setCurrentUser(user);
     if (user) {

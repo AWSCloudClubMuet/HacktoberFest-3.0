@@ -27,21 +27,19 @@ export default function PostGigPage() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
-    initializeStore();
-    const u = getCurrentUser();
-    setCurrentUser(u);
+    initializeStore().then(() => setCurrentUser(getCurrentUser())).catch(console.error);
 
     // Set default deadline to 14 days from now
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() + 14);
     setDeadline(defaultDate.toISOString().split("T")[0]);
 
-    const handleUserChange = () => setCurrentUser(getCurrentUser());
+    const handleUserChange = () => initializeStore().then(() => setCurrentUser(getCurrentUser())).catch(console.error);
     window.addEventListener("user-changed", handleUserChange);
     return () => window.removeEventListener("user-changed", handleUserChange);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
 
@@ -81,7 +79,7 @@ export default function PostGigPage() {
 
     try {
       setIsSubmitting(true);
-      const newGig = createGig({
+      const newGig = await createGig({
         user_id: currentUser.id,
         title: title.trim(),
         description: description.trim(),

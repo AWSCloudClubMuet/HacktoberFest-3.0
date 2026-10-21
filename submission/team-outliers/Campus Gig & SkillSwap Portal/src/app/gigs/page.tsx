@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { getGigs, initializeStore } from "@/lib/api";
+import { fetchGigs, initializeStore } from "@/lib/api";
 import { Gig, GigCategory, GigType, PaymentType, GigStatus } from "@/types";
 import { GigCard } from "@/components/gigs/gig-card";
 import { Button } from "@/components/ui/button";
@@ -23,22 +23,34 @@ function GigsContent() {
   const [minBudget, setMinBudget] = React.useState<string>("");
   const [maxBudget, setMaxBudget] = React.useState<string>("");
 
-  function refreshGigs() {
-    const filtered = getGigs({
-      category: category === "All" ? undefined : category,
-      type: type === "All" ? undefined : type,
-      payment_type: paymentType === "All" ? undefined : paymentType,
-      status: status === "All" ? undefined : status,
-      search: search,
-      minBudget: minBudget ? Number(minBudget) : undefined,
-      maxBudget: maxBudget ? Number(maxBudget) : undefined,
-    });
-    setGigs(filtered);
-  }
+  const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState("");
 
   React.useEffect(() => {
-    initializeStore();
-    refreshGigs();
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        // Users (for poster info on cards) + server-side filtered gigs from GET /api/gigs
+        const [, filtered] = await Promise.all([
+          initializeStore(),
+          fetchGigs({
+            category: category === "All" ? undefined : category,
+            type: type === "All" ? undefined : type,
+            payment_type: paymentType === "All" ? undefined : paymentType,
+            status: status === "All" ? undefined : status,
+            search,
+            minBudget: minBudget ? Number(minBudget) : undefined,
+            maxBudget: maxBudget ? Number(maxBudget) : undefined,
+          }),
+        ]);
+        if (!cancelled) { setGigs(filtered); setLoadError(""); }
+      } catch (err: any) {
+        if (!cancelled) setLoadError(err.message || "Could not load gigs.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }, 200); // debounce typing in search/budget inputs
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [category, type, paymentType, status, search, minBudget, maxBudget]);
 
   const handleResetFilters = () => {
@@ -258,7 +270,11 @@ function GigsContent() {
       </div>
 
       {/* Gigs Grid */}
-      {gigs.length === 0 ? (
+      {loadError ? (
+        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm font-semibold text-red-700">{loadError}</div>
+      ) : loading ? (
+        <div className="rounded-3xl border border-stone-200 bg-white/60 p-12 text-center text-sm font-semibold text-stone-500">Loading gigs…</div>
+      ) : gigs.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-stone-300 bg-white/60 p-12 text-center space-y-4">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-2xl text-amber-700">
             🔍

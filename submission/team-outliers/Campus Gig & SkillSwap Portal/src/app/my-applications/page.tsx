@@ -15,8 +15,8 @@ export default function MyApplicationsPage() {
   const [myApplications, setMyApplications] = React.useState<Application[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("All");
 
-  const loadData = () => {
-    initializeStore();
+  const loadData = async () => {
+    try { await initializeStore(); } catch (err) { console.error(err); }
     const user = getCurrentUser();
     setCurrentUser(user);
     if (user) {

@@ -22,7 +22,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
-    const refresh = () => { initializeStore(); setCurrentUser(getCurrentUser()); setUsers(getUsers()); };
+    const refresh = () => { initializeStore().then(() => { setCurrentUser(getCurrentUser()); setUsers(getUsers()); }).catch(console.error); };
     refresh();
     window.addEventListener("user-changed", refresh);
     return () => window.removeEventListener("user-changed", refresh);

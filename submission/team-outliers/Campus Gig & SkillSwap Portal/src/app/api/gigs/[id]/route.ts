@@ -1,29 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getGigById, updateGig } from "@/lib/api";
+import { NextRequest } from "next/server";
+import { getGig, patchGig } from "@/lib/server/store";
+import { readJson, respond } from "@/lib/server/http";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  const gig = getGigById(id);
-  if (!gig) {
-    return NextResponse.json({ error: "Gig not found" }, { status: 404 });
-  }
-  return NextResponse.json(gig);
+type Ctx = { params: Promise<{ id: string }> };
+
+export function GET(_req: NextRequest, { params }: Ctx) {
+  return respond(async () => getGig((await params).id));
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const body = await request.json();
-    const { owner_id, ...updates } = body;
-    const updated = updateGig(id, updates, owner_id);
-    return NextResponse.json(updated);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to update gig" }, { status: 400 });
-  }
+// PATCH /api/gigs/:id  body: { owner_id, status: "Completed" }
+export function PATCH(request: NextRequest, { params }: Ctx) {
+  return respond(async () => patchGig((await params).id, await readJson(request)));
 }

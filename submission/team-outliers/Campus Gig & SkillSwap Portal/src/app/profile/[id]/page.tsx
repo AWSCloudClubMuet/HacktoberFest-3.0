@@ -28,8 +28,10 @@ export default function UserProfilePage() {
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [userGigs, setUserGigs] = React.useState<Gig[]>([]);
 
-  const loadData = () => {
-    initializeStore();
+  const [loaded, setLoaded] = React.useState(false);
+
+  const loadData = async () => {
+    try { await initializeStore(); } catch (err) { console.error(err); }
     const foundUser = getUserById(userId);
     setUser(foundUser);
     setCurrentUser(getCurrentUser());
@@ -43,6 +45,7 @@ export default function UserProfilePage() {
       const gigs = getGigs({ userId: foundUser.id });
       setUserGigs(gigs);
     }
+    setLoaded(true);
   };
 
   React.useEffect(() => {
@@ -50,6 +53,10 @@ export default function UserProfilePage() {
     window.addEventListener("user-changed", loadData);
     return () => window.removeEventListener("user-changed", loadData);
   }, [userId]);
+
+  if (!loaded) {
+    return <div className="mx-auto max-w-3xl px-4 py-16 text-center text-sm font-semibold text-stone-500">Loading profile…</div>;
+  }
 
   if (!user) {
     return (

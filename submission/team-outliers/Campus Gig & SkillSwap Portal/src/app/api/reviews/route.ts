@@ -1,24 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getReviews, createReview } from "@/lib/api";
+import { NextRequest } from "next/server";
+import { listReviews, createReview } from "@/lib/server/store";
+import { readJson, respond } from "@/lib/server/http";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const gig_id = searchParams.get("gig_id") || undefined;
-  const user_id = searchParams.get("user_id") || undefined;
-
-  const reviews = getReviews(gig_id, user_id);
-  return NextResponse.json({
-    total: reviews.length,
-    data: reviews,
+// GET /api/reviews?gig_id=&user_id=
+export function GET(request: NextRequest) {
+  const p = new URL(request.url).searchParams;
+  return respond(() => {
+    const data = listReviews(p.get("gig_id") || undefined, p.get("user_id") || undefined);
+    return { total: data.length, data };
   });
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const review = createReview(body);
-    return NextResponse.json(review, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to submit review" }, { status: 400 });
-  }
+// POST /api/reviews  body: { gig_id, reviewer_id, rating, comment }
+export function POST(request: NextRequest) {
+  return respond(async () => createReview(await readJson(request)), 201);
 }

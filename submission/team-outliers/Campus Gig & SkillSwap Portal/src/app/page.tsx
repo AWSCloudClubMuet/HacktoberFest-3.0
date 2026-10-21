@@ -18,7 +18,7 @@ export default function HomePage() {
   const [gigs, setGigs] = React.useState<Gig[]>([]);
   const [studentCount, setStudentCount] = React.useState(0);
 
-  React.useEffect(() => { initializeStore(); setGigs(getGigs()); setStudentCount(getUsers().length); }, []);
+  React.useEffect(() => { initializeStore().then(() => { setGigs(getGigs()); setStudentCount(getUsers().length); }).catch(console.error); }, []);
   const openGigs = gigs.filter((gig) => gig.status === "Open").slice(0, 3);
   const completed = gigs.filter((gig) => gig.status === "Completed").length;
 

@@ -57,3 +57,6 @@ Desktop.ini
 *.pem
 *.key
 *.crt
+
+# Mock API persistence (local dev)
+.data/

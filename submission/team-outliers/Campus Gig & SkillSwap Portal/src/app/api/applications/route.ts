@@ -1,24 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getApplications, createApplication } from "@/lib/api";
+import { NextRequest } from "next/server";
+import { listApplications, createApplication } from "@/lib/server/store";
+import { readJson, respond } from "@/lib/server/http";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const gig_id = searchParams.get("gig_id") || undefined;
-  const applicant_id = searchParams.get("applicant_id") || undefined;
-
-  const applications = getApplications(gig_id, applicant_id);
-  return NextResponse.json({
-    total: applications.length,
-    data: applications,
+// GET /api/applications?gig_id=&applicant_id=
+export function GET(request: NextRequest) {
+  const p = new URL(request.url).searchParams;
+  return respond(() => {
+    const data = listApplications(p.get("gig_id") || undefined, p.get("applicant_id") || undefined);
+    return { total: data.length, data };
   });
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const app = createApplication(body);
-    return NextResponse.json(app, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to create application" }, { status: 400 });
-  }
+// POST /api/applications  body: { gig_id, applicant_id, message }
+export function POST(request: NextRequest) {
+  return respond(async () => createApplication(await readJson(request)), 201);
 }
