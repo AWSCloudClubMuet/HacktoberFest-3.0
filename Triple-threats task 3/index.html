@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B0D12">
+  <title>TuneWave </title>
+  <style>
+    :root {
+      --bg: #090B14;
+      --panel: #151725;
+      --panel-raised: #1b1d2d;
+      --panel-deep: #10121e;
+      --green: #C6FF3D;
+      --purple: #9B5CFF;
+      --text: #F4F5FA;
+      --muted: #9ba1b5;
+      --line: #2a2d42;
+      --danger: #fb7185;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 78% -15%, #32205b44 0, transparent 36%),
+        radial-gradient(ellipse at 35% 0%, #143a2a22 0, transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding-bottom: 108px;
+    }
+
+    button, input, select { font: inherit; }
+    button {
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      padding: 10px 13px;
+      color: var(--text);
+      background: var(--panel-raised);
+      transition: transform .18s ease, filter .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.12); }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--purple);
+      outline-offset: 2px;
+    }
+    button.primary {
+      color: #101306;
+      font-weight: 800;
+      background: var(--green);
+      box-shadow: 0 0 22px #C6FF3D20;
+    }
+    button.primary:hover { box-shadow: 0 0 24px #C6FF3D42; }
+    button.purple { background: #33204f; border-color: #7142b5; }
+    button.ghost { border-color: var(--line); background: transparent; }
+    button.icon-button { min-width: 39px; padding: 9px 10px; }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .app-shell { display: grid; grid-template-columns: 224px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 28px;
+      padding: 26px 16px; border-right: 1px solid #ffffff0c;
+      background: #090B14eF; backdrop-filter: blur(18px);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+    .logo {
+      display: grid; place-items: center; width: 42px; height: 42px;
+      border-radius: 14px; color: #101306; font-size: 23px; font-weight: 900;
+      background: linear-gradient(135deg, var(--green), #e5ff9c);
+      box-shadow: 0 8px 28px #C6FF3D28;
+    }
+    .brand-name { font-size: 19px; font-weight: 850; letter-spacing: -.7px; }
+    .brand-sub { color: var(--muted); font-size: 10px; letter-spacing: 1.5px; }
+    .nav-group-title { padding: 0 11px 8px; color: #747b8d; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav a {
+      display: flex; align-items: center; gap: 12px; padding: 11px 12px;
+      color: var(--muted); text-decoration: none; border-radius: 12px;
+      transition: background .18s, color .18s;
+    }
+    .nav a:hover, .nav a.active { color: var(--text); background: #202238; }
+    .nav a.active { box-shadow: inset 3px 0 var(--green); }
+    .nav-icon { width: 19px; text-align: center; font-size: 17px; }
+    .sidebar-note { margin-top: auto; padding: 15px; border: 1px solid #38275d; border-radius: 15px; background: linear-gradient(145deg, #211638, #15131f); }
+    .sidebar-note strong { display: block; margin-bottom: 4px; }
+    .sidebar-note p { margin: 0; color: var(--muted); font-size: 12px; }
+
+    main { min-width: 0; max-width: 1600px; width: 100%; margin: 0 auto; padding: 28px clamp(16px, 3vw, 42px) 40px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
+    .mobile-brand { display: none; }
+    .page-title { margin: 0; font-size: clamp(23px, 3vw, 32px); line-height: 1.15; letter-spacing: -1.2px; }
+    .page-subtitle { margin: 7px 0 0; color: var(--muted); }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .status-pill, .pill {
+      display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line);
+      padding: 7px 10px; border-radius: 999px; color: var(--muted); font-size: 11px; white-space: nowrap;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px #C6FF3D99; }
+    .panel {
+      min-width: 0; padding: 20px; border: 1px solid #ffffff0d; border-radius: var(--radius);
+      background: linear-gradient(145deg, #17192af2, #111320f2);
+      box-shadow: 0 16px 45px #00000016;
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .85fr); gap: 18px; }
+    .featured {
+      position: relative; overflow: hidden; display: flex; align-items: center; gap: 24px; min-height: 280px;
+      background: radial-gradient(ellipse at 15% 15%, #6339a83b, transparent 50%), linear-gradient(135deg, #1a1d29, #13151d);
+    }
+    .featured::after {
+      content: ""; position: absolute; width: 230px; height: 230px; border-radius: 50%;
+      right: -100px; top: -100px; background: #9B5CFF17; filter: blur(2px); pointer-events: none;
+    }
+    .album-art {
+      flex: 0 0 auto; display: grid; place-items: center; width: clamp(130px, 17vw, 190px); aspect-ratio: 1;
+      border-radius: 20px; font-size: 62px; overflow: hidden;
+      background: linear-gradient(145deg, #C6FF3D, #9B5CFF 56%, #282040);
+      box-shadow: 0 18px 42px #0007, 0 0 35px #9B5CFF29;
+    }
+    .art-2 { background: linear-gradient(145deg, #ff7a59, #9B5CFF 65%, #18132b); }
+    .art-3 { background: linear-gradient(145deg, #167c80, #173354 55%, #9B5CFF); }
+    .art-4 { background: linear-gradient(145deg, #f9c74f, #e76f51 45%, #6d28d9); }
+    .eyebrow { color: var(--green); font-size: 10px; font-weight: 850; letter-spacing: 1.8px; text-transform: uppercase; }
+    .featured h2 { margin: 9px 0 4px; font-size: clamp(25px, 3vw, 39px); letter-spacing: -1.4px; line-height: 1.1; overflow-wrap: anywhere; }
+    .muted { color: var(--muted); }
+    .featured-copy { position: relative; z-index: 1; min-width: 0; }
+    .control-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 17px; }
+    .mini-progress { display: flex; align-items: center; gap: 9px; margin-top: 15px; color: var(--muted); font-size: 11px; }
+    input[type="range"] { width: 100%; accent-color: var(--green); cursor: pointer; }
+    .stats-panel { display: flex; flex-direction: column; gap: 16px; }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .section-heading h2, .section-heading h3 { margin: 0; font-size: 16px; letter-spacing: -.25px; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .stat-card { padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #111320; }
+    .stat-card strong { display: block; font-size: 27px; letter-spacing: -1px; }
+    .stat-card span { color: var(--muted); font-size: 11px; }
+    .stat-card small { display: block; margin-top: 4px; color: var(--purple); font-size: 10px; }
+    .visualizer { display: flex; align-items: end; gap: 4px; height: 35px; margin-top: auto; padding-top: 8px; }
+    .visualizer span { flex: 1; max-width: 7px; height: var(--h); border-radius: 5px; background: linear-gradient(to top, var(--purple), #c4b5fd); opacity: .8; transform-origin: bottom; }
+    .visualizer.playing span { animation: wave .8s ease-in-out infinite alternate; animation-delay: var(--delay); }
+    @keyframes wave { from { transform: scaleY(.35); opacity: .55; } to { transform: scaleY(1); opacity: 1; } }
+
+    .content-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
+    .span-two { grid-column: 1 / -1; }
+    .input-row { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
+    .input-row input, .input-row select, .search-input {
+      min-width: 0; width: 100%; padding: 11px 12px; color: var(--text); background: #0d0f1a;
+      border: 1px solid var(--line); border-radius: 11px; outline: none;
+    }
+    .input-row input:focus, .input-row select:focus, .search-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px #9B5CFF1c; }
+    .list { display: flex; flex-direction: column; gap: 7px; }
+    .song-row { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 9px; border: 1px solid transparent; border-radius: 13px; background: #111321; transition: border-color .2s, background .2s; }
+    .song-row:hover { border-color: #ffffff18; background: #171a24; }
+    .song-row.current { border-color: #C6FF3D65; background: #22291a; }
+    .song-art { display: grid; place-items: center; flex: 0 0 auto; width: 42px; height: 42px; border-radius: 11px; font-size: 20px; background: linear-gradient(135deg, #9B5CFF, #29213d); }
+    .song-info { flex: 1; min-width: 0; }
+    .song-info strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .song-info small { display: block; color: var(--muted); font-size: 11px; }
+    .song-actions { display: flex; gap: 5px; }
+    .song-actions button { padding: 7px 9px; font-size: 11px; }
+    .empty { padding: 12px 8px; color: var(--muted); font-size: 12px; }
+    .hint { margin: 10px 0 0; color: var(--muted); font-size: 11px; }
+    .viz-box { min-height: 72px; padding: 12px; overflow: auto; border: 1px solid var(--line); border-radius: 13px; background: #0d0f1a; }
+    .node-list { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+    .node { padding: 7px 9px; border: 1px solid #503b79; border-radius: 9px; background: #211b35; font-size: 11px; white-space: nowrap; }
+    .node.active { border-color: var(--green); background: #252d18; box-shadow: 0 0 0 2px #C6FF3D12; }
+    .arrow { color: var(--purple); font-weight: 900; }
+    .queue-item { display: inline-flex; align-items: center; gap: 6px; margin: 3px; padding: 7px 9px; border: 1px solid #503b79; border-radius: 9px; background: #211b35; font-size: 11px; }
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .tree { display: flex; flex-direction: column; align-items: center; gap: 7px; min-height: 70px; }
+    .tree-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
+    .tree-node { padding: 6px 8px; border: 1px solid #503b79; border-radius: 9px; background: #211b35; font-size: 10px; }
+    .tree-node.found { border-color: var(--green); background: #252d18; }
+    .graph { display: block; width: 100%; height: 260px; margin-top: 12px; }
+    .log { height: 150px; overflow: auto; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: #090b14; color: #a7f3c5; font: 11px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .log div { padding: 2px 0; border-bottom: 1px solid #ffffff08; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 12px; background: #111321; }
+    .check-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border-radius: 9px; color: var(--purple); background: #251a3e; }
+    .check-item strong { display: block; font-size: 12px; }
+    .check-item small { color: var(--muted); font-size: 11px; }
+    .footer { padding: 24px 0 4px; color: #777e8f; text-align: center; font-size: 11px; }
+
+    .bottom-player {
+      position: fixed; z-index: 20; inset: auto 0 0; display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.3fr) minmax(140px, 1fr);
+      align-items: center; gap: 20px; min-height: 88px; padding: 13px 25px;
+      border-top: 1px solid #ffffff12; background: #111321f2; backdrop-filter: blur(20px);
+      box-shadow: 0 -15px 45px #0004;
+    }
+    .player-song { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .player-cover { display: grid; place-items: center; flex: 0 0 auto; width: 48px; height: 48px; border-radius: 10px; font-size: 23px; background: linear-gradient(135deg, var(--purple), #29213d); }
+    .player-song strong { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; }
+    .player-song small { color: var(--muted); font-size: 11px; }
+    .player-center { min-width: 0; }
+    .player-controls { display: flex; justify-content: center; align-items: center; gap: 9px; }
+    .player-controls button { padding: 7px 10px; background: transparent; color: var(--muted); }
+    .player-controls button:hover { color: var(--text); }
+    .player-controls .play-round { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border-radius: 50%; background: var(--green); color: #101306; font-weight: 900; }
+    .player-timeline { display: flex; align-items: center; gap: 8px; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .player-timeline input { height: 4px; }
+    .player-tools { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+    .player-tools label { display: flex; align-items: center; gap: 8px; width: min(150px, 100%); color: var(--muted); font-size: 15px; }
+    .player-tools input { min-width: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 1050px) {
+      .app-shell { grid-template-columns: 76px minmax(0, 1fr); }
+      .sidebar { align-items: center; padding: 22px 9px; }
+      .brand { padding: 0; }
+      .brand-copy, .nav-group-title, .nav-label, .sidebar-note { display: none; }
+      .nav a { justify-content: center; width: 48px; height: 46px; padding: 0; }
+      .nav-icon { font-size: 19px; }
+      .hero-grid { grid-template-columns: minmax(0, 1fr); }
+      .stats-panel { min-height: 0; }
+    }
+    @media (max-width: 700px) {
+      body { padding-bottom: 145px; }
+      .app-shell { display: block; }
+      .sidebar { position: fixed; z-index: 25; inset: auto 0 88px; height: 54px; flex-direction: row; justify-content: center; padding: 5px 10px; border-top: 1px solid #ffffff12; border-right: 0; background: #111321f5; }
+      .sidebar .brand, .sidebar .sidebar-note { display: none; }
+      .sidebar nav { display: flex; align-items: center; width: 100%; justify-content: space-around; }
+      .sidebar .nav-group-title { display: none; }
+      .sidebar .nav a { width: 48px; height: 42px; }
+      .sidebar .nav-label { display: none; }
+      main { padding: 20px 13px 24px; }
+      .topbar { align-items: flex-start; }
+      .top-actions .status-pill { display: none; }
+      .featured { align-items: flex-start; flex-direction: column; gap: 17px; }
+      .album-art { width: 125px; border-radius: 15px; font-size: 48px; }
+      .content-grid { grid-template-columns: minmax(0, 1fr); }
+      .span-two { grid-column: auto; }
+      .bottom-player { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; min-height: 88px; padding: 10px 12px; }
+      .player-song { grid-column: 1; }
+      .player-center { grid-column: 1 / -1; grid-row: 2; }
+      .player-tools { grid-column: 2; grid-row: 1; }
+      .player-tools label { width: 80px; }
+      .player-tools #repeatBtn { display: none; }
+      .player-cover { width: 40px; height: 40px; }
+      .player-controls { gap: 12px; }
+      .player-timeline { margin-top: 0; }
+      .player-controls button { padding: 3px 7px; }
+    }
+    @media (max-width: 420px) {
+      .panel { padding: 14px; }
+      .input-row { align-items: stretch; flex-wrap: wrap; }
+      .input-row > input, .input-row > select { flex: 1 1 120px; }
+      .two-col { grid-template-columns: 1fr; }
+      .song-actions button { padding: 6px 7px; }
+      .player-tools label { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    :root {
+      --bg: #090B14;
+      --panel: #151725;
+      --panel-raised: #1b1d2d;
+      --panel-deep: #10121e;
+      --green: #C6FF3D;
+      --purple: #9B5CFF;
+      --text: #F4F5FA;
+      --muted: #9ba1b5;
+      --line: #2a2d42;
+      --danger: #ff6f91;
+      --radius: 20px;
+    }
+    body {
+      background-image:
+        linear-gradient(#9b5cff08 1px, transparent 1px),
+        linear-gradient(90deg, #9b5cff08 1px, transparent 1px),
+        radial-gradient(ellipse at 78% -15%, #9b5cff2a 0, transparent 38%),
+        radial-gradient(ellipse at 25% 0%, #c6ff3d10 0, transparent 32%),
+        linear-gradient(145deg, #090b14, #0b0d18 55%, #0a0b14);
+      background-size: 44px 44px, 44px 44px, auto, auto, auto;
+      background-attachment: fixed;
+    }
+    .sidebar {
+      border-right-color: #9b5cff24;
+      background: #0b0d16eF;
+      box-shadow: 12px 0 45px #0002;
+    }
+    .logo {
+      background: linear-gradient(135deg, var(--green), #edffb5 70%, var(--purple));
+      box-shadow: 0 0 26px #c6ff3d25, 0 8px 28px #9b5cff20;
+    }
+    .brand-name { letter-spacing: -1px; }
+    .nav a:hover, .nav a.active {
+      background: linear-gradient(100deg, #c6ff3d12, #9b5cff12);
+    }
+    .nav a.active { box-shadow: inset 3px 0 var(--green), 0 0 22px #c6ff3d08; }
+    .sidebar-note {
+      border-color: #9b5cff50;
+      background: linear-gradient(145deg, #231a3bdb, #121421e8);
+      box-shadow: inset 0 1px #ffffff0b, 0 12px 34px #0002;
+    }
+    .panel {
+      border-color: #a9a7ff18;
+      background: linear-gradient(145deg, #191b2bf0, #111320ed);
+      box-shadow: 0 18px 50px #0003, inset 0 1px #ffffff08;
+      backdrop-filter: blur(16px);
+    }
+    .panel:hover { border-color: #9b5cff35; }
+    .featured {
+      border-color: #c6ff3d22;
+      background:
+        radial-gradient(ellipse at 12% 10%, #c6ff3d14, transparent 40%),
+        radial-gradient(ellipse at 85% 85%, #9b5cff25, transparent 48%),
+        linear-gradient(135deg, #1b1d2e, #111320);
+    }
+    .featured::after { background: #9b5cff20; }
+    .album-art {
+      background: linear-gradient(140deg, #c6ff3d, #9b5cff 56%, #201634);
+      box-shadow: 0 20px 48px #0008, 0 0 32px #9b5cff28;
+      border: 1px solid #ffffff22;
+    }
+    .eyebrow { color: var(--green); }
+    .status-pill { background: #111421a8; }
+    .status-dot { box-shadow: 0 0 13px #c6ff3d99; }
+    button { border-color: #ffffff0b; }
+    button.primary {
+      background: var(--green);
+      box-shadow: 0 0 0 1px #c6ff3d26, 0 0 24px #c6ff3d18;
+    }
+    button.primary:hover { box-shadow: 0 0 0 1px #c6ff3d66, 0 0 28px #c6ff3d35; }
+    button.purple { background: #34204f; border-color: #9b5cff65; }
+    button.ghost { border-color: #34364d; background: #ffffff03; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline-color: var(--green);
+      box-shadow: 0 0 0 3px #c6ff3d22;
+    }
+    .stat-card, .input-row input, .input-row select, .search-input,
+    .viz-box, .log, .song-row, .check-item {
+      background-color: #0d0f1bd9;
+    }
+    .stat-card { border-color: #ffffff10; }
+    .stat-card small { color: #bd91ff; }
+    .song-row.current {
+      border-color: #c6ff3d80;
+      background: linear-gradient(100deg, #c6ff3d10, #151a1c);
+      box-shadow: inset 3px 0 var(--green), 0 0 22px #c6ff3d08;
+    }
+    .song-row:hover { border-color: #9b5cff50; background: #191a2b; }
+    .song-art, .player-cover {
+      background: linear-gradient(140deg, #9b5cff, #40265f 65%, #171b2a);
+      box-shadow: inset 0 1px #ffffff18;
+    }
+    .node, .queue-item, .tree-node {
+      border-color: #7650ac85;
+      background: linear-gradient(145deg, #29203e, #19182a);
+    }
+    .node.active, .tree-node.found {
+      border-color: var(--green);
+      background: #242d19;
+      box-shadow: 0 0 0 2px #c6ff3d12, 0 0 18px #c6ff3d0b;
+    }
+    .arrow { color: #bd91ff; }
+    .graph { filter: drop-shadow(0 0 12px #9b5cff12); }
+    .bottom-player {
+      border-top-color: #9b5cff30;
+      background: #0d0f19ed;
+      backdrop-filter: blur(24px) saturate(130%);
+      box-shadow: 0 -15px 55px #0006, 0 -1px #ffffff05;
+    }
+    .player-controls .play-round { background: var(--green); box-shadow: 0 0 20px #c6ff3d25; }
+    .player-tools #repeatBtn, #repeatBtn { border-color: #9b5cff40; }
+    .visualizer span { background: linear-gradient(to top, #9b5cff, #d9c2ff); }
+    .visualizer.playing span:nth-child(3n) { background: linear-gradient(to top, #c6ff3d, #efffb3); }
+    ::selection { color: #101306; background: #c6ff3d; }
+    @media (hover: hover) {
+      .song-row, .panel, .node, .tree-node, .queue-item { transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease; }
+      .node:hover, .tree-node:hover, .queue-item:hover { transform: translateY(-1px); }
+    }
+
+    /* Vibe refresh: bolder editorial type, sticker labels, and brighter acid-lime / violet energy. */
+    .page-title { font-size: clamp(28px, 3.6vw, 43px); font-weight: 950; letter-spacing: -1.9px; }
+    .page-title::after { content: "."; color: var(--green); }
+.topbar .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 9px;
+    margin: 0 0 12px 0;
+    border: 1px solid #9b5cff50;
+    border-radius: 7px;
+    background: #9b5cff14;
+    color: #c7a5ff;
+    transform: none;
+    line-height: 1.2;
+}    .topbar .eyebrow::before { content: "✳"; color: var(--green); font-size: 13px; }
+    .page-subtitle { font-size: 13px; }
+    .panel { border-radius: 23px; position: relative; }
+    .panel::before { content: ""; position: absolute; inset: 0 auto auto 18px; width: 42px; height: 2px; border-radius: 5px; background: linear-gradient(90deg, var(--green), var(--purple)); opacity: .9; }
+    .featured { border-radius: 28px; }
+    .album-art { border-radius: 25px; transform: rotate(-2deg); transition: transform .25s ease; }
+    .featured:hover .album-art { transform: rotate(0deg) scale(1.025); }
+    .featured h2 { font-size: clamp(30px, 3.6vw, 46px); font-weight: 950; letter-spacing: -2px; }
+    .eyebrow { letter-spacing: 1.5px; }
+    .section-heading h2, .section-heading h3 { font-weight: 850; letter-spacing: -.5px; }
+    .status-pill { background: #c6ff3d0d; border-color: #c6ff3d30; color: var(--text); }
+    .status-dot { animation: status-pulse 1.8s ease-in-out infinite; }
+    @keyframes status-pulse { 50% { box-shadow: 0 0 0 5px #c6ff3d10, 0 0 18px #c6ff3d99; } }
+    button { font-weight: 700; }
+    button.primary { text-transform: uppercase; letter-spacing: .4px; }
+    .song-row { border-radius: 15px; }
+    .song-art, .player-cover { border-radius: 13px; }
+    .theme-toggle { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; border-color: #9b5cff65; background: linear-gradient(120deg, #9b5cff19, #c6ff3d0b); }
+    .theme-toggle-icon { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: #101306; background: var(--green); font-size: 15px; }
+    .top-actions { flex-wrap: wrap; justify-content: flex-end; }
+    .bottom-player { border-radius: 18px 18px 0 0; }
+
+    body[data-theme="light"] {
+      --bg: #f4f3fb; --panel: #ffffff; --panel-raised: #eceaf6; --panel-deep: #f7f6fc;
+      --text: #171426; --muted: #68647b; --line: #ded9ed; --green: #8bbd00; --purple: #7540d8;
+      background-image: linear-gradient(#7540d80a 1px, transparent 1px), linear-gradient(90deg, #7540d80a 1px, transparent 1px), radial-gradient(ellipse at 78% -15%, #b89aff55 0, transparent 38%), radial-gradient(ellipse at 25% 0%, #d9f69c66 0, transparent 32%), linear-gradient(145deg, #f8f7ff, #f0eef9 55%, #faf9ff);
+      color: var(--text);
+    }
+    body[data-theme="light"] .sidebar { background: #ffffffed; border-right-color: #7540d826; box-shadow: 12px 0 35px #2d1a5b0a; }
+    body[data-theme="light"] .nav a:hover, body[data-theme="light"] .nav a.active { color: #171426; background: linear-gradient(100deg, #8bbd001b, #7540d812); }
+    body[data-theme="light"] .sidebar-note { background: linear-gradient(145deg, #f1eaff, #faffed); border-color: #c9b5f6; }
+    body[data-theme="light"] .panel { background: linear-gradient(145deg, #ffffffef, #f7f5ffef); border-color: #dcd3f0; box-shadow: 0 14px 40px #35205d0d, inset 0 1px #ffffff; }
+    body[data-theme="light"] .featured { background: radial-gradient(ellipse at 12% 10%, #c6ff3d30, transparent 40%), radial-gradient(ellipse at 85% 85%, #9b5cff20, transparent 48%), linear-gradient(135deg, #ffffff, #f0ecfb); border-color: #d8c7fa; }
+    body[data-theme="light"] .stat-card, body[data-theme="light"] .input-row input, body[data-theme="light"] .input-row select, body[data-theme="light"] .search-input, body[data-theme="light"] .viz-box, body[data-theme="light"] .song-row, body[data-theme="light"] .check-item { background-color: #f8f7fd; color: var(--text); border-color: #e3deef; }
+    body[data-theme="light"] .song-row.current { background: linear-gradient(100deg, #e8f8c7, #f8f7fd); border-color: #9bc632; box-shadow: inset 3px 0 #8bbd00; }
+    body[data-theme="light"] .song-row:hover { background: #f0ebfc; border-color: #c8b5ef; }
+    body[data-theme="light"] .node, body[data-theme="light"] .queue-item, body[data-theme="light"] .tree-node { background: linear-gradient(145deg, #f0e9ff, #faf8ff); border-color: #c6b0ef; color: #31204e; }
+    body[data-theme="light"] .node.active, body[data-theme="light"] .tree-node.found { background: #eff9d7; border-color: #8bbd00; color: #253300; }
+    body[data-theme="light"] .log { background: #f1f8ed; color: #285b39; border-color: #d5e8d0; }
+    body[data-theme="light"] .bottom-player { background: #ffffffed; border-top-color: #d9c9f5; box-shadow: 0 -12px 40px #30204e12; }
+    body[data-theme="light"] .player-controls button { color: #68647b; }
+    body[data-theme="light"] .player-controls button:hover { color: #171426; }
+    body[data-theme="light"] .player-controls .play-round { background: #c6ff3d; color: #1b2308; }
+    body[data-theme="light"] .theme-toggle { background: linear-gradient(120deg, #7540d814, #8bbd001a); border-color: #c5b0ef; }
+    body[data-theme="light"] .theme-toggle-icon { color: #fff; background: #7540d8; }
+    body[data-theme="light"] .sidebar, body[data-theme="light"] .bottom-player { backdrop-filter: blur(22px) saturate(140%); }
+    body[data-theme="light"] button { color: #201a32; border-color: #e0d9ef; }
+    body[data-theme="light"] button.primary { color: #1d2705; background: #c6ff3d; }
+    body[data-theme="light"] button.purple { color: #4a248b; background: #eee4ff; border-color: #c5a9f6; }
+    body[data-theme="light"] .status-pill { color: #343047; background: #f3f9e6; border-color: #d8e9b0; }
+    @media (max-width: 700px) { .top-actions { gap: 6px; } .theme-toggle { padding: 8px 9px; } .theme-toggle #themeToggleLabel { font-size: 11px; } }
+
+
+    /* Sidebar destinations open as interactive pop-up panels. */
+    .popup-backdrop {
+      position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center;
+      padding: 24px; background: #05060bd9; backdrop-filter: blur(12px);
+    }
+    .popup-backdrop.open { display: flex; animation: popupFade .18s ease-out; }
+    .popup-window {
+      width: min(1120px, 100%); max-height: min(88vh, 900px); display: flex; flex-direction: column;
+      overflow: hidden; border: 1px solid #9B5CFF75; border-radius: 22px;
+      background: var(--bg); box-shadow: 0 28px 100px #0009, 0 0 44px #9B5CFF20;
+      animation: popupRise .22s ease-out;
+    }
+    .popup-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px;
+      border-bottom: 1px solid var(--line); background: linear-gradient(100deg, #9B5CFF18, #C6FF3D0b); }
+    .popup-head-copy { min-width: 0; }
+    .popup-kicker { margin: 0 0 2px; color: var(--purple); font-size: 10px; font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase; }
+    .popup-title { margin: 0; font-size: 20px; letter-spacing: -.6px; }
+    .popup-close { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; font-size: 22px; }
+    .popup-body { overflow: auto; padding: 20px; display: grid; gap: 16px; }
+    .popup-body > .panel { width: 100%; }
+    .popup-body > .hero-grid { grid-template-columns: minmax(0, 1.45fr) minmax(260px, .85fr); }
+    .popup-body > .topbar { margin: 0; }
+    .popup-body .graph { min-height: 220px; }
+    body.popup-open { overflow: hidden; }
+    @keyframes popupFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popupRise { from { opacity: .6; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    body[data-theme="light"] .popup-backdrop { background: #25203980; }
+    body[data-theme="light"] .popup-window { background: var(--bg); border-color: #9B5CFF70; }
+    @media (max-width: 760px) {
+      .popup-backdrop { padding: 9px; align-items: center; }
+      .popup-window { max-height: 92vh; border-radius: 17px; }
+      .popup-body { padding: 12px; }
+      .popup-body > .hero-grid { grid-template-columns: minmax(0, 1fr); }
+      .popup-body > .topbar { align-items: flex-start; flex-direction: column; }
+      .popup-body > .topbar .top-actions { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">♫</div>
+        <div class="brand-copy">
+          <div class="brand-name">TuneWave</div>
+          <!-- <div class="brand-sub">MUSIC · DSA LAB</div> -->
+        </div>
+      </div>
+
+      <div>
+        <div class="nav-group-title">Workspace</div>
+        <nav class="nav">
+          <a class="active" href="#overview"><span class="nav-icon">⌂</span><span class="nav-label">Overview</span></a>
+          <a href="#playlist-section"><span class="nav-icon">♫</span><span class="nav-label">Playlist</span></a>
+          <a href="#queue-section"><span class="nav-icon">☷</span><span class="nav-label">Up Next & History</span></a>
+          <a href="#search-section"><span class="nav-icon">⌕</span><span class="nav-label">Song Search</span></a>
+          <a href="#artist-section"><span class="nav-icon">◎</span><span class="nav-label">Artist Discovery</span></a>
+        </nav>
+      </div>
+
+      <div class="sidebar-note">
+        <strong>DSA first. Music always.</strong>
+        <p>Explore how the playlist, queue, title index, and artist graph work together.</p>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar" id="overview">
+        <div>
+          <p class="eyebrow">YOUR MUSIC WORKSPACE</p>
+          <h1 class="page-title">Good music. Smart algorithms.</h1>
+          <p class="page-subtitle">A premium player powered by real data structures.</p>
+        </div>
+        <div class="top-actions">
+          <span class="status-pill"><span class="status-dot"></span> DSA engine ready</span>
+          <button class="ghost theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch between dark and light mode"><span class="theme-toggle-icon" aria-hidden="true">☼</span><span id="themeToggleLabel">Light mode</span></button>
+          <button class="ghost" id="clearLogBtn" title="Clear execution log">Clear log</button>
+        </div>
+      </header>
+
+      <section class="hero-grid" aria-label="Player overview">
+        <div class="panel featured">
+          <div class="album-art art-1" id="cover" aria-hidden="true">🌌</div>
+          <div class="featured-copy">
+            <div class="eyebrow">NOW PLAYING · TUNEWAVE MIX</div>
+            <h2 id="nowTitle">Midnight City</h2>
+            <div class="muted" id="nowArtist">M83</div>
+            <div class="control-row">
+              <button class="icon-button ghost" id="prevBtn" title="Previous song" aria-label="Previous song">⏮</button>
+              <button class="primary" id="playBtn" title="Play or pause">▶ Play</button>
+              <button class="icon-button ghost" id="nextBtn" title="Next song" aria-label="Next song">⏭</button>
+              <button class="ghost" id="repeatBtn">↻ Repeat: Off</button>
+            </div>
+            <div class="mini-progress">
+              <span id="elapsed">0:00</span>
+              <input id="seek" type="range" min="0" max="100" value="0" aria-label="Seek through current song">
+              <span id="duration">3:42</span>
+            </div>
+            <p class="hint" id="playHint">Demo mode: controls simulate playback; DSA operations are active.</p>
+          </div>
+        </div>
+
+        <div class="panel stats-panel">
+          <div class="section-heading">
+            <div><h2>Engine overview</h2><p>Live state from the DSA core</p></div>
+            <span class="pill">TUNEWAVE 1.0</span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><strong id="statSongs">6</strong><span>Playlist songs</span><small>Doubly linked list + Map</small></div>
+            <div class="stat-card"><strong id="statQueue">2</strong><span>Up Next</span><small>O(1) FIFO queue</small></div>
+            <div class="stat-card"><strong id="statHistory">0</strong><span>History items</span><small>Stack · max 10</small></div>
+            <div class="stat-card"><strong id="statArtists">8</strong><span>Artist nodes</span><small>Undirected graph</small></div>
+          </div>
+          <div class="visualizer" id="visualizer" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel" id="playlist-section">
+          <div class="section-heading">
+            <div><h2>01 / Playlist</h2><p>Doubly linked list · Hash map by unique ID</p></div>
+            <span class="pill">DLL + MAP</span>
+          </div>
+          <div class="input-row">
+            <input id="songTitle" placeholder="Song title" aria-label="Song title">
+            <input id="songArtist" placeholder="Artist" aria-label="Artist">
+          </div>
+          <div class="input-row">
+            <button class="primary" id="addSongBtn">＋ Add song</button>
+            <button id="removeCurrentBtn">Remove current</button>
+          </div>
+          <div class="list" id="playlist"></div>
+          <div style="margin-top:16px">
+            <div class="section-heading"><h3>Linked-list structure</h3><span class="pill">prev ⇄ next</span></div>
+            <div class="viz-box" id="dllViz"></div>
+          </div>
+        </article>
+
+        <article class="panel" id="queue-section">
+          <div class="section-heading">
+            <div><h2>02 / Queue & History</h2><p>FIFO queue · Capped history stack</p></div>
+            <span class="pill">QUEUE + STACK</span>
+          </div>
+          <div class="input-row">
+            <select id="queueSelect" aria-label="Choose a song to queue"></select>
+            <button class="primary" id="queueBtn">＋ Queue</button>
+          </div>
+          <div class="section-heading"><h3>Up Next queue</h3><button id="playQueuedBtn">Play next ↗</button></div>
+          <div class="viz-box" id="queueViz"></div>
+          <div class="section-heading" style="margin-top:17px"><h3>Recently played stack</h3><button id="backBtn">↶ Back</button></div>
+          <div class="viz-box" id="historyViz"></div>
+          <p class="hint">Queued playback and Back replay do not move the playlist cursor.</p>
+        </article>
+
+        <article class="panel" id="search-section">
+          <div class="section-heading">
+            <div><h2>03 / Song Search</h2><p>Binary search tree with prefix pruning</p></div>
+            <span class="pill">BST</span>
+          </div>
+          <input id="searchInput" class="search-input" placeholder="Search title prefix, e.g. sta" aria-label="Search song title prefix">
+          <div class="list" id="searchResults" style="margin-top:12px"></div>
+          <div class="section-heading" style="margin-top:17px"><h3>BST snapshot</h3><span class="pill">TITLE INDEX</span></div>
+          <div class="viz-box"><div class="tree" id="bstViz"></div></div>
+          <p class="hint">Prefix matches are returned alphabetically. Titles are indexed independently from playlist order.</p>
+        </article>
+
+        <article class="panel" id="artist-section">
+          <div class="section-heading">
+            <div><h2>04 / Artist Discovery</h2><p>Recommend artists exactly two links away</p></div>
+            <span class="pill">UNDIRECTED GRAPH</span>
+          </div>
+          <div class="input-row">
+            <select id="artistSelect" aria-label="Choose an artist"></select>
+            <button class="purple" id="recommendBtn">Recommend</button>
+          </div>
+          <div class="viz-box" id="recommendations"><span class="empty">Choose an artist to explore second-degree connections.</span></div>
+          <canvas id="graphCanvas" class="graph" aria-label="Artist relationship graph"></canvas>
+          <p class="hint">Results exclude the selected artist and its direct neighbors, and are sorted alphabetically.</p>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <div><h2>Execution telemetry</h2><p>Recent algorithm events</p></div>
+            <span class="pill">LIVE LOG</span>
+          </div>
+          <div class="log" id="log" aria-live="polite"></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <div><h2>Demo checklist</h2><p>Demonstrate the algorithms to judges</p></div>
+            <span class="pill">TEST PLAN</span>
+          </div>
+          <div class="list">
+            <div class="check-item"><div class="check-icon">✓</div><div><strong>Unique song IDs</strong><small>Add songs and inspect Map-backed ID lookup.</small></div></div>
+            <div class="check-item"><div class="check-icon">↻</div><div><strong>Repeat boundary</strong><small>Try next at the last song with repeat on and off.</small></div></div>
+            <div class="check-item"><div class="check-icon">⌁</div><div><strong>Queue priority</strong><small>Queue a song and play it before playlist continuation.</small></div></div>
+            <div class="check-item"><div class="check-icon">⌕</div><div><strong>BST prefix search</strong><small>Try prefixes such as “sta” or “mi”.</small></div></div>
+            <div class="check-item"><div class="check-icon">◎</div><div><strong>Exactly two graph links</strong><small>Compare direct connections with recommendations.</small></div></div>
+          </div>
+        </article>
+      </section>
+      <footer class="footer">TUNEWAVE · Vanilla JavaScript · DSA-first music studio</footer>
+    </main>
+  </div>
+
+  <footer class="bottom-player" aria-label="Persistent music player">
+    <div class="player-song">
+      <div class="player-cover" id="miniCover" aria-hidden="true">🌌</div>
+      <div style="min-width:0"><strong id="miniTitle">Midnight City</strong><small id="miniArtist">M83</small></div>
+    </div>
+    <div class="player-center">
+      <div class="player-controls">
+        <button id="miniPrev" aria-label="Previous song" title="Previous">⏮</button>
+        <button class="play-round" id="miniPlay" aria-label="Play or pause" title="Play or pause">▶</button>
+        <button id="miniNext" aria-label="Next song" title="Next">⏭</button>
+      </div>
+      <div class="player-timeline">
+        <span id="miniElapsed">0:00</span>
+        <input id="miniSeek" type="range" min="0" max="100" value="0" aria-label="Seek through current song">
+        <span id="miniDuration">3:42</span>
+      </div>
+    </div>
+    <div class="player-tools">
+      <button class="ghost" id="miniRepeat" title="Toggle repeat">↻</button>
+      <label title="Volume">♫ <input id="volume" type="range" min="0" max="100" value="80" aria-label="Volume"></label>
+    </div>
+  </footer>
+
+
+  <div class="popup-backdrop" id="navPopup" aria-hidden="true">
+    <section class="popup-window" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+      <header class="popup-head">
+        <div class="popup-head-copy">
+          <p class="popup-kicker">TuneWave · Quick view</p>
+          <h2 class="popup-title" id="popupTitle">Playlist</h2>
+        </div>
+        <button class="popup-close" id="popupClose" type="button" aria-label="Close popup">×</button>
+      </header>
+      <div class="popup-body" id="popupBody"></div>
+    </section>
+  </div>
+
+  <script>
+    'use strict';
+
+    const $ = (id) => document.getElementById(id);
+    const icons = ['🌌', '🌃', '🌊', '🌠', '🌆', '🌙', '☄️', '✨', '🎧', '🪐'];
+    const palette = ['#8B5CF6', '#1ED760', '#F472B6', '#14B8A6', '#F59E0B', '#6366F1'];
+
+    const initialSongs = [
+      { id: 's1', title: 'Midnight City', artist: 'M83', icon: '🌌', duration: 222 },
+      { id: 's2', title: 'Blinding Lights', artist: 'The Weeknd', icon: '🌃', duration: 200 },
+      { id: 's3', title: 'Ocean Drive', artist: 'Duke Dumont', icon: '🌊', duration: 190 },
+      { id: 's4', title: 'Stargazing', artist: 'Kygo', icon: '🌠', duration: 230 },
+      { id: 's5', title: 'Sunset Lover', artist: 'Petit Biscuit', icon: '🌆', duration: 210 },
+      { id: 's6', title: 'Starboy', artist: 'The Weeknd', icon: '🌙', duration: 230 }
+    ];
+
+    // Milestone 1: Doubly linked list + hash map.
+    // The Map provides O(1) average lookup by unique song ID.
+
+    class SongNode {
+      constructor(song) {
+        Object.assign(this, song);
+        this.prev = null;
+        this.next = null;
+      }
+    }
+
+    class Playlist {
+      constructor() {
+        this.head = null;
+        this.tail = null;
+        this.current = null;
+        this.map = new Map();
+        this.repeat = false;
+      }
+
+      addSong(song) {
+        if (this.map.has(song.id)) return false;
+
+        const node = new SongNode(song);
+        this.map.set(song.id, node);
+
+        if (!this.head) {
+          this.head = this.tail = this.current = node;
+        } else {
+          node.prev = this.tail;
+          this.tail.next = node;
+          this.tail = node;
+        }
+        return true;
+      }
+
+      removeSong(id) {
+        const node = this.map.get(id);
+        if (!node) return null;
+
+        const wasCurrent = this.current === node;
+
+        if (node.prev) node.prev.next = node.next;
+        else this.head = node.next;
+
+        if (node.next) node.next.prev = node.prev;
+        else this.tail = node.prev;
+
+        if (wasCurrent) this.current = node.next || node.prev || null;
+
+        this.map.delete(id);
+        node.prev = null;
+        node.next = null;
+        return { song: node, wasCurrent };
+      }
+
+      next() {
+        if (!this.current) return null;
+        if (this.current.next) {
+          this.current = this.current.next;
+          return this.current;
+        }
+        if (this.repeat && this.head) {
+          this.current = this.head;
+          return this.current;
+        }
+        // Requirement: when repeat is off, stay on the final song.
+        return null;
+      }
+
+      previous() {
+        if (!this.current) return null;
+        if (this.current.prev) {
+          this.current = this.current.prev;
+          return this.current;
+        }
+        if (this.repeat && this.tail) {
+          this.current = this.tail;
+          return this.current;
+        }
+        return null;
+      }
+
+      toggleRepeat() {
+        this.repeat = !this.repeat;
+        return this.repeat;
+      }
+
+      all() {
+        const songs = [];
+        let node = this.head;
+        while (node) {
+          songs.push(node);
+          node = node.next;
+        }
+        return songs;
+      }
+    }
+
+    // Milestone 2: O(1) linked FIFO queue + capped history stack.
+    
+    class QueueNode {
+      constructor(id) {
+        this.id = id;
+        this.next = null;
+      }
+    }
+
+    class SongQueue {
+      constructor() {
+        this.front = null;
+        this.rear = null;
+        this.length = 0;
+      }
+
+      enqueue(id) {
+        const node = new QueueNode(id);
+        if (!this.rear) this.front = this.rear = node;
+        else {
+          this.rear.next = node;
+          this.rear = node;
+        }
+        this.length += 1;
+      }
+
+      dequeue() {
+        if (!this.front) return null;
+        const node = this.front;
+        this.front = node.next;
+        if (!this.front) this.rear = null;
+        this.length -= 1;
+        return node.id;
+      }
+
+      toArray() {
+        const items = [];
+        let node = this.front;
+        while (node) {
+          items.push(node.id);
+          node = node.next;
+        }
+        return items;
+      }
+
+      removeId(id) {
+        let previous = null;
+        let node = this.front;
+        while (node) {
+          if (node.id === id) {
+            if (previous) previous.next = node.next;
+            else this.front = node.next;
+            if (this.rear === node) this.rear = previous;
+            this.length -= 1;
+          } else {
+            previous = node;
+          }
+          node = node.next;
+        }
+      }
+    }
+
+    class QueueHistory {
+      constructor() {
+        this.queue = new SongQueue();
+        this.history = [];
+        this.historyLimit = 10;
+      }
+
+      enqueue(id) { this.queue.enqueue(id); }
+
+      dequeue() {
+        // Skip stale IDs if a song was removed while queued.
+        let id = this.queue.dequeue();
+        while (id !== null && !playlist.map.has(id)) id = this.queue.dequeue();
+        return id;
+      }
+
+      pushHistory(id) {
+        this.history.push(id);
+        if (this.history.length > this.historyLimit) this.history.shift();
+      }
+
+      back() {
+        // Pop until a still-existing song is found.
+        let id = this.history.pop() ?? null;
+        while (id !== null && !playlist.map.has(id)) id = this.history.pop() ?? null;
+        return id;
+      }
+
+      removeId(id) {
+        this.queue.removeId(id);
+        this.history = this.history.filter((historyId) => historyId !== id);
+      }
+    }
+
+    // Milestone 3: BST title index. Each title node can reference multiple
+    // songs, so duplicate titles do not overwrite a different song's ID.
+    
+    class BSTNode {
+      constructor(title) {
+        this.title = title;
+        this.key = title.toLocaleLowerCase();
+        this.songIds = new Set();
+        this.left = null;
+        this.right = null;
+      }
+    }
+
+    class SongBST {
+      constructor() {
+        this.root = null;
+        this.byTitle = new Map();
+      }
+
+      insert(title, id) {
+        const key = title.toLocaleLowerCase();
+        let node = this.root;
+
+        if (!node) {
+          node = new BSTNode(title);
+          this.root = node;
+          node.songIds.add(id);
+          this.byTitle.set(key, node);
+          return;
+        }
+
+        while (node) {
+          if (key === node.key) {
+            node.songIds.add(id);
+            return;
+          }
+          if (key < node.key) {
+            if (!node.left) {
+              node.left = new BSTNode(title);
+              node.left.songIds.add(id);
+              this.byTitle.set(key, node.left);
+              return;
+            }
+            node = node.left;
+          } else {
+            if (!node.right) {
+              node.right = new BSTNode(title);
+              node.right.songIds.add(id);
+              this.byTitle.set(key, node.right);
+              return;
+            }
+            node = node.right;
+          }
+        }
+      }
+
+      find(title) {
+        const node = this.byTitle.get(title.toLocaleLowerCase());
+        return node ? [...node.songIds][0] ?? null : null;
+      }
+
+      remove(title, id) {
+        const key = title.toLocaleLowerCase();
+        const indexedNode = this.byTitle.get(key);
+        if (!indexedNode) return false;
+
+        indexedNode.songIds.delete(id);
+        if (indexedNode.songIds.size) return true;
+
+        // Remove a BST node while preserving the ordering invariant.
+        const removeNode = (node, targetKey) => {
+          if (!node) return null;
+          if (targetKey < node.key) node.left = removeNode(node.left, targetKey);
+          else if (targetKey > node.key) node.right = removeNode(node.right, targetKey);
+          else {
+            if (!node.left) return node.right;
+            if (!node.right) return node.left;
+
+            let successor = node.right;
+            while (successor.left) successor = successor.left;
+            node.title = successor.title;
+            node.key = successor.key;
+            node.songIds = successor.songIds;
+            this.byTitle.set(successor.key, node);
+            node.right = removeNode(node.right, successor.key);
+          }
+          return node;
+        };
+
+        this.byTitle.delete(key);
+        this.root = removeNode(this.root, key);
+        return true;
+      }
+
+      prefixSearch(prefix) {
+        const p = prefix.toLocaleLowerCase();
+        if (!p) return [];
+
+        const results = [];
+        const upperBound = p + '\uffff';
+
+        const walk = (node) => {
+          if (!node) return;
+
+          // BST lexical ordering lets us skip subtrees outside the prefix range.
+          if (node.key >= p) walk(node.left);
+
+          if (node.key.startsWith(p)) {
+            for (const songId of node.songIds) results.push({ title: node.title, songId });
+          }
+
+          if (node.key <= upperBound) walk(node.right);
+        };
+
+        walk(this.root);
+        return results.sort((a, b) =>
+          a.title.localeCompare(b.title) || a.songId.localeCompare(b.songId)
+        );
+      }
+
+      nodesByDepth(maxDepth = 5) {
+        const rows = [];
+        const walk = (node, depth) => {
+          if (!node || depth >= maxDepth) return;
+          if (!rows[depth]) rows[depth] = [];
+          rows[depth].push(node);
+          walk(node.left, depth + 1);
+          walk(node.right, depth + 1);
+        };
+        walk(this.root, 0);
+        return rows;
+      }
+    }
+
+    // Artist graph: undirected adjacency sets and exact two-hop results.
+
+    class ArtistGraph {
+      constructor() {
+        this.adj = new Map();
+      }
+
+      addArtist(artist) {
+        if (!this.adj.has(artist)) this.adj.set(artist, new Set());
+      }
+
+      addRelation(a, b) {
+        if (a === b) return;
+        this.addArtist(a);
+        this.addArtist(b);
+        this.adj.get(a).add(b);
+        this.adj.get(b).add(a);
+      }
+
+      recommend(artist) {
+        const direct = this.adj.get(artist);
+        if (!direct) return [];
+
+        const results = new Set();
+        for (const neighbor of direct) {
+          for (const candidate of (this.adj.get(neighbor) || [])) {
+            if (candidate !== artist && !direct.has(candidate)) results.add(candidate);
+          }
+        }
+        return [...results].sort((a, b) => a.localeCompare(b));
+      }
+    }
+
+    const playlist = new Playlist();
+    const manager = new QueueHistory();
+    const bst = new SongBST();
+    const graph = new ArtistGraph();
+
+    let playing = false;
+    let elapsed = 0;
+    let activeSong = null;
+    let songCounter = 7;
+    let tickHandle = null;
+
+    initialSongs.forEach((song) => {
+      playlist.addSong(song);
+      bst.insert(song.title, song.id);
+      graph.addArtist(song.artist);
+    });
+
+    [
+      ['M83', 'The Weeknd'],
+      ['The Weeknd', 'Duke Dumont'],
+      ['Duke Dumont', 'Daft Punk'],
+      ['Kygo', 'M83'],
+      ['Kygo', 'ODESZA'],
+      ['ODESZA', 'Petit Biscuit'],
+      ['Petit Biscuit', 'Tycho'],
+      ['Daft Punk', 'Justice'],
+      ['Justice', 'M83'],
+      ['Duke Dumont', 'Calvin Harris'],
+      ['Calvin Harris', 'Kygo']
+    ].forEach(([a, b]) => graph.addRelation(a, b));
+
+    function log(message) {
+      const line = document.createElement('div');
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      $('log').prepend(line);
+      while ($('log').children.length > 60) $('log').lastChild.remove();
+    }
+
+    function formatTime(seconds) {
+      return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+    }
+
+    function getSong(id) {
+      return playlist.map.get(id) || null;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[char]);
+    }
+
+    function setActive(song, recordHistory = true) {
+      if (!song) {
+        activeSong = null;
+        playing = false;
+        elapsed = 0;
+        render();
+        return;
+      }
+
+      activeSong = song;
+      elapsed = 0;
+      playing = true;
+      if (recordHistory) manager.pushHistory(song.id);
+      render();
+      log(`Now playing "${song.title}"${recordHistory ? ' · history stack updated' : ''}`);
+    }
+
+    function playPlaylistNext() {
+      // Milestone 2: Up Next is consumed before advancing the playlist cursor.
+      const queuedId = manager.dequeue();
+      if (queuedId) {
+        const queuedSong = getSong(queuedId);
+        if (queuedSong) {
+          // Queue playback must not move playlist.current.
+          setActive(queuedSong);
+          log('Up Next priority honored · playlist cursor unchanged');
+          return;
+        }
+      }
+
+      const nextSong = playlist.next();
+      if (!nextSong) {
+        // If repeat is off, remain on the final song and stop at the boundary.
+        playing = false;
+        render();
+        log('Playlist reached its end · repeat is off; cursor remains on final song');
+        return;
+      }
+      setActive(nextSong);
+      log('Playlist cursor advanced through the doubly linked list');
+    }
+
+    function playPlaylistPrevious() {
+      const previousSong = playlist.previous();
+      if (!previousSong) {
+        log('Playlist is at its beginning · repeat is off');
+        return;
+      }
+      setActive(previousSong);
+      log('Playlist cursor moved backward through the doubly linked list');
+    }
+
+    function togglePlayback() {
+      if (!activeSong && playlist.current) {
+        setActive(playlist.current);
+        return;
+      }
+      if (!activeSong) return;
+      playing = !playing;
+      renderNow();
+      log(playing ? 'Playback resumed (demo timer)' : 'Playback paused');
+    }
+
+    function addSong() {
+      const title = $('songTitle').value.trim();
+      const artist = $('songArtist').value.trim();
+
+      if (!title || !artist) {
+        alert('Please enter both a song title and artist.');
+        log('Add song failed · title and artist are required');
+        return;
+      }
+
+      const song = {
+        id: `s${songCounter++}`,
+        title,
+        artist,
+        icon: icons[Math.floor(Math.random() * icons.length)],
+        duration: 210
+      };
+
+      // IDs are unique; duplicate titles are allowed and grouped in the BST node.
+      if (!playlist.addSong(song)) {
+        log(`Add song failed · duplicate ID ${song.id}`);
+        return;
+      }
+
+      bst.insert(song.title, song.id);
+      graph.addArtist(artist);
+      $('songTitle').value = '';
+      $('songArtist').value = '';
+      log(`Added "${title}" · DLL append, Map insert, BST index insert`);
+      render();
+    }
+
+    function removeCurrentSong() {
+      const target = activeSong || playlist.current;
+      if (!target) {
+        alert('There is no current song to remove.');
+        return;
+      }
+
+      const result = playlist.removeSong(target.id);
+      if (!result) return;
+
+      bst.remove(result.song.title, result.song.id);
+      manager.removeId(result.song.id);
+
+      // If the removed song was being shown, select the cursor's new song.
+      if (activeSong?.id === result.song.id) {
+        activeSong = playlist.current;
+        elapsed = 0;
+        playing = false;
+      }
+
+      log(`Removed "${result.song.title}" · DLL relink, Map delete, BST/queue/history cleanup`);
+      render();
+    }
+
+    function renderPlaylist() {
+      const songs = playlist.all();
+      const container = $('playlist');
+      container.innerHTML = '';
+
+      if (!songs.length) {
+        container.innerHTML = '<div class="empty">Your playlist is empty. Add a song to begin.</div>';
+      }
+
+      songs.forEach((song) => {
+        const row = document.createElement('div');
+        row.className = `song-row${activeSong?.id === song.id ? ' current' : ''}`;
+        row.innerHTML = `
+          <div class="song-art">${escapeHtml(song.icon || '♫')}</div>
+          <div class="song-info"><strong></strong><small></small></div>
+          <div class="song-actions">
+            <button title="Play this song" aria-label="Play this song">▶</button>
+            <button title="Add to Up Next" aria-label="Add to Up Next">＋</button>
+          </div>`;
+        row.querySelector('strong').textContent = song.title;
+        row.querySelector('small').textContent = song.artist;
+        row.querySelectorAll('button')[0].onclick = () => {
+          playlist.current = playlist.map.get(song.id);
+          setActive(song);
+          log('Selected playlist song using Map ID lookup');
+        };
+        row.querySelectorAll('button')[1].onclick = () => {
+          manager.enqueue(song.id);
+          log(`Queued "${song.title}" · O(1) FIFO enqueue`);
+          render();
+        };
+        container.append(row);
+      });
+
+      const viz = $('dllViz');
+      if (!songs.length) {
+        viz.innerHTML = '<span class="empty">No nodes yet.</span>';
+      } else {
+        const pieces = songs.map((song) =>
+          `<span class="node ${activeSong?.id === song.id ? 'active' : ''}">${escapeHtml(song.title)}</span>`
+        );
+        viz.innerHTML = `<div class="node-list"><span class="node">HEAD</span>${pieces.join('<span class="arrow">⇄</span>')}<span class="node">TAIL</span></div><p class="hint">Each node stores prev and next references. Map entries: ${playlist.map.size}.</p>`;
+      }
+    }
+
+    function renderQueue() {
+      const queueView = $('queueViz');
+      queueView.innerHTML = '';
+      const queuedIds = manager.queue.toArray();
+
+      if (!queuedIds.length) {
+        queueView.innerHTML = '<span class="empty">Queue is empty. Add a song using ＋ beside a playlist song.</span>';
+      } else {
+        queuedIds.forEach((id, index) => {
+          const song = getSong(id);
+          if (!song) return;
+          const item = document.createElement('span');
+          item.className = 'queue-item';
+          item.textContent = `${index === 0 ? '▶ FRONT · ' : ''}${song.title}${index === queuedIds.length - 1 ? ' · REAR' : ''}`;
+          queueView.append(item);
+        });
+      }
+
+      const historyView = $('historyViz');
+      historyView.innerHTML = '';
+      if (!manager.history.length) {
+        historyView.innerHTML = '<span class="empty">No playback history yet. Play a song to populate the stack.</span>';
+      } else {
+        [...manager.history].reverse().forEach((id, index) => {
+          const song = getSong(id);
+          if (!song) return;
+          const item = document.createElement('span');
+          item.className = 'queue-item';
+          item.textContent = `${index === 0 ? 'TOP · ' : '↓ '}${song.title}`;
+          historyView.append(item);
+        });
+      }
+    }
+
+    function renderBST() {
+      const tree = $('bstViz');
+      tree.innerHTML = '';
+      const rows = bst.nodesByDepth(5);
+
+      if (!rows.length) {
+        tree.innerHTML = '<span class="empty">BST is empty.</span>';
+        return;
+      }
+
+      rows.forEach((nodes) => {
+        const row = document.createElement('div');
+        row.className = 'tree-row';
+        nodes.forEach((node) => {
+          const element = document.createElement('span');
+          element.className = 'tree-node';
+          element.textContent = `${node.title}${node.songIds.size > 1 ? ` (${node.songIds.size})` : ''}`;
+          element.title = `Song IDs: ${[...node.songIds].join(', ')}`;
+          row.append(element);
+        });
+        tree.append(row);
+      });
+    }
+
+    function renderSelects() {
+      const songs = playlist.all();
+      const queueSelect = $('queueSelect');
+      const previousQueueValue = queueSelect.value;
+      queueSelect.innerHTML = '';
+
+      songs.forEach((song) => {
+        const option = document.createElement('option');
+        option.value = song.id;
+        option.textContent = `${song.title} — ${song.artist}`;
+        queueSelect.append(option);
+      });
+
+      if (songs.some((song) => song.id === previousQueueValue)) queueSelect.value = previousQueueValue;
+
+      const artistSelect = $('artistSelect');
+      const previousArtist = artistSelect.value;
+      artistSelect.innerHTML = '';
+      [...graph.adj.keys()].sort((a, b) => a.localeCompare(b)).forEach((artist) => {
+        const option = document.createElement('option');
+        option.value = artist;
+        option.textContent = artist;
+        artistSelect.append(option);
+      });
+      if ([...graph.adj.keys()].includes(previousArtist)) artistSelect.value = previousArtist;
+    }
+
+    function renderStats() {
+      $('statSongs').textContent = playlist.map.size;
+      $('statQueue').textContent = manager.queue.length;
+      $('statHistory').textContent = manager.history.length;
+      $('statArtists').textContent = graph.adj.size;
+    }
+
+    function renderNow() {
+      const song = activeSong || playlist.current;
+      if (!song) {
+        $('nowTitle').textContent = 'Nothing queued';
+        $('nowArtist').textContent = 'Add a song to start';
+        $('cover').textContent = '♫';
+        $('miniTitle').textContent = 'Nothing playing';
+        $('miniArtist').textContent = 'Add a song to start';
+        $('miniCover').textContent = '♫';
+        return;
+      }
+
+      $('nowTitle').textContent = song.title;
+      $('nowArtist').textContent = song.artist;
+      $('cover').textContent = song.icon || '♫';
+      $('miniTitle').textContent = song.title;
+      $('miniArtist').textContent = song.artist;
+      $('miniCover').textContent = song.icon || '♫';
+
+      $('repeatBtn').textContent = `↻ Repeat: ${playlist.repeat ? 'On' : 'Off'}`;
+      $('miniRepeat').style.color = playlist.repeat ? 'var(--green)' : 'var(--muted)';
+      $('playBtn').textContent = playing ? 'Ⅱ Pause' : '▶ Play';
+      $('miniPlay').textContent = playing ? 'Ⅱ' : '▶';
+      $('visualizer').classList.toggle('playing', playing);
+
+      const duration = song.duration || 210;
+      const percent = Math.min(100, Math.round((elapsed / duration) * 100));
+      $('elapsed').textContent = formatTime(elapsed);
+      $('duration').textContent = formatTime(duration);
+      $('seek').value = percent;
+      $('miniElapsed').textContent = formatTime(elapsed);
+      $('miniDuration').textContent = formatTime(duration);
+      $('miniSeek').value = percent;
+    }
+
+    function render() {
+      renderPlaylist();
+      renderQueue();
+      renderBST();
+      renderSelects();
+      renderStats();
+      renderNow();
+      drawGraph();
+    }
+
+    function drawGraph() {
+      const canvas = $('graphCanvas');
+      const context = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const width = rect.width;
+      const height = rect.height;
+      const artists = [...graph.adj.keys()].sort((a, b) => a.localeCompare(b));
+      const selected = $('artistSelect').value;
+      const positions = new Map();
+
+      artists.forEach((artist, index) => {
+        const angle = (2 * Math.PI * index / Math.max(artists.length, 1)) - Math.PI / 2;
+        positions.set(artist, {
+          x: width / 2 + Math.cos(angle) * Math.min(width * .36, 120),
+          y: height / 2 + Math.sin(angle) * Math.min(height * .33, 90)
+        });
+      });
+
+      context.lineWidth = 1.2;
+      context.strokeStyle = '#3b3d4d';
+      graph.adj.forEach((neighbors, artist) => {
+        neighbors.forEach((neighbor) => {
+          if (artist.localeCompare(neighbor) >= 0) return;
+          const from = positions.get(artist);
+          const to = positions.get(neighbor);
+          if (!from || !to) return;
+          context.beginPath();
+          context.moveTo(from.x, from.y);
+          context.lineTo(to.x, to.y);
+          context.stroke();
+        });
+      });
+
+      artists.forEach((artist, index) => {
+        const point = positions.get(artist);
+        const isSelected = artist === selected;
+        context.beginPath();
+        context.arc(point.x, point.y, isSelected ? 8 : 5.5, 0, Math.PI * 2);
+        context.fillStyle = isSelected ? '#1ED760' : palette[index % palette.length];
+        context.fill();
+        context.fillStyle = '#e8eaf2';
+        context.font = '10px system-ui';
+        context.textAlign = 'center';
+        context.fillText(artist, point.x, point.y + 19);
+      });
+    }
+
+    function showRecommendations() {
+      const artist = $('artistSelect').value;
+      const recommendations = graph.recommend(artist);
+      const container = $('recommendations');
+      container.innerHTML = '';
+
+      const heading = document.createElement('div');
+      heading.innerHTML = `<strong>${escapeHtml(artist)}</strong> · ${recommendations.length} second-degree recommendation(s)`;
+      container.append(heading);
+
+      if (!recommendations.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'No artists exactly two links away were found.';
+        container.append(empty);
+      } else {
+        const list = document.createElement('div');
+        list.className = 'node-list';
+        list.style.marginTop = '10px';
+        recommendations.forEach((name) => {
+          const node = document.createElement('span');
+          node.className = 'node active';
+          node.textContent = name;
+          list.append(node);
+        });
+        container.append(list);
+      }
+
+      drawGraph();
+      log(`Graph: exact two-hop recommendations for ${artist}: ${recommendations.join(', ') || 'none'}`);
+    }
+
+
+    // Sidebar navigation opens the real section in a modal popup. Moving the original
+    // DOM nodes (rather than cloning them) keeps every existing control and listener working.
+    const navPopup = $('navPopup');
+    const popupBody = $('popupBody');
+    const popupTitle = $('popupTitle');
+    const popupClose = $('popupClose');
+    let popupRestorePoints = [];
+    let popupLastFocus = null;
+
+    const navDestinations = {
+      '#overview': { title: 'Home / Overview', selectors: ['#overview', '.hero-grid'] },
+      '#playlist-section': { title: 'Playlist', selectors: ['#playlist-section'] },
+      '#queue-section': { title: 'Up Next & Listening History', selectors: ['#queue-section'] },
+      '#search-section': { title: 'Song Search · BST Lab', selectors: ['#search-section'] },
+      '#artist-section': { title: 'Artist Discovery', selectors: ['#artist-section'] }
+    };
+
+    function openNavPopup(destination, link) {
+      const config = navDestinations[destination];
+      if (!config) return;
+      closeNavPopup(false);
+      popupLastFocus = document.activeElement;
+      popupTitle.textContent = config.title;
+      popupBody.replaceChildren();
+      popupRestorePoints = [];
+
+      config.selectors.forEach((selector) => {
+        const element = document.querySelector(selector);
+        if (!element) return;
+        const placeholder = document.createComment(`restore ${selector}`);
+        element.parentNode.insertBefore(placeholder, element);
+        popupRestorePoints.push({ element, placeholder });
+        popupBody.append(element);
+      });
+
+      document.querySelectorAll('.nav a').forEach((item) => {
+        const selected = item === link;
+        item.classList.toggle('active', selected);
+        if (selected) item.setAttribute('aria-current', 'page');
+        else item.removeAttribute('aria-current');
+      });
+      navPopup.classList.add('open');
+      navPopup.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('popup-open');
+      popupClose.focus();
+      if (typeof drawGraph === 'function' && destination === '#artist-section') {
+        requestAnimationFrame(() => drawGraph());
+      }
+    }
+
+    function closeNavPopup(restoreFocus = true) {
+      if (!navPopup || !navPopup.classList.contains('open')) return;
+      popupRestorePoints.forEach(({ element, placeholder }) => {
+        if (placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(element, placeholder);
+          placeholder.remove();
+        }
+      });
+      popupRestorePoints = [];
+      popupBody.replaceChildren();
+      navPopup.classList.remove('open');
+      navPopup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('popup-open');
+      if (restoreFocus && popupLastFocus && typeof popupLastFocus.focus === 'function') popupLastFocus.focus();
+    }
+
+    document.querySelectorAll('.nav a').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        openNavPopup(link.getAttribute('href'), link);
+      });
+    });
+    popupClose.addEventListener('click', () => closeNavPopup());
+    navPopup.addEventListener('click', (event) => {
+      if (event.target === navPopup) closeNavPopup();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeNavPopup();
+    });
+
+    // Keep both the main player and bottom player controls synchronized.
+    $('addSongBtn').addEventListener('click', addSong);
+    $('songTitle').addEventListener('keydown', (event) => { if (event.key === 'Enter') addSong(); });
+    $('songArtist').addEventListener('keydown', (event) => { if (event.key === 'Enter') addSong(); });
+    $('removeCurrentBtn').addEventListener('click', removeCurrentSong);
+
+    $('nextBtn').addEventListener('click', playPlaylistNext);
+    $('miniNext').addEventListener('click', playPlaylistNext);
+    $('prevBtn').addEventListener('click', playPlaylistPrevious);
+    $('miniPrev').addEventListener('click', playPlaylistPrevious);
+    $('playBtn').addEventListener('click', togglePlayback);
+    $('miniPlay').addEventListener('click', togglePlayback);
+
+    const toggleRepeat = () => {
+      const enabled = playlist.toggleRepeat();
+      log(`Repeat ${enabled ? 'enabled' : 'disabled'}`);
+      renderNow();
+    };
+    $('repeatBtn').addEventListener('click', toggleRepeat);
+    $('miniRepeat').addEventListener('click', toggleRepeat);
+
+    const updateSeek = (value) => {
+      const song = activeSong || playlist.current;
+      if (!song) return;
+      elapsed = Math.round((song.duration || 210) * Number(value) / 100);
+      $('elapsed').textContent = formatTime(elapsed);
+      $('miniElapsed').textContent = formatTime(elapsed);
+      $('seek').value = value;
+      $('miniSeek').value = value;
+    };
+    $('seek').addEventListener('input', (event) => updateSeek(event.target.value));
+    $('miniSeek').addEventListener('input', (event) => updateSeek(event.target.value));
+    $('volume').addEventListener('input', (event) => {
+      // The current demo has no audio source; this control is a UI placeholder.
+      $('volume').title = `Demo volume: ${event.target.value}%`;
+    });
+
+    $('queueBtn').addEventListener('click', () => {
+      const id = $('queueSelect').value;
+      if (!id) return;
+      manager.enqueue(id);
+      log(`Up Next enqueue ${id} · O(1) FIFO queue`);
+      render();
+    });
+
+    $('playQueuedBtn').addEventListener('click', () => {
+      const id = manager.dequeue();
+      if (!id) {
+        log('Queue empty · nothing to play');
+        render();
+        return;
+      }
+      const song = getSong(id);
+      if (!song) {
+        log('Queued song no longer exists');
+        render();
+        return;
+      }
+      // Intentionally do not change playlist.current when playing from queue.
+      setActive(song);
+      log('Queued song played · playlist cursor unchanged');
+    });
+
+    $('backBtn').addEventListener('click', () => {
+      const id = manager.back();
+      if (!id) {
+        log('History stack empty · cannot go back');
+        render();
+        return;
+      }
+      const song = getSong(id);
+      if (!song) {
+        log('History item no longer exists');
+        render();
+        return;
+      }
+      // Intentionally do not change playlist.current and do not push history again.
+      setActive(song, false);
+      log(`History pop "${song.title}" · playlist cursor unchanged`);
+    });
+
+    $('searchInput').addEventListener('input', () => {
+      const prefix = $('searchInput').value.trim();
+      const results = bst.prefixSearch(prefix);
+      const container = $('searchResults');
+      container.innerHTML = '';
+
+      if (!prefix) {
+        container.innerHTML = '<div class="empty">Type a title prefix to search the BST index.</div>';
+        return;
+      }
+      if (!results.length) {
+        container.innerHTML = '<div class="empty">No matching songs found.</div>';
+        return;
+      }
+
+      results.forEach((result) => {
+        const song = getSong(result.songId);
+        if (!song) return;
+
+        const row = document.createElement('div');
+        row.className = 'song-row';
+        row.innerHTML = '<div class="song-art">⌕</div><div class="song-info"><strong></strong><small></small></div><button>Play</button>';
+        row.querySelector('strong').textContent = result.title;
+        row.querySelector('small').textContent = song.artist;
+        row.querySelector('button').addEventListener('click', () => {
+          // Searching selects the song in the playlist, so its cursor moves intentionally.
+          playlist.current = playlist.map.get(song.id);
+          setActive(song);
+          log(`BST prefix search selected "${song.title}"`);
+        });
+        container.append(row);
+      });
+
+      log(`BST prefix search "${prefix}" · ${results.length} result(s)`);
+    });
+
+    $('recommendBtn').addEventListener('click', showRecommendations);
+    $('artistSelect').addEventListener('change', drawGraph);
+    const themeToggle = $('themeToggle');
+    const themeToggleLabel = $('themeToggleLabel');
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.dataset.theme = isLight ? 'light' : 'dark';
+      themeToggleLabel.textContent = isLight ? 'Dark mode' : 'Light mode';
+      themeToggle.querySelector('.theme-toggle-icon').textContent = isLight ? '☾' : '☼';
+      themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+      themeToggle.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#F4F3FB' : '#090B14');
+    }
+    applyTheme('dark');
+    themeToggle.addEventListener('click', () => {
+      applyTheme(document.body.dataset.theme === 'light' ? 'dark' : 'light');
+    });
+
+    $('clearLogBtn').addEventListener('click', () => {
+      $('log').innerHTML = '';
+      log('Execution log cleared');
+    });
+    window.addEventListener('resize', drawGraph);
+
+    // Decorative sound-wave bars for the premium studio look.
+    for (let index = 0; index < 25; index += 1) {
+      const bar = document.createElement('span');
+      bar.style.setProperty('--h', `${18 + ((index * 17) % 82)}%`);
+      bar.style.setProperty('--delay', `${(index % 8) * -0.11}s`);
+      $('visualizer').append(bar);
+    }
+
+    // Demo timer only. Real audio can be added separately if the task requires it.
+    tickHandle = window.setInterval(() => {
+      if (!playing || !activeSong) return;
+      elapsed += 1;
+      if (elapsed >= (activeSong.duration || 210)) {
+        elapsed = 0;
+        playPlaylistNext();
+      } else {
+        renderNow();
+      }
+    }, 1000);
+
+    render();
+    log('TuneWave initialized · DLL, Map, O(1) FIFO queue, capped history, BST and artist graph ready');
+    log('Use the checklist to demonstrate each required milestone.');
+  </script>
+</body>
+</html>
