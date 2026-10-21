@@ -1,0 +1,13 @@
+{
+  "name": "swapboard",
+  "version": "1.0.0",
+  "description": "Swapboard: a campus gig and skill-swap marketplace (zero-dependency Node backend + vanilla JS frontend).",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "reset": "node server/seed.js --write"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TuneWave</title>
+<style>
+:root{--paper:#E8EAF1;--card:#F6F7FB;--ink:#161A3A;--mute:#666B8C;--line:#CDD1E2;--cobalt:#2F3CFF;--lime:#D8F25A;--serif:"Iowan Old Style","Palatino Linotype",Georgia,serif;--sans:"Avenir Next","Segoe UI Variable","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+header{display:flex;align-items:baseline;justify-content:space-between;padding:22px 32px 6px}
+.logo{font:italic 700 30px var(--serif);letter-spacing:-.5px}
+.logo i{color:var(--cobalt)}
+#test{border:1.5px solid var(--ink);background:none;border-radius:99px;padding:6px 14px}
+#test:hover{background:var(--ink);color:var(--paper)}
+main{display:grid;grid-template-columns:380px 1fr;gap:28px;padding:16px 32px 40px;max-width:1180px;margin:auto}
+@media(max-width:860px){main{grid-template-columns:1fr;padding:12px 16px 32px}header{padding:18px 16px 4px}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.deck{background:var(--ink);color:#EDEEF8;border:0;text-align:center}
+.vinyl{width:190px;height:190px;margin:4px auto 16px;border-radius:50%;background:repeating-radial-gradient(circle,#0b0d24 0 2px,#1d2150 3px 4px);position:relative;box-shadow:0 14px 30px #0006;animation:spin 5s linear infinite;animation-play-state:paused}
+.vinyl.on{animation-play-state:running}
+.vinyl:before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,#fff0,#ffffff26 12%,#fff0 30%,#fff0 55%,#ffffff1c 68%,#fff0 85%)}
+.vinyl b{position:absolute;inset:66px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px #0b0d24}
+.vinyl b:after{content:"";position:absolute;inset:40%;border-radius:50%;background:var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.vinyl{animation:none}}
+.title{font:600 24px var(--serif);min-height:30px}
+.artist{color:#A9AED6;min-height:22px}
+.bar{height:5px;background:#ffffff26;border-radius:9px;margin:16px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--lime)}
+.time{display:flex;justify-content:space-between;font-size:12px;color:#A9AED6;font-variant-numeric:tabular-nums}
+.ctl{display:flex;justify-content:center;gap:10px;margin:14px 0 8px;flex-wrap:wrap}
+.ctl button{border:1px solid #ffffff3a;background:#ffffff12;color:#fff;border-radius:99px;padding:9px 15px;min-width:46px}
+.ctl button:hover{background:#ffffff26}
+.ctl .go{background:var(--lime);color:var(--ink);border-color:var(--lime);font-weight:700;min-width:84px}
+.ctl .on{background:var(--cobalt);border-color:var(--cobalt)}
+#status{min-height:21px;font-size:13px;color:var(--lime)}
+h2{font:600 18px var(--serif);margin:0 0 10px}
+.side{display:grid;gap:18px;margin-top:18px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .t{flex:1;min-width:0}
+.list .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .t span{font-size:13px;color:var(--mute)}
+.list li.cur{background:linear-gradient(90deg,var(--lime),#D8F25A00);margin:0 -10px;padding:8px 10px;border-radius:10px;border-top-color:transparent}
+.empty{color:var(--mute);font-size:14px;margin:0}
+.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px}
+.mini:hover{border-color:var(--ink)}.mini.x:hover{background:#ffe3e3}
+nav{display:flex;gap:6px;margin-bottom:16px}
+nav button{border:0;background:none;padding:8px 16px;border-radius:99px;font-weight:600;color:var(--mute)}
+nav button[aria-selected=true]{background:var(--ink);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+input,select{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;flex:1;min-width:130px}
+.btn{border:0;background:var(--cobalt);color:#fff;border-radius:10px;padding:9px 16px;font-weight:600}
+.btn.alt{background:var(--ink)}
+.note{font-size:13px;color:var(--mute);margin:6px 0 10px}
+svg{width:100%;height:auto;background:#fff;border-radius:14px;border:1px solid var(--line)}
+svg text{font:12px var(--sans);fill:var(--ink)}
+.chip{display:inline-block;background:var(--lime);border-radius:99px;padding:4px 12px;margin:3px 6px 3px 0;font-weight:600;font-size:14px}
+</style>
+</head>
+<body>
+<header><div class="logo">Tune<i>Wave</i></div><button id="test" title="Runs the rule checks for all three milestones">Run rule checks</button></header>
+<main>
+<section>
+  <div class="panel deck">
+    <div class="vinyl" id="vinyl"><b></b></div>
+    <div class="title" id="ttl">Nothing playing</div>
+    <div class="artist" id="art">Add songs to your playlist, then press Play</div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+    <div class="ctl">
+      <button data-a="back" title="Replay the last song from history">Back</button>
+      <button data-a="prev">Prev</button>
+      <button class="go" data-a="play" id="playbtn">Play</button>
+      <button data-a="next">Next</button>
+      <button data-a="repeat" id="repeat">Repeat off</button>
+    </div>
+    <div id="status" role="status"></div>
+  </div>
+  <div class="side">
+    <div class="panel"><h2>Up Next</h2><ul class="list" id="queue"></ul></div>
+    <div class="panel"><h2>History <small style="font:13px var(--sans);color:var(--mute)">last 10</small></h2><ul class="list" id="hist"></ul></div>
+  </div>
+</section>
+<section class="panel">
+  <nav role="tablist">
+    <button role="tab" data-tab="playlist" aria-selected="true">Playlist</button>
+    <button role="tab" data-tab="library" aria-selected="false">Find songs</button>
+    <button role="tab" data-tab="artists" aria-selected="false">Artists</button>
+  </nav>
+  <div id="v-playlist"></div>
+  <div id="v-library" hidden></div>
+  <div id="v-artists" hidden></div>
+</section>
+</main>
+
+<script>
+/* ============================================================
+   ENGINE  (all data structures; no DOM access in this block)
+   ============================================================ */
+
+/* Milestone 1: doubly linked list + hash map */
+class PNode{constructor(song){this.song=song;this.prev=null;this.next=null}}
+class Playlist{
+  constructor(){this.head=null;this.tail=null;this.cur=null;this.map=new Map();this.repeat=false}
+  addSong(song){
+    if(this.map.has(song.id))return false;            // O(1) duplicate check
+    const n=new PNode(song);
+    if(this.tail){n.prev=this.tail;this.tail.next=n;this.tail=n}else this.head=this.tail=n;
+    this.map.set(song.id,n);return true;
+  }
+  removeSong(id){
+    const n=this.map.get(id);if(!n)return false;       // O(1) lookup, O(1) unlink
+    if(this.cur===n)this.cur=n.prev;                   // next() then continues with the song after it
+    n.prev?n.prev.next=n.next:this.head=n.next;
+    n.next?n.next.prev=n.prev:this.tail=n.prev;
+    this.map.delete(id);return true;
+  }
+  next(){
+    if(!this.head)return null;
+    if(!this.cur)this.cur=this.head;
+    else if(this.cur.next)this.cur=this.cur.next;
+    else if(this.repeat)this.cur=this.head;
+    else return "end";
+    return this.cur.song;
+  }
+  previous(){
+    if(!this.head||!this.cur)return this.head?"start":null;
+    if(this.cur.prev)this.cur=this.cur.prev;
+    else if(this.repeat)this.cur=this.tail;
+    else return "start";
+    return this.cur.song;
+  }
+  toggleRepeat(){return this.repeat=!this.repeat}
+  toArray(){const a=[];for(let n=this.head;n;n=n.next)a.push(n.song);return a}
+}
+
+/* Milestone 3a: BST keyed by title (case-insensitive) */
+class TNode{constructor(title,id){this.title=title;this.key=title.toLowerCase();this.id=id;this.left=null;this.right=null}}
+class SongTree{
+  constructor(){this.root=null;this.size=0;this.visited=0}
+  addSong(title,id){
+    const n=new TNode(title,id);
+    if(!this.root){this.root=n;this.size++;return true}
+    let c=this.root;
+    for(;;){
+      if(n.key===c.key)return false;
+      const side=n.key<c.key?"left":"right";
+      if(!c[side]){c[side]=n;this.size++;return true}
+      c=c[side];
+    }
+  }
+  findSong(title){
+    const k=title.toLowerCase();let c=this.root;
+    while(c){if(k===c.key)return c.id;c=k<c.key?c.left:c.right}
+    return null;
+  }
+  prefixSearch(prefix){
+    const p=prefix.toLowerCase(),out=[];this.visited=0;
+    const walk=n=>{
+      if(!n)return;this.visited++;
+      const head=n.key.slice(0,p.length);
+      if(head>p){walk(n.left);return}                  // everything right of here is larger: skip it
+      if(head<p){walk(n.right);return}                 // everything left of here is smaller: skip it
+      walk(n.left);out.push(n.title);walk(n.right);    // in-order => alphabetical
+    };
+    walk(this.root);return out;
+  }
+}
+
+/* Song catalogue = hash map by id + BST by title */
+class Library{
+  constructor(){this.byId=new Map();this.tree=new SongTree();this.n=0}
+  add(title,artist,dur){
+    const id="s"+(this.n+1);
+    if(!this.tree.addSong(title,id))return null;
+    this.n++;const s={id,title,artist,dur:dur||150+Math.floor(Math.random()*110)};
+    this.byId.set(id,s);return s;
+  }
+}
+
+/* Milestone 2: queue + bounded stack on top of the playlist */
+class Player{
+  constructor(playlist,library){this.pl=playlist;this.lib=library;this.queue=[];this.history=[];this.now=null}
+  addToUpNext(id){const s=this.lib.byId.get(id);if(!s)return false;this.queue.push(s);return true}
+  _play(s){this.now=s;this.history.push(s);if(this.history.length>10)this.history.shift()}
+  playNext(){
+    if(this.queue.length){const s=this.queue.shift();this._play(s);return s}   // playlist position untouched
+    const r=this.pl.next();if(r&&r!=="end")this._play(r);return r;
+  }
+  playPrevious(){const r=this.pl.previous();if(r&&r!=="start")this._play(r);return r}
+  back(){if(!this.history.length)return null;const s=this.history.pop();this.now=s;return s}
+}
+
+/* Milestone 3b: undirected artist graph */
+class ArtistGraph{
+  constructor(){this.adj=new Map()}
+  canon(a){a=a.trim();for(const k of this.adj.keys())if(k.toLowerCase()===a.toLowerCase())return k;return a}
+  addArtist(a){a=this.canon(a);if(!this.adj.has(a))this.adj.set(a,new Set());return a}
+  addRelation(a,b){a=this.addArtist(a);b=this.addArtist(b);if(a===b)return false;this.adj.get(a).add(b);this.adj.get(b).add(a);return true}
+  recommendArtists(artist){
+    const a=this.canon(artist),direct=this.adj.get(a);if(!direct)return [];
+    const out=new Set();
+    for(const f of direct)for(const g of this.adj.get(f))if(g!==a&&!direct.has(g))out.add(g);
+    return [...out].sort((x,y)=>x.localeCompare(y));
+  }
+}
+
+const SEED=[["Amber Hours","Marlow Finch"],["Afterglow Drive","Night Harbor"],["Alibi in Blue","Velvet Orbit"],["Basement Weather","Cobalt Static"],["Blue Hour Radio","Night Harbor"],["Candlewax","Paper Lanterns"],["Cartwheel Season","Juno Vale"],["Hollow Light","Hollow Pines"],["Low Tide Letters","The Slow Tides"],["Midnight Ferry","Kite & Ember"],["Paper Moons","Paper Lanterns"],["Salt and Static","Cobalt Static"],["Slow Burn Summer","Saffron Line"],["Static Bloom","Juno Vale"]];
+const RELS=[["Velvet Orbit","Night Harbor"],["Night Harbor","Cobalt Static"],["Cobalt Static","Juno Vale"],["Velvet Orbit","Marlow Finch"],["Marlow Finch","Paper Lanterns"],["Paper Lanterns","Hollow Pines"],["Hollow Pines","The Slow Tides"],["Juno Vale","Kite & Ember"],["Kite & Ember","Saffron Line"],["Night Harbor","Marlow Finch"]];
+const seedLibrary=()=>{const L=new Library();SEED.forEach(([t,a])=>L.add(t,a));return L};
+const seedGraph=()=>{const g=new ArtistGraph();RELS.forEach(([a,b])=>g.addRelation(a,b));return g};
+
+/* Rule checks for every milestone */
+function selfTest(){
+  const r=[],ok=(n,c)=>r.push([n,!!c]);
+  let L=new Library();["A","B","C"].forEach(t=>L.add(t,"x"));
+  let P=new Playlist(),pl=new Player(P,L);const S=[...L.byId.values()];S.forEach(s=>P.addSong(s));
+  ok("A song can only appear once",!P.addSong(S[0])&&P.toArray().length===3);
+  P.next();P.next();P.next();
+  ok("Repeat off: next() on last returns \"end\" and stays",P.next()==="end"&&P.cur.song===S[2]);
+  P.toggleRepeat();ok("Repeat on: next() on last wraps to first",P.next()===S[0]);P.toggleRepeat();
+  pl.addToUpNext(S[2].id);const pos=P.cur;
+  ok("Up Next plays before the playlist and leaves its position alone",pl.playNext()===S[2]&&P.cur===pos);
+  ok("Playlist continues once Up Next is empty",pl.playNext()===S[1]);
+  ok("removeSong unlinks the node and clears the map entry",P.removeSong(S[1].id)&&!P.map.has(S[1].id)&&P.toArray().length===2);
+  L=new Library();for(let i=0;i<12;i++)L.add("T"+String.fromCharCode(65+i),"x");
+  pl=new Player(new Playlist(),L);[...L.byId.keys()].forEach(id=>{pl.addToUpNext(id);pl.playNext()});
+  ok("History keeps only the last 10 songs",pl.history.length===10&&pl.history[0].title==="TC");
+  const top=pl.history.at(-1);ok("back() replays the top song and removes it",pl.back()===top&&pl.history.length===9);
+  L=seedLibrary();const res=L.tree.prefixSearch("sa");
+  ok("prefixSearch returns alphabetical matches",res.join()==="Salt and Static"&&L.tree.prefixSearch("s").join()==="Salt and Static,Slow Burn Summer,Static Bloom");
+  L.tree.prefixSearch("sa");ok("prefixSearch skips subtrees that cannot match",L.tree.visited<L.tree.size);
+  const g=seedGraph();
+  ok("Recommendations are exactly two links away, alphabetical",g.recommendArtists("Velvet Orbit").join()==="Cobalt Static,Paper Lanterns");
+  const h=new ArtistGraph();[["a","b"],["b","c"],["a","d"],["d","c"],["c","e"]].forEach(x=>h.addRelation(...x));
+  ok("Two-link artists are found once and e (three links) is excluded",h.recommendArtists("a").join()==="c");
+  h.addRelation("a","c");ok("Directly related artists drop out of the recommendations",h.recommendArtists("a").join()==="e");
+  return r;
+}
+
+/* ============================================================
+   INTERFACE
+   ============================================================ */
+const lib=seedLibrary(),playlist=new Playlist(),player=new Player(playlist,lib),graph=seedGraph();
+["Afterglow Drive","Blue Hour Radio","Candlewax","Hollow Light","Low Tide Letters"].forEach(t=>playlist.addSong(lib.byId.get(lib.tree.findSong(t))));
+const ui={tab:"playlist",playing:false,pos:0,q:"",found:null,pick:"Velvet Orbit"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const say=m=>$("status").textContent=m;
+
+function row(s,btns,cls=""){
+  return `<li class="${cls}"><div class="t"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></div>${btns}</li>`;
+}
+function renderDeck(){
+  const s=player.now;
+  $("ttl").textContent=s?s.title:"Nothing playing";
+  $("art").textContent=s?s.artist:"Add songs to your playlist, then press Play";
+  $("dur").textContent=fmt(s?s.dur:0);$("cur").textContent=fmt(ui.pos);
+  $("fill").style.width=s?Math.min(100,ui.pos/s.dur*100)+"%":"0";
+  $("vinyl").classList.toggle("on",ui.playing&&!!s);
+  $("playbtn").textContent=ui.playing?"Pause":"Play";
+  $("repeat").textContent="Repeat "+(playlist.repeat?"on":"off");
+  $("repeat").classList.toggle("on",playlist.repeat);
+  $("queue").innerHTML=player.queue.length?player.queue.map((s,i)=>row(s,"")).join(""):'<p class="empty">Queue is empty. Songs you add here play before the playlist continues.</p>';
+  $("hist").innerHTML=player.history.length?[...player.history].reverse().map(s=>row(s,"")).join(""):'<p class="empty">Songs you play will show up here.</p>';
+}
+function renderPlaylist(){
+  const a=playlist.toArray();
+  $("v-playlist").innerHTML=`<h2>Your playlist <small style="font:13px var(--sans);color:var(--mute)">${a.length} songs</small></h2>`+
+   (a.length?`<ul class="list">${a.map(s=>row(s,`<button class="mini" data-a="queue" data-id="${s.id}">Play next</button><button class="mini x" data-a="remove" data-id="${s.id}">Remove</button>`,playlist.cur&&playlist.cur.song===s?"cur":"")).join("")}</ul>`:'<p class="empty">Your playlist is empty. Add songs from the Find songs tab.</p>');
+}
+function renderLibrary(){
+  const q=ui.q.trim(),hits=q?lib.tree.prefixSearch(q):null,vis=lib.tree.visited;
+  const card=t=>{const s=lib.byId.get(lib.tree.findSong(t));const inPl=playlist.map.has(s.id);
+    return row(s,`<button class="mini" data-a="queue" data-id="${s.id}">Play next</button><button class="mini" data-a="add" data-id="${s.id}" ${inPl?"disabled":""}>${inPl?"In playlist":"Add"}</button>`)};
+  const all=lib.tree.prefixSearch("");
+  $("v-library").innerHTML=`<h2>Find songs</h2>
+   <div class="row"><input id="q" placeholder="Start typing a title…" value="${esc(ui.q)}" autocomplete="off"><button class="btn alt" data-a="exact">Find exact title</button></div>
+   <p class="note">${q?`${hits.length} match${hits.length===1?"":"es"}. The search checked ${vis} of ${lib.tree.size} titles and skipped the rest.`:`${lib.tree.size} songs, sorted by title.`}</p>
+   ${ui.found!==null?`<p class="note"><b>Exact lookup:</b> ${ui.found?esc(ui.found):"no song with that title"}</p>`:""}
+   <ul class="list">${(q?hits:all).map(card).join("")||'<p class="empty">No titles start with that.</p>'}</ul>
+   <h2 style="margin-top:22px">Add a song to the catalogue</h2>
+   <div class="row"><input id="nt" placeholder="Title"><input id="na" placeholder="Artist"><button class="btn" data-a="newsong">Add song</button></div>`;
+  const qi=$("q");if(qi&&ui.focusQ){qi.focus();qi.setSelectionRange(qi.value.length,qi.value.length)}
+}
+function renderArtists(){
+  const names=[...graph.adj.keys()].sort((a,b)=>a.localeCompare(b));
+  if(!graph.adj.has(ui.pick))ui.pick=names[0];
+  const rec=graph.recommendArtists(ui.pick),direct=graph.adj.get(ui.pick)||new Set();
+  const W=640,H=380,cx=W/2,cy=H/2,r=Math.min(W,H)/2-48,pos={};
+  names.forEach((n,i)=>{const t=i/names.length*Math.PI*2-Math.PI/2;pos[n]=[cx+Math.cos(t)*r*1.35,cy+Math.sin(t)*r]});
+  let edges="";const seen=new Set();
+  for(const [a,set] of graph.adj)for(const b of set){const k=[a,b].sort().join("|");if(seen.has(k))continue;seen.add(k);
+    const hot=a===ui.pick||b===ui.pick;edges+=`<line x1="${pos[a][0]}" y1="${pos[a][1]}" x2="${pos[b][0]}" y2="${pos[b][1]}" stroke="${hot?"#2F3CFF":"#B9BED6"}" stroke-width="${hot?2.5:1.5}"/>`}
+  const nodes=names.map(n=>{const sel=n===ui.pick,rc=rec.includes(n),d=direct.has(n);
+    const fill=sel?"#161A3A":rc?"#D8F25A":"#fff",stroke=d?"#2F3CFF":"#161A3A";
+    return `<g data-a="pick" data-n="${esc(n)}" style="cursor:pointer"><circle cx="${pos[n][0]}" cy="${pos[n][1]}" r="9" fill="${fill}" stroke="${stroke}" stroke-width="2"/><text x="${pos[n][0]}" y="${pos[n][1]-15}" text-anchor="middle">${esc(n)}</text></g>`}).join("");
+  const opts=names.map(n=>`<option ${n===ui.pick?"selected":""}>${esc(n)}</option>`).join("");
+  $("v-artists").innerHTML=`<h2>Artists</h2>
+   <div class="row"><select id="sel">${opts}</select></div>
+   <p class="note">Click an artist in the map or use the list. Blue lines are direct links; yellow dots are two links away.</p>
+   <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Artist relation graph">${edges}${nodes}</svg>
+   <div style="margin:14px 0 4px"><b>You might like</b></div>
+   ${rec.length?rec.map(n=>`<span class="chip">${esc(n)}</span>`).join(""):'<p class="empty">Nothing two links away that you are not already linked to.</p>'}
+   <h2 style="margin-top:22px">Link two artists</h2>
+   <div class="row"><input id="ra" placeholder="Artist A"><input id="rb" placeholder="Artist B"><button class="btn" data-a="relate">Add link</button></div>`;
+}
+function render(){
+  document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===ui.tab));
+  ["playlist","library","artists"].forEach(t=>$("v-"+t).hidden=t!==ui.tab);
+  renderDeck();
+  if(ui.tab==="playlist")renderPlaylist();else if(ui.tab==="library")renderLibrary();else renderArtists();
+}
+
+function start(s){ui.pos=0;ui.playing=true}
+function advance(){
+  const r=player.playNext();
+  if(r===null){say("Add songs to the playlist first.");ui.playing=false}
+  else if(r==="end"){say("End of playlist. Turn repeat on to loop.");ui.playing=false}
+  else{say("");start()}
+}
+const actions={
+  play(){if(!player.now)return advance();ui.playing=!ui.playing},
+  next:advance,
+  prev(){const r=player.playPrevious();if(r===null)say("Add songs to the playlist first.");else if(r==="start")say("You are at the start of the playlist.");else{say("");start()}},
+  back(){const s=player.back();if(!s)say("History is empty.");else{say("Replaying "+s.title);start()}},
+  repeat(){playlist.toggleRepeat();say("Repeat "+(playlist.repeat?"on: the last song wraps to the first.":"off: the playlist stops at the last song."))},
+  remove(id){const s=lib.byId.get(id);playlist.removeSong(id);say(`Removed "${s.title}".`)},
+  queue(id){player.addToUpNext(id);say(`"${lib.byId.get(id).title}" will play next.`)},
+  add(id){const s=lib.byId.get(id);say(playlist.addSong(s)?`Added "${s.title}" to your playlist.`:`"${s.title}" is already in your playlist.`)},
+  exact(){const t=$("q").value.trim(),id=t&&lib.tree.findSong(t);ui.found=id?`${lib.byId.get(id).title} by ${lib.byId.get(id).artist}`:"";if(!t)ui.found=null;ui.focusQ=false},
+  newsong(){const t=$("nt").value.trim(),a=$("na").value.trim();
+    if(!t||!a)return say("Enter both a title and an artist.");
+    const s=lib.add(t,a);if(!s)return say(`"${t}" is already in the catalogue.`);
+    graph.addArtist(a);say(`Added "${t}" to the catalogue.`)},
+  pick(n){ui.pick=n},
+  relate(){const a=$("ra").value.trim(),b=$("rb").value.trim();
+    if(!a||!b)return say("Enter two artist names.");
+    if(!graph.addRelation(a,b))return say("An artist cannot be related to themselves.");
+    say(`Linked ${graph.canon(a)} and ${graph.canon(b)}.`)}
+};
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-tab],[data-a]");if(!t)return;
+  if(t.dataset.tab){ui.tab=t.dataset.tab;return render()}
+  if(t.id==="test")return;
+  ui.focusQ=false;actions[t.dataset.a](t.dataset.id||t.dataset.n);render();
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){ui.q=e.target.value;ui.focusQ=true;ui.found=null;render()}});
+document.addEventListener("change",e=>{if(e.target.id==="sel"){ui.pick=e.target.value;render()}});
+$("test").addEventListener("click",()=>{
+  const r=selfTest(),pass=r.filter(x=>x[1]).length;
+  console.table(r.map(([name,ok])=>({check:name,result:ok?"pass":"FAIL"})));
+  alert(`${pass} of ${r.length} rule checks passed.\n\n`+r.map(([n,ok])=>(ok?"✓ ":"✗ ")+n).join("\n"));
+});
+setInterval(()=>{
+  const s=player.now;if(!s||!ui.playing)return;
+  ui.pos++;if(ui.pos>=s.dur)advance();renderDeck();
+},1000);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Backup Vault</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Backup Vault</h1>
+      <p id="mode" class="muted"></p>
+    </div>
+    <div class="actions">
+      <button id="setup">Set up storage</button>
+      <button id="backup" class="primary">Back up now</button>
+      <button id="verify">Verify</button>
+    </div>
+  </header>
+
+  <div id="banner" hidden></div>
+
+  <section class="stats" id="stats"></section>
+
+  <main>
+    <div class="col">
+      <section>
+        <h2>Protected files</h2>
+        <table id="files"></table>
+        <p class="muted small">Pick a file to see its version history. The demo buttons break things on purpose so you can practise recovering.</p>
+        <button id="fail" class="small-btn">Run a failing backup</button>
+      </section>
+
+      <section id="history-panel" hidden>
+        <h2 id="history-title"></h2>
+        <div class="row-actions">
+          <button data-sim="edit" class="small-btn">Edit local copy</button>
+          <button data-sim="bad" class="small-btn">Simulate bad update</button>
+          <button data-sim="delete" class="small-btn danger">Simulate delete</button>
+        </div>
+        <table id="versions"></table>
+      </section>
+
+      <section>
+        <h2>Verification</h2>
+        <div id="verify-out" class="muted">Not run yet.</div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section>
+        <h2>Storage checks</h2>
+        <ul id="storage" class="plain"></ul>
+      </section>
+
+      <section>
+        <h2>Recovery targets</h2>
+        <form id="policy">
+          <label>Backup frequency
+            <select name="frequency"><option>Hourly</option><option>Daily</option><option>Weekly</option></select>
+          </label>
+          <label>RPO (hours of data we can lose) <input name="rpo_hours" type="number" min="1"></label>
+          <label>RTO (minutes to be back up) <input name="rto_minutes" type="number" min="1"></label>
+          <label>Keep old versions (days) <input name="retention_days" type="number" min="1"></label>
+          <label>Move old versions to Glacier after (days) <input name="glacier_days" type="number" min="1"></label>
+          <button class="small-btn">Save targets</button>
+        </form>
+        <details>
+          <summary>What this protects against, and what it doesn't</summary>
+          <p class="small">Versioning means an overwrite or delete leaves earlier copies behind. Public access is blocked and the app only needs object-level permissions, so a leaked key can't open the bucket up. Lifecycle rules keep storage costs down.</p>
+          <p class="small">It does not cover someone deleting every version, stolen admin credentials, or a regional outage. For those you'd add MFA delete or Object Lock, a second account, and cross-region replication.</p>
+        </details>
+      </section>
+
+      <section>
+        <h2>Recent recoveries</h2>
+        <ul id="recoveries" class="plain"></ul>
+      </section>
+
+      <section>
+        <h2>Alerts and events</h2>
+        <ul id="events" class="plain"></ul>
+      </section>
+
+      <section>
+        <h2>Backup log</h2>
+        <table id="jobs" class="compact"></table>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "app": "orders",
+  "debug": false,
+  "db_host": "db.internal",
+  "retries": 3
+}
+# edited 2026-10-21T09:54:52+00:00
