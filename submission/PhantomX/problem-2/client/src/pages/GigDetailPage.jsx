@@ -200,8 +200,8 @@ export function GigDetailPage({ gigId }) {
 
   return (
     <div className="space-y-5">
-      <Link to="/" className={`inline-flex min-h-11 items-center text-sm ${textLinkClass}`}>Back to gigs</Link>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <Link to={gig.type === 'Requesting' ? '/request' : '/offer'} className={`inline-flex min-h-11 items-center text-sm ${textLinkClass}`}>Back to {gig.type === 'Requesting' ? 'requests' : 'offers'}</Link>
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="min-w-0 space-y-5">
           <article className={`${cardClass} space-y-4 p-5`}>
             <div className="flex flex-wrap gap-2">
@@ -328,7 +328,7 @@ export function GigDetailPage({ gigId }) {
           ) : null}
         </div>
 
-        <aside className="min-w-0 space-y-4">
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-36 lg:self-start">
           <PersonCard title="Posted by" person={poster} />
           {applicantUser ? <PersonCard title="Accepted student" person={applicantUser} /> : null}
 
@@ -372,8 +372,8 @@ export function GigDetailPage({ gigId }) {
                       placeholder="Say how you can help"
                     />
                   </Field>
-                  <button className={`${buttonClass} w-full`} type="submit" disabled={Boolean(busy)}>
-                    {busy === 'apply' ? 'Sending…' : 'Apply'}
+                  <button className={`${buttonClass} w-full ${gig.type === 'Requesting' ? 'fill-request' : ''}`} type="submit" disabled={Boolean(busy)}>
+                    {busy === 'apply' ? 'Sending…' : (gig.type === 'Requesting' ? 'Offer your help' : 'Request this service')}
                   </button>
                 </form>
               ) : (

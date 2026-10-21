@@ -57,12 +57,7 @@ export function LoginPage() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-4">
       <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
-        <div className="flex h-1.5" aria-hidden="true">
-          <span className="flex-1 bg-primary" />
-          <span className="flex-1 bg-secondary" />
-          <span className="flex-1 bg-accent" />
-          <span className="flex-1 bg-faint" />
-        </div>
+        <div className="h-1.5 fill-offer" aria-hidden="true" />
         <form className="space-y-4 p-5 sm:p-6" noValidate onSubmit={onSubmit}>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>

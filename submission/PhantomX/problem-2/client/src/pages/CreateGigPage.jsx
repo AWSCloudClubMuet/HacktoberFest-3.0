@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
-import { CATEGORIES, GIG_TYPES, PAYMENTS } from '../constants.js';
+import { CATEGORIES, PAYMENTS } from '../constants.js';
 import { Alert, Field, buttonClass, inputClass } from '../components.jsx';
+import { SECTIONS } from '../section.js';
+import { PageHeader } from '../ui.jsx';
 
 const emptyForm = {
   title: '',
@@ -15,8 +17,10 @@ const emptyForm = {
 };
 
 export function CreateGigPage() {
-  const { navigate, pushToast } = useApp();
-  const [form, setForm] = useState(emptyForm);
+  const { navigate, pushToast, section, query } = useApp();
+  const preset = new URLSearchParams(query || '').get('type');
+  const starting = preset === 'Requesting' || preset === 'Offering' ? preset : (section === 'request' ? 'Requesting' : 'Offering');
+  const [form, setForm] = useState({ ...emptyForm, type: starting });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -32,7 +36,7 @@ export function CreateGigPage() {
     if (typeof values.description !== 'string' || values.description.trim() === '') next.description = 'description is required';
     else if (values.description.trim().length > 2000) next.description = 'description must be 2000 characters or fewer';
     if (!CATEGORIES.includes(values.category)) next.category = `category must be one of: ${CATEGORIES.join(', ')}`;
-    if (!GIG_TYPES.includes(values.type)) next.type = `type must be one of: ${GIG_TYPES.join(', ')}`;
+    if (values.type !== 'Offering' && values.type !== 'Requesting') next.type = 'type must be one of: Offering, Requesting';
     if (!PAYMENTS.some((payment) => payment.value === values.payment_type)) {
       next.payment_type = 'payment_type must be one of: Paid, SkillSwap, Free';
     }
@@ -80,9 +84,14 @@ export function CreateGigPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <div>
-        <h1 className="page-title text-ink">Post a gig</h1>
-        <p className="mt-2 text-base text-muted">Offer a skill or ask for short-term help.</p>
+      <PageHeader
+        eyebrow={form.type === 'Requesting' ? SECTIONS.request.label : SECTIONS.offer.label}
+        title={form.type === 'Requesting' ? 'Post a request' : 'Post an offer'}
+        subtitle={form.type === 'Requesting' ? 'Ask a classmate for help. This is a Requesting gig.' : 'Offer a skill other students can request. This is an Offering gig.'}
+      />
+      <div className="grid grid-cols-2 gap-1 rounded-full bg-surface p-1 shadow-card" role="group" aria-label="Gig type">
+        <button type="button" className={`min-h-11 rounded-full text-sm font-semibold ${form.type === 'Offering' ? 'fill-offer text-white' : 'text-muted'}`} onClick={() => update('type', 'Offering')}>Offering</button>
+        <button type="button" className={`min-h-11 rounded-full text-sm font-semibold ${form.type === 'Requesting' ? 'fill-request text-white' : 'text-muted'}`} onClick={() => update('type', 'Requesting')}>Requesting</button>
       </div>
       <form className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-card" noValidate onSubmit={onSubmit}>
         <Alert>{apiError}</Alert>
@@ -96,11 +105,6 @@ export function CreateGigPage() {
           <Field label="Category" error={errors.category}>
             <select className={inputClass} value={form.category} onChange={(event) => update('category', event.target.value)}>
               {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
-            </select>
-          </Field>
-          <Field label="Type" error={errors.type}>
-            <select className={inputClass} value={form.type} onChange={(event) => update('type', event.target.value)}>
-              {GIG_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
             </select>
           </Field>
         </div>

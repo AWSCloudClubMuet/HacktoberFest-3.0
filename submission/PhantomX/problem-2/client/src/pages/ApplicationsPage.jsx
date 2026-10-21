@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { formatWhen } from '../format.js';
+import { SECTIONS } from '../section.js';
+import { PageHeader } from '../ui.jsx';
 import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
 
 export function ApplicationsPage() {
-  const { userId } = useApp();
+  const { userId, section, chooseSection } = useApp();
   const [rows, setRows] = useState(null);
   const [error, setError] = useState('');
 
@@ -19,8 +21,10 @@ export function ApplicationsPage() {
       .then(([applications, gigs]) => {
         if (cancelled) return;
         const byId = new Map(gigs.map((gig) => [gig.id, gig]));
+        const wanted = SECTIONS[section]?.type || 'Offering';
         const next = applications
           .slice()
+          .filter((application) => byId.get(application.gig_id)?.type === wanted)
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map((application) => ({
             ...application,
@@ -37,13 +41,14 @@ export function ApplicationsPage() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, section]);
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="page-title text-ink">My applications</h1>
-        <p className="mt-2 text-base text-muted">Gigs you have applied to.</p>
+      <PageHeader title="My applications" subtitle={section === 'request' ? 'Help you offered on requests.' : 'Services you requested from offers.'} />
+      <div className="grid grid-cols-2 gap-1 rounded-full bg-surface p-1 shadow-card" role="tablist" aria-label="Your applications">
+        <button type="button" role="tab" aria-selected={section === 'offer'} className={`min-h-11 rounded-full px-2 text-sm font-semibold ${section === 'offer' ? 'fill-offer text-white' : 'text-muted'}`} onClick={() => chooseSection('offer')}>To offers</button>
+        <button type="button" role="tab" aria-selected={section === 'request'} className={`min-h-11 rounded-full px-2 text-sm font-semibold ${section === 'request' ? 'fill-request text-white' : 'text-muted'}`} onClick={() => chooseSection('request')}>To requests</button>
       </div>
       <Alert>{error}</Alert>
       {rows === null && !error ? <Loading>Loading applications…</Loading> : null}

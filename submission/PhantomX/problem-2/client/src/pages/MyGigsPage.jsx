@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { paymentLabel } from '../constants.js';
+import { SECTIONS } from '../section.js';
+import { PageHeader } from '../ui.jsx';
 import { formatMoney } from '../format.js';
 import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
 
 export function MyGigsPage() {
-  const { userId } = useApp();
+  const { userId, section, chooseSection } = useApp();
   const [rows, setRows] = useState(null);
   const [error, setError] = useState('');
 
@@ -22,6 +24,7 @@ export function MyGigsPage() {
         }
         const mine = gigs
           .filter((gig) => gig.user_id === userId)
+          .filter((gig) => gig.type === (SECTIONS[section]?.type || 'Offering'))
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map((gig) => ({ ...gig, applicantCount: counts.get(gig.id) || 0 }));
         setRows(mine);
@@ -35,20 +38,21 @@ export function MyGigsPage() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, section]);
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="page-title text-ink">My gigs</h1>
-        <p className="mt-2 text-base text-muted">Gigs you posted, with their status and applicant count.</p>
+      <PageHeader title="My gigs" subtitle="Gigs you posted, with their status and applicant count." />
+      <div className="grid grid-cols-2 gap-1 rounded-full bg-surface p-1 shadow-card" role="tablist" aria-label="Your gigs">
+        <button type="button" role="tab" aria-selected={section === 'offer'} className={`min-h-11 rounded-full text-sm font-semibold ${section === 'offer' ? 'fill-offer text-white' : 'text-muted'}`} onClick={() => chooseSection('offer')}>Offered</button>
+        <button type="button" role="tab" aria-selected={section === 'request'} className={`min-h-11 rounded-full text-sm font-semibold ${section === 'request' ? 'fill-request text-white' : 'text-muted'}`} onClick={() => chooseSection('request')}>Requested</button>
       </div>
       <Alert>{error}</Alert>
       {rows === null && !error ? <Loading>Loading your gigs…</Loading> : null}
       {rows && rows.length === 0 && !error ? (
         <Empty>
           You have not posted a gig yet.{' '}
-          <Link to="/gigs/new" className={textLinkClass}>Post one</Link>
+          <Link to={`/gigs/new?type=${SECTIONS[section].type}`} className={textLinkClass}>Post one</Link>
         </Empty>
       ) : null}
       {rows && rows.length > 0 ? (

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { Alert, Badge, Empty, Loading, Stars, cardClass } from '../components.jsx';
+import { initials } from '../format.js';
 
 export function ProfilePage({ profileId }) {
   const { userId, users } = useApp();
@@ -88,12 +89,6 @@ export function ProfilePage({ profileId }) {
       </section>
     </div>
   );
-}
-
-function initials(name) {
-  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return '?';
-  return parts.slice(0, 2).map((part) => part[0].toUpperCase()).join('');
 }
 
 function Stat({ label, value, hint, stars }) {

@@ -72,12 +72,7 @@ export function SignupPage() {
   return (
     <div className="mx-auto w-full max-w-md">
       <form className="space-y-4 overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6" noValidate onSubmit={onSubmit}>
-        <div className="-mx-5 -mt-5 flex h-1.5 sm:-mx-6 sm:-mt-6" aria-hidden="true">
-          <span className="flex-1 bg-primary" />
-          <span className="flex-1 bg-secondary" />
-          <span className="flex-1 bg-accent" />
-          <span className="flex-1 bg-faint" />
-        </div>
+        <div className="-mx-5 -mt-5 h-1.5 fill-request sm:-mx-6 sm:-mt-6" aria-hidden="true" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>
           <h1 className="page-title mt-1 text-ink">Create an account</h1>
