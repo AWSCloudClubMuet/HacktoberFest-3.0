@@ -16,7 +16,7 @@ const BOARD_GIGS: Gig[] = [
     type: 'Offering', category: 'Writing', payment_type: 'Paid', budget: 30,
     deadline: '2026-11-03', status: 'Open', display_status: 'Open',
     accepted_applicant_id: null, created_at: '2026-10-21',
-    owner_name: 'Sam Rivera', owner_major: 'Sociology', applications_count: 0,
+    owner_name: 'Ayesha Khan', owner_major: 'Sociology', applications_count: 0,
   },
   {
     id: 19, user_id: 3,
@@ -25,7 +25,7 @@ const BOARD_GIGS: Gig[] = [
     type: 'Requesting', category: 'Programming', payment_type: 'Paid', budget: 200,
     deadline: '2026-11-05', status: 'Open', display_status: 'Open',
     accepted_applicant_id: null, created_at: '2026-10-21',
-    owner_name: 'Jordan Lee', owner_major: 'Design', applications_count: 1,
+    owner_name: 'Ahmed Raza', owner_major: 'Design', applications_count: 1,
   },
 ]
 
