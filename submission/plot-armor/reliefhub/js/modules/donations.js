@@ -33,6 +33,35 @@
 
       const root = UI.h('div');
 
+      /* summary cards — cash total + per-category, aggregated client-side */
+      const cashDonations = donations.filter(d => d.type === 'Cash');
+      const totalCash = cashDonations.reduce((s, d) => s + (+d.amount_or_quantity || 0), 0);
+      const byCategory = {};
+      for (const c of CASH_CATEGORIES) byCategory[c] = 0; /* show all three even at 0 */
+      for (const d of cashDonations) {
+        byCategory[d.category] = (byCategory[d.category] || 0) + (+d.amount_or_quantity || 0);
+      }
+      const inKind = donations.filter(d => d.type === 'In-Kind');
+      const inKindUnits = inKind.reduce((s, d) => s + (+d.amount_or_quantity || 0), 0);
+
+      root.append(UI.h('div', { class: 'cards' }, [
+        UI.h('div', { class: 'card' }, [
+          UI.h('div', { class: 'card-label' }, 'Total Cash Received'),
+          UI.h('div', { class: 'card-value' }, 'PKR ' + totalCash.toLocaleString()),
+          UI.h('div', { class: 'card-sub' }, cashDonations.length + ' cash donations'),
+        ]),
+        ...CASH_CATEGORIES.map(c => UI.h('div', { class: 'card' }, [
+          UI.h('div', { class: 'card-label' }, c),
+          UI.h('div', { class: 'card-value' }, 'PKR ' + (byCategory[c] || 0).toLocaleString()),
+          UI.h('div', { class: 'card-sub' }, cashDonations.filter(d => d.category === c).length + ' donations'),
+        ])),
+        UI.h('div', { class: 'card' }, [
+          UI.h('div', { class: 'card-label' }, 'In-Kind Received'),
+          UI.h('div', { class: 'card-value' }, inKindUnits.toLocaleString() + ' units'),
+          UI.h('div', { class: 'card-sub' }, inKind.length + ' donations added to stock'),
+        ]),
+      ]));
+
       /* toolbar */
       root.append(UI.h('div', { class: 'toolbar' }, [
         App.canEdit()
