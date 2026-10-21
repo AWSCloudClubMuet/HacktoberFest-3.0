@@ -118,6 +118,7 @@
   <!-- Scripts -->
   <script type="module">
     import { api, initNavbar, renderStatusBadge, renderPaymentBadge, formatDate, getCurrentUserId } from './js/app.js';
+    import { getGigCover, getUserAvatar } from './js/images.js';
 
     let allApps = [];
     let currentFilter = '';
@@ -147,22 +148,34 @@
       tbody.innerHTML = filtered.map(a => {
         const isAccepted = a.status === 'Accepted';
         const isRejected = a.status === 'Rejected';
+        const coverUrl = getGigCover({ id: a.gig_id, category: a.gig_category });
+        const avatarUrl = getUserAvatar(a.gig_owner_id);
 
         return `
           <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
             <td class="p-4 sm:p-5">
-              <a href="gig.html?id=${a.gig_id}" class="font-extrabold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-1">
-                ${a.gig_title}
-              </a>
-              <div class="mt-1">
-                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                  ${a.gig_category}
-                </span>
+              <div class="flex items-center gap-3">
+                <img src="${coverUrl}" class="w-12 h-12 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-700 flex-shrink-0" alt="Gig Cover" />
+                <div>
+                  <a href="gig.html?id=${a.gig_id}" class="font-extrabold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-1">
+                    ${a.gig_title}
+                  </a>
+                  <div class="mt-1">
+                    <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      ${a.gig_category}
+                    </span>
+                  </div>
+                </div>
               </div>
             </td>
             <td class="p-4 sm:p-5">
-              <div class="font-bold text-slate-900 dark:text-white">${a.gig_owner_name}</div>
-              <div class="text-[11px] text-slate-400">Owner</div>
+              <div class="flex items-center gap-2">
+                <img src="${avatarUrl}" class="w-7 h-7 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${a.gig_owner_name}" />
+                <div>
+                  <div class="font-bold text-slate-900 dark:text-white">${a.gig_owner_name}</div>
+                  <div class="text-[11px] text-slate-400">Owner</div>
+                </div>
+              </div>
             </td>
             <td class="p-4 sm:p-5">
               ${renderPaymentBadge(a.gig_payment_type, a.gig_budget)}

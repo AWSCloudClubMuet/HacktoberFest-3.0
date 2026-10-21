@@ -48,9 +48,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           
           <div class="flex items-center gap-4 sm:gap-6">
-            <div id="profile-avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg shadow-emerald-600/20 flex-shrink-0">
-              U
-            </div>
+            <img id="profile-avatar-img" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-lg shadow-emerald-600/20 flex-shrink-0" src="" alt="Student Profile" />
             
             <div class="space-y-1">
               <div class="flex items-center gap-2.5 flex-wrap">
@@ -135,6 +133,7 @@
   <!-- Scripts -->
   <script type="module">
     import { api, initNavbar, getCurrentUserId, formatDate } from './js/app.js';
+    import { getUserAvatar } from './js/images.js';
 
     const urlParams = new URLSearchParams(window.location.search);
     let userId = urlParams.get('id');
@@ -152,7 +151,10 @@
         document.getElementById('profile-container').classList.remove('hidden');
 
         document.getElementById('profile-name').textContent = user.name;
-        document.getElementById('profile-avatar').textContent = user.name.charAt(0);
+        const avatarImg = document.getElementById('profile-avatar-img');
+        if (avatarImg) {
+          avatarImg.src = getUserAvatar(userId);
+        }
         document.getElementById('profile-meta').textContent = `${user.major} • Semester ${user.semester}`;
         document.getElementById('profile-email').textContent = user.email;
 
@@ -183,10 +185,8 @@
           reviewsList.innerHTML = reviews.map(r => `
             <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
               <div class="flex items-center justify-between gap-2 flex-wrap">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-                    ${r.reviewer_name.charAt(0)}
-                  </div>
+                <div class="flex items-center gap-2.5">
+                  <img src="${getUserAvatar(r.reviewer_id)}" class="w-7 h-7 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${r.reviewer_name}" />
                   <div>
                     <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                       <a href="profile.html?id=${r.reviewer_id}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">

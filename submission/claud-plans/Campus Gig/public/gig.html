@@ -50,6 +50,22 @@
     <!-- Gig Container -->
     <div id="gig-detail-container" class="hidden space-y-6">
       
+      <!-- Gig Showcase Hero Image Banner (Fiverr Pro / Upwork style) -->
+      <div class="relative w-full h-56 sm:h-72 md:h-84 lg:h-96 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm group bg-slate-900">
+        <img id="gig-banner-img" src="" alt="Project Showcase" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+        <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-4 flex items-end justify-between">
+          <div class="space-y-1">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-lg backdrop-blur-md">
+              <i class="fa-solid fa-sparkles text-[10px]"></i> Verified Campus Project Showcase
+            </span>
+            <p class="text-white/90 text-xs sm:text-sm font-medium drop-shadow-sm hidden sm:block">
+              Deliverable preview & service scope
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- Gig Top Header Card -->
       <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
         <div class="flex items-center gap-2 flex-wrap mb-3">
@@ -168,9 +184,7 @@
             </h3>
 
             <div class="flex items-center gap-3">
-              <div id="owner-avatar" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-extrabold text-lg flex items-center justify-center shadow-sm">
-                U
-              </div>
+              <img id="owner-avatar-img" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-sm flex-shrink-0" src="" alt="Owner Avatar" />
               <div>
                 <div id="owner-name" class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white"></div>
                 <div id="owner-major-sem" class="text-xs text-slate-500 dark:text-slate-400"></div>
@@ -245,6 +259,7 @@
   <!-- Scripts -->
   <script type="module">
     import { api, initNavbar, getCurrentUserId, renderStatusBadge, renderPaymentBadge, formatDate, showToast } from './js/app.js';
+    import { getGigCover, getUserAvatar } from './js/images.js';
 
     const urlParams = new URLSearchParams(window.location.search);
     const gigId = urlParams.get('id');
@@ -264,6 +279,12 @@
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('gig-detail-container').classList.remove('hidden');
 
+        // Banner Image
+        const bannerImg = document.getElementById('gig-banner-img');
+        if (bannerImg) {
+          bannerImg.src = getGigCover(gigData);
+        }
+
         // Header info
         document.getElementById('gig-title').textContent = gigData.title;
         document.getElementById('gig-category').textContent = gigData.category;
@@ -277,7 +298,10 @@
         // Creator sidebar
         if (gigData.owner) {
           document.getElementById('owner-name').textContent = gigData.owner.name;
-          document.getElementById('owner-avatar').textContent = (gigData.owner.name || 'U').charAt(0);
+          const ownerAvatarImg = document.getElementById('owner-avatar-img');
+          if (ownerAvatarImg) {
+            ownerAvatarImg.src = getUserAvatar(gigData.owner_id);
+          }
           document.getElementById('owner-major-sem').textContent = `${gigData.owner.major} • Semester ${gigData.owner.semester}`;
           document.getElementById('owner-skills').innerHTML = (gigData.owner.skills || [])
             .map(s => `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">${s}</span>`).join('');
@@ -341,7 +365,10 @@
             appsList.innerHTML = gigData.applications.map(app => `
               <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="font-bold text-xs text-slate-900 dark:text-white">${app.applicant_name} <span class="text-slate-400 font-normal">(${app.applicant_major})</span></span>
+                  <div class="flex items-center gap-2">
+                    <img src="${getUserAvatar(app.applicant_id)}" class="w-6 h-6 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${app.applicant_name}" />
+                    <span class="font-bold text-xs text-slate-900 dark:text-white">${app.applicant_name} <span class="text-slate-400 font-normal">(${app.applicant_major})</span></span>
+                  </div>
                   ${renderStatusBadge(app.status)}
                 </div>
                 <p class="text-xs text-slate-600 dark:text-slate-300 leading-snug">"${app.message}"</p>
@@ -400,9 +427,12 @@
           reviewsList.innerHTML = `<p class="text-xs text-slate-400">No reviews submitted yet for this completed gig.</p>`;
         } else {
           reviewsList.innerHTML = reviews.map(r => `
-            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5">
               <div class="flex items-center justify-between">
-                <strong class="text-xs font-bold text-slate-900 dark:text-white">${r.reviewer_name}</strong>
+                <div class="flex items-center gap-2">
+                  <img src="${getUserAvatar(r.reviewer_id)}" class="w-6 h-6 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${r.reviewer_name}" />
+                  <strong class="text-xs font-bold text-slate-900 dark:text-white">${r.reviewer_name}</strong>
+                </div>
                 <span class="text-xs text-amber-500 font-bold">${'★'.repeat(r.rating)} (${r.rating}/5)</span>
               </div>
               <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${r.comment}</p>

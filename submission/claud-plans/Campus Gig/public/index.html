@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Gig & SkillSwap Portal — Student Freelance Marketplace</title>
+  <title>Campus Gig & SkillSwap — Verified Student Freelance Marketplace</title>
   
   <!-- Tailwind CSS CDN with dark mode enabled via class -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,515 +35,995 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- React 18, ReactDOM & Babel Standalone -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <!-- Navbar Mount -->
-  <div id="navbar-mount"></div>
+  <!-- React Root Container -->
+  <div id="root" class="min-h-screen flex flex-col"></div>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-    
-    <!-- Hero Section (Upwork / Fiverr Marketplace Header) -->
-    <section class="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-slate-800 relative overflow-hidden">
-      <!-- Glow Accent -->
-      <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none"></div>
+  <!-- React Application Component Script -->
+  <script type="text/babel" data-type="module">
+    import { api, getCurrentUserId, setCurrentUserId, getAuthToken, setAuthToken, showToast, formatDate, renderStatusBadge, renderPaymentBadge } from './js/app.js';
+    import { GIG_COVERS, USER_AVATARS, getGigCover, getUserAvatar } from './js/images.js';
 
-      <div class="max-w-3xl space-y-4 relative z-10">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide">
-          <i class="fa-solid fa-graduation-cap"></i> Verified University Student Marketplace
-        </div>
-        
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight font-display">
-          Find Trusted Student Talent & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Swap Skills</span>
-        </h1>
-        
-        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-          Connect with peers across campus for technical development, UI/UX designs, academic research proofreading, and 1-on-1 exam tutoring.
-        </p>
+    const { useState, useEffect, useMemo, useCallback } = React;
 
-        <!-- Search Bar -->
-        <div class="pt-2 max-w-2xl">
-          <div class="relative flex items-center">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-base"></i>
-            <input
-              type="text"
-              id="hero-search-input"
-              placeholder="Search by keywords, skills, or deliverables (e.g. Python, Figma, React, Proofreading)..."
-              class="w-full bg-white dark:bg-slate-800/90 text-slate-900 dark:text-white pl-12 pr-28 py-3.5 rounded-2xl text-sm font-medium outline-none border border-transparent focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 shadow-lg placeholder:text-slate-400 transition-all"
-            />
-            <button
-              id="hero-search-btn"
-              class="absolute right-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-transform active:scale-95"
-            >
-              Search
-            </button>
-          </div>
-        </div>
+    // ==========================================
+    // 1. GLASSMORPHIC NAVBAR COMPONENT
+    // ==========================================
+    function Navbar({ users, currentUser, activeUser, onSwitchUser, onOpenAuth }) {
+      const [theme, setTheme] = useState(() => localStorage.getItem('campus_theme') || 'light');
+      const [dropdownOpen, setDropdownOpen] = useState(false);
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-        <!-- Quick Popular Tag Chips -->
-        <div class="pt-2 flex items-center gap-2 flex-wrap text-xs text-slate-300">
-          <span class="font-bold text-slate-400">Popular:</span>
-          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Node.js">Node.js</button>
-          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Figma">Figma UI/UX</button>
-          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Python">Python</button>
-          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Tutoring">Tutoring</button>
-        </div>
-      </div>
-
-      <!-- Quick Platform Stats Cards -->
-      <div class="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
-        <div>
-          <div class="text-2xl font-black text-white font-display" id="stat-total-gigs">25</div>
-          <div class="text-xs text-slate-400 font-medium">Campus Opportunities</div>
-        </div>
-        <div>
-          <div class="text-2xl font-black text-emerald-400 font-display" id="stat-open-gigs">8</div>
-          <div class="text-xs text-slate-400 font-medium">Open Right Now</div>
-        </div>
-        <div>
-          <div class="text-2xl font-black text-white font-display">12</div>
-          <div class="text-xs text-slate-400 font-medium">Verified Students</div>
-        </div>
-        <div>
-          <div class="text-2xl font-black text-amber-400 font-display">4.8 ★</div>
-          <div class="text-xs text-slate-400 font-medium">Average Peer Rating</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Filter & Sort Bar (Upwork Style) -->
-    <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
-      
-      <!-- Category Tabs Row -->
-      <div class="flex items-center justify-between gap-4 flex-wrap border-b border-slate-100 dark:border-slate-800/80 pb-4">
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 max-w-full" id="category-pills">
-          <button class="cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm" data-cat="">
-            <i class="fa-solid fa-border-all mr-1"></i> All Categories
-          </button>
-          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Programming">
-            <i class="fa-solid fa-code mr-1"></i> Programming
-          </button>
-          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Design">
-            <i class="fa-solid fa-pen-ruler mr-1"></i> Design
-          </button>
-          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Writing">
-            <i class="fa-solid fa-file-lines mr-1"></i> Writing
-          </button>
-          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Tutoring">
-            <i class="fa-solid fa-graduation-cap mr-1"></i> Tutoring
-          </button>
-        </div>
-
-        <div class="text-xs font-bold text-slate-500 dark:text-slate-400">
-          Showing <span id="showing-count" class="text-slate-900 dark:text-white font-black">25</span> opportunities
-        </div>
-      </div>
-
-      <!-- Advanced Filter Controls -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 pt-1">
-        
-        <!-- Type Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Intent</label>
-          <select id="filter-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
-            <option value="">All Types</option>
-            <option value="Offering">📢 Offering Service</option>
-            <option value="Requesting">🙋 Requesting Help</option>
-          </select>
-        </div>
-
-        <!-- Compensation Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Compensation</label>
-          <select id="filter-payment" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
-            <option value="">All Types</option>
-            <option value="Paid">💰 Paid (PKR)</option>
-            <option value="SkillSwap">🤝 SkillSwap</option>
-            <option value="Free">🎁 Free</option>
-          </select>
-        </div>
-
-        <!-- Min Budget -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Min PKR</label>
-          <input
-            type="number"
-            id="filter-min-budget"
-            placeholder="0"
-            min="0"
-            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
-          />
-        </div>
-
-        <!-- Max Budget -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Max PKR</label>
-          <input
-            type="number"
-            id="filter-max-budget"
-            placeholder="10000"
-            min="0"
-            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
-          />
-        </div>
-
-        <!-- Status Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Status</label>
-          <select id="filter-status" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
-            <option value="">All Statuses</option>
-            <option value="Open">🟢 Open</option>
-            <option value="In Progress">🔵 In Progress</option>
-            <option value="Completed">🟣 Completed</option>
-            <option value="Expired">🔴 Expired</option>
-          </select>
-        </div>
-
-        <!-- Reset Button -->
-        <div class="flex items-end">
-          <button
-            id="clear-filters-btn"
-            class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5"
-          >
-            <i class="fa-solid fa-rotate-left"></i> Reset
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Marketplace Gigs List / Cards Grid -->
-    <section class="space-y-4">
-      
-      <div id="cards-loading" class="text-center py-16 text-slate-400 dark:text-slate-500 font-semibold text-sm">
-        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-2xl mb-2 block"></i>
-        Loading opportunities from campus...
-      </div>
-
-      <div id="no-results" class="hidden text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-        <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-3">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">No opportunities found</h3>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-sm mx-auto">
-          Try clearing your search terms or relaxing the filters.
-        </p>
-        <button id="reset-no-results-btn" class="mt-4 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
-          Reset All Filters
-        </button>
-      </div>
-
-      <!-- Upwork Style Job Grid -->
-      <div id="gigs-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-
-    </section>
-
-  </main>
-
-  <!-- Quick Proposal Modal -->
-  <div id="quick-modal" class="fixed inset-0 z-50 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-        <h3 class="font-display font-extrabold text-lg text-slate-900 dark:text-white">
-          <i class="fa-solid fa-paper-plane text-emerald-600 mr-1.5"></i> Submit Proposal
-        </h3>
-        <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-        <div id="modal-gig-title" class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1"></div>
-        <div id="modal-gig-owner" class="text-xs text-slate-500 dark:text-slate-400 mt-1"></div>
-      </div>
-
-      <form id="quick-apply-form" class="space-y-4">
-        <input type="hidden" id="modal-gig-id" />
-        <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-            Your Cover Letter / Proposal Message *
-          </label>
-          <textarea
-            id="modal-message"
-            rows="4"
-            required
-            placeholder="Explain why you are the ideal student for this gig, what tools you will use, and your estimated completion time..."
-            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 placeholder:text-slate-400"
-          ></textarea>
-        </div>
-
-        <div class="flex justify-end gap-2.5 pt-2">
-          <button type="button" id="cancel-modal-btn" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-            Cancel
-          </button>
-          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30">
-            Send Proposal
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Professional Footer -->
-  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 mt-12 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-slate-800 dark:text-white">CampusGig & SkillSwap</span>
-        <span>•</span>
-        <span>Peer Freelancing for University Students</span>
-      </div>
-      <div>Built with Node.js, Express, MongoDB & Tailwind CSS</div>
-    </div>
-  </footer>
-
-  <!-- Page Scripts -->
-  <script type="module">
-    import { api, initNavbar, renderStatusBadge, renderPaymentBadge, formatDate, getCurrentUserId, showToast } from './js/app.js';
-
-    let currentCategory = '';
-    const heroInput = document.getElementById('hero-search-input');
-    const heroBtn = document.getElementById('hero-search-btn');
-    const filterType = document.getElementById('filter-type');
-    const filterPayment = document.getElementById('filter-payment');
-    const filterMinBudget = document.getElementById('filter-min-budget');
-    const filterMaxBudget = document.getElementById('filter-max-budget');
-    const filterStatus = document.getElementById('filter-status');
-    const clearBtn = document.getElementById('clear-filters-btn');
-    const resetNoResultsBtn = document.getElementById('reset-no-results-btn');
-    const gigsGrid = document.getElementById('gigs-grid');
-    const cardsLoading = document.getElementById('cards-loading');
-    const noResults = document.getElementById('no-results');
-    const showingCount = document.getElementById('showing-count');
-
-    // Modal elements
-    const quickModal = document.getElementById('quick-modal');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const cancelModalBtn = document.getElementById('cancel-modal-btn');
-    const quickApplyForm = document.getElementById('quick-apply-form');
-
-    function closeModal() {
-      quickModal.classList.add('hidden');
-      quickModal.classList.remove('flex');
-      document.getElementById('modal-message').value = '';
-    }
-
-    closeModalBtn.addEventListener('click', closeModal);
-    cancelModalBtn.addEventListener('click', closeModal);
-
-    async function loadGigs() {
-      cardsLoading.classList.remove('hidden');
-      gigsGrid.classList.add('hidden');
-      noResults.classList.add('hidden');
-
-      const params = new URLSearchParams();
-      if (currentCategory) params.append('category', currentCategory);
-      if (heroInput.value.trim()) params.append('q', heroInput.value.trim());
-      if (filterType.value) params.append('type', filterType.value);
-      if (filterPayment.value) params.append('payment_type', filterPayment.value);
-      if (filterMinBudget.value) params.append('minBudget', filterMinBudget.value);
-      if (filterMaxBudget.value) params.append('maxBudget', filterMaxBudget.value);
-      if (filterStatus.value) params.append('status', filterStatus.value);
-
-      try {
-        const gigs = await api(`/gigs?${params.toString()}`);
-        cardsLoading.classList.add('hidden');
-
-        if (!gigs || gigs.length === 0) {
-          noResults.classList.remove('hidden');
-          showingCount.textContent = '0';
-          return;
+      useEffect(() => {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
+        localStorage.setItem('campus_theme', theme);
+      }, [theme]);
 
-        showingCount.textContent = gigs.length;
-        gigsGrid.classList.remove('hidden');
+      const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+      };
 
-        const currentUserId = getCurrentUserId();
-
-        gigsGrid.innerHTML = gigs.map(gig => {
-          const isOwner = gig.owner_id === currentUserId;
-          const isOpen = gig.status === 'Open';
-
-          // Category icon
-          const catIcon = gig.category === 'Programming' ? 'fa-code' : gig.category === 'Design' ? 'fa-pen-ruler' : gig.category === 'Writing' ? 'fa-file-lines' : 'fa-graduation-cap';
-
-          return `
-            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group">
-              <div>
+      return (
+        <header className="sticky top-0 z-50 w-full transition-all duration-300">
+          <div className="border-b border-slate-200/60 dark:border-white/[0.08] bg-white/75 dark:bg-slate-950/75 backdrop-blur-2xl backdrop-saturate-150 transition-colors shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16 gap-4">
                 
-                <!-- Card Top: Category & Status -->
-                <div class="flex items-center justify-between gap-2 mb-3">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                    <i class="fa-solid ${catIcon} text-emerald-600 dark:text-emerald-400"></i> ${gig.category}
-                  </span>
-                  ${renderStatusBadge(gig.status)}
-                </div>
-
-                <!-- Title -->
-                <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  <a href="gig.html?id=${gig.id}">
-                    ${gig.title}
+                {/* Brand Logo & Desktop Navigation */}
+                <div className="flex items-center gap-6 lg:gap-8 flex-shrink-0">
+                  <a href="index.html" className="flex items-center gap-3 group flex-shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-emerald-500/10 border border-slate-800 dark:border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform duration-200 shadow-sm">
+                      <i className="fa-solid fa-graduation-cap text-base"></i>
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-1.5 leading-none">
+                        <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white font-display">
+                          Campus<span className="text-emerald-600 dark:text-emerald-400">Gig</span>
+                        </span>
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          PRO
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider uppercase mt-1">
+                        Student Freelance & SkillSwap
+                      </span>
+                    </div>
                   </a>
-                </h3>
 
-                <!-- Description Snippet -->
-                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed font-normal">
-                  ${gig.description}
-                </p>
-
-                <!-- Compensation & Due date metadata -->
-                <div class="flex items-center gap-2 flex-wrap mb-4">
-                  ${renderPaymentBadge(gig.payment_type, gig.budget)}
-                  <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    ${gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}
-                  </span>
-                  <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 text-slate-500 dark:text-slate-400">
-                    <i class="fa-regular fa-clock"></i> Due ${formatDate(gig.deadline)}
-                  </span>
+                  {/* Desktop Nav Links (Single line, whitespace-nowrap, never awkward wrap) */}
+                  <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
+                    <a href="index.html" className="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs">
+                      <i className="fa-solid fa-compass mr-1.5 opacity-80"></i> Explore Gigs
+                    </a>
+                    <a href="create.html" className="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60">
+                      <i className="fa-solid fa-circle-plus mr-1.5 opacity-70"></i> Post a Gig
+                    </a>
+                    <a href="applications.html" className="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60">
+                      <i className="fa-solid fa-file-contract mr-1.5 opacity-70"></i> Proposals
+                    </a>
+                    <a href="profile.html" className="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60">
+                      <i className="fa-solid fa-user-check mr-1.5 opacity-70"></i> Profile
+                    </a>
+                  </nav>
                 </div>
 
-              </div>
-
-              <!-- Card Footer: Owner Info & Action Buttons -->
-              <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
-                
-                <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
-                    ${(gig.owner_name || 'U').charAt(0)}
-                  </div>
-                  <div class="min-w-0">
-                    <div class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${gig.owner_name}</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${gig.owner_major || 'Student'} • ${gig.application_count || 0} applied</div>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  ${isOpen && !isOwner ? `
-                    <button 
-                      class="btn-apply-quick px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-transform active:scale-95"
-                      data-id="${gig.id}"
-                      data-title="${gig.title.replace(/"/g, '&quot;')}"
-                      data-owner="${gig.owner_name}"
-                    >
-                      Apply
-                    </button>
-                  ` : ''}
-
-                  <a 
-                    href="gig.html?id=${gig.id}" 
-                    class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                {/* Right Side Controls */}
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  
+                  {/* Theme Toggle Button */}
+                  <button
+                    onClick={toggleTheme}
+                    className="w-9 h-9 rounded-xl bg-white/60 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 flex items-center justify-center transition-all duration-150 shadow-xs"
+                    title={theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
                   >
-                    Details <i class="fa-solid fa-arrow-right text-[10px] ml-0.5"></i>
-                  </a>
-                </div>
+                    <i className={`fa-solid ${theme === 'dark' ? 'fa-sun text-amber-400' : 'fa-moon text-slate-600'}`}></i>
+                  </button>
 
+                  {/* Student Persona Switcher Capsule & Frosted Popover */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/70 dark:border-white/10 backdrop-blur-md transition-all shadow-xs group"
+                    >
+                      <div className="relative flex-shrink-0">
+                        <img
+                          src={getUserAvatar(currentUser?.id)}
+                          alt={currentUser?.name}
+                          className="w-7 h-7 rounded-lg object-cover border border-emerald-500/40 shadow-xs"
+                        />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border border-white dark:border-slate-900 rounded-full"></span>
+                      </div>
+                      <div className="text-left leading-none max-w-[110px] sm:max-w-[140px] truncate">
+                        <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                          {currentUser?.name || 'Student'}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-medium mt-1 truncate">
+                          {currentUser?.major || 'CSE'} (S{currentUser?.semester || 1})
+                        </div>
+                      </div>
+                      <i className={`fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}></i>
+                    </button>
+
+                    {/* Frosted Dropdown Popover */}
+                    {dropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-2xl p-2 z-50">
+                        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800/80">
+                          <div className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Switch Student Persona</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Test as any verified university student</div>
+                        </div>
+
+                        <div className="max-h-60 overflow-y-auto py-1 space-y-0.5">
+                          {users.map(u => (
+                            <button
+                              key={u.id}
+                              onClick={() => {
+                                onSwitchUser(u.id);
+                                setDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
+                                u.id === currentUser?.id ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold' : 'text-slate-700 dark:text-slate-200'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <img
+                                  src={getUserAvatar(u.id)}
+                                  alt={u.name}
+                                  className="w-6 h-6 rounded-lg object-cover flex-shrink-0"
+                                />
+                                <div className="min-w-0">
+                                  <div className="text-xs font-semibold truncate leading-tight">{u.name}</div>
+                                  <div className="text-[10px] text-slate-400 truncate">{u.major} • Semester {u.semester}</div>
+                                </div>
+                              </div>
+                              {u.id === currentUser?.id && (
+                                <i className="fa-solid fa-check text-xs text-emerald-600 flex-shrink-0"></i>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between px-1">
+                          <button
+                            onClick={() => {
+                              setDropdownOpen(false);
+                              onOpenAuth();
+                            }}
+                            className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 py-1"
+                          >
+                            <i className="fa-solid fa-user-plus text-[10px]"></i> Sign In / Register
+                          </button>
+                          <a href="profile.html" className="text-[11px] font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white py-1">
+                            My Profile &rarr;
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Post Gig CTA */}
+                  <a
+                    href="create.html"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-sm shadow-emerald-600/30 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
+                  >
+                    <i className="fa-solid fa-plus text-[11px]"></i> Post Gig
+                  </a>
+
+                  {/* Mobile Hamburger Button */}
+                  <button
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className="lg:hidden w-9 h-9 rounded-xl bg-white/60 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 flex items-center justify-center text-sm shadow-xs"
+                  >
+                    <i className="fa-solid fa-bars"></i>
+                  </button>
+
+                </div>
               </div>
             </div>
-          `;
-        }).join('');
 
-        // Attach Quick Apply Modal buttons
-        document.querySelectorAll('.btn-apply-quick').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.getElementById('modal-gig-id').value = btn.dataset.id;
-            document.getElementById('modal-gig-title').textContent = btn.dataset.title;
-            document.getElementById('modal-gig-owner').textContent = `Created by: ${btn.dataset.owner}`;
-            quickModal.classList.remove('hidden');
-            quickModal.classList.add('flex');
+            {/* Mobile Drawer */}
+            {mobileMenuOpen && (
+              <div className="lg:hidden px-4 pt-2 pb-4 border-t border-slate-200/60 dark:border-slate-800/60 space-y-1 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl">
+                <a href="index.html" className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Explore Gigs</a>
+                <a href="create.html" className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Post a Gig</a>
+                <a href="applications.html" className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">My Applications</a>
+                <a href="profile.html" className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Student Profile</a>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAuth();
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <i className="fa-solid fa-user-plus mr-1.5"></i> Sign In / Register
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+      );
+    }
+
+    // ==========================================
+    // 2. HERO MARKETPLACE BANNER
+    // ==========================================
+    function Hero({ searchQuery, setSearchQuery, onSearch, activeUsersCount, totalGigsCount }) {
+      return (
+        <section className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 text-white p-6 sm:p-10 lg:p-12 shadow-2xl border border-slate-800/80 overflow-hidden">
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -right-20 -top-20 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none"></div>
+
+          <div className="max-w-3xl space-y-4 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide">
+              <i className="fa-solid fa-graduation-cap"></i> Verified Campus Freelance Network
+            </div>
+            
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight font-display">
+              Find Trusted Student Freelancers & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Swap Skills</span>
+            </h1>
+            
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-medium">
+              Hire top students for programming, design, academic writing, and exam tutoring — or trade skills peer-to-peer.
+            </p>
+
+            {/* Upwork/Fiverr Search Bar */}
+            <div className="pt-2 max-w-2xl">
+              <div className="relative flex items-center">
+                <i className="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-base"></i>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && onSearch()}
+                  placeholder="Search by keyword, skill, or deliverable (e.g. Python, Figma, React, Tutoring)..."
+                  className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white pl-12 pr-28 py-3.5 rounded-2xl text-xs sm:text-sm font-medium outline-none border border-transparent focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 shadow-xl placeholder:text-slate-400 transition-all"
+                />
+                <button
+                  onClick={onSearch}
+                  className="absolute right-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/30 transition-transform active:scale-95"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {/* Popular Tags */}
+            <div className="pt-2 flex items-center gap-2 flex-wrap text-xs text-slate-300">
+              <span className="font-bold text-slate-400">Popular:</span>
+              {['Node.js', 'Figma UI/UX', 'Python', 'Proofreading', 'Calculus'].map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => {
+                    setSearchQuery(tag);
+                    onSearch();
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white transition-colors"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Platform Counters */}
+          <div className="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
+            <div>
+              <div className="text-2xl font-black text-white font-display">{totalGigsCount}</div>
+              <div className="text-xs text-slate-400 font-medium">Campus Opportunities</div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-emerald-400 font-display">100%</div>
+              <div className="text-xs text-slate-400 font-medium">Verified University Peers</div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-white font-display">{activeUsersCount}</div>
+              <div className="text-xs text-slate-400 font-medium">Talented Students</div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-amber-400 font-display">4.9 ★</div>
+              <div className="text-xs text-slate-400 font-medium">Community Rating</div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // ==========================================
+    // 3. FIVERR / UPWORK GIG CARD COMPONENT
+    // ==========================================
+    function GigCard({ gig, currentUserId, onQuickApply }) {
+      const isOwner = gig.owner_id === currentUserId;
+      const isOpen = gig.status === 'Open';
+      const coverUrl = getGigCover(gig);
+      const avatarUrl = getUserAvatar(gig.owner_id);
+
+      return (
+        <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+          <div>
+            {/* Gig Showcase Image Banner */}
+            <div className="relative aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img
+                src={coverUrl}
+                alt={gig.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                loading="lazy"
+              />
+              
+              {/* Image Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20"></div>
+
+              {/* Floating Top Badges */}
+              <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-white/20 shadow-xs flex items-center gap-1.5">
+                  <i className={`fa-solid ${
+                    gig.category === 'Programming' ? 'fa-code text-emerald-500' :
+                    gig.category === 'Design' ? 'fa-pen-ruler text-indigo-500' :
+                    gig.category === 'Writing' ? 'fa-file-lines text-amber-500' : 'fa-graduation-cap text-teal-500'
+                  }`}></i>
+                  {gig.category}
+                </span>
+
+                {/* Status Badge (Expired strictly in high-contrast red) */}
+                <div dangerouslySetInnerHTML={{ __html: renderStatusBadge(gig.status) }}></div>
+              </div>
+
+              {/* Bottom overlay: Due Date */}
+              <div className="absolute bottom-3 left-3 text-[11px] font-semibold text-white/90 backdrop-blur-xs px-2 py-0.5 rounded-md bg-black/40 flex items-center gap-1">
+                <i className="fa-regular fa-clock"></i> Due {formatDate(gig.deadline)}
+              </div>
+            </div>
+
+            {/* Card Content Area */}
+            <div className="p-5 space-y-3">
+              {/* Freelancer Creator Header */}
+              <div className="flex items-center justify-between gap-2">
+                <a href={`profile.html?id=${gig.owner_id}`} className="flex items-center gap-2.5 group/user min-w-0">
+                  <img
+                    src={avatarUrl}
+                    alt={gig.owner_name}
+                    className="w-8 h-8 rounded-full object-cover border-2 border-emerald-500 flex-shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover/user:text-emerald-600 dark:group-hover/user:text-emerald-400 transition-colors truncate">
+                      {gig.owner_name}
+                    </div>
+                    <div className="text-[10px] text-slate-400 truncate">
+                      {gig.owner_major || 'Student'} • {gig.application_count || 0} applied
+                    </div>
+                  </div>
+                </a>
+
+                {/* Star Rating Badge */}
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md flex-shrink-0">
+                  <i className="fa-solid fa-star text-[10px]"></i> 4.9
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="font-display font-extrabold text-sm sm:text-base text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <a href={`gig.html?id=${gig.id}`}>{gig.title}</a>
+              </h3>
+
+              {/* Description preview */}
+              <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                {gig.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Card Footer: Pricing & Action */}
+          <div className="p-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+            <div>
+              <span className="block text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                {gig.payment_type === 'Paid' ? 'Starting at' : 'Compensation'}
+              </span>
+              <div dangerouslySetInnerHTML={{ __html: renderPaymentBadge(gig.payment_type, gig.budget) }}></div>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {isOpen && !isOwner && (
+                <button
+                  onClick={() => onQuickApply(gig)}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-transform active:scale-95"
+                >
+                  Apply
+                </button>
+              )}
+              <a
+                href={`gig.html?id=${gig.id}`}
+                className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                Details &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // 4. MAIN REACT MARKETPLACE APP
+    // ==========================================
+    function App() {
+      const [users, setUsers] = useState([]);
+      const [currentUser, setCurrentUser] = useState(null);
+      const [gigs, setGigs] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      // Filters
+      const [category, setCategory] = useState('');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [type, setType] = useState('');
+      const [paymentType, setPaymentType] = useState('');
+      const [minBudget, setMinBudget] = useState('');
+      const [maxBudget, setMaxBudget] = useState('');
+      const [status, setStatus] = useState('');
+
+      // Modals
+      const [applyModalGig, setApplyModalGig] = useState(null);
+      const [applyMessage, setApplyMessage] = useState('');
+      const [authModalOpen, setAuthModalOpen] = useState(false);
+      const [authTab, setAuthTab] = useState('login');
+
+      // Login form state
+      const [loginEmail, setLoginEmail] = useState('');
+      const [loginPassword, setLoginPassword] = useState('campus123');
+
+      // Register form state
+      const [regName, setRegName] = useState('');
+      const [regEmail, setRegEmail] = useState('');
+      const [regMajor, setRegMajor] = useState('CSE');
+      const [regSemester, setRegSemester] = useState('5');
+      const [regPassword, setRegPassword] = useState('');
+      const [regSkills, setRegSkills] = useState('');
+
+      // Initial Fetch
+      useEffect(() => {
+        async function init() {
+          try {
+            const usersData = await api('/users');
+            setUsers(usersData);
+            const currentId = getCurrentUserId();
+            const active = usersData.find(u => u.id === currentId) || usersData[0];
+            setCurrentUser(active);
+            if (active) {
+              setLoginEmail(active.email);
+            }
+          } catch (e) {
+            console.error('Failed to load users:', e);
+          }
+          fetchGigs();
+        }
+        init();
+      }, []);
+
+      const fetchGigs = useCallback(async (customParams = {}) => {
+        setLoading(true);
+        const params = new URLSearchParams();
+        if (customParams.category !== undefined ? customParams.category : category) {
+          params.append('category', customParams.category !== undefined ? customParams.category : category);
+        }
+        if (customParams.q !== undefined ? customParams.q : searchQuery) {
+          params.append('q', (customParams.q !== undefined ? customParams.q : searchQuery).trim());
+        }
+        if (type) params.append('type', type);
+        if (paymentType) params.append('payment_type', paymentType);
+        if (minBudget) params.append('minBudget', minBudget);
+        if (maxBudget) params.append('maxBudget', maxBudget);
+        if (status) params.append('status', status);
+
+        try {
+          const res = await api(`/gigs?${params.toString()}`);
+          setGigs(res || []);
+        } catch (err) {
+          setGigs([]);
+        } finally {
+          setLoading(false);
+        }
+      }, [category, searchQuery, type, paymentType, minBudget, maxBudget, status]);
+
+      useEffect(() => {
+        fetchGigs();
+      }, [fetchGigs]);
+
+      const handleSwitchUser = async (newUserId) => {
+        await setCurrentUserId(newUserId);
+        const found = users.find(u => u.id === newUserId);
+        setCurrentUser(found);
+        showToast(`Switched active persona to ${found?.name || newUserId}`, 'success');
+        setTimeout(() => window.location.reload(), 250);
+      };
+
+      const handleResetFilters = () => {
+        setCategory('');
+        setSearchQuery('');
+        setType('');
+        setPaymentType('');
+        setMinBudget('');
+        setMaxBudget('');
+        setStatus('');
+      };
+
+      // Submit Proposal
+      const handleProposalSubmit = async (e) => {
+        e.preventDefault();
+        if (!applyModalGig) return;
+        try {
+          await api('/applications', {
+            method: 'POST',
+            body: JSON.stringify({
+              gig_id: applyModalGig.id,
+              message: applyMessage,
+            }),
           });
-        });
+          showToast('Proposal submitted successfully!', 'success');
+          setApplyModalGig(null);
+          setApplyMessage('');
+          fetchGigs();
+        } catch (err) {
+          // Toast handled by api()
+        }
+      };
 
-        // Update open count
-        const openCount = gigs.filter(g => g.status === 'Open').length;
-        document.getElementById('stat-open-gigs').textContent = openCount;
+      // Submit Login
+      const handleLoginSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const res = await api('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+          });
+          if (res.token) {
+            setAuthToken(res.token);
+            localStorage.setItem('campus_current_user', res.user.id);
+            showToast(`Welcome back, ${res.user.name}!`, 'success');
+            setAuthModalOpen(false);
+            setTimeout(() => window.location.reload(), 300);
+          }
+        } catch (err) {}
+      };
 
-      } catch (err) {
-        cardsLoading.classList.add('hidden');
-        noResults.classList.remove('hidden');
-      }
+      // Submit Register
+      const handleRegisterSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const res = await api('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify({
+              name: regName,
+              email: regEmail,
+              major: regMajor,
+              semester: Number(regSemester),
+              password: regPassword,
+              skills: regSkills,
+            }),
+          });
+          if (res.token) {
+            setAuthToken(res.token);
+            localStorage.setItem('campus_current_user', res.user.id);
+            showToast(`Account registered for ${res.user.name}!`, 'success');
+            setAuthModalOpen(false);
+            setTimeout(() => window.location.reload(), 300);
+          }
+        } catch (err) {}
+      };
+
+      return (
+        <div className="flex-1 flex flex-col">
+          {/* 1. Navbar */}
+          <Navbar
+            users={users}
+            currentUser={currentUser}
+            onSwitchUser={handleSwitchUser}
+            onOpenAuth={() => setAuthModalOpen(true)}
+          />
+
+          {/* 2. Main Container */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            
+            {/* Hero Section */}
+            <Hero
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onSearch={() => fetchGigs()}
+              activeUsersCount={users.length}
+              totalGigsCount={gigs.length}
+            />
+
+            {/* Category Cards Carousel / Filter */}
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="font-display font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white flex items-center gap-2">
+                  <i className="fa-solid fa-layer-group text-emerald-600"></i> Browse by Category
+                </h2>
+                {category && (
+                  <button
+                    onClick={() => setCategory('')}
+                    className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  >
+                    View All Categories &times;
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { name: 'Programming', icon: 'fa-code', color: 'from-blue-600 to-cyan-500', img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80' },
+                  { name: 'Design', icon: 'fa-pen-ruler', color: 'from-purple-600 to-pink-500', img: 'https://images.unsplash.com/photo-1581291518655-9523c932deda?auto=format&fit=crop&w=400&q=80' },
+                  { name: 'Writing', icon: 'fa-file-lines', color: 'from-amber-600 to-orange-500', img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=400&q=80' },
+                  { name: 'Tutoring', icon: 'fa-graduation-cap', color: 'from-emerald-600 to-teal-500', img: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=400&q=80' },
+                ].map(cat => (
+                  <button
+                    key={cat.name}
+                    onClick={() => setCategory(category === cat.name ? '' : cat.name)}
+                    className={`relative rounded-2xl overflow-hidden p-4 text-left border transition-all duration-200 group h-28 flex flex-col justify-end ${
+                      category === cat.name
+                        ? 'border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
+                    }`}
+                  >
+                    <img
+                      src={cat.img}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-transparent"></div>
+                    <div className="relative z-10 text-white">
+                      <i className={`fa-solid ${cat.icon} text-lg mb-1 block text-emerald-400`}></i>
+                      <div className="font-extrabold text-sm">{cat.name}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Filter Bar (Upwork Style) */}
+            <section className="bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md shadow-sm space-y-4">
+              <div className="flex items-center justify-between gap-4 flex-wrap border-b border-slate-100 dark:border-slate-800/80 pb-3">
+                <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  Showing <span className="text-slate-900 dark:text-white font-black">{gigs.length}</span> opportunities
+                </div>
+
+                <button
+                  onClick={handleResetFilters}
+                  className="text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 flex items-center gap-1.5 transition-colors"
+                >
+                  <i className="fa-solid fa-rotate-left text-[11px]"></i> Reset Filters
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {/* Intent Filter */}
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Intent</label>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+                  >
+                    <option value="">All Types</option>
+                    <option value="Offering">📢 Offering Service</option>
+                    <option value="Requesting">🙋 Requesting Help</option>
+                  </select>
+                </div>
+
+                {/* Compensation Filter */}
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Payment</label>
+                  <select
+                    value={paymentType}
+                    onChange={(e) => setPaymentType(e.target.value)}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+                  >
+                    <option value="">All Compensations</option>
+                    <option value="Paid">💰 Paid (PKR)</option>
+                    <option value="SkillSwap">🤝 SkillSwap</option>
+                    <option value="Free">🎁 Free</option>
+                  </select>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Status</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="Open">🟢 Open</option>
+                    <option value="In Progress">🔵 In Progress</option>
+                    <option value="Completed">🟣 Completed</option>
+                    <option value="Expired">🔴 Expired</option>
+                  </select>
+                </div>
+
+                {/* Min Budget */}
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Min PKR</label>
+                  <input
+                    type="number"
+                    value={minBudget}
+                    onChange={(e) => setMinBudget(e.target.value)}
+                    placeholder="0"
+                    min="0"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                {/* Max Budget */}
+                <div>
+                  <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Max PKR</label>
+                  <input
+                    type="number"
+                    value={maxBudget}
+                    onChange={(e) => setMaxBudget(e.target.value)}
+                    placeholder="10000"
+                    min="0"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Gigs Grid */}
+            <section className="space-y-4">
+              {loading ? (
+                <div className="text-center py-20 text-slate-400 font-semibold text-sm">
+                  <i className="fa-solid fa-circle-notch fa-spin text-emerald-500 text-3xl mb-3 block"></i>
+                  Loading student opportunities...
+                </div>
+              ) : gigs.length === 0 ? (
+                <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-3">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">No opportunities found</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
+                    Try adjusting your filters or clearing search terms to see more campus gigs.
+                  </p>
+                  <button
+                    onClick={handleResetFilters}
+                    className="mt-4 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm"
+                  >
+                    Reset All Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {gigs.map(gig => (
+                    <GigCard
+                      key={gig.id}
+                      gig={gig}
+                      currentUserId={currentUser?.id}
+                      onQuickApply={(g) => {
+                        setApplyModalGig(g);
+                        setApplyMessage('');
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+          </main>
+
+          {/* Quick Proposal Modal */}
+          {applyModalGig && (
+            <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <h3 className="font-display font-extrabold text-base sm:text-lg text-slate-900 dark:text-white">
+                    <i className="fa-solid fa-paper-plane text-emerald-600 mr-1.5"></i> Submit Proposal
+                  </h3>
+                  <button
+                    onClick={() => setApplyModalGig(null)}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl leading-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl text-xs text-slate-700 dark:text-slate-300">
+                  Applying for: <strong className="text-slate-900 dark:text-white">{applyModalGig.title}</strong>
+                </div>
+
+                <form onSubmit={handleProposalSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                      Proposal Message / Pitch *
+                    </label>
+                    <textarea
+                      value={applyMessage}
+                      onChange={(e) => setApplyMessage(e.target.value)}
+                      required
+                      rows="4"
+                      placeholder="Explain your relevant coursework, tools, past projects, and delivery timeline..."
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500 placeholder:text-slate-400"
+                    ></textarea>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setApplyModalGig(null)}
+                      className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/30"
+                    >
+                      Send Proposal
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Auth Modal */}
+          {authModalOpen && (
+            <div className="fixed inset-0 z-[100] bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">
+                      <i className="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 className="font-display font-extrabold text-base text-slate-900 dark:text-white">Student Authentication</h3>
+                  </div>
+                  <button onClick={() => setAuthModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl leading-none">&times;</button>
+                </div>
+
+                <div className="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
+                  <button
+                    onClick={() => setAuthTab('login')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${authTab === 'login' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500'}`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => setAuthTab('register')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${authTab === 'register' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs' : 'text-slate-500'}`}
+                  >
+                    Register Account
+                  </button>
+                </div>
+
+                {authTab === 'login' ? (
+                  <form onSubmit={handleLoginSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Campus Email *</label>
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        required
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password *</label>
+                      <input
+                        type="password"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        required
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1">Default password for seeded students: <strong>campus123</strong></p>
+                    </div>
+                    <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">
+                      Sign In with JWT
+                    </button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleRegisterSubmit} className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
+                      <input
+                        type="text"
+                        value={regName}
+                        onChange={(e) => setRegName(e.target.value)}
+                        required
+                        placeholder="e.g. Asad Rehman"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">University Email *</label>
+                      <input
+                        type="email"
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
+                        required
+                        placeholder="student@campus.edu.pk"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Major *</label>
+                        <input
+                          type="text"
+                          value={regMajor}
+                          onChange={(e) => setRegMajor(e.target.value)}
+                          required
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Semester *</label>
+                        <input
+                          type="number"
+                          value={regSemester}
+                          onChange={(e) => setRegSemester(e.target.value)}
+                          min="1"
+                          max="12"
+                          required
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password (min 6 chars) *</label>
+                      <input
+                        type="password"
+                        value={regPassword}
+                        onChange={(e) => setRegPassword(e.target.value)}
+                        required
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Skills (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={regSkills}
+                        onChange={(e) => setRegSkills(e.target.value)}
+                        placeholder="e.g. React, Node.js, Python"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">
+                      Create Account & Get JWT
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <footer className="bg-white/80 dark:bg-slate-900/80 border-t border-slate-200/80 dark:border-slate-800/80 py-8 mt-16 transition-colors backdrop-blur-md">
+            <div className="max-w-7xl mx-auto px-4 text-center space-y-2">
+              <div className="text-sm font-extrabold text-slate-900 dark:text-white">
+                CampusGig &bull; Verified University Freelance Marketplace
+              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                Built with React 18, Node.js, Express &amp; MongoDB &copy; 2026.
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
     }
 
-    // Quick Apply Form Submission
-    quickApplyForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const gigId = document.getElementById('modal-gig-id').value;
-      const message = document.getElementById('modal-message').value.trim();
-
-      if (!message) return;
-
-      try {
-        await api('/applications', {
-          method: 'POST',
-          body: JSON.stringify({ gig_id: gigId, message }),
-        });
-        showToast('Proposal submitted successfully! Check My Applications.', 'success');
-        closeModal();
-        loadGigs();
-      } catch (err) {}
-    });
-
-    // Category Tabs click handler
-    document.getElementById('category-pills').addEventListener('click', (e) => {
-      const btn = e.target.closest('.cat-pill');
-      if (!btn) return;
-      document.querySelectorAll('#category-pills .cat-pill').forEach(b => {
-        b.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
-      });
-      btn.className = 'cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
-      currentCategory = btn.dataset.cat || '';
-      loadGigs();
-    });
-
-    // Quick chips in hero
-    document.querySelectorAll('.quick-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        heroInput.value = chip.dataset.q;
-        loadGigs();
-      });
-    });
-
-    // Debounced search
-    let debounceTimer;
-    heroInput.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 250);
-    });
-    heroBtn.addEventListener('click', loadGigs);
-
-    filterType.addEventListener('change', loadGigs);
-    filterPayment.addEventListener('change', loadGigs);
-    filterStatus.addEventListener('change', loadGigs);
-
-    filterMinBudget.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 300);
-    });
-    filterMaxBudget.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 300);
-    });
-
-    function resetAllFilters() {
-      heroInput.value = '';
-      filterType.value = '';
-      filterPayment.value = '';
-      filterMinBudget.value = '';
-      filterMaxBudget.value = '';
-      filterStatus.value = '';
-      currentCategory = '';
-      document.querySelectorAll('#category-pills .cat-pill').forEach(b => {
-        b.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
-      });
-      document.querySelector('#category-pills .cat-pill[data-cat=""]').className = 'cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
-      loadGigs();
-    }
-
-    clearBtn.addEventListener('click', resetAllFilters);
-    resetNoResultsBtn.addEventListener('click', resetAllFilters);
-
-    initNavbar('browse');
-    loadGigs();
+    // Render the React Application
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
