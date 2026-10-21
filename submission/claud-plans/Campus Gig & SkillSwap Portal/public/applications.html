@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications - Campus Gig & SkillSwap Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">My Submitted Applications</h1>
+      <p style="color: #64748b;">Track the status of your micro-gig proposals and peer collaborations.</p>
+    </div>
+
+    <div class="content-box">
+      <div id="loading" style="text-align: center; padding: 3rem; color: #64748b;">
+        Loading your applications...
+      </div>
+
+      <div id="empty-state" style="display: none; text-align: center; padding: 4rem 1rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">No applications submitted yet</h3>
+        <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't submitted any proposals for open gigs.</p>
+        <a href="index.html" class="btn-primary">Browse Available Gigs →</a>
+      </div>
+
+      <div class="table-wrap" id="table-wrap" style="display: none;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Gig Title & Category</th>
+              <th>Owner</th>
+              <th>Compensation</th>
+              <th>Gig Status</th>
+              <th>Application Status</th>
+              <th>Applied Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="apps-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
+  </footer>
+
+  <script type="module">
+    import { api, initNavbar, renderStatusBadge, renderPaymentPill, formatDate, getCurrentUserId } from './js/app.js';
+
+    async function loadApplications() {
+      const currentUserId = getCurrentUserId();
+      const loading = document.getElementById('loading');
+      const emptyState = document.getElementById('empty-state');
+      const tableWrap = document.getElementById('table-wrap');
+      const tbody = document.getElementById('apps-tbody');
+
+      loading.style.display = 'block';
+      emptyState.style.display = 'none';
+      tableWrap.style.display = 'none';
+
+      try {
+        const apps = await api(`/applications?applicant_id=${currentUserId}`);
+        loading.style.display = 'none';
+
+        if (!apps || apps.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        tableWrap.style.display = 'block';
+        tbody.innerHTML = apps.map(a => `
+          <tr>
+            <td>
+              <strong style="color: #0f172a; font-size: 0.95rem;">
+                <a href="gig.html?id=${a.gig_id}" style="text-decoration: underline;">${a.gig_title}</a>
+              </strong>
+              <div style="margin-top: 0.25rem;">
+                <span class="category-tag ${a.gig_category}" style="font-size: 0.7rem;">${a.gig_category}</span>
+              </div>
+            </td>
+            <td>${a.gig_owner_name}</td>
+            <td>${renderPaymentPill(a.gig_payment_type, a.gig_budget)}</td>
+            <td>${renderStatusBadge(a.effective_gig_status)}</td>
+            <td>
+              <span class="status-badge ${a.status}">
+                ${a.status === 'Accepted' ? '✓ Accepted' : a.status === 'Rejected' ? '✕ Rejected' : '⏳ Pending'}
+              </span>
+            </td>
+            <td style="color: #64748b; font-size: 0.85rem;">${formatDate(a.created_at)}</td>
+            <td>
+              <a href="gig.html?id=${a.gig_id}" class="card-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                View Gig
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        loading.innerHTML = `<span style="color:#ef4444;">Error loading applications.</span>`;
+      }
+    }
+
+    initNavbar('applications');
+    loadApplications();
+  </script>
+</body>
+</html>

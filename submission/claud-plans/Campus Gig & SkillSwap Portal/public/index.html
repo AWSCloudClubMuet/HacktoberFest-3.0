@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Gig & SkillSwap Portal - Browse Gigs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- Hero Header -->
+    <section class="hero-section">
+      <div class="hero-badge">⚡ University SkillSwap & Micro-Gigs</div>
+      <h1 class="hero-title">Discover Opportunities & Collaborate</h1>
+      <p class="hero-subtitle">
+        Swap skills, offer freelance services, and find academic peer assistance on campus.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-total-gigs">25</div>
+          <div class="stat-label">Total Gigs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-open-gigs">8</div>
+          <div class="stat-label">Open Now</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">12</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">4.8 ★</div>
+          <div class="stat-label">Avg Rating</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters & Search -->
+    <section class="filter-card">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search by keyword, skill, or topic (e.g., Python, Figma, React)..."
+          >
+        </div>
+      </div>
+
+      <div class="filter-pills-row">
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="category-tabs">
+          <button class="category-tab active" data-cat="">All Categories</button>
+          <button class="category-tab" data-cat="Programming">💻 Programming</button>
+          <button class="category-tab" data-cat="Design">🎨 Design</button>
+          <button class="category-tab" data-cat="Writing">✍️ Writing</button>
+          <button class="category-tab" data-cat="Tutoring">📚 Tutoring</button>
+        </div>
+
+        <!-- Filter Selects -->
+        <div class="select-filters">
+          <select id="filter-type" class="custom-select">
+            <option value="">All Types</option>
+            <option value="Offering">Offering Service</option>
+            <option value="Requesting">Requesting Help</option>
+          </select>
+
+          <select id="filter-payment" class="custom-select">
+            <option value="">All Payments</option>
+            <option value="Paid">Paid</option>
+            <option value="SkillSwap">SkillSwap</option>
+            <option value="Free">Free</option>
+          </select>
+
+          <input
+            type="number"
+            id="filter-min-budget"
+            class="budget-input"
+            placeholder="Min PKR"
+            min="0"
+          >
+          <input
+            type="number"
+            id="filter-max-budget"
+            class="budget-input"
+            placeholder="Max PKR"
+            min="0"
+          >
+
+          <button id="clear-filters-btn" class="clear-btn">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gig Cards Grid -->
+    <section>
+      <div id="cards-loading" style="text-align: center; padding: 3rem; color: #64748b; font-weight: 500;">
+        Loading opportunities...
+      </div>
+      <div class="cards-grid" id="gigs-grid" style="display: none;"></div>
+      <div id="no-results" style="display: none; text-align: center; padding: 4rem 1rem; color: #64748b;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔎</div>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">No gigs found</h3>
+        <p>Try loosening your search terms or clearing the active filters.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { api, initNavbar, renderStatusBadge, renderPaymentPill, formatDate } from './js/app.js';
+
+    let currentCategory = '';
+    const searchInput = document.getElementById('search-input');
+    const filterType = document.getElementById('filter-type');
+    const filterPayment = document.getElementById('filter-payment');
+    const filterMinBudget = document.getElementById('filter-min-budget');
+    const filterMaxBudget = document.getElementById('filter-max-budget');
+    const clearBtn = document.getElementById('clear-filters-btn');
+    const gigsGrid = document.getElementById('gigs-grid');
+    const cardsLoading = document.getElementById('cards-loading');
+    const noResults = document.getElementById('no-results');
+
+    async function loadGigs() {
+      cardsLoading.style.display = 'block';
+      gigsGrid.style.display = 'none';
+      noResults.style.display = 'none';
+
+      const params = new URLSearchParams();
+      if (currentCategory) params.append('category', currentCategory);
+      if (searchInput.value.trim()) params.append('q', searchInput.value.trim());
+      if (filterType.value) params.append('type', filterType.value);
+      if (filterPayment.value) params.append('payment_type', filterPayment.value);
+      if (filterMinBudget.value) params.append('minBudget', filterMinBudget.value);
+      if (filterMaxBudget.value) params.append('maxBudget', filterMaxBudget.value);
+
+      try {
+        const gigs = await api(`/gigs?${params.toString()}`);
+        cardsLoading.style.display = 'none';
+
+        if (!gigs || gigs.length === 0) {
+          noResults.style.display = 'block';
+          return;
+        }
+
+        gigsGrid.style.display = 'grid';
+        gigsGrid.innerHTML = gigs.map(gig => `
+          <div class="gig-card">
+            <div>
+              <div class="card-top">
+                <span class="category-tag ${gig.category}">${gig.category}</span>
+                ${renderStatusBadge(gig.status)}
+              </div>
+
+              <h3 class="card-title">
+                <a href="gig.html?id=${gig.id}">${gig.title}</a>
+              </h3>
+              <p class="card-desc">${gig.description}</p>
+
+              <div class="card-pills">
+                <span class="pill-type">${gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}</span>
+                ${renderPaymentPill(gig.payment_type, gig.budget)}
+                <span class="pill-type" style="font-size:0.75rem; color:#64748b;">⏳ Due ${formatDate(gig.deadline)}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="owner-meta">
+                <div class="avatar-circle">${(gig.owner_name || 'U').charAt(0)}</div>
+                <div>
+                  <div class="owner-name">${gig.owner_name}</div>
+                  <div class="owner-sub">${gig.owner_major || 'Student'} • ${gig.application_count || 0} applied</div>
+                </div>
+              </div>
+              <a href="gig.html?id=${gig.id}" class="card-btn">View Details →</a>
+            </div>
+          </div>
+        `).join('');
+
+        // Update stats
+        const openCount = gigs.filter(g => g.status === 'Open').length;
+        document.getElementById('stat-open-gigs').textContent = openCount;
+        document.getElementById('stat-total-gigs').textContent = gigs.length;
+
+      } catch (err) {
+        cardsLoading.style.display = 'none';
+        noResults.style.display = 'block';
+      }
+    }
+
+    // Category Tabs click handler
+    document.getElementById('category-tabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.category-tab');
+      if (!btn) return;
+      document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.cat || '';
+      loadGigs();
+    });
+
+    // Event listeners with debounce on search
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 250);
+    });
+
+    filterType.addEventListener('change', loadGigs);
+    filterPayment.addEventListener('change', loadGigs);
+    filterMinBudget.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 300);
+    });
+    filterMaxBudget.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 300);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      filterType.value = '';
+      filterPayment.value = '';
+      filterMinBudget.value = '';
+      filterMaxBudget.value = '';
+      currentCategory = '';
+      document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
+      document.querySelector('.category-tab[data-cat=""]').classList.add('active');
+      loadGigs();
+    });
+
+    // Init
+    initNavbar('browse');
+    loadGigs();
+  </script>
+</body>
+</html>
