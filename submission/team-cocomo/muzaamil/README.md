@@ -1,54 +1,50 @@
 # ReliefHub
 
-Flood-relief coordination for Sindh. React/Vite frontend with a Convex backend; application reads and writes go through the backend.
+Flood-relief coordination for Sindh: camps report needs, coordinators dispatch supplies from a central warehouse, field volunteers confirm deliveries.
 
-## Development
+## Stack
+
+- **Frontend** — React 19, Vite, Tailwind CSS v4, React Router, MapLibre (map), Recharts, three.js (3D map), cmdk (command palette), motion
+- **Backend** — Convex (queries, mutations, actions, HTTP routes), Convex Auth (email/password)
+- **AI** — `@typesafe-ai/sdk` (Jev) powers Quick log intent classification via `TYPESAFE_API_KEY`
+
+## Develop
 
 ```sh
 npm install
-npm run dev:backend
-npm run seed
-npm run dev
+npm run dev:backend   # convex dev
+npm run seed          # demo data (skips if seeded)
+npm run dev           # vite
 ```
 
-Configure the deployment with Convex and set `VITE_CONVEX_URL` and `VITE_CONVEX_SITE_URL` in `.env.local`. Seeding leaves an existing dataset intact unless explicitly reset.
+Set `VITE_CONVEX_URL` / `VITE_CONVEX_SITE_URL` in `.env.local`. Checks: `npm test`, `npm run build`, `npm run typecheck`.
 
-## Roles and permissions
+## Roles
 
-Relief Coordinators can view the organization dashboard and all camps, needs, warehouse inventory, dispatches, donations and volunteers. They manage these records, assign/unassign volunteers, and control dispatch creation, transit, cancellation and delivery. They can edit their own account name.
+- **Coordinator** — full access: dashboard, camps, needs, warehouse, dispatches, donations, volunteers.
+- **Field volunteer** — sees only their own profile and assigned camp (needs, deliveries, team); can mark in-transit deliveries delivered.
 
-Field Volunteers can edit their own name, skill and phone, and see only their assigned active camp, its needs, deliveries and local team names/skills. They can mark an In Transit delivery Delivered only at that camp. Unassigned volunteers see their own profile and assignment waiting state. Volunteers cannot access global dashboard data, warehouse stock, donations, other camps, the full volunteer roster, or change their role/assignment. Team phone numbers and account IDs are not included in the assignment response.
+Enforced in every backend function (`requireCoordinator` / own-camp checks) and by route guards in `src/App.tsx`. Signup always creates a volunteer; grant coordinator access with `npx convex run users:setRole '{"email":"…","role":"coordinator"}'`. Demo quick-login buttons are off unless `RELIEFHUB_DEMO_MODE=true` is set in the Convex env.
 
-Both page routes and backend functions enforce these restrictions. Collection exports at `GET <VITE_CONVEX_SITE_URL>/api/<collection>` require a Coordinator's Convex Auth bearer token; signed-out requests receive 401 and volunteers receive 403. The collections are `camps`, `inventory`, `needs`, `dispatches`, `donations`, and `volunteers`.
+## Functions
 
-### Coordinator provisioning
+All in `convex/`. Coordinator-only unless noted.
 
-Public signup always creates a Field Volunteer, regardless of any supplied `role`. To grant Coordinator access, create the person's account first, then use trusted deployment CLI access:
+| Module | Functions |
+| --- | --- |
+| `dashboard` | `overview` (KPIs, charts, map data), `nav` (sidebar counts) |
+| `camps` | `list`, `get`, `create`, `update`, `remove` |
+| `needs` | `list`, `create`, `update`, `remove` |
+| `inventory` | `list`, `create`, `update`, `restock`, `remove` |
+| `dispatches` | `list`, `limits`, `create` (reserves stock), `markInTransit`, `markDelivered` (also volunteers, own camp only), `cancel` (restores stock) |
+| `donations` | `list`, `create` |
+| `volunteers` | `list`, `create`, `assign`, `unassign`, `remove` |
+| `me` (any signed-in user) | `profile`, `saveProfile` (own name/skill/phone), `assignment` (own camp, needs, deliveries, team) |
+| `users` | `viewer` (current user), `demoMode`; internal: `setRole`, `assertCoordinator` |
+| `intent` | `classify` — action; turns a Quick log sentence into a structured intent (offline keyword fallback) |
+| `seed` | `run` — internal; demo dataset |
+| `http` | `GET <site>/api/<collection>` — JSON export of `camps`, `inventory`, `needs`, `dispatches`, `donations`, `volunteers`; requires a coordinator bearer token |
 
-```sh
-npx convex run users:setRole '{"email":"you@organisation.pk","role":"coordinator"}'
-```
+## Data model
 
-The same internal function accepts `"volunteer"` to revoke Coordinator access. It cannot be called by browser clients. Existing personal accounts retain their roles; review accounts created before this restriction if the app was shared publicly.
-
-### Optional hackathon demo
-
-Shared quick-test accounts are disabled by default, including existing sessions. For an isolated demo deployment, enable them explicitly:
-
-```sh
-npx convex env set RELIEFHUB_DEMO_MODE true
-```
-
-This displays the two quick sign-in buttons and permits the predefined demo Coordinator and Volunteer accounts. Demo Coordinator access includes full editing. Remove the setting to disable shared accounts again:
-
-```sh
-npx convex env remove RELIEFHUB_DEMO_MODE
-```
-
-## Checks
-
-```sh
-npm test
-npm run build
-npx tsc --noEmit -p convex/tsconfig.json
-```
+`users` (Convex Auth + role) · `camps` (capacity, families, status, lat/lng) · `inventory` (stock, reorder level) · `needs` (camp × item, required/fulfilled) · `dispatches` (need, qty, status) · `donations` (cash/in-kind) · `volunteers` (name, skill, camp, linked `user_id`)
