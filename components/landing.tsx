@@ -65,11 +65,6 @@ export default function LandingPage() {
           <p className="landing-steps">
             <span>Post a gig</span><i>→</i><span>Get applications</span><i>→</i><span>Accept one</span><i>→</i><span>Leave a review</span>
           </p>
-          {stats && (
-            <p className="landing-stats">
-              {stats.open_gigs} gigs open right now · {stats.active_students} students · {stats.avg_rating} average rating from {stats.review_count} reviews
-            </p>
-          )}
         </main>
 
         <section className="board" aria-label="Open gigs">
