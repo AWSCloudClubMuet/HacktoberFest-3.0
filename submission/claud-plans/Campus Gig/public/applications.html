@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Applications - Campus Gig & SkillSwap Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>My Applications — Campus Gig & SkillSwap Portal</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,32 +12,49 @@
   <div id="navbar-mount"></div>
 
   <main class="main-content">
-    <div class="page-header">
-      <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">My Submitted Applications</h1>
-      <p style="color: #64748b;">Track the status of your micro-gig proposals and peer collaborations.</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">
+          My Applications <span>Dashboard</span>
+        </h1>
+        <p style="color: #64748b; font-size: 0.95rem;">
+          Track all your submitted gig proposals, review acceptances, and monitor peer collaboration statuses.
+        </p>
+      </div>
+      <a href="index.html" class="btn-primary">
+        <i class="fa-solid fa-compass"></i> Explore Gigs
+      </a>
+    </div>
+
+    <!-- Filter Tabs Row -->
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;" id="status-tabs">
+      <button class="cat-btn active" data-status="">All Applications (<span id="count-all">0</span>)</button>
+      <button class="cat-btn" data-status="Pending"><i class="fa-solid fa-clock" style="color: #f59e0b;"></i> Pending (<span id="count-pending">0</span>)</button>
+      <button class="cat-btn" data-status="Accepted"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Accepted (<span id="count-accepted">0</span>)</button>
+      <button class="cat-btn" data-status="Rejected"><i class="fa-solid fa-circle-xmark" style="color: #ef4444;"></i> Rejected (<span id="count-rejected">0</span>)</button>
     </div>
 
     <div class="content-box">
-      <div id="loading" style="text-align: center; padding: 3rem; color: #64748b;">
-        Loading your applications...
+      <div id="loading" style="text-align: center; padding: 3rem; color: #64748b; font-weight: 600;">
+        <i class="fa-solid fa-circle-notch fa-spin"></i> Loading your application history...
       </div>
 
       <div id="empty-state" style="display: none; text-align: center; padding: 4rem 1rem;">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
-        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">No applications submitted yet</h3>
-        <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't submitted any proposals for open gigs.</p>
-        <a href="index.html" class="btn-primary">Browse Available Gigs →</a>
+        <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 0.75rem;"><i class="fa-solid fa-file-circle-question"></i></div>
+        <h3 style="font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">No applications in this view</h3>
+        <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't submitted any proposals matching this status filter.</p>
+        <a href="index.html" class="btn-primary">Browse Marketplace Opportunities →</a>
       </div>
 
       <div class="table-wrap" id="table-wrap" style="display: none;">
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Gig Title & Category</th>
-              <th>Owner</th>
+              <th>Opportunity & Category</th>
+              <th>Creator</th>
               <th>Compensation</th>
               <th>Gig Status</th>
-              <th>Application Status</th>
+              <th>Application Status & Stepper</th>
               <th>Applied Date</th>
               <th>Action</th>
             </tr>
@@ -52,64 +66,110 @@
   </main>
 
   <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
+    <p>Campus Gig & SkillSwap Portal &copy; 2026. Designed with professional Stitch & Lovable UI standards.</p>
   </footer>
 
   <script type="module">
-    import { api, initNavbar, renderStatusBadge, renderPaymentPill, formatDate, getCurrentUserId } from './js/app.js';
+    import { api, initNavbar, renderStatusBadge, renderPaymentBadge, formatDate, getCurrentUserId } from './js/app.js';
 
-    async function loadApplications() {
-      const currentUserId = getCurrentUserId();
+    let allApps = [];
+    let currentStatusFilter = '';
+
+    function renderApps() {
       const loading = document.getElementById('loading');
       const emptyState = document.getElementById('empty-state');
       const tableWrap = document.getElementById('table-wrap');
       const tbody = document.getElementById('apps-tbody');
 
-      loading.style.display = 'block';
+      loading.style.display = 'none';
+
+      let filtered = allApps;
+      if (currentStatusFilter) {
+        filtered = allApps.filter(a => a.status === currentStatusFilter);
+      }
+
+      if (filtered.length === 0) {
+        emptyState.style.display = 'block';
+        tableWrap.style.display = 'none';
+        return;
+      }
+
       emptyState.style.display = 'none';
-      tableWrap.style.display = 'none';
+      tableWrap.style.display = 'block';
 
-      try {
-        const apps = await api(`/applications?applicant_id=${currentUserId}`);
-        loading.style.display = 'none';
+      tbody.innerHTML = filtered.map(a => {
+        const isAccepted = a.status === 'Accepted';
+        const isRejected = a.status === 'Rejected';
 
-        if (!apps || apps.length === 0) {
-          emptyState.style.display = 'block';
-          return;
-        }
-
-        tableWrap.style.display = 'block';
-        tbody.innerHTML = apps.map(a => `
+        return `
           <tr>
             <td>
               <strong style="color: #0f172a; font-size: 0.95rem;">
-                <a href="gig.html?id=${a.gig_id}" style="text-decoration: underline;">${a.gig_title}</a>
+                <a href="gig.html?id=${a.gig_id}" style="text-decoration: none; color: inherit;" class="card-title">
+                  ${a.gig_title}
+                </a>
               </strong>
-              <div style="margin-top: 0.25rem;">
-                <span class="category-tag ${a.gig_category}" style="font-size: 0.7rem;">${a.gig_category}</span>
+              <div style="margin-top: 0.3rem;">
+                <span class="cat-badge ${a.gig_category}">${a.gig_category}</span>
               </div>
             </td>
-            <td>${a.gig_owner_name}</td>
-            <td>${renderPaymentPill(a.gig_payment_type, a.gig_budget)}</td>
+            <td>
+              <div style="font-weight: 600; color: #0f172a;">${a.gig_owner_name}</div>
+              <div style="font-size: 0.75rem; color: #64748b;">Creator</div>
+            </td>
+            <td>${renderPaymentBadge(a.gig_payment_type, a.gig_budget)}</td>
             <td>${renderStatusBadge(a.effective_gig_status)}</td>
             <td>
-              <span class="status-badge ${a.status}">
-                ${a.status === 'Accepted' ? '✓ Accepted' : a.status === 'Rejected' ? '✕ Rejected' : '⏳ Pending'}
-              </span>
+              <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                <span class="status-pill ${a.status}">
+                  <i class="fa-solid ${isAccepted ? 'fa-check-double' : isRejected ? 'fa-xmark' : 'fa-hourglass-half'}"></i>
+                  ${a.status}
+                </span>
+              </div>
+              <div style="font-size: 0.78rem; color: #475569; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${a.message}">
+                "${a.message}"
+              </div>
             </td>
-            <td style="color: #64748b; font-size: 0.85rem;">${formatDate(a.created_at)}</td>
+            <td style="color: #64748b; font-size: 0.85rem;">
+              <i class="fa-solid fa-calendar-check" style="color: #94a3b8; margin-right: 4px;"></i>
+              ${formatDate(a.created_at)}
+            </td>
             <td>
-              <a href="gig.html?id=${a.gig_id}" class="card-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
-                View Gig
+              <a href="gig.html?id=${a.gig_id}" class="btn-card-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                View Gig <i class="fa-solid fa-arrow-up-right-from-square"></i>
               </a>
             </td>
           </tr>
-        `).join('');
+        `;
+      }).join('');
+    }
 
+    async function loadApplications() {
+      const currentUserId = getCurrentUserId();
+      try {
+        allApps = await api(`/applications?applicant_id=${currentUserId}`);
+
+        // Update counts
+        document.getElementById('count-all').textContent = allApps.length;
+        document.getElementById('count-pending').textContent = allApps.filter(a => a.status === 'Pending').length;
+        document.getElementById('count-accepted').textContent = allApps.filter(a => a.status === 'Accepted').length;
+        document.getElementById('count-rejected').textContent = allApps.filter(a => a.status === 'Rejected').length;
+
+        renderApps();
       } catch (err) {
-        loading.innerHTML = `<span style="color:#ef4444;">Error loading applications.</span>`;
+        document.getElementById('loading').innerHTML = `<span style="color:#ef4444;"><i class="fa-solid fa-circle-exclamation"></i> Error loading applications.</span>`;
       }
     }
+
+    // Status filter clicks
+    document.getElementById('status-tabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-btn');
+      if (!btn) return;
+      document.querySelectorAll('#status-tabs .cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStatusFilter = btn.dataset.status || '';
+      renderApps();
+    });
 
     initNavbar('applications');
     loadApplications();

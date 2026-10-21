@@ -3,251 +3,714 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Gig & SkillSwap Portal - Browse Gigs</title>
+  <title>Campus Gig & Marketplace — Modern React + Tailwind</title>
+  
+  <!-- Tailwind CSS CDN with custom config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#ff5500',
+              orangeHover: '#e64c00',
+              peach: '#fdeee9',
+              powderBlue: '#e8f1f5',
+              softBlue: '#edf4f8',
+              softBeige: '#f7f5f2',
+              softPeach: '#fcf3ed',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          borderRadius: {
+            '3xl': '24px',
+            '4xl': '32px',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- React 18 & ReactDOM & Babel for JSX -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at 10% 20%, #f1f5f9 0%, #e2e8f0 100%);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+  </style>
 </head>
-<body>
+<body class="p-3 md:p-6 lg:p-8 min-h-screen flex items-center justify-center">
 
-  <!-- Navbar Mount -->
-  <div id="navbar-mount"></div>
+  <div id="root" class="w-full max-w-[1440px]"></div>
 
-  <!-- Main Container -->
-  <main class="main-content">
-    
-    <!-- Hero Header -->
-    <section class="hero-section">
-      <div class="hero-badge">⚡ University SkillSwap & Micro-Gigs</div>
-      <h1 class="hero-title">Discover Opportunities & Collaborate</h1>
-      <p class="hero-subtitle">
-        Swap skills, offer freelance services, and find academic peer assistance on campus.
-      </p>
+  <!-- React & Tailwind Application -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-      <div class="hero-stats">
-        <div class="stat-item">
-          <div class="stat-value" id="stat-total-gigs">25</div>
-          <div class="stat-label">Total Gigs</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value" id="stat-open-gigs">8</div>
-          <div class="stat-label">Open Now</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">12</div>
-          <div class="stat-label">Students</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">4.8 ★</div>
-          <div class="stat-label">Avg Rating</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Filters & Search -->
-    <section class="filter-card">
-      <div class="search-row">
-        <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
-          <input
-            type="text"
-            id="search-input"
-            class="search-input"
-            placeholder="Search by keyword, skill, or topic (e.g., Python, Figma, React)..."
-          >
-        </div>
-      </div>
-
-      <div class="filter-pills-row">
-        <!-- Category Tabs -->
-        <div class="category-tabs" id="category-tabs">
-          <button class="category-tab active" data-cat="">All Categories</button>
-          <button class="category-tab" data-cat="Programming">💻 Programming</button>
-          <button class="category-tab" data-cat="Design">🎨 Design</button>
-          <button class="category-tab" data-cat="Writing">✍️ Writing</button>
-          <button class="category-tab" data-cat="Tutoring">📚 Tutoring</button>
-        </div>
-
-        <!-- Filter Selects -->
-        <div class="select-filters">
-          <select id="filter-type" class="custom-select">
-            <option value="">All Types</option>
-            <option value="Offering">Offering Service</option>
-            <option value="Requesting">Requesting Help</option>
-          </select>
-
-          <select id="filter-payment" class="custom-select">
-            <option value="">All Payments</option>
-            <option value="Paid">Paid</option>
-            <option value="SkillSwap">SkillSwap</option>
-            <option value="Free">Free</option>
-          </select>
-
-          <input
-            type="number"
-            id="filter-min-budget"
-            class="budget-input"
-            placeholder="Min PKR"
-            min="0"
-          >
-          <input
-            type="number"
-            id="filter-max-budget"
-            class="budget-input"
-            placeholder="Max PKR"
-            min="0"
-          >
-
-          <button id="clear-filters-btn" class="clear-btn">Reset</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Gig Cards Grid -->
-    <section>
-      <div id="cards-loading" style="text-align: center; padding: 3rem; color: #64748b; font-weight: 500;">
-        Loading opportunities...
-      </div>
-      <div class="cards-grid" id="gigs-grid" style="display: none;"></div>
-      <div id="no-results" style="display: none; text-align: center; padding: 4rem 1rem; color: #64748b;">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔎</div>
-        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">No gigs found</h3>
-        <p>Try loosening your search terms or clearing the active filters.</p>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
-  </footer>
-
-  <!-- Scripts -->
-  <script type="module">
-    import { api, initNavbar, renderStatusBadge, renderPaymentPill, formatDate } from './js/app.js';
-
-    let currentCategory = '';
-    const searchInput = document.getElementById('search-input');
-    const filterType = document.getElementById('filter-type');
-    const filterPayment = document.getElementById('filter-payment');
-    const filterMinBudget = document.getElementById('filter-min-budget');
-    const filterMaxBudget = document.getElementById('filter-max-budget');
-    const clearBtn = document.getElementById('clear-filters-btn');
-    const gigsGrid = document.getElementById('gigs-grid');
-    const cardsLoading = document.getElementById('cards-loading');
-    const noResults = document.getElementById('no-results');
-
-    async function loadGigs() {
-      cardsLoading.style.display = 'block';
-      gigsGrid.style.display = 'none';
-      noResults.style.display = 'none';
-
-      const params = new URLSearchParams();
-      if (currentCategory) params.append('category', currentCategory);
-      if (searchInput.value.trim()) params.append('q', searchInput.value.trim());
-      if (filterType.value) params.append('type', filterType.value);
-      if (filterPayment.value) params.append('payment_type', filterPayment.value);
-      if (filterMinBudget.value) params.append('minBudget', filterMinBudget.value);
-      if (filterMaxBudget.value) params.append('maxBudget', filterMaxBudget.value);
-
-      try {
-        const gigs = await api(`/gigs?${params.toString()}`);
-        cardsLoading.style.display = 'none';
-
-        if (!gigs || gigs.length === 0) {
-          noResults.style.display = 'block';
-          return;
-        }
-
-        gigsGrid.style.display = 'grid';
-        gigsGrid.innerHTML = gigs.map(gig => `
-          <div class="gig-card">
-            <div>
-              <div class="card-top">
-                <span class="category-tag ${gig.category}">${gig.category}</span>
-                ${renderStatusBadge(gig.status)}
-              </div>
-
-              <h3 class="card-title">
-                <a href="gig.html?id=${gig.id}">${gig.title}</a>
-              </h3>
-              <p class="card-desc">${gig.description}</p>
-
-              <div class="card-pills">
-                <span class="pill-type">${gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}</span>
-                ${renderPaymentPill(gig.payment_type, gig.budget)}
-                <span class="pill-type" style="font-size:0.75rem; color:#64748b;">⏳ Due ${formatDate(gig.deadline)}</span>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <div class="owner-meta">
-                <div class="avatar-circle">${(gig.owner_name || 'U').charAt(0)}</div>
-                <div>
-                  <div class="owner-name">${gig.owner_name}</div>
-                  <div class="owner-sub">${gig.owner_major || 'Student'} • ${gig.application_count || 0} applied</div>
-                </div>
-              </div>
-              <a href="gig.html?id=${gig.id}" class="card-btn">View Details →</a>
-            </div>
-          </div>
-        `).join('');
-
-        // Update stats
-        const openCount = gigs.filter(g => g.status === 'Open').length;
-        document.getElementById('stat-open-gigs').textContent = openCount;
-        document.getElementById('stat-total-gigs').textContent = gigs.length;
-
-      } catch (err) {
-        cardsLoading.style.display = 'none';
-        noResults.style.display = 'block';
-      }
+    // Toast helper
+    function showAppToast(message, type = 'success') {
+      const el = document.createElement('div');
+      el.className = `fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 text-sm font-semibold ${
+        type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
+      }`;
+      el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i><span>${message}</span>`;
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 3500);
     }
 
-    // Category Tabs click handler
-    document.getElementById('category-tabs').addEventListener('click', (e) => {
-      const btn = e.target.closest('.category-tab');
-      if (!btn) return;
-      document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCategory = btn.dataset.cat || '';
-      loadGigs();
-    });
+    function App() {
+      // State
+      const [users, setUsers] = useState([]);
+      const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('campus_current_user') || 'u1');
+      const [activeCategory, setActiveCategory] = useState('All');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [gigs, setGigs] = useState([]);
+      const [loadingGigs, setLoadingGigs] = useState(false);
+      const [activeTab, setActiveTab] = useState('marketplace'); // 'marketplace' or 'gigs'
+      const [wishlistCount, setWishlistCount] = useState(4);
+      const [quickApplyModal, setQuickApplyModal] = useState(null); // gig object
+      const [proposalMessage, setProposalMessage] = useState('');
 
-    // Event listeners with debounce on search
-    let debounceTimer;
-    searchInput.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 250);
-    });
+      const categories = [
+        'Electronics',
+        'Computers',
+        'Clothes',
+        'Arts & Crafts',
+        'Toys & Games',
+        'Jewelry',
+        'Beauty & Care',
+        'Mother & Kids',
+        'Home Design',
+        'Sports',
+        'Pet Supplies',
+        'Programming',
+        'Design',
+        'Writing',
+        'Tutoring'
+      ];
 
-    filterType.addEventListener('change', loadGigs);
-    filterPayment.addEventListener('change', loadGigs);
-    filterMinBudget.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 300);
-    });
-    filterMaxBudget.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(loadGigs, 300);
-    });
+      // Fetch users
+      useEffect(() => {
+        fetch('/users')
+          .then(res => res.json())
+          .then(data => setUsers(data))
+          .catch(e => console.error('Error fetching users:', e));
+      }, []);
 
-    clearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      filterType.value = '';
-      filterPayment.value = '';
-      filterMinBudget.value = '';
-      filterMaxBudget.value = '';
-      currentCategory = '';
-      document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
-      document.querySelector('.category-tab[data-cat=""]').classList.add('active');
-      loadGigs();
-    });
+      // Fetch gigs from API
+      const loadGigs = () => {
+        setLoadingGigs(true);
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) params.append('q', searchQuery.trim());
+        if (['Programming', 'Design', 'Writing', 'Tutoring'].includes(activeCategory)) {
+          params.append('category', activeCategory);
+        }
 
-    // Init
-    initNavbar('browse');
-    loadGigs();
+        fetch(`/gigs?${params.toString()}`)
+          .then(res => res.json())
+          .then(data => {
+            setGigs(data || []);
+            setLoadingGigs(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setLoadingGigs(false);
+          });
+      };
+
+      useEffect(() => {
+        loadGigs();
+      }, [activeCategory, searchQuery]);
+
+      const handleUserChange = (e) => {
+        const id = e.target.value;
+        setCurrentUserId(id);
+        localStorage.setItem('campus_current_user', id);
+        const selectedUser = users.find(u => u.id === id);
+        showAppToast(`Switched active user to ${selectedUser ? selectedUser.name : id}`);
+      };
+
+      // Submit quick application
+      const submitApplication = async (e) => {
+        e.preventDefault();
+        if (!quickApplyModal || !proposalMessage.trim()) return;
+
+        try {
+          const res = await fetch('/applications', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-user-id': currentUserId,
+            },
+            body: JSON.stringify({
+              gig_id: quickApplyModal.id,
+              message: proposalMessage.trim()
+            })
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            showAppToast(data.error || 'Failed to submit application', 'error');
+            return;
+          }
+
+          showAppToast('Proposal submitted successfully!');
+          setQuickApplyModal(null);
+          setProposalMessage('');
+          loadGigs();
+        } catch (err) {
+          showAppToast(err.message, 'error');
+        }
+      };
+
+      const currentUser = users.find(u => u.id === currentUserId) || { name: 'Student', major: 'CSE' };
+
+      return (
+        <div className="bg-white rounded-3xl md:rounded-4xl shadow-2xl p-5 md:p-8 lg:p-10 border border-slate-100 transition-all">
+          
+          {/* ========================================================= */}
+          {/* 1. TOP HEADER & NAVIGATION                                */}
+          {/* ========================================================= */}
+          <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 md:pb-8 border-b border-slate-100">
+            
+            {/* Logo */}
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+              <a href="index.html" className="flex items-center gap-2.5 group">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center relative overflow-hidden shadow-md group-hover:scale-105 transition-transform">
+                  <div className="w-3.5 h-3.5 rounded-full bg-brand-orange absolute -bottom-0.5 -right-0.5"></div>
+                  <div className="w-3 h-3 rounded-full bg-white opacity-90 absolute top-2 left-2"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-400 opacity-60 absolute bottom-2 left-2"></div>
+                </div>
+                <div>
+                  <span className="font-extrabold text-xl tracking-tight text-slate-900 block leading-tight font-display">
+                    Campus<span className="text-brand-orange">Gig</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Marketplace</span>
+                </div>
+              </a>
+
+              {/* Mobile View Toggle */}
+              <div className="md:hidden flex items-center gap-2">
+                <div className="relative p-2 text-slate-600">
+                  <i className="fa-solid fa-bag-shopping text-lg"></i>
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-brand-orange text-white text-[9px] font-bold flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Pill Bar & Filters Button */}
+            <div className="flex items-center gap-2.5 w-full md:max-w-xl">
+              <div className="relative flex-1">
+                <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input
+                  type="text"
+                  placeholder="Search products, campus gigs, tutoring, design..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#f4f6f8] hover:bg-slate-100 focus:bg-white text-slate-900 text-sm font-medium rounded-full pl-11 pr-4 py-3 outline-none border border-transparent focus:border-brand-orange focus:ring-4 focus:ring-orange-500/10 transition-all placeholder:text-slate-400"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                )}
+              </div>
+
+              {/* Filter button */}
+              <button
+                onClick={() => setActiveTab(activeTab === 'marketplace' ? 'gigs' : 'marketplace')}
+                title="Toggle Mode"
+                className="w-11 h-11 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors flex-shrink-0"
+              >
+                <i className="fa-solid fa-sliders text-sm"></i>
+              </button>
+            </div>
+
+            {/* Right Action Icons & User Switcher */}
+            <div className="hidden md:flex items-center gap-3">
+              
+              {/* Shopping Bag with Badge */}
+              <button 
+                onClick={() => setWishlistCount(c => c + 1)}
+                className="relative w-10 h-10 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
+                title="My Basket"
+              >
+                <i className="fa-solid fa-bag-shopping text-sm"></i>
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand-orange text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                  {wishlistCount}
+                </span>
+              </button>
+
+              {/* Heart Wishlist */}
+              <button 
+                onClick={() => showAppToast('Saved to your campus wishlist!')}
+                className="w-10 h-10 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
+                title="Wishlist"
+              >
+                <i className="fa-regular fa-heart text-sm"></i>
+              </button>
+
+              {/* Role Switcher Pill: "Acting as" */}
+              <div className="flex items-center gap-2 bg-[#f4f6f8] border border-slate-200/80 rounded-full pl-2 pr-3 py-1.5 shadow-sm">
+                <img 
+                  src="assets/avatar.jpg" 
+                  alt="Student Avatar" 
+                  className="w-7 h-7 rounded-full object-cover border border-white shadow-xs" 
+                />
+                <select
+                  value={currentUserId}
+                  onChange={handleUserChange}
+                  className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer max-w-[130px] truncate"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.name} ({u.major})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+            </div>
+          </header>
+
+          {/* ========================================================= */}
+          {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT                         */}
+          {/* ========================================================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 md:pt-8">
+            
+            {/* Left Sidebar: Categories */}
+            <aside className="lg:col-span-2 space-y-4">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight font-display mb-3">
+                Categories
+              </h2>
+              
+              <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 custom-scroll">
+                <button
+                  onClick={() => setActiveCategory('All')}
+                  className={`text-left text-xs md:text-sm font-semibold px-3 py-2 rounded-xl transition-all whitespace-nowrap ${
+                    activeCategory === 'All' 
+                      ? 'bg-slate-900 text-white shadow-sm' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  All Items & Gigs
+                </button>
+
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`text-left text-xs md:text-sm font-medium px-3 py-1.5 rounded-xl transition-all whitespace-nowrap ${
+                      activeCategory === cat 
+                        ? 'bg-brand-orange text-white font-bold shadow-sm' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Quick links to core portal pages */}
+              <div className="hidden lg:block pt-6 border-t border-slate-100 space-y-2">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Portal Pages</div>
+                <a href="create.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
+                  <i className="fa-solid fa-plus text-[10px] w-4"></i> Post a Gig
+                </a>
+                <a href="applications.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
+                  <i className="fa-solid fa-file-signature text-[10px] w-4"></i> My Applications
+                </a>
+                <a href="profile.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
+                  <i className="fa-solid fa-user text-[10px] w-4"></i> Student Profile
+                </a>
+              </div>
+            </aside>
+
+            {/* Right Main Content */}
+            <main className="lg:col-span-10 space-y-8">
+              
+              {/* ------------------------------------------------------- */}
+              {/* A. HERO PROMOTION BANNERS (Exact Match to Screenshot)  */}
+              {/* ------------------------------------------------------- */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                
+                {/* Big Sale Card (Left ~60%) */}
+                <div className="md:col-span-7 bg-[#fbf5f2] rounded-3xl md:rounded-4xl p-6 md:p-8 flex items-center justify-between relative overflow-hidden group shadow-xs hover:shadow-md transition-all">
+                  <div className="space-y-3 z-10 max-w-[240px]">
+                    <h3 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight font-display leading-tight">
+                      BIG SALE!
+                    </h3>
+                    <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed">
+                      Wireless headphones with noise canceling
+                    </p>
+                    <div className="pt-2">
+                      <button 
+                        onClick={() => showAppToast('Browsing wireless noise-canceling headphones!')}
+                        className="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold px-6 py-2.5 rounded-full shadow-lg shadow-orange-500/25 transition-transform group-hover:scale-105 active:scale-95"
+                      >
+                        Headphones
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 3D Headphones Image */}
+                  <div className="w-[170px] md:w-[210px] lg:w-[240px] flex-shrink-0 relative group-hover:scale-105 transition-transform duration-300">
+                    <img 
+                      src="assets/headphones.jpg" 
+                      alt="3D Wireless Headphones" 
+                      className="w-full object-contain drop-shadow-xl"
+                    />
+                  </div>
+                </div>
+
+                {/* Stacked Right Promo Cards (Right ~40%) */}
+                <div className="md:col-span-5 flex flex-col gap-4">
+                  
+                  {/* Top Card: 20% OFF */}
+                  <div className="bg-[#fdeee9] rounded-3xl p-5 md:p-6 flex flex-col justify-center shadow-xs hover:shadow-md transition-all">
+                    <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight font-display leading-snug">
+                      Get up to <span className="text-brand-orange">20%</span><br />OFF Headphones
+                    </h4>
+                    <p className="text-slate-500 text-xs font-medium mt-1">Exclusive student discounts</p>
+                  </div>
+
+                  {/* Bottom Card: Fujifilm Instax 11 */}
+                  <div className="bg-[#e8f1f5] rounded-3xl p-5 md:p-6 flex items-center justify-between relative overflow-hidden shadow-xs hover:shadow-md transition-all group">
+                    <div className="space-y-2 z-10">
+                      <h4 className="text-base md:text-lg font-black text-slate-900 tracking-tight font-display">
+                        Fujifilm Instax 11
+                      </h4>
+                      <button 
+                        onClick={() => showAppToast('Browsing Fujifilm Instax rental & sale!')}
+                        className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold px-4 py-2 rounded-full shadow-sm transition-transform group-hover:scale-105"
+                      >
+                        Shop now
+                      </button>
+                    </div>
+                    
+                    {/* 3D Instax Camera Image */}
+                    <div className="w-[90px] md:w-[110px] flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                      <img 
+                        src="assets/instax.jpg" 
+                        alt="Fujifilm Instax 11" 
+                        className="w-full object-contain drop-shadow-md"
+                      />
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* ------------------------------------------------------- */}
+              {/* B. EXPLORE POPULAR CATEGORIES (Exact to Screenshot)    */}
+              {/* ------------------------------------------------------- */}
+              <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight font-display">
+                    Explore popular categories
+                  </h3>
+                  <button 
+                    onClick={() => setActiveTab('gigs')}
+                    className="text-xs font-bold text-slate-400 hover:text-slate-800 flex items-center gap-1 transition-colors"
+                  >
+                    See all <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  
+                  {/* Card 1: Household goods */}
+                  <div 
+                    onClick={() => { setActiveCategory('Home Design'); showAppToast('Filtered by Household Goods'); }}
+                    className="bg-brand-softBlue rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
+                  >
+                    <div className="w-full flex justify-start">
+                      <span className="bg-slate-400/20 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        -30%
+                      </span>
+                    </div>
+                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
+                      <img src="assets/kettle.jpg" alt="Household Goods" className="h-full object-contain drop-shadow-sm" />
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
+                      Household goods
+                    </span>
+                  </div>
+
+                  {/* Card 2: Game controllers */}
+                  <div 
+                    onClick={() => { setActiveCategory('Computers'); showAppToast('Filtered by Game Controllers'); }}
+                    className="bg-brand-softBeige rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
+                  >
+                    <div className="w-full flex justify-start">
+                      <span className="bg-slate-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                        New
+                      </span>
+                    </div>
+                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
+                      <img src="assets/controller.jpg" alt="Game Controllers" className="h-full object-contain drop-shadow-sm" />
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
+                      Game controllers
+                    </span>
+                  </div>
+
+                  {/* Card 3: Accessories */}
+                  <div 
+                    onClick={() => { setActiveCategory('Clothes'); showAppToast('Filtered by Accessories'); }}
+                    className="bg-[#f0f3f6] rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
+                  >
+                    <div className="w-full flex justify-start opacity-0">
+                      <span className="text-[10px]">-</span>
+                    </div>
+                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
+                      <img src="assets/totebag.jpg" alt="Accessories" className="h-full object-contain drop-shadow-sm" />
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
+                      Accessories
+                    </span>
+                  </div>
+
+                  {/* Card 4: Furniture */}
+                  <div 
+                    onClick={() => { setActiveCategory('Home Design'); showAppToast('Filtered by Furniture'); }}
+                    className="bg-brand-softPeach rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
+                  >
+                    <div className="w-full flex justify-start opacity-0">
+                      <span className="text-[10px]">-</span>
+                    </div>
+                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
+                      <img src="assets/armchair.jpg" alt="Furniture" className="h-full object-contain drop-shadow-sm" />
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
+                      Furniture
+                    </span>
+                  </div>
+
+                </div>
+              </section>
+
+              {/* ------------------------------------------------------- */}
+              {/* C. CAMPUS GIGS & OPPORTUNITIES LIVE FEED               */}
+              {/* ------------------------------------------------------- */}
+              <section className="pt-4 border-t border-slate-100 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight font-display">
+                      Student Micro-Gigs & Peer SkillSwaps
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium">
+                      Live data connected to Node.js & Express REST API ({gigs.length} opportunities available)
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <a 
+                      href="create.html" 
+                      className="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold px-4 py-2 rounded-full shadow-md shadow-orange-500/20 inline-flex items-center gap-1.5 transition-transform hover:scale-105"
+                    >
+                      <i className="fa-solid fa-plus text-[10px]"></i> Post New Gig
+                    </a>
+                  </div>
+                </div>
+
+                {loadingGigs ? (
+                  <div className="text-center py-12 text-slate-400 font-semibold text-sm">
+                    <i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Loading opportunities...
+                  </div>
+                ) : gigs.length === 0 ? (
+                  <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-100">
+                    <div className="text-3xl text-slate-300 mb-2"><i class="fa-solid fa-inbox"></i></div>
+                    <p className="text-sm font-bold text-slate-700">No gigs found for this filter.</p>
+                    <button 
+                      onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
+                      className="mt-3 text-xs font-bold text-brand-orange underline"
+                    >
+                      Reset filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {gigs.map(gig => {
+                      const isOwner = gig.owner_id === currentUserId;
+                      const isOpen = gig.status === 'Open';
+
+                      return (
+                        <div 
+                          key={gig.id}
+                          className="bg-[#fbfcfd] hover:bg-white rounded-3xl p-5 border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between gap-2 mb-3">
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-200/70 text-slate-700">
+                                {gig.category}
+                              </span>
+
+                              {/* Status Badge */}
+                              <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
+                                gig.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                                gig.status === 'In Progress' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                                gig.status === 'Completed' ? 'bg-purple-50 text-purple-600 border border-purple-200' :
+                                gig.status === 'Expired' ? 'bg-rose-50 text-rose-600 border border-rose-200 font-black' :
+                                'bg-slate-100 text-slate-600 border border-slate-200'
+                              }`}>
+                                {gig.status}
+                              </span>
+                            </div>
+
+                            <h4 className="text-sm md:text-base font-extrabold text-slate-900 leading-snug line-clamp-2 mb-1.5 font-display">
+                              <a href={`gig.html?id=${gig.id}`} className="hover:text-brand-orange transition-colors">
+                                {gig.title}
+                              </a>
+                            </h4>
+
+                            <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                              {gig.description}
+                            </p>
+
+                            <div className="flex items-center gap-2 flex-wrap mb-4">
+                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                                {gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}
+                              </span>
+
+                              <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md ${
+                                gig.payment_type === 'Paid' ? 'bg-emerald-100/70 text-emerald-800' :
+                                gig.payment_type === 'SkillSwap' ? 'bg-blue-100/70 text-blue-800' :
+                                'bg-purple-100/70 text-purple-800'
+                              }`}>
+                                {gig.payment_type === 'Paid' ? `PKR ${Number(gig.budget || 0).toLocaleString()}` : gig.payment_type}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-100/80 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-full bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">
+                                {(gig.owner_name || 'U').charAt(0)}
+                              </div>
+                              <span className="text-xs font-bold text-slate-700 truncate max-w-[90px]">
+                                {gig.owner_name}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              {isOpen && !isOwner && (
+                                <button
+                                  onClick={() => setQuickApplyModal(gig)}
+                                  className="text-xs font-bold bg-slate-900 hover:bg-brand-orange text-white px-3 py-1.5 rounded-full transition-all"
+                                >
+                                  Apply
+                                </button>
+                              )}
+                              <a 
+                                href={`gig.html?id=${gig.id}`}
+                                className="text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-full transition-all"
+                              >
+                                Details
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+
+            </main>
+          </div>
+
+          {/* ========================================================= */}
+          {/* QUICK APPLY MODAL                                         */}
+          {/* ========================================================= */}
+          {quickApplyModal && (
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display font-black text-lg text-slate-900">
+                    Apply for Opportunity
+                  </h3>
+                  <button 
+                    onClick={() => setQuickApplyModal(null)}
+                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                  <div className="text-xs font-bold text-slate-900 line-clamp-1">{quickApplyModal.title}</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">Posted by {quickApplyModal.owner_name}</div>
+                </div>
+
+                <form onSubmit={submitApplication} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">Your Proposal Message *</label>
+                    <textarea
+                      rows="3"
+                      required
+                      placeholder="Explain how you can help, your past tools/projects, and availability..."
+                      value={proposalMessage}
+                      onChange={(e) => setProposalMessage(e.target.value)}
+                      className="w-full text-xs font-medium bg-slate-50 focus:bg-white border border-slate-200 focus:border-brand-orange rounded-2xl p-3 outline-none transition-all placeholder:text-slate-400"
+                    ></textarea>
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setQuickApplyModal(null)}
+                      className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2 rounded-full text-xs font-bold bg-brand-orange hover:bg-brand-orangeHover text-white shadow-md shadow-orange-500/25"
+                    >
+                      Send Proposal
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>

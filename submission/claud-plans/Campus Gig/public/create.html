@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post a New Gig - Campus Gig & SkillSwap Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Post an Opportunity — Campus Gig & SkillSwap Portal</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,34 +12,46 @@
   <div id="navbar-mount"></div>
 
   <main class="main-content">
-    <div style="max-width: 760px; margin: 0 auto;">
-      <a href="index.html" class="back-link">← Back to Browse Gigs</a>
+    <div style="max-width: 780px; margin: 0 auto;">
+      <a href="index.html" class="btn-secondary" style="margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Marketplace
+      </a>
 
       <div class="page-header">
-        <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">Post an Opportunity</h1>
-        <p style="color: #64748b;">Share your skills or request assistance from fellow university students.</p>
+        <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">
+          Post a Campus <span>Opportunity</span>
+        </h1>
+        <p style="color: #64748b; font-size: 0.95rem;">
+          Share your programming, design, writing, or tutoring skills or request collaboration from university peers.
+        </p>
       </div>
 
       <div class="content-box">
         <!-- Error Banner -->
-        <div id="error-banner" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;"></div>
+        <div id="error-banner" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i> <span id="error-banner-text"></span>
+        </div>
 
         <form id="create-gig-form">
           <div class="form-group">
-            <label for="gig-title" class="form-label">Gig Title *</label>
+            <label for="gig-title" class="form-label">
+              <i class="fa-solid fa-heading" style="color: var(--primary-600); margin-right: 4px;"></i> Opportunity Title *
+            </label>
             <input
               type="text"
               id="gig-title"
               class="form-control"
-              placeholder="e.g., MERN Stack Dashboard Implementation or Physics Lab Data Analysis"
+              placeholder="e.g. MERN Stack Dashboard Implementation or Calculus II Exam Prep"
               required
             >
-            <div class="form-hint">Make it specific and clear so applicants understand your expectations.</div>
+            <div class="form-hint">A concise, descriptive headline attracts the best candidates.</div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;" class="form-grid-2">
             <div class="form-group">
-              <label for="gig-category" class="form-label">Category *</label>
+              <label for="gig-category" class="form-label">
+                <i class="fa-solid fa-folder-tree" style="color: var(--primary-600); margin-right: 4px;"></i> Category *
+              </label>
               <select id="gig-category" class="form-control" required>
                 <option value="Programming">💻 Programming</option>
                 <option value="Design">🎨 Design</option>
@@ -52,7 +61,9 @@
             </div>
 
             <div class="form-group">
-              <label for="gig-type" class="form-label">Intent / Type *</label>
+              <label for="gig-type" class="form-label">
+                <i class="fa-solid fa-arrows-split-up-and-left" style="color: var(--primary-600); margin-right: 4px;"></i> Engagement Type *
+              </label>
               <select id="gig-type" class="form-control" required>
                 <option value="Offering">📢 Offering a Service</option>
                 <option value="Requesting">🙋 Requesting Help</option>
@@ -60,24 +71,28 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;" class="form-grid-2">
             <div class="form-group">
-              <label for="gig-payment" class="form-label">Compensation Model *</label>
+              <label for="gig-payment" class="form-label">
+                <i class="fa-solid fa-hand-holding-dollar" style="color: var(--primary-600); margin-right: 4px;"></i> Compensation Model *
+              </label>
               <select id="gig-payment" class="form-control" required>
                 <option value="Paid">💰 Paid (Budget in PKR)</option>
-                <option value="SkillSwap">🤝 SkillSwap (Mutual learning)</option>
-                <option value="Free">🎁 Free / Volunteer</option>
+                <option value="SkillSwap">🤝 SkillSwap (Knowledge Trade)</option>
+                <option value="Free">🎁 Free (Volunteer)</option>
               </select>
             </div>
 
-            <!-- Dynamic Budget Field (Shown only when Paid) -->
+            <!-- Dynamic Budget Input (Shown only when Paid) -->
             <div class="form-group" id="budget-group">
-              <label for="gig-budget" class="form-label">Budget (PKR) *</label>
+              <label for="gig-budget" class="form-label">
+                <i class="fa-solid fa-money-bill-wave" style="color: #10b981; margin-right: 4px;"></i> Budget (PKR) *
+              </label>
               <input
                 type="number"
                 id="gig-budget"
                 class="form-control"
-                placeholder="e.g., 2500"
+                placeholder="e.g. 3500"
                 min="1"
               >
               <div class="form-hint">Must be greater than 0 PKR for Paid gigs.</div>
@@ -85,31 +100,35 @@
           </div>
 
           <div class="form-group">
-            <label for="gig-deadline" class="form-label">Application Deadline *</label>
+            <label for="gig-deadline" class="form-label">
+              <i class="fa-solid fa-calendar-days" style="color: var(--primary-600); margin-right: 4px;"></i> Application Deadline *
+            </label>
             <input
               type="datetime-local"
               id="gig-deadline"
               class="form-control"
               required
             >
-            <div class="form-hint">Must be in the future. Once passed, gigs automatically display as Expired.</div>
+            <div class="form-hint">Must be in the future. Past deadlines will display with high-contrast red Expired badges.</div>
           </div>
 
           <div class="form-group">
-            <label for="gig-desc" class="form-label">Detailed Description *</label>
+            <label for="gig-desc" class="form-label">
+              <i class="fa-solid fa-align-left" style="color: var(--primary-600); margin-right: 4px;"></i> Detailed Description & Milestones *
+            </label>
             <textarea
               id="gig-desc"
               class="form-control"
-              placeholder="Provide context, required tools/languages, expected milestones, or deliverables..."
+              placeholder="Outline project requirements, tools/languages expected, deliverables, and how you plan to coordinate..."
               style="min-height: 140px;"
               required
             ></textarea>
           </div>
 
-          <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; margin-top: 1.5rem;">
+          <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; margin-top: 1.75rem;">
             <a href="index.html" class="btn-secondary">Cancel</a>
             <button type="submit" class="btn-primary" id="btn-submit">
-              Publish Gig →
+              <i class="fa-solid fa-paper-plane"></i> Publish Opportunity
             </button>
           </div>
         </form>
@@ -118,7 +137,7 @@
   </main>
 
   <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
+    <p>Campus Gig & SkillSwap Portal &copy; 2026. Designed with professional Stitch & Lovable UI standards.</p>
   </footer>
 
   <script type="module">
@@ -127,7 +146,6 @@
     // Set default deadline to 7 days from now
     const now = new Date();
     const defaultDeadline = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    // Format to YYYY-MM-DDTHH:MM
     const isoString = defaultDeadline.toISOString().slice(0, 16);
     document.getElementById('gig-deadline').value = isoString;
     document.getElementById('gig-deadline').min = now.toISOString().slice(0, 16);
@@ -136,6 +154,7 @@
     const budgetGroup = document.getElementById('budget-group');
     const budgetInput = document.getElementById('gig-budget');
     const errorBanner = document.getElementById('error-banner');
+    const errorText = document.getElementById('error-banner-text');
 
     function updateBudgetVisibility() {
       if (paymentSelect.value === 'Paid') {
@@ -177,14 +196,14 @@
           }),
         });
 
-        showToast('Gig published successfully!', 'success');
+        showToast('Opportunity published successfully!', 'success');
         setTimeout(() => {
           window.location.href = `gig.html?id=${newGig.id}`;
         }, 500);
 
       } catch (err) {
         errorBanner.style.display = 'block';
-        errorBanner.innerHTML = `<strong>Validation Error:</strong> ${err.message}`;
+        errorText.textContent = err.message;
       }
     });
 

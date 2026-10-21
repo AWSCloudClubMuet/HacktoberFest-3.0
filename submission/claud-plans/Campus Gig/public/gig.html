@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gig Details - Campus Gig & SkillSwap Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Gig Details — Campus Gig & SkillSwap Portal</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,69 +12,83 @@
   <div id="navbar-mount"></div>
 
   <main class="main-content">
-    <a href="index.html" class="back-link">← Back to Browse Gigs</a>
+    <a href="index.html" class="btn-secondary" style="margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Marketplace
+    </a>
 
-    <div id="loading" style="text-align: center; padding: 4rem; color: #64748b;">
-      Loading gig details...
+    <div id="loading" style="text-align: center; padding: 4rem; color: #64748b; font-weight: 600;">
+      <i class="fa-solid fa-circle-notch fa-spin"></i> Loading opportunity details...
     </div>
 
     <div id="gig-detail-container" style="display: none;">
       <!-- Page Header -->
-      <div class="page-header">
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
-          <span id="gig-category" class="category-tag"></span>
+      <div class="page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span id="gig-category" class="cat-badge"></span>
           <span id="gig-status-badge"></span>
           <span id="gig-payment-badge"></span>
-          <span id="gig-type-badge" class="pill-type"></span>
+          <span id="gig-type-badge" class="badge-item"></span>
         </div>
-        <h1 id="gig-title" class="hero-title" style="text-align: left; margin-bottom: 0.5rem;"></h1>
+        <h1 id="gig-title" class="hero-title" style="text-align: left; margin-bottom: 0.5rem; font-size: 2.2rem;"></h1>
         <p style="color: #64748b; font-size: 0.95rem;">
-          Posted by <strong id="owner-name-top" style="color: #0f172a;"></strong> • Deadline: <span id="gig-deadline"></span>
+          <i class="fa-solid fa-user" style="color: #94a3b8; margin-right: 4px;"></i> Posted by <strong id="owner-name-top" style="color: #0f172a;"></strong> 
+          • <i class="fa-solid fa-calendar-clock" style="color: #94a3b8; margin-left: 8px; margin-right: 4px;"></i> Deadline: <span id="gig-deadline"></span>
         </p>
       </div>
 
-      <!-- Detail Layout -->
-      <div class="detail-layout">
+      <!-- Detail Layout (Responsive 2-column) -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;" class="detail-grid">
+        
         <!-- Left: Gig Description, Apply Form & Reviews -->
         <div>
           <!-- Description Box -->
           <div class="content-box">
-            <h2 class="box-title">About this Opportunity</h2>
-            <div id="gig-description" style="color: #334155; line-height: 1.7; font-size: 1rem; white-space: pre-line;"></div>
+            <h2 class="box-title">
+              <i class="fa-solid fa-align-left" style="color: var(--primary-600); margin-right: 6px;"></i> Opportunity Overview
+            </h2>
+            <div id="gig-description" style="color: #334155; line-height: 1.75; font-size: 1rem; white-space: pre-line;"></div>
           </div>
 
           <!-- Application Box (For non-owners) -->
           <div class="content-box" id="apply-box">
-            <h2 class="box-title">Apply to this Opportunity</h2>
-            <div id="apply-status-message" style="display: none; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.92rem;"></div>
+            <h2 class="box-title">
+              <i class="fa-solid fa-paper-plane" style="color: var(--primary-600); margin-right: 6px;"></i> Submit Your Application
+            </h2>
+            <div id="apply-status-message" style="display: none; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.25rem; font-size: 0.92rem;"></div>
 
             <form id="apply-form">
               <div class="form-group">
-                <label for="apply-message" class="form-label">Your Proposal & Availability</label>
+                <label for="apply-message" class="form-label">Your Proposal & Value Proposition *</label>
                 <textarea
                   id="apply-message"
                   class="form-control"
-                  placeholder="Explain why you are a great fit, highlight your relevant skills, and when you can start..."
+                  placeholder="Introduce yourself, your relevant background/tools (e.g. Node.js, Figma), and your timeline to deliver..."
                   required
                 ></textarea>
-                <div class="form-hint">Write a clear message so the gig owner can review your qualifications.</div>
+                <div class="form-hint">A strong proposal explains why you're a good fit and how you plan to complete the task.</div>
               </div>
 
-              <button type="submit" class="btn-primary" id="btn-submit-apply">Submit Application</button>
+              <button type="submit" class="btn-primary" id="btn-submit-apply">
+                <i class="fa-solid fa-paper-plane"></i> Submit Application
+              </button>
             </form>
           </div>
 
           <!-- Reviews Box (When Completed) -->
           <div class="content-box" id="reviews-box" style="display: none;">
-            <h2 class="box-title">Completed Work Reviews & Feedback</h2>
+            <h2 class="box-title">
+              <i class="fa-solid fa-star-half-stroke" style="color: #eab308; margin-right: 6px;"></i> Completed Work & Peer Reviews
+            </h2>
             
             <!-- Submit Review Form (if user is eligible) -->
-            <div id="leave-review-section" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
-              <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem;">Leave a Peer Review</h3>
+            <div id="leave-review-section" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.75rem;">
+              <h3 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem; color: #0f172a;">
+                <i class="fa-solid fa-pen-to-square"></i> Leave a Peer Review
+              </h3>
               <form id="review-form">
                 <div class="form-group">
-                  <label class="form-label">Rating (1 to 5 Stars)</label>
-                  <select id="review-rating" class="form-control" style="max-width: 180px;" required>
+                  <label class="form-label">Rating (1 to 5 Stars) *</label>
+                  <select id="review-rating" class="form-control" style="max-width: 200px;" required>
                     <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
                     <option value="4">⭐⭐⭐⭐ 4 Stars</option>
                     <option value="3">⭐⭐⭐ 3 Stars</option>
@@ -86,10 +97,12 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Your Feedback / Review Comment</label>
-                  <textarea id="review-comment" class="form-control" placeholder="Share your experience working with your peer..." required></textarea>
+                  <label class="form-label">Your Experience / Feedback *</label>
+                  <textarea id="review-comment" class="form-control" placeholder="Describe the quality of work, communication, and punctuality..." required></textarea>
                 </div>
-                <button type="submit" class="btn-primary">Post Review</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fa-solid fa-check"></i> Post Review
+                </button>
               </form>
             </div>
 
@@ -98,56 +111,60 @@
           </div>
         </div>
 
-        <!-- Right Sidebar: Owner Profile & Owner Controls -->
+        <!-- Right Sidebar: Creator Card & Owner Controls -->
         <div>
-          <!-- Owner Profile Box -->
+          <!-- Creator Profile Card -->
           <div class="content-box">
-            <h3 class="box-title" style="font-size: 1.15rem;">Gig Creator</h3>
-            <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem;">
-              <div class="avatar-circle" id="owner-avatar" style="width: 48px; height: 48px; font-size: 1.1rem;">U</div>
+            <h3 class="box-title" style="font-size: 1.15rem;">
+              <i class="fa-solid fa-user-graduate" style="color: var(--primary-600); margin-right: 6px;"></i> Opportunity Creator
+            </h3>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="student-avatar" id="owner-avatar" style="width: 52px; height: 52px; font-size: 1.25rem;">U</div>
               <div>
-                <div id="owner-name" style="font-weight: 700; font-size: 1.05rem;">Student Name</div>
-                <div id="owner-major-sem" style="color: #64748b; font-size: 0.85rem;">CSE • Semester 6</div>
+                <div id="owner-name" style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Student Name</div>
+                <div id="owner-major-sem" style="color: #64748b; font-size: 0.88rem;">CSE • Semester 6</div>
               </div>
             </div>
 
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
-              <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.25rem;">Skills</div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+              <div style="font-size: 0.8rem; color: #64748b; font-weight: 600; margin-bottom: 0.35rem;">VERIFIED SKILLS</div>
               <div id="owner-skills" style="display: flex; flex-wrap: wrap; gap: 0.35rem;"></div>
             </div>
 
-            <a id="owner-profile-link" href="#" class="btn-secondary" style="width: 100%; text-align: center; display: block;">
-              View Full Profile →
+            <a id="owner-profile-link" href="#" class="btn-secondary" style="width: 100%; text-align: center; justify-content: center;">
+              View Full Profile <i class="fa-solid fa-arrow-right"></i>
             </a>
           </div>
 
           <!-- Owner Management Panel -->
-          <div class="content-box" id="owner-panel" style="display: none; border-color: #6366f1;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-              <h3 class="box-title" style="font-size: 1.15rem; margin-bottom: 0;">Owner Controls</h3>
-              <span class="category-tag" style="background: #e0e7ff; color: #4338ca;">You are the Owner</span>
+          <div class="content-box" id="owner-panel" style="display: none; border-color: var(--primary-300); box-shadow: var(--shadow-hover);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <h3 class="box-title" style="font-size: 1.15rem; margin-bottom: 0;">
+                <i class="fa-solid fa-sliders" style="color: var(--primary-600);"></i> Owner Controls
+              </h3>
+              <span class="cat-badge" style="background: #e0e7ff; color: #4338ca;">You are the Creator</span>
             </div>
 
             <!-- Mark Completed Action -->
-            <div id="mark-completed-section" style="display: none; margin-bottom: 1.5rem; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
-              <p style="font-size: 0.88rem; color: #166534; margin-bottom: 0.75rem;">
-                Gig is <strong>In Progress</strong> with an accepted student collaborator. When work is delivered, mark it completed to unlock reviews.
+            <div id="mark-completed-section" style="display: none; margin-bottom: 1.5rem; padding: 1.1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;">
+              <p style="font-size: 0.88rem; color: #166534; margin-bottom: 0.85rem; line-height: 1.5;">
+                <i class="fa-solid fa-circle-info"></i> Gig is <strong>In Progress</strong> with an accepted student. When the deliverables are ready, complete the gig to unlock reviews.
               </p>
-              <button id="btn-mark-completed" class="btn-success" style="width: 100%;">
-                ✓ Mark as Completed
+              <button id="btn-mark-completed" class="btn-success" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-circle-check"></i> Mark as Completed
               </button>
             </div>
 
             <!-- Cancel Gig Action (if Open) -->
             <div id="cancel-gig-section" style="display: none; margin-bottom: 1.5rem;">
-              <button id="btn-cancel-gig" class="btn-danger" style="width: 100%;">
-                ✕ Cancel Gig
+              <button id="btn-cancel-gig" class="btn-danger" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-ban"></i> Cancel Gig
               </button>
             </div>
 
             <!-- Received Applications List -->
-            <h4 style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">
-              Received Applications (<span id="apps-count">0</span>)
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 0.85rem;">
+              Received Proposals (<span id="apps-count">0</span>)
             </h4>
             <div id="owner-apps-list" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
           </div>
@@ -157,11 +174,11 @@
   </main>
 
   <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Built with Node.js, Express & MongoDB.</p>
+    <p>Campus Gig & SkillSwap Portal &copy; 2026. Designed with professional Stitch & Lovable UI standards.</p>
   </footer>
 
   <script type="module">
-    import { api, initNavbar, getCurrentUserId, renderStatusBadge, renderPaymentPill, formatDate, showToast } from './js/app.js';
+    import { api, initNavbar, getCurrentUserId, renderStatusBadge, renderPaymentBadge, formatDate, showToast } from './js/app.js';
 
     const urlParams = new URLSearchParams(window.location.search);
     const gigId = urlParams.get('id');
@@ -184,10 +201,10 @@
         // Render header
         document.getElementById('gig-title').textContent = gigData.title;
         document.getElementById('gig-category').textContent = gigData.category;
-        document.getElementById('gig-category').className = `category-tag ${gigData.category}`;
+        document.getElementById('gig-category').className = `cat-badge ${gigData.category}`;
         document.getElementById('gig-status-badge').innerHTML = renderStatusBadge(gigData.status);
-        document.getElementById('gig-payment-badge').innerHTML = renderPaymentPill(gigData.payment_type, gigData.budget);
-        document.getElementById('gig-type-badge').textContent = gigData.type === 'Offering' ? '📢 Offering Service' : '🙋 Requesting Help';
+        document.getElementById('gig-payment-badge').innerHTML = renderPaymentBadge(gigData.payment_type, gigData.budget);
+        document.getElementById('gig-type-badge').innerHTML = gigData.type === 'Offering' ? '<i class="fa-solid fa-bullhorn"></i> Offering Service' : '<i class="fa-solid fa-hand-holding-hand"></i> Requesting Help';
         document.getElementById('owner-name-top').textContent = gigData.owner?.name || 'Student';
         document.getElementById('gig-deadline').textContent = formatDate(gigData.deadline);
         document.getElementById('gig-description').textContent = gigData.description;
@@ -198,7 +215,7 @@
           document.getElementById('owner-avatar').textContent = (gigData.owner.name || 'U').charAt(0);
           document.getElementById('owner-major-sem').textContent = `${gigData.owner.major} • Semester ${gigData.owner.semester}`;
           document.getElementById('owner-skills').innerHTML = (gigData.owner.skills || [])
-            .map(s => `<span class="pill-type" style="background:#fff; font-size:0.75rem;">${s}</span>`).join('');
+            .map(s => `<span class="badge-item" style="background:#fff; font-size:0.75rem;">${s}</span>`).join('');
           document.getElementById('owner-profile-link').href = `profile.html?id=${gigData.owner.id}`;
         }
 
@@ -217,14 +234,16 @@
           applyMsg.style.display = 'block';
           applyMsg.style.background = '#fef2f2';
           applyMsg.style.color = '#991b1b';
-          applyMsg.innerHTML = `⚠️ This gig has status <strong>${gigData.status}</strong> and is not accepting applications.`;
+          applyMsg.style.border = '1px solid #fecaca';
+          applyMsg.innerHTML = `<i class="fa-solid fa-lock" style="margin-right:6px;"></i> This gig is currently <strong>${gigData.status}</strong> and is not open for new applications.`;
         } else if (existingApp) {
           applyBox.style.display = 'block';
           applyForm.style.display = 'none';
           applyMsg.style.display = 'block';
           applyMsg.style.background = '#eff6ff';
           applyMsg.style.color = '#1e40af';
-          applyMsg.innerHTML = `✓ You have already applied for this gig with status: <strong>${existingApp.status}</strong>.`;
+          applyMsg.style.border = '1px solid #bfdbfe';
+          applyMsg.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> You have already applied for this gig with status: <strong>${existingApp.status}</strong>.`;
         } else {
           applyBox.style.display = 'block';
           applyForm.style.display = 'block';
@@ -259,16 +278,20 @@
             appsList.innerHTML = `<div style="color:#64748b; font-size:0.88rem; text-align:center; padding:1.5rem 0;">No applications received yet.</div>`;
           } else {
             appsList.innerHTML = gigData.applications.map(app => `
-              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem;">
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1.1rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                  <strong style="font-size:0.92rem;">${app.applicant_name} (${app.applicant_major})</strong>
-                  <span class="status-badge ${app.status}">${app.status}</span>
+                  <strong style="font-size:0.95rem; color:#0f172a;">${app.applicant_name} <span style="font-size:0.8rem; font-weight:normal; color:#64748b;">(${app.applicant_major})</span></strong>
+                  ${renderStatusBadge(app.status)}
                 </div>
-                <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem; line-height:1.4;">${app.message}</p>
+                <p style="font-size:0.88rem; color:#475569; margin-bottom:0.85rem; line-height:1.45;">"${app.message}"</p>
                 ${app.status === 'Pending' && gigData.status === 'Open' ? `
                   <div style="display:flex; gap:0.5rem;">
-                    <button class="btn-success btn-accept-app" data-id="${app.id}" style="font-size:0.8rem; padding:0.4rem 0.8rem;">Accept</button>
-                    <button class="btn-danger btn-reject-app" data-id="${app.id}" style="font-size:0.8rem; padding:0.4rem 0.8rem;">Reject</button>
+                    <button class="btn-success btn-accept-app" data-id="${app.id}" style="font-size:0.82rem; padding:0.45rem 0.9rem;">
+                      <i class="fa-solid fa-check"></i> Accept Candidate
+                    </button>
+                    <button class="btn-danger btn-reject-app" data-id="${app.id}" style="font-size:0.82rem; padding:0.45rem 0.9rem;">
+                      <i class="fa-solid fa-xmark"></i> Reject
+                    </button>
                   </div>
                 ` : ''}
               </div>
@@ -289,8 +312,8 @@
 
       } catch (err) {
         document.getElementById('loading').innerHTML = `
-          <div style="color:#ef4444; font-weight:600;">Failed to load gig details.</div>
-          <a href="index.html" class="btn-secondary" style="margin-top:1rem; display:inline-block;">Return to Browse</a>
+          <div style="color:#ef4444; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> Failed to load gig details.</div>
+          <a href="index.html" class="btn-secondary" style="margin-top:1rem; display:inline-flex;">Return to Marketplace</a>
         `;
       }
     }
@@ -302,7 +325,6 @@
         const reviewsList = document.getElementById('reviews-list');
         const leaveSec = document.getElementById('leave-review-section');
 
-        // Check if current user is participant (owner or accepted applicant)
         const isOwner = gigData.owner_id === currentUserId;
         const isApplicant = gigData.accepted_applicant_id === currentUserId;
         const hasReviewed = reviews.some(r => r.reviewer_id === currentUserId);
@@ -317,12 +339,12 @@
           reviewsList.innerHTML = `<p style="color:#64748b; font-size:0.9rem;">No reviews submitted yet for this completed gig.</p>`;
         } else {
           reviewsList.innerHTML = reviews.map(r => `
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1.1rem; margin-bottom:0.85rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
                 <strong>${r.reviewer_name}</strong>
                 <span style="color:#eab308; font-weight:700;">${'⭐'.repeat(r.rating)} (${r.rating}/5)</span>
               </div>
-              <p style="font-size:0.9rem; color:#334155;">${r.comment}</p>
+              <p style="font-size:0.9rem; color:#334155; line-height:1.5;">${r.comment}</p>
             </div>
           `).join('');
         }
@@ -342,11 +364,9 @@
           method: 'POST',
           body: JSON.stringify({ gig_id: gigId, message }),
         });
-        showToast('Application submitted successfully!', 'success');
+        showToast('Application proposal submitted successfully!', 'success');
         loadGig();
-      } catch (err) {
-        // toast already handled by api()
-      }
+      } catch (err) {}
     });
 
     // Accept / Reject Application buttons delegation
@@ -361,7 +381,7 @@
             method: 'PATCH',
             body: JSON.stringify({ status: 'Accepted' }),
           });
-          showToast('Applicant accepted! Gig is now In Progress.', 'success');
+          showToast('Applicant accepted! Gig marked In Progress, other pending applications rejected.', 'success');
           loadGig();
         } catch (e) {}
       }
@@ -386,7 +406,7 @@
           method: 'PATCH',
           body: JSON.stringify({ status: 'Completed' }),
         });
-        showToast('Gig marked as Completed! Reviews unlocked.', 'success');
+        showToast('Gig marked as Completed! Peer reviews unlocked.', 'success');
         loadGig();
       } catch (e) {}
     });
@@ -423,12 +443,12 @@
             comment,
           }),
         });
-        showToast('Review submitted successfully!', 'success');
+        showToast('Review submitted successfully! Reputation profile updated.', 'success');
         loadGig();
       } catch (e) {}
     });
 
-    // Init Navbar and Page
+    // Init
     initNavbar();
     loadGig();
   </script>
