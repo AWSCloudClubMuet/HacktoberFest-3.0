@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Campus SkillSwap</title>
+<style>
+:root{--p:#4338ca;--pl:#eef2ff;--r:#dc2626;--g:#16a34a;--bg:#f5f6fa;--tx:#1e1b3a;--mu:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+header{background:var(--p);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:19px}nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{color:#fff;opacity:.75;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:14px}nav a.on{opacity:1;background:#ffffff26;font-weight:600}
+main{max-width:900px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px #0001}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+input,select,textarea,button{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;width:100%}
+button{background:var(--p);color:#fff;border:0;cursor:pointer;font-weight:600;width:auto}
+button.sec{background:#fff;color:var(--p);border:1px solid var(--p)}button.red{background:var(--r)}button.grn{background:var(--g)}
+.tag{font-size:12px;padding:2px 8px;border-radius:20px;background:var(--pl);color:var(--p);white-space:nowrap}
+.s-Open{background:#dcfce7;color:#166534}.s-InProgress{background:#fef9c3;color:#854d0e}.s-Completed{background:#e0e7ff;color:#3730a3}
+.s-Expired,.s-Cancelled,.s-Rejected{background:#fee2e2;color:#991b1b}.s-Pending{background:#f3f4f6;color:#374151}.s-Accepted{background:#dcfce7;color:#166534}
+.mu{color:var(--mu);font-size:13px}.err{color:var(--r);font-size:13px}label{font-size:13px;color:var(--mu);display:block;margin-top:6px}
+h2,h3{margin:4px 0 10px}.stars{color:#f59e0b}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:8px;z-index:20}
+</style>
+</head>
+<body>
+<header><h1>🎓 Campus SkillSwap</h1><nav id="nav"></nav>
+<select id="userSel" style="width:auto;color:#111" onchange="setUser(this.value)"></select></header>
+<main id="main"></main>
+<div id="toast"></div>
+<script>
+const API=localStorage.getItem('api')||'http://localhost:3000';
+let D={users:[],gigs:[],applications:[],reviews:[]},me=null,view='browse',sel=null;
+let F={q:'',category:'',type:'',payment_type:'',min:'',max:''},browseGigs=[];
+const CATS=['Programming','Design','Writing','Tutoring'];
+const $=s=>document.querySelector(s);
+const req=(m,p,b)=>fetch(API+p,{method:m,headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined}).then(r=>{if(!r.ok)throw r;return r.json()});
+const today=()=>new Date().toISOString().slice(0,10);
+const U=id=>D.users.find(u=>u.id==id)||{name:'?'};
+const G=id=>D.gigs.find(g=>g.id==id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){$('#toast').innerHTML=`<div class="toast">${esc(t)}</div>`;setTimeout(()=>$('#toast').innerHTML='',2200)}
+// Open gigs past deadline display as Expired
+const status=g=>g.status==='Open'&&g.deadline<today()?'Expired':g.status;
+const sTag=s=>`<span class="tag s-${s.replace(' ','')}">${s}</span>`;
+function avgRating(uid){const r=D.reviews.filter(x=>x.reviewee_id==uid);return r.length?{v:r.reduce((a,b)=>a+ +b.rating,0)/r.length,n:r.length}:{v:0,n:0}}
+const stars=v=>'<span class="stars">'+'★'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v))+'</span>';
+
+async function load(){
+  try{const ks=Object.keys(D);const r=await Promise.all(ks.map(k=>req('GET','/'+k)));ks.forEach((k,i)=>D[k]=r[i])}
+  catch(e){$('#main').innerHTML=`<div class="card err">Mock API not reachable at ${API}. Run <b>npm start</b> (json-server on port 3000).</div>`;return false}
+  const uid=localStorage.getItem('uid')||D.users[0]?.id;me=D.users.find(u=>u.id==uid)||D.users[0];
+  $('#userSel').innerHTML=D.users.map(u=>`<option value="${u.id}" ${u.id==me.id?'selected':''}>👤 ${esc(u.name)}</option>`).join('');
+  return true;
+}
+function setUser(id){localStorage.setItem('uid',id);me=U(id);render()}
+async function refresh(){if(await load()){if(view==='browse')await search();render()}}
+const NAV={browse:'🔍 Browse',post:'➕ Post Gig',mygigs:'📋 My Gigs',myapps:'📨 My Applications',profile:'👤 Profile'};
+function go(v,s){view=v;sel=s??null;if(v==='browse')search().then(render);else render();scrollTo(0,0)}
+function render(){
+  $('#nav').innerHTML=Object.entries(NAV).map(([k,l])=>`<a class="${k===view?'on':''}" onclick="go('${k}')">${l}</a>`).join('');
+  ({browse:renderBrowse,post:renderPost,mygigs:renderMyGigs,myapps:renderMyApps,profile:renderProfile,gig:renderGig})[view]();
+}
+
+// ---- M2 Browse (uses GET /gigs with category, type, q query params)
+async function search(){
+  const p=new URLSearchParams();if(F.category)p.set('category',F.category);if(F.type)p.set('type',F.type);if(F.payment_type)p.set('payment_type',F.payment_type);if(F.q)p.set('q',F.q);
+  p.set('_sort','created_at');p.set('_order','desc');
+  try{browseGigs=await req('GET','/gigs?'+p)}catch(e){browseGigs=[]}
+  const kw=F.q.toLowerCase();
+  browseGigs=browseGigs.filter(g=>(!kw||(g.title+' '+g.description).toLowerCase().includes(kw))
+    &&(F.min===''||(g.budget!=null&&g.budget>=+F.min))&&(F.max===''||(g.budget!=null&&g.budget<=+F.max)));
+}
+function gigCard(g){const s=status(g),u=U(g.user_id);
+  return `<div class="card" style="cursor:pointer" onclick="go('gig','${g.id}')"><div class="row between"><b>${esc(g.title)}</b>${sTag(s)}</div>
+  <div class="row" style="margin:6px 0"><span class="tag">${g.category}</span><span class="tag">${g.type}</span><span class="tag">${g.payment_type==='Paid'?'💰 Rs '+g.budget:g.payment_type==='SkillSwap'?'🔁 Skill Swap':'🆓 Free'}</span></div>
+  <div class="mu">${esc(g.description).slice(0,110)}</div><div class="mu" style="margin-top:4px">by ${esc(u.name)} · deadline ${g.deadline}</div></div>`}
+function renderBrowse(){
+  $('#main').innerHTML=`<div class="card"><input id="fq" placeholder="Search titles & descriptions…" value="${esc(F.q)}">
+  <div class="grid" style="margin-top:8px">
+  <select id="fc"><option value="">All categories</option>${CATS.map(c=>`<option ${F.category==c?'selected':''}>${c}</option>`)}</select>
+  <select id="ft"><option value="">Offering + Requesting</option>${['Offering','Requesting'].map(c=>`<option ${F.type==c?'selected':''}>${c}</option>`)}</select>
+  <select id="fp"><option value="">Any payment</option>${['Paid','SkillSwap','Free'].map(c=>`<option ${F.payment_type==c?'selected':''}>${c}</option>`)}</select>
+  <input id="fmin" type="number" placeholder="Min budget" value="${F.min}"><input id="fmax" type="number" placeholder="Max budget" value="${F.max}"></div>
+  <div class="row" style="margin-top:8px"><button onclick="applyF()">Search</button><button class="sec" onclick="F={q:'',category:'',type:'',payment_type:'',min:'',max:''};go('browse')">Clear</button><span class="mu">${browseGigs.length} gigs</span></div></div>
+  ${browseGigs.map(gigCard).join('')||'<p class="mu">No gigs match.</p>'}`;
+  $('#fq').onkeydown=e=>{if(e.key==='Enter')applyF()};
+}
+function applyF(){F={q:$('#fq').value.trim(),category:$('#fc').value,type:$('#ft').value,payment_type:$('#fp').value,min:$('#fmin').value,max:$('#fmax').value};go('browse')}
+
+// ---- M1 Post gig
+function renderPost(){
+  $('#main').innerHTML=`<div class="card"><h2>Create a gig</h2>
+  <div class="grid"><div><label>Type</label><select id="gt"><option>Requesting</option><option>Offering</option></select></div>
+  <div><label>Category</label><select id="gc">${CATS.map(c=>`<option>${c}</option>`)}</select></div>
+  <div><label>Payment type</label><select id="gp" onchange="$('#gbw').style.display=this.value==='Paid'?'':'none'"><option>Paid</option><option value="SkillSwap">Skill Swap</option><option>Free</option></select></div>
+  <div id="gbw"><label>Budget (Rs)</label><input id="gb" type="number"></div>
+  <div><label>Deadline</label><input id="gd" type="date" min="${today()}"></div></div>
+  <label>Title</label><input id="gti" maxlength="80"><label>Description</label><textarea id="gde" rows="4"></textarea>
+  <p class="err" id="ge"></p><button onclick="postGig()">Post gig</button></div>`}
+async function postGig(){
+  const b={user_id:me.id,title:$('#gti').value.trim(),description:$('#gde').value.trim(),type:$('#gt').value,category:$('#gc').value,payment_type:$('#gp').value,
+    budget:$('#gp').value==='Paid'?+$('#gb').value:null,deadline:$('#gd').value,status:'Open',accepted_applicant_id:null,created_at:new Date().toISOString()};
+  const e=[];if(b.title.length<5)e.push('Title must be at least 5 characters');if(b.description.length<15)e.push('Description must be at least 15 characters');
+  if(b.payment_type==='Paid'&&!(b.budget>0))e.push('Budget must be > 0 for paid gigs');if(!b.deadline||b.deadline<today())e.push('Deadline must be today or later');
+  if(e.length){$('#ge').innerHTML=e.join('<br>');return}
+  const g=await req('POST','/gigs',b);toast('Gig posted');await load();go('gig',g.id)}
+
+// ---- Gig detail: apply (M2), manage applicants & status (M3), reviews (M4)
+function renderGig(){
+  const g=G(sel);if(!g)return go('browse');const s=status(g),own=g.user_id==me.id,apps=D.applications.filter(a=>a.gig_id==g.id);
+  const myApp=apps.find(a=>a.applicant_id==me.id),isAccepted=g.accepted_applicant_id==me.id;
+  let html=`<button class="sec" onclick="go('browse')">← Back</button><div class="card" style="margin-top:10px"><div class="row between"><h2>${esc(g.title)}</h2>${sTag(s)}</div>
+  <div class="row"><span class="tag">${g.category}</span><span class="tag">${g.type}</span><span class="tag">${g.payment_type}${g.budget?' · Rs '+g.budget:''}</span></div>
+  <p>${esc(g.description)}</p><p class="mu">Posted by <a href="#" onclick="go('profile','${g.user_id}');return false">${esc(U(g.user_id).name)}</a> · deadline ${g.deadline}${g.accepted_applicant_id?' · assigned to '+esc(U(g.accepted_applicant_id).name):''}</p>`;
+  if(own){
+    if(s==='In Progress')html+=`<button class="grn" onclick="setStatus('${g.id}','Completed')">Mark Completed</button> `;
+    if(s==='Open')html+=`<button class="red" onclick="setStatus('${g.id}','Cancelled')">Cancel gig</button>`;
+  }
+  html+='</div>';
+  if(!own){
+    if(myApp)html+=`<div class="card">Your application: ${sTag(myApp.status)}<p class="mu">${esc(myApp.message)}</p></div>`;
+    else if(s==='Open')html+=`<div class="card"><h3>Apply</h3><textarea id="am" rows="3" maxlength="300" placeholder="Short message: why you're a good fit"></textarea><p class="err" id="ae"></p><button onclick="apply('${g.id}')">Send application</button></div>`;
+    else html+=`<div class="card mu">This gig is not accepting applications (${s}).</div>`;
+  }
+  if(own){
+    html+=`<div class="card"><h3>Applicants (${apps.length})</h3>${apps.map(a=>{const r=avgRating(a.applicant_id);return `<div class="row between" style="padding:8px 0;border-bottom:1px solid #eee">
+    <div><a href="#" onclick="go('profile','${a.applicant_id}');return false"><b>${esc(U(a.applicant_id).name)}</b></a> ${r.n?stars(r.v):''}<div class="mu">${esc(a.message)}</div></div>
+    <div class="row">${sTag(a.status)}${a.status==='Pending'&&s==='Open'?`<button class="grn" onclick="accept('${g.id}','${a.id}')">Accept</button><button class="sec" onclick="reject('${a.id}')">Reject</button>`:''}</div></div>`}).join('')||'<p class="mu">No applications yet.</p>'}</div>`;
+  }
+  // reviews
+  const revs=D.reviews.filter(r=>r.gig_id==g.id);
+  if(g.status==='Completed'){
+    const party=own||isAccepted,other=own?g.accepted_applicant_id:g.user_id,done=revs.find(r=>r.reviewer_id==me.id);
+    html+=`<div class="card"><h3>Reviews</h3>${revs.map(r=>`<p>${stars(r.rating)} <b>${esc(U(r.reviewer_id).name)}</b> → ${esc(U(r.reviewee_id).name)}<br><span class="mu">${esc(r.comment)}</span></p>`).join('')||'<p class="mu">No reviews yet.</p>'}
+    ${party&&!done?`<hr><b>Rate ${esc(U(other).name)}</b><select id="rr">${[5,4,3,2,1].map(n=>`<option value="${n}">${'★'.repeat(n)} (${n})</option>`)}</select><textarea id="rc" rows="2" placeholder="Comment"></textarea><p class="err" id="re"></p><button onclick="review('${g.id}','${other}')">Submit review</button>`:''}</div>`;
+  }
+  $('#main').innerHTML=html;
+}
+async function apply(gid){
+  await load();const g=G(gid),msg=$('#am').value.trim();
+  if(g.user_id==me.id)return $('#ae').textContent='You cannot apply to your own gig';
+  if(D.applications.some(a=>a.gig_id==gid&&a.applicant_id==me.id))return $('#ae').textContent='You already applied to this gig';
+  if(status(g)!=='Open')return $('#ae').textContent='Gig is closed';
+  if(msg.length<5)return $('#ae').textContent='Write a short message (min 5 chars)';
+  await req('POST','/applications',{gig_id:gid,applicant_id:me.id,message:msg,status:'Pending',created_at:new Date().toISOString()});
+  toast('Application sent');await load();render()}
+async function accept(gid,aid){
+  await load();const g=G(gid);if(g.user_id!=me.id||status(g)!=='Open')return toast('Not allowed');
+  const a=D.applications.find(x=>x.id==aid);
+  await req('PATCH','/applications/'+aid,{status:'Accepted'});
+  await Promise.all(D.applications.filter(x=>x.gig_id==gid&&x.id!=aid&&x.status==='Pending').map(x=>req('PATCH','/applications/'+x.id,{status:'Rejected'})));
+  await req('PATCH','/gigs/'+gid,{status:'In Progress',accepted_applicant_id:a.applicant_id});
+  toast('Applicant accepted · gig In Progress');await load();render()}
+async function reject(aid){const a=D.applications.find(x=>x.id==aid);if(G(a.gig_id).user_id!=me.id)return;await req('PATCH','/applications/'+aid,{status:'Rejected'});await load();render()}
+async function setStatus(gid,st){
+  await load();const g=G(gid);if(g.user_id!=me.id)return toast('Only owner can change status');
+  if(st==='Completed'&&g.status!=='In Progress')return toast('Can complete only from In Progress');
+  if(st==='Cancelled'&&g.status!=='Open')return toast('Only open gigs can be cancelled');
+  await req('PATCH','/gigs/'+gid,{status:st});toast('Gig '+st);await load();render()}
+async function review(gid,reviewee){
+  await load();const g=G(gid);
+  if(g.status!=='Completed'||![g.user_id,g.accepted_applicant_id].includes(me.id))return toast('Not allowed');
+  if(D.reviews.some(r=>r.gig_id==gid&&r.reviewer_id==me.id))return $('#re').textContent='You already reviewed this gig';
+  const rating=+$('#rr').value;if(rating<1||rating>5)return;
+  await req('POST','/reviews',{gig_id:gid,reviewer_id:me.id,reviewee_id:reviewee,rating,comment:$('#rc').value.trim()});
+  toast('Review submitted');await load();render()}
+
+// ---- My gigs / My applications
+function renderMyGigs(){const L=D.gigs.filter(g=>g.user_id==me.id);
+  $('#main').innerHTML=`<h2>My posted gigs</h2>${L.map(g=>{const p=D.applications.filter(a=>a.gig_id==g.id&&a.status==='Pending').length;return gigCard(g).replace('</div></div>',`${p?` · <b>${p} pending applicant(s)</b>`:''}</div></div>`)}).join('')||'<p class="mu">No gigs yet.</p>'}`}
+function renderMyApps(){const L=D.applications.filter(a=>a.applicant_id==me.id);
+  $('#main').innerHTML=`<h2>My applications</h2>${L.map(a=>{const g=G(a.gig_id)||{};return `<div class="card row between" style="cursor:pointer" onclick="go('gig','${g.id}')"><div><b>${esc(g.title)}</b><div class="mu">${g.category} · gig ${status(g)}</div><div class="mu">"${esc(a.message)}"</div></div>${sTag(a.status)}</div>`}).join('')||'<p class="mu">No applications yet.</p>'}`}
+
+// ---- Profile (rating calculated from reviews)
+function renderProfile(){
+  const u=U(sel||me.id),r=avgRating(u.id),posted=D.gigs.filter(g=>g.user_id==u.id),done=D.gigs.filter(g=>g.status==='Completed'&&(g.user_id==u.id||g.accepted_applicant_id==u.id));
+  const got=D.reviews.filter(x=>x.reviewee_id==u.id);
+  $('#main').innerHTML=`<div class="card"><h2>${esc(u.name)}</h2><div class="mu">${esc(u.major)} · Semester ${u.semester}</div><p>${esc(u.bio)}</p>
+  <div class="row">${(u.skills||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join('')}</div>
+  <div class="grid" style="margin-top:12px;text-align:center"><div class="card"><div class="mu">Gigs posted</div><h2>${posted.length}</h2></div>
+  <div class="card"><div class="mu">Gigs completed</div><h2>${done.length}</h2></div>
+  <div class="card"><div class="mu">Avg rating</div><h2>${r.n?r.v.toFixed(1):'–'}</h2>${r.n?stars(r.v)+`<div class="mu">${r.n} reviews</div>`:''}</div></div></div>
+  <div class="card"><h3>Reviews received</h3>${got.map(x=>`<p>${stars(x.rating)} from <b>${esc(U(x.reviewer_id).name)}</b> on “${esc(G(x.gig_id)?.title)}”<br><span class="mu">${esc(x.comment)}</span></p>`).join('')||'<p class="mu">None yet.</p>'}</div>
+  ${u.id==me.id?`<div class="card"><h3>Edit profile</h3><label>Major</label><input id="pm" value="${esc(u.major)}"><label>Skills (comma separated)</label><input id="ps" value="${esc((u.skills||[]).join(', '))}"><label>Bio</label><textarea id="pb">${esc(u.bio)}</textarea><button style="margin-top:8px" onclick="saveProfile()">Save</button></div>`:''}`}
+async function saveProfile(){await req('PATCH','/users/'+me.id,{major:$('#pm').value.trim(),bio:$('#pb').value.trim(),skills:$('#ps').value.split(',').map(s=>s.trim()).filter(Boolean)});toast('Profile saved');await load();render()}
+
+refresh();
+</script>
+</body>
+</html>
