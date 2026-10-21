@@ -1,0 +1,23 @@
+{
+  "name": "campus-gig-skillswap-portal",
+  "version": "1.0.0",
+  "description": "Campus Gig & SkillSwap Portal - HacktoberFest 3.0 submission by Team SheNova",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "dev": "node dev-runner.js",
+    "start": "node server/index.js",
+    "test": "node tests/api.test.js",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install"
+  },
+  "keywords": [
+    "campus-gig",
+    "skillswap",
+    "hacktoberfest",
+    "team-shenova",
+    "marketplace"
+  ],
+  "author": "Team SheNova",
+  "license": "MIT"
+}
