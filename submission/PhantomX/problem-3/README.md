@@ -24,4 +24,11 @@ forge test
 
 ## Status
 
-Scaffold only. Contract and tests are being built.
+Complete: create, commit, reveal, finalize and withdraw are implemented, audited and tested. See task-1/NOTES.md for design decisions and the audit log.
+
+## Assumptions added beyond the task script
+
+- **Reserve price must be greater than zero** (`InvalidReserve`). A zero reserve would make "no bid" and "bid of zero" indistinguishable.
+- **A revealed amount below the reserve is rejected** (`BidBelowReserve`), so the bidder can retry until `revealEnd`.
+- **At most `MAX_BIDDERS = 200` bidders per auction** (`TooManyBidders`). Added during the audit so the `finalize` loop can never exceed the block gas limit and lock deposits. 200 bidders finalize in about 3.9M gas.
+- **No minimum reveal window is enforced.** The task script fixes `createAuction`'s checks exactly, so this is documented as accepted finding A-7 in `task-1/NOTES.md` with the recommended hardening.
