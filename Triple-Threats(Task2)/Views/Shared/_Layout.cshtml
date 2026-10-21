@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ReliefHub Flood Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="flex flex-col min-h-full text-slate-800 antialiased">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <div class="flex items-center gap-8">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-white shadow-md">
+                            <!-- Flood Waves SVG -->
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">ReliefHub</span>
+                            <span class="text-xs block text-slate-500 font-medium -mt-1">Sindh Flood Relief Coordination</span>
+                        </div>
+                    </a>
+
+                    <nav class="hidden md:flex items-center gap-1">
+                        <a asp-controller="Home" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Dashboard</a>
+                        <a asp-controller="Camps" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Camps & Needs</a>
+                        <a asp-controller="Inventory" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Warehouse</a>
+                        <a asp-controller="Dispatches" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Dispatches</a>
+                        <a asp-controller="Donations" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Donations</a>
+                        <a asp-controller="Volunteers" asp-action="Index" class="px-3 py-2 text-sm font-semibold rounded-lg text-slate-700 hover:text-cyan-600 hover:bg-slate-100">Volunteers</a>
+                    </nav>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live Emergency Feed
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Alerts -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        @if (TempData["Success"] != null)
+        {
+            <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-xl font-medium mb-2">
+                ✓ @TempData["Success"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-sm rounded-xl font-medium mb-2">
+                ⚠️ @TempData["Error"]
+            </div>
+        }
+    </div>
+
+    <!-- Main -->
+    <main class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-20 py-6 text-center text-xs text-slate-500">
+        ReliefHub Flood Emergency Coordination System &bull; Sindh Floods Response &bull; ASP.NET Core 8 & MS SQL Server
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,173 @@
+@model CampusGigPortal.Models.ViewModels.GigIndexViewModel
+@{
+    ViewData["Title"] = "Discover Campus Gigs";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                Explore Campus Gigs & Skills
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">Search through verified student gigs, skill exchanges, and open requests.</p>
+        </div>
+        <a asp-controller="Gigs" asp-action="Create" class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-all self-start md:self-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Post New Gig
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs mb-8">
+        <form asp-controller="Gigs" asp-action="Index" method="get" class="space-y-4">
+            
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" name="q" value="@Model.Q" placeholder="Search keywords across title and description (e.g. Flutter, Blender, Calculus, Resume)..." 
+                       class="w-full pl-11 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                    <select name="category" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                        <option value="All" selected="@(string.IsNullOrEmpty(Model.Category) || Model.Category == "All")">All Categories</option>
+                        <option value="Programming" selected="@(Model.Category == "Programming")">💻 Programming</option>
+                        <option value="Design" selected="@(Model.Category == "Design")">🎨 Design & UI/UX</option>
+                        <option value="Writing" selected="@(Model.Category == "Writing")">✍️ Writing & Editing</option>
+                        <option value="Tutoring" selected="@(Model.Category == "Tutoring")">📚 STEM Tutoring</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Gig Type</label>
+                    <select name="type" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                        <option value="All" selected="@(string.IsNullOrEmpty(Model.Type) || Model.Type == "All")">All Types</option>
+                        <option value="Offering" selected="@(Model.Type == "Offering")">🟢 Offering Skill</option>
+                        <option value="Requesting" selected="@(Model.Type == "Requesting")">🔵 Requesting Help</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Compensation</label>
+                    <select name="paymentType" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                        <option value="All" selected="@(string.IsNullOrEmpty(Model.PaymentType) || Model.PaymentType == "All")">All Compensation</option>
+                        <option value="Paid" selected="@(Model.PaymentType == "Paid")">💵 Paid ($)</option>
+                        <option value="SkillSwap" selected="@(Model.PaymentType == "SkillSwap")">⇄ Skill Swap</option>
+                        <option value="Free" selected="@(Model.PaymentType == "Free")">🎁 Free / Volunteer</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                    <select name="status" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:bg-white focus:ring-2 focus:ring-indigo-500">
+                        <option value="All" selected="@(string.IsNullOrEmpty(Model.Status) || Model.Status == "All")">All Statuses</option>
+                        <option value="Open" selected="@(Model.Status == "Open")">Open (Active)</option>
+                        <option value="In Progress" selected="@(Model.Status == "In Progress")">In Progress</option>
+                        <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+                        <option value="Expired" selected="@(Model.Status == "Expired")">Expired</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Budget ($)</label>
+                    <div class="flex items-center gap-1">
+                        <input type="number" name="minBudget" value="@Model.MinBudget" placeholder="Min" class="w-1/2 text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:bg-white" />
+                        <span class="text-slate-400 text-xs">-</span>
+                        <input type="number" name="maxBudget" value="@Model.MaxBudget" placeholder="Max" class="w-1/2 text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 focus:bg-white" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                <span class="text-xs font-medium text-slate-500">Found <strong class="text-slate-800">@Model.TotalResults</strong> matching gigs</span>
+                <div class="flex items-center gap-2">
+                    <a asp-action="Index" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100">Reset</a>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg">Apply Filters</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var gig in Model.Gigs)
+        {
+            var isExpired = gig.EffectiveStatus == "Expired";
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group">
+                <div class="p-5 pb-3">
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full @(gig.Type == "Offering" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-blue-50 text-blue-700 border border-blue-200")">
+                            @(gig.Type == "Offering" ? "Offering Skill" : "Requesting Help")
+                        </span>
+
+                        @if (gig.PaymentType == "Paid")
+                        {
+                            <span class="font-extrabold text-sm text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-100">
+                                $@(gig.Budget?.ToString("N0"))
+                            </span>
+                        }
+                        else if (gig.PaymentType == "SkillSwap")
+                        {
+                            <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-lg border border-violet-100">⇄ Skill Swap</span>
+                        }
+                        else
+                        {
+                            <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg">Free</span>
+                        }
+                    </div>
+
+                    <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1 text-base">
+                        <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id">@gig.Title</a>
+                    </h3>
+
+                    <div class="flex items-center gap-3 text-xs text-slate-500 mt-2 mb-3">
+                        <span>@gig.Category</span>
+                        <span>&bull;</span>
+                        <span class="@(isExpired ? "text-rose-600 font-bold" : "text-slate-500")">Due: @gig.Deadline.ToString("MMM dd, yyyy")</span>
+                    </div>
+
+                    <p class="text-xs text-slate-600 line-clamp-2">@gig.Description</p>
+                </div>
+
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between mt-auto">
+                    <a asp-controller="Profiles" asp-action="Index" asp-route-id="@gig.UserId" class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+                            @(gig.User?.Name.Substring(0, 1) ?? "U")
+                        </div>
+                        <span class="text-xs font-semibold text-slate-800">@gig.User?.Name</span>
+                    </a>
+
+                    <div class="flex items-center gap-2">
+                        @if (isExpired)
+                        {
+                            <span class="text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">Expired</span>
+                        }
+                        else if (gig.Status == "In Progress")
+                        {
+                            <span class="text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">In Progress</span>
+                        }
+                        else if (gig.Status == "Completed")
+                        {
+                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">Completed</span>
+                        }
+                        else
+                        {
+                            <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Open (@gig.Applications.Count)</span>
+                        }
+
+                        <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            Details &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>

@@ -1,0 +1,125 @@
+@model IEnumerable<ReliefHub.Models.Volunteer>
+@{
+    ViewData["Title"] = "Volunteer Deployment";
+    var camps = (List<ReliefHub.Models.Camp>)ViewBag.Camps;
+    var selectedSkill = (string)ViewBag.SelectedSkill;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Volunteer Deployment</h1>
+            <p class="text-sm text-slate-500">Register and deploy specialized volunteers to active flood camps.</p>
+        </div>
+    </div>
+
+    <!-- Skill Filter Bar -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-400 uppercase">Filter by Skill:</span>
+            <a asp-action="Index" asp-route-skill="All" class="px-3 py-1 rounded-lg text-xs font-bold @(string.IsNullOrEmpty(selectedSkill) || selectedSkill == "All" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200")">All</a>
+            <a asp-action="Index" asp-route-skill="Medical" class="px-3 py-1 rounded-lg text-xs font-bold @(selectedSkill == "Medical" ? "bg-rose-600 text-white" : "bg-rose-50 text-rose-700 hover:bg-rose-100")">Medical</a>
+            <a asp-action="Index" asp-route-skill="Logistics" class="px-3 py-1 rounded-lg text-xs font-bold @(selectedSkill == "Logistics" ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-700 hover:bg-blue-100")">Logistics</a>
+            <a asp-action="Index" asp-route-skill="Cooking" class="px-3 py-1 rounded-lg text-xs font-bold @(selectedSkill == "Cooking" ? "bg-amber-600 text-white" : "bg-amber-50 text-amber-700 hover:bg-amber-100")">Cooking</a>
+            <a asp-action="Index" asp-route-skill="Driving" class="px-3 py-1 rounded-lg text-xs font-bold @(selectedSkill == "Driving" ? "bg-cyan-600 text-white" : "bg-cyan-50 text-cyan-700 hover:bg-cyan-100")">Driving</a>
+            <a asp-action="Index" asp-route-skill="Counselling" class="px-3 py-1 rounded-lg text-xs font-bold @(selectedSkill == "Counselling" ? "bg-violet-600 text-white" : "bg-violet-50 text-violet-700 hover:bg-violet-100")">Counselling</a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Registration Form -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-1">Register Volunteer</h2>
+            <p class="text-xs text-slate-500 mb-4">Add volunteers with dedicated relief skills.</p>
+
+            <form asp-action="Register" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                    <input type="text" name="Name" placeholder="e.g. Dr. Aamir Soomro" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Primary Skill</label>
+                    <select name="Skill" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="Medical">Medical (Doctor / Nurse)</option>
+                        <option value="Logistics">Logistics & Distribution</option>
+                        <option value="Cooking">Cooking & Rations</option>
+                        <option value="Driving">Driving & Transport</option>
+                        <option value="Counselling">Trauma Counselling</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all">
+                    Register Volunteer
+                </button>
+            </form>
+        </div>
+
+        <!-- Volunteers List with Assignment dropdown -->
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Registered Volunteers (@Model.Count())</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                            <th class="p-3">Volunteer</th>
+                            <th class="p-3">Skill</th>
+                            <th class="p-3">Assigned Camp</th>
+                            <th class="p-3 text-right">Update Camp Assignment</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach (var v in Model)
+                        {
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">@v.Name</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-slate-100 text-slate-700">@v.Skill</span>
+                                </td>
+                                <td class="p-3">
+                                    @if (v.IsAssigned)
+                                    {
+                                        <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                                            @v.Camp?.Name (@v.Camp?.District)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-slate-400 italic">Unassigned (Reserve)</span>
+                                    }
+                                </td>
+                                <td class="p-3 text-right">
+                                    <form asp-action="Assign" method="post" class="inline-flex items-center gap-1">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="volunteerId" value="@v.Id" />
+                                        <select name="campId" class="text-[11px] p-1 bg-slate-50 border border-slate-200 rounded-lg">
+                                            <option value="">-- Unassigned --</option>
+                                            @foreach (var c in camps)
+                                            {
+                                                if (v.CampId == c.Id)
+                                                {
+                                                    <option value="@c.Id" selected>@c.Name (@c.District)</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@c.Id">@c.Name (@c.District)</option>
+                                                }
+                                            }
+                                        </select>
+                                        <button type="submit" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg text-[10px] font-bold">Save</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,87 @@
+@model ReliefHub.Models.Camp
+@{
+    ViewData["Title"] = "Register Relief Camp";
+}
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="mb-6">
+        <a asp-action="Index" class="text-xs font-semibold text-slate-500 hover:text-cyan-600 transition-colors">
+            &larr; Back to Camp Registry
+        </a>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Register New Relief Camp</h1>
+        <p class="text-sm text-slate-500">Record a designated flood shelter, its location, capacity, and current families.</p>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
+        <form asp-action="Create" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl"></div>
+
+            <!-- Camp Name -->
+            <div>
+                <label asp-for="Name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Camp Name</label>
+                <input asp-for="Name" placeholder="e.g. Dadu High School Relief Camp" 
+                       class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none transition-all" required />
+                <span asp-validation-for="Name" class="text-rose-500 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- District -->
+            <div>
+                <label asp-for="District" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">District (Sindh)</label>
+                <select asp-for="District" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                    <option value="Dadu">Dadu</option>
+                    <option value="Sukkur">Sukkur</option>
+                    <option value="Larkana">Larkana</option>
+                    <option value="Khairpur">Khairpur</option>
+                    <option value="Qambar Shahdadkot">Qambar Shahdadkot</option>
+                    <option value="Jacobabad">Jacobabad</option>
+                    <option value="Shikarpur">Shikarpur</option>
+                    <option value="Badin">Badin</option>
+                </select>
+                <span asp-validation-for="District" class="text-rose-500 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Capacity & Families (2 Columns) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Capacity" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Family Capacity</label>
+                    <input asp-for="Capacity" type="number" min="1" placeholder="500" 
+                           class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none" required />
+                    <span asp-validation-for="Capacity" class="text-rose-500 text-xs mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label asp-for="CurrentFamilies" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Current Families</label>
+                    <input asp-for="CurrentFamilies" type="number" min="0" placeholder="0" 
+                           class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none" required />
+                    <span asp-validation-for="CurrentFamilies" class="text-rose-500 text-xs mt-1 block"></span>
+                </div>
+            </div>
+
+            <!-- Initial Status -->
+            <div>
+                <label asp-for="Status" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Initial Status</label>
+                <select asp-for="Status" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                    <option value="Active">Active (Accepting Families)</option>
+                    <option value="Full">Full (At Maximum Capacity)</option>
+                    <option value="Closed">Closed / Decommissioned</option>
+                </select>
+                <p class="text-[11px] text-slate-400 mt-1">Note: Camp will be automatically marked <strong>Full</strong> if Current Families reaches or exceeds Capacity.</p>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a asp-action="Index" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="px-7 py-2.5 text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl shadow-md shadow-cyan-100 transition-all">
+                    Register Camp
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>

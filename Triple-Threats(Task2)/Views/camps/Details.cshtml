@@ -1,0 +1,115 @@
+@model ReliefHub.Models.Camp
+@{
+    ViewData["Title"] = Model.Name;
+    var inventory = (List<ReliefHub.Models.InventoryItem>)ViewBag.InventoryItems;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-bold text-cyan-600 uppercase">District @Model.District</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold @(Model.EffectiveStatus == "Active" ? "bg-emerald-100 text-emerald-800" : Model.EffectiveStatus == "Full" ? "bg-amber-100 text-amber-800" : "bg-slate-200 text-slate-700")">
+                    @Model.EffectiveStatus
+                </span>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900">@Model.Name</h1>
+            <p class="text-sm text-slate-500 mt-1">Sheltering @Model.CurrentFamilies of @Model.Capacity families</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl">
+                Edit Camp
+            </a>
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Delete this camp?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-xl">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Needs List & Add Need -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-1">Add Resource Need</h2>
+            <p class="text-xs text-slate-500 mb-4">Link an inventory item to this camp's requirements.</p>
+
+            <form asp-action="AddNeed" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="campId" value="@Model.Id" />
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Select Item</label>
+                    <select name="inventoryItemId" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required>
+                        @foreach (var i in inventory)
+                        {
+                            <option value="@i.Id">@i.Name (@i.Category) - In Stock: @i.Stock @i.Unit</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Required Quantity</label>
+                    <input type="number" min="1" name="requiredQuantity" placeholder="100" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Priority</label>
+                    <select name="priority" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="High">High Priority</option>
+                        <option value="Medium">Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl">
+                    Add Need
+                </button>
+            </form>
+        </div>
+
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Camp Supply Needs (@Model.Needs.Count)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                            <th class="p-3">Supply Item</th>
+                            <th class="p-3">Priority</th>
+                            <th class="p-3">Fulfilled / Required</th>
+                            <th class="p-3">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach (var n in Model.Needs)
+                        {
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">@n.InventoryItem?.Name</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded font-bold text-[10px] @(n.Priority == "High" ? "bg-rose-100 text-rose-800" : n.Priority == "Medium" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600")">
+                                        @n.Priority
+                                    </span>
+                                </td>
+                                <td class="p-3 font-semibold text-slate-700">@n.FulfilledQuantity / @n.RequiredQuantity @n.InventoryItem?.Unit</td>
+                                <td class="p-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-20 bg-slate-200 rounded-full h-1.5">
+                                            <div class="bg-cyan-600 h-1.5 rounded-full" style="width: @n.FulfilmentPercentage%"></div>
+                                        </div>
+                                        <span class="font-bold">@n.FulfilmentPercentage%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

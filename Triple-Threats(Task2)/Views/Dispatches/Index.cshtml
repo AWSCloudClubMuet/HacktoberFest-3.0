@@ -1,0 +1,113 @@
+@model IEnumerable<ReliefHub.Models.Dispatch>
+@{
+    ViewData["Title"] = "Dispatches & Stock Reservations";
+    var camps = (List<ReliefHub.Models.Camp>)ViewBag.Camps;
+    var needs = (List<ReliefHub.Models.Need>)ViewBag.Needs;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Dispatches & Stock Allocation</h1>
+            <p class="text-sm text-slate-500">Allocate warehouse supplies without over-dispatching or exceeding unreserved demand.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Dispatch Creation Form -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-1">Create Resource Dispatch</h2>
+            <p class="text-xs text-slate-500 mb-4">Stock is reserved immediately upon dispatch creation.</p>
+
+            <form asp-action="Create" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Camp</label>
+                    <select name="campId" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required>
+                        @foreach (var c in camps)
+                        {
+                            <option value="@c.Id">@c.Name (@c.District)</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Need (Supply Item)</label>
+                    <select name="needId" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required>
+                        @foreach (var n in needs)
+                        {
+                            <option value="@n.Id">
+                                @n.Camp?.Name: @n.InventoryItem?.Name (Remaining Need: @n.RemainingUnreservedQuantity | In Stock: @n.InventoryItem?.Stock)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Quantity</label>
+                    <input type="number" name="quantity" min="1" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" placeholder="e.g. 50" required />
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-xs">
+                    Dispatch & Reserve Stock
+                </button>
+            </form>
+        </div>
+
+        <!-- Dispatches History Table -->
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Dispatch Records</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                            <th class="p-3">Camp</th>
+                            <th class="p-3">Item & Qty</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach (var d in Model)
+                        {
+                            <tr>
+                                <td class="p-3 font-bold text-slate-900">@d.Camp?.Name</td>
+                                <td class="p-3">@d.Quantity @d.Need?.InventoryItem?.Unit of @d.Need?.InventoryItem?.Name</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded font-bold text-[10px] @(d.Status == "Delivered" ? "bg-emerald-100 text-emerald-800" : d.Status == "In Transit" ? "bg-blue-100 text-blue-800" : d.Status == "Cancelled" ? "bg-slate-100 text-slate-500" : "bg-amber-100 text-amber-800")">
+                                        @d.Status
+                                    </span>
+                                </td>
+                                <td class="p-3 text-right space-x-1">
+                                    @if (d.Status == "Pending")
+                                    {
+                                        <form asp-action="MarkInTransit" asp-route-id="@d.Id" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">Transit</button>
+                                        </form>
+                                    }
+                                    @if (d.Status == "Pending" || d.Status == "In Transit")
+                                    {
+                                        <form asp-action="MarkDelivered" asp-route-id="@d.Id" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="px-2 py-1 bg-emerald-600 text-white rounded text-[10px] font-bold">Deliver</button>
+                                        </form>
+                                        <form asp-action="Cancel" asp-route-id="@d.Id" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="px-2 py-1 bg-rose-600 text-white rounded text-[10px] font-bold">Cancel</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

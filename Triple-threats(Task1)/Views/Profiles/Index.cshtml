@@ -1,0 +1,80 @@
+@model CampusGigPortal.Models.ViewModels.ProfileViewModel
+@{
+    var u = Model.ProfileUser;
+    ViewData["Title"] = $"{u.Name} - Profile";
+}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs mb-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white font-extrabold text-2xl flex items-center justify-center">
+                    @u.Name.Substring(0, 1)
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900">@u.Name</h1>
+                    <div class="text-sm font-semibold text-slate-600">@u.Major &bull; @u.Semester</div>
+                </div>
+            </div>
+
+            <!-- Dynamically Calculated Average Rating (Milestone 4) -->
+            <div class="flex items-center gap-4 bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                <div class="text-center px-3 border-r border-slate-200">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Dynamic Rating</span>
+                    <span class="text-xl font-black text-amber-500">★ @Model.AverageRating.ToString("0.0")</span>
+                    <span class="text-[10px] text-slate-400 block">(@Model.ReviewsReceived.Count reviews)</span>
+                </div>
+                <div class="text-center px-3 border-r border-slate-200">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Posted</span>
+                    <span class="text-xl font-black text-slate-900">@Model.PostedGigs.Count</span>
+                </div>
+                <div class="text-center px-3">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Completed</span>
+                    <span class="text-xl font-black text-slate-900">@Model.CompletedGigs.Count</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-slate-100">
+            <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">About</h3>
+            <p class="text-sm text-slate-700 leading-relaxed">@u.Bio</p>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">Skills</h3>
+            <div class="flex flex-wrap gap-2">
+                @foreach (var s in u.Skills)
+                {
+                    <span class="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-100">@s</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Received -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">Peer Reviews Received (@Model.ReviewsReceived.Count)</h2>
+        @if (!Model.ReviewsReceived.Any())
+        {
+            <div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl">No reviews received yet.</div>
+        }
+        else
+        {
+            <div class="space-y-3">
+                @foreach (var r in Model.ReviewsReceived)
+                {
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold text-xs text-slate-800">@r.Reviewer?.Name</span>
+                            <span class="text-amber-500 font-bold text-xs">@r.Rating/5 ★</span>
+                        </div>
+                        <p class="text-xs text-slate-600 italic">"@r.Comment"</p>
+                        <span class="text-[10px] text-slate-400 mt-1 block">Gig: @r.Gig?.Title</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>

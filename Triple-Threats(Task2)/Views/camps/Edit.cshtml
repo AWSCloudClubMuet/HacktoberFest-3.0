@@ -1,0 +1,58 @@
+@model ReliefHub.Models.Camp
+@{
+    ViewData["Title"] = $"Edit {Model.Name}";
+}
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-6">
+        <a asp-action="Index" class="text-xs font-semibold text-slate-500 hover:text-cyan-600">&larr; Back to Camp Registry</a>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Edit Camp Details</h1>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
+        <form asp-action="Edit" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div>
+                <label asp-for="Name" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Camp Name</label>
+                <input asp-for="Name" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl" required />
+            </div>
+
+            <div>
+                <label asp-for="District" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">District</label>
+                <select asp-for="District" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    <option value="Dadu">Dadu</option>
+                    <option value="Sukkur">Sukkur</option>
+                    <option value="Larkana">Larkana</option>
+                    <option value="Khairpur">Khairpur</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Capacity" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Capacity</label>
+                    <input asp-for="Capacity" type="number" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+                <div>
+                    <label asp-for="CurrentFamilies" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Current Families</label>
+                    <input asp-for="CurrentFamilies" type="number" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Status" class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Status</label>
+                <select asp-for="Status" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    <option value="Active">Active</option>
+                    <option value="Full">Full</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+                <a asp-action="Index" class="px-5 py-2 text-xs font-semibold text-slate-600 rounded-xl">Cancel</a>
+                <button type="submit" class="px-6 py-2 text-xs font-bold text-white bg-cyan-600 rounded-xl">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
