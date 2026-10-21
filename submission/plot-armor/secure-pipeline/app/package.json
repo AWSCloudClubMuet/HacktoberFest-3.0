@@ -8,6 +8,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "lodash": "4.17.20",
+    "moment": "2.24.0"
   }
 }

@@ -4,6 +4,8 @@
 
 const express = require('express');
 const crypto = require('crypto');
+const _ = require('lodash');
+const moment = require('moment');
 const { query } = require('./db');
 
 const app = express();
@@ -33,15 +35,15 @@ app.get('/', (req, res) => {
 
 // overall camp status summary
 app.get('/api/status', (req, res) => {
-  const totalCapacity = camps.reduce((sum, c) => sum + c.capacity, 0);
-  const totalOccupants = camps.reduce((sum, c) => sum + c.occupants, 0);
+  const totalCapacity = _.sumBy(camps, 'capacity');
+  const totalOccupants = _.sumBy(camps, 'occupants');
   res.json({
     ok: true,
     camps: camps.length,
     totalCapacity,
     totalOccupants,
     utilization: `${Math.round((totalOccupants / totalCapacity) * 100)}%`,
-    generatedAt: new Date().toISOString(),
+    generatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
   });
 });
 
