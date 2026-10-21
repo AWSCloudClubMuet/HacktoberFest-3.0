@@ -1,101 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Reputation Profile — Campus Gig & SkillSwap Portal</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Student Freelancer Profile — Campus Gig & SkillSwap Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
   <!-- Navbar Mount -->
   <div id="navbar-mount"></div>
 
-  <main class="main-content">
-    <div id="loading" style="text-align: center; padding: 4rem; color: #64748b; font-weight: 600;">
-      <i class="fa-solid fa-circle-notch fa-spin"></i> Loading student profile and credentials...
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-20 text-slate-400 dark:text-slate-500 font-semibold text-sm">
+      <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-3xl mb-3 block"></i>
+      Loading student freelancer profile...
     </div>
 
-    <div id="profile-container" style="display: none; max-width: 960px; margin: 0 auto;">
+    <div id="profile-container" class="hidden space-y-6">
       
-      <!-- Profile Header Card -->
-      <div class="content-box" style="margin-bottom: 2rem; position: relative; overflow: hidden;">
-        <div style="height: 6px; background: var(--primary-gradient); position: absolute; top: 0; left: 0; right: 0;"></div>
+      <!-- Profile Header Card (Fiverr/Upwork Seller Header) -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors relative overflow-hidden">
         
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
-          <div style="display: flex; align-items: center; gap: 1.5rem;">
-            <div class="student-avatar" id="profile-avatar" style="width: 76px; height: 76px; font-size: 2rem; font-weight: 800; border-width: 2px;">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          
+          <div class="flex items-center gap-4 sm:gap-6">
+            <div id="profile-avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg shadow-emerald-600/20 flex-shrink-0">
               U
             </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
-                <h1 id="profile-name" style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; color: #0f172a;"></h1>
-                <span class="cat-badge" style="background: #e0e7ff; color: #4338ca; font-size: 0.72rem;">
-                  <i class="fa-solid fa-certificate"></i> Verified Student
+            
+            <div class="space-y-1">
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 id="profile-name" class="font-display font-black text-xl sm:text-2xl text-slate-900 dark:text-white"></h1>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                  <i class="fa-solid fa-certificate text-[10px]"></i> Verified Campus Student
                 </span>
               </div>
-              <div id="profile-meta" style="color: #64748b; font-size: 0.95rem; font-weight: 600;"></div>
-              <div id="profile-email" style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;">
-                <i class="fa-solid fa-envelope"></i> <span></span>
+              
+              <div id="profile-meta" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400"></div>
+              
+              <div class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 pt-0.5">
+                <i class="fa-solid fa-envelope"></i> <span id="profile-email"></span>
               </div>
             </div>
           </div>
 
-          <div>
-            <a href="create.html" class="btn-primary" style="font-size: 0.88rem; padding: 0.6rem 1.1rem;">
+          <div class="flex sm:flex-col items-center sm:items-end gap-2">
+            <a href="create.html" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-transform active:scale-95 inline-flex items-center gap-1.5">
               <i class="fa-solid fa-plus"></i> Post Opportunity
             </a>
           </div>
+
         </div>
 
-        <!-- Skills pills -->
-        <div style="margin-top: 1.5rem; border-top: 1px solid #f1f5f9; padding-top: 1.25rem;">
-          <div style="font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em;">
-            Verified Skills & Tools
-          </div>
-          <div id="profile-skills" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+        <!-- Verified Skills Tags -->
+        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+          <h3 class="text-xs font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider mb-2.5">
+            Core Competencies & Tools
+          </h3>
+          <div id="profile-skills" class="flex flex-wrap gap-2"></div>
         </div>
+
       </div>
 
-      <!-- Reputation & Computed Stats Row -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
-        <div class="stat-box" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Gigs Posted</div>
-          <div class="stat-number" id="stat-posted" style="font-size: 2.2rem; margin: 0.35rem 0;">0</div>
-          <div style="font-size: 0.75rem; color: #94a3b8;"><i class="fa-solid fa-bullhorn"></i> Campus creator</div>
+      <!-- Reputation & Computed Stats Grid (Never hardcoded) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gigs Created</div>
+          <div id="stat-posted" class="font-display font-black text-3xl text-slate-900 dark:text-white">0</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Opportunities posted</div>
         </div>
 
-        <div class="stat-box" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Gigs Completed</div>
-          <div class="stat-number" id="stat-completed" style="font-size: 2.2rem; margin: 0.35rem 0; color: #10b981;">0</div>
-          <div style="font-size: 0.75rem; color: #94a3b8;"><i class="fa-solid fa-check-circle"></i> Owner or applicant</div>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gigs Completed</div>
+          <div id="stat-completed" class="font-display font-black text-3xl text-emerald-600 dark:text-emerald-400">0</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner or accepted collaborator</div>
         </div>
 
-        <div class="stat-box" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Community Rating</div>
-          <div class="stat-number" id="stat-rating" style="font-size: 2.2rem; margin: 0.35rem 0; color: #eab308;">-</div>
-          <div id="stat-reviews-count" style="font-size: 0.75rem; color: #94a3b8;">0 reviews</div>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Community Rating</div>
+          <div id="stat-rating" class="font-display font-black text-3xl text-amber-500">N/A</div>
+          <div id="stat-reviews-count" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0 peer reviews</div>
         </div>
+
       </div>
 
-      <!-- Reviews Section -->
-      <div class="content-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
-          <h2 class="box-title" style="margin-bottom: 0;">
-            <i class="fa-solid fa-comments" style="color: var(--primary-600); margin-right: 6px;"></i> Peer Reviews & Ratings
+      <!-- Received Peer Reviews Section -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <h2 class="font-display font-extrabold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-comments text-emerald-600"></i> Peer Feedback & Testimonials
           </h2>
-          <span style="font-size: 0.85rem; color: #64748b;">Feedback given by gig partners</span>
+          <span class="text-xs text-slate-400">Verified collaboration reviews</span>
         </div>
 
-        <div id="reviews-list"></div>
+        <div id="reviews-list" class="space-y-3 pt-2"></div>
       </div>
+
     </div>
+
   </main>
 
-  <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Designed with professional Stitch & Lovable UI standards.</p>
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+      CampusGig &copy; 2026. Built with Node.js, Express & MongoDB.
+    </div>
   </footer>
 
+  <!-- Scripts -->
   <script type="module">
     import { api, initNavbar, getCurrentUserId, formatDate } from './js/app.js';
 
@@ -111,28 +148,28 @@
         const user = await api(`/users/${userId}`);
         const reviews = await api(`/reviews?user_id=${userId}`);
 
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('profile-container').style.display = 'block';
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('profile-container').classList.remove('hidden');
 
         document.getElementById('profile-name').textContent = user.name;
         document.getElementById('profile-avatar').textContent = user.name.charAt(0);
         document.getElementById('profile-meta').textContent = `${user.major} • Semester ${user.semester}`;
-        document.querySelector('#profile-email span').textContent = user.email;
+        document.getElementById('profile-email').textContent = user.email;
 
         // Skills
         document.getElementById('profile-skills').innerHTML = (user.skills || [])
           .map(s => `
-            <span class="badge-item" style="font-size: 0.82rem; padding: 0.35rem 0.75rem; background: #ffffff;">
-              <i class="fa-solid fa-check" style="color: #10b981;"></i> ${s}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> ${s}
             </span>
           `).join('');
 
-        // Stats
+        // Dynamic metrics
         document.getElementById('stat-posted').textContent = user.gigsPosted || 0;
         document.getElementById('stat-completed').textContent = user.gigsCompleted || 0;
-        
+
         if (user.averageRating !== null && user.averageRating !== undefined) {
-          document.getElementById('stat-rating').innerHTML = `${user.averageRating} <i class="fa-solid fa-star" style="font-size:1.3rem;"></i>`;
+          document.getElementById('stat-rating').textContent = `${user.averageRating} ★`;
         } else {
           document.getElementById('stat-rating').textContent = 'N/A';
         }
@@ -141,41 +178,44 @@
         // Reviews list
         const reviewsList = document.getElementById('reviews-list');
         if (!reviews || reviews.length === 0) {
-          reviewsList.innerHTML = `
-            <div style="text-align: center; padding: 2.5rem 1rem; color: #94a3b8;">
-              <i class="fa-solid fa-comment-slash" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
-              No peer reviews received yet. Completed gigs unlock peer ratings.
-            </div>
-          `;
+          reviewsList.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No reviews received yet. Completed gigs unlock peer reviews.</div>`;
         } else {
           reviewsList.innerHTML = reviews.map(r => `
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; transition: var(--transition);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.65rem;">
-                  <div class="student-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
                     ${r.reviewer_name.charAt(0)}
                   </div>
                   <div>
-                    <strong style="color: #0f172a; font-size: 0.95rem;">
-                      <a href="profile.html?id=${r.reviewer_id}" style="text-decoration: none; color: inherit;">${r.reviewer_name}</a>
+                    <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                      <a href="profile.html?id=${r.reviewer_id}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                        ${r.reviewer_name}
+                      </a>
                     </strong>
-                    <span style="color: #64748b; font-size: 0.8rem;">(${r.reviewer_major || 'Student'})</span>
-                    <div style="font-size: 0.78rem; color: #94a3b8;">
-                      Gig: <strong>${r.gig_title}</strong> • ${formatDate(r.created_at)}
-                    </div>
+                    <span class="text-[11px] text-slate-400">(${r.reviewer_major || 'Student'})</span>
                   </div>
                 </div>
-                <div style="color: #eab308; font-weight: 700; font-size: 0.95rem; background: #fefce8; padding: 0.25rem 0.65rem; border-radius: 999px; border: 1px solid #fef08a;">
-                  ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)} (${r.rating}/5)
+
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-amber-500 font-bold">${'★'.repeat(r.rating)} (${r.rating}/5)</span>
+                  <span class="text-[11px] text-slate-400">• ${formatDate(r.created_at)}</span>
                 </div>
               </div>
-              <p style="color: #334155; font-size: 0.92rem; line-height: 1.5; padding-left: 2.6rem;">${r.comment}</p>
+
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed pl-9">
+                "${r.comment}"
+              </p>
+              
+              <div class="text-[11px] text-slate-400 pl-9">
+                Gig: <span class="font-semibold text-slate-600 dark:text-slate-300">${r.gig_title}</span>
+              </div>
             </div>
           `).join('');
         }
 
       } catch (err) {
-        document.getElementById('loading').innerHTML = `<span style="color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Student profile not found.</span>`;
+        document.getElementById('loading').innerHTML = `<span class="text-rose-500 font-bold">Student profile not found.</span>`;
       }
     }
 

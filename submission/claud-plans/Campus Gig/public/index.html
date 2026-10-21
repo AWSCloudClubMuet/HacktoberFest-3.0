@@ -1,716 +1,549 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Gig & Marketplace — Modern React + Tailwind</title>
+  <title>Campus Gig & SkillSwap Portal — Student Freelance Marketplace</title>
   
-  <!-- Tailwind CSS CDN with custom config -->
+  <!-- Tailwind CSS CDN with dark mode enabled via class -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            brand: {
-              orange: '#ff5500',
-              orangeHover: '#e64c00',
-              peach: '#fdeee9',
-              powderBlue: '#e8f1f5',
-              softBlue: '#edf4f8',
-              softBeige: '#f7f5f2',
-              softPeach: '#fcf3ed',
-            }
-          },
           fontFamily: {
             sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
             display: ['Plus Jakarta Sans', 'sans-serif'],
           },
-          borderRadius: {
-            '3xl': '24px',
-            '4xl': '32px',
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
           }
         }
       }
     };
   </script>
 
-  <!-- Google Fonts & FontAwesome Icons -->
+  <!-- Google Fonts & FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- React 18 & ReactDOM & Babel for JSX -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <style>
-    body {
-      background: radial-gradient(circle at 10% 20%, #f1f5f9 0%, #e2e8f0 100%);
-      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    }
-    .custom-scroll::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 999px;
-    }
-  </style>
 </head>
-<body class="p-3 md:p-6 lg:p-8 min-h-screen flex items-center justify-center">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <div id="root" class="w-full max-w-[1440px]"></div>
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
 
-  <!-- React & Tailwind Application -->
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Hero Section (Upwork / Fiverr Marketplace Header) -->
+    <section class="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-slate-800 relative overflow-hidden">
+      <!-- Glow Accent -->
+      <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none"></div>
 
-    // Toast helper
-    function showAppToast(message, type = 'success') {
-      const el = document.createElement('div');
-      el.className = `fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 text-sm font-semibold ${
-        type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
-      }`;
-      el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i><span>${message}</span>`;
-      document.body.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 300);
-      }, 3500);
-    }
-
-    function App() {
-      // State
-      const [users, setUsers] = useState([]);
-      const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('campus_current_user') || 'u1');
-      const [activeCategory, setActiveCategory] = useState('All');
-      const [searchQuery, setSearchQuery] = useState('');
-      const [gigs, setGigs] = useState([]);
-      const [loadingGigs, setLoadingGigs] = useState(false);
-      const [activeTab, setActiveTab] = useState('marketplace'); // 'marketplace' or 'gigs'
-      const [wishlistCount, setWishlistCount] = useState(4);
-      const [quickApplyModal, setQuickApplyModal] = useState(null); // gig object
-      const [proposalMessage, setProposalMessage] = useState('');
-
-      const categories = [
-        'Electronics',
-        'Computers',
-        'Clothes',
-        'Arts & Crafts',
-        'Toys & Games',
-        'Jewelry',
-        'Beauty & Care',
-        'Mother & Kids',
-        'Home Design',
-        'Sports',
-        'Pet Supplies',
-        'Programming',
-        'Design',
-        'Writing',
-        'Tutoring'
-      ];
-
-      // Fetch users
-      useEffect(() => {
-        fetch('/users')
-          .then(res => res.json())
-          .then(data => setUsers(data))
-          .catch(e => console.error('Error fetching users:', e));
-      }, []);
-
-      // Fetch gigs from API
-      const loadGigs = () => {
-        setLoadingGigs(true);
-        const params = new URLSearchParams();
-        if (searchQuery.trim()) params.append('q', searchQuery.trim());
-        if (['Programming', 'Design', 'Writing', 'Tutoring'].includes(activeCategory)) {
-          params.append('category', activeCategory);
-        }
-
-        fetch(`/gigs?${params.toString()}`)
-          .then(res => res.json())
-          .then(data => {
-            setGigs(data || []);
-            setLoadingGigs(false);
-          })
-          .catch(err => {
-            console.error(err);
-            setLoadingGigs(false);
-          });
-      };
-
-      useEffect(() => {
-        loadGigs();
-      }, [activeCategory, searchQuery]);
-
-      const handleUserChange = (e) => {
-        const id = e.target.value;
-        setCurrentUserId(id);
-        localStorage.setItem('campus_current_user', id);
-        const selectedUser = users.find(u => u.id === id);
-        showAppToast(`Switched active user to ${selectedUser ? selectedUser.name : id}`);
-      };
-
-      // Submit quick application
-      const submitApplication = async (e) => {
-        e.preventDefault();
-        if (!quickApplyModal || !proposalMessage.trim()) return;
-
-        try {
-          const res = await fetch('/applications', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-user-id': currentUserId,
-            },
-            body: JSON.stringify({
-              gig_id: quickApplyModal.id,
-              message: proposalMessage.trim()
-            })
-          });
-
-          const data = await res.json();
-          if (!res.ok) {
-            showAppToast(data.error || 'Failed to submit application', 'error');
-            return;
-          }
-
-          showAppToast('Proposal submitted successfully!');
-          setQuickApplyModal(null);
-          setProposalMessage('');
-          loadGigs();
-        } catch (err) {
-          showAppToast(err.message, 'error');
-        }
-      };
-
-      const currentUser = users.find(u => u.id === currentUserId) || { name: 'Student', major: 'CSE' };
-
-      return (
-        <div className="bg-white rounded-3xl md:rounded-4xl shadow-2xl p-5 md:p-8 lg:p-10 border border-slate-100 transition-all">
-          
-          {/* ========================================================= */}
-          {/* 1. TOP HEADER & NAVIGATION                                */}
-          {/* ========================================================= */}
-          <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 md:pb-8 border-b border-slate-100">
-            
-            {/* Logo */}
-            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-              <a href="index.html" className="flex items-center gap-2.5 group">
-                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center relative overflow-hidden shadow-md group-hover:scale-105 transition-transform">
-                  <div className="w-3.5 h-3.5 rounded-full bg-brand-orange absolute -bottom-0.5 -right-0.5"></div>
-                  <div className="w-3 h-3 rounded-full bg-white opacity-90 absolute top-2 left-2"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-400 opacity-60 absolute bottom-2 left-2"></div>
-                </div>
-                <div>
-                  <span className="font-extrabold text-xl tracking-tight text-slate-900 block leading-tight font-display">
-                    Campus<span className="text-brand-orange">Gig</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Marketplace</span>
-                </div>
-              </a>
-
-              {/* Mobile View Toggle */}
-              <div className="md:hidden flex items-center gap-2">
-                <div className="relative p-2 text-slate-600">
-                  <i className="fa-solid fa-bag-shopping text-lg"></i>
-                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-brand-orange text-white text-[9px] font-bold flex items-center justify-center">
-                    {wishlistCount}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Pill Bar & Filters Button */}
-            <div className="flex items-center gap-2.5 w-full md:max-w-xl">
-              <div className="relative flex-1">
-                <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input
-                  type="text"
-                  placeholder="Search products, campus gigs, tutoring, design..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#f4f6f8] hover:bg-slate-100 focus:bg-white text-slate-900 text-sm font-medium rounded-full pl-11 pr-4 py-3 outline-none border border-transparent focus:border-brand-orange focus:ring-4 focus:ring-orange-500/10 transition-all placeholder:text-slate-400"
-                />
-                {searchQuery && (
-                  <button 
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs"
-                  >
-                    <i className="fa-solid fa-xmark"></i>
-                  </button>
-                )}
-              </div>
-
-              {/* Filter button */}
-              <button
-                onClick={() => setActiveTab(activeTab === 'marketplace' ? 'gigs' : 'marketplace')}
-                title="Toggle Mode"
-                className="w-11 h-11 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors flex-shrink-0"
-              >
-                <i className="fa-solid fa-sliders text-sm"></i>
-              </button>
-            </div>
-
-            {/* Right Action Icons & User Switcher */}
-            <div className="hidden md:flex items-center gap-3">
-              
-              {/* Shopping Bag with Badge */}
-              <button 
-                onClick={() => setWishlistCount(c => c + 1)}
-                className="relative w-10 h-10 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
-                title="My Basket"
-              >
-                <i className="fa-solid fa-bag-shopping text-sm"></i>
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand-orange text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
-                  {wishlistCount}
-                </span>
-              </button>
-
-              {/* Heart Wishlist */}
-              <button 
-                onClick={() => showAppToast('Saved to your campus wishlist!')}
-                className="w-10 h-10 rounded-full bg-[#f4f6f8] hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
-                title="Wishlist"
-              >
-                <i className="fa-regular fa-heart text-sm"></i>
-              </button>
-
-              {/* Role Switcher Pill: "Acting as" */}
-              <div className="flex items-center gap-2 bg-[#f4f6f8] border border-slate-200/80 rounded-full pl-2 pr-3 py-1.5 shadow-sm">
-                <img 
-                  src="assets/avatar.jpg" 
-                  alt="Student Avatar" 
-                  className="w-7 h-7 rounded-full object-cover border border-white shadow-xs" 
-                />
-                <select
-                  value={currentUserId}
-                  onChange={handleUserChange}
-                  className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer max-w-[130px] truncate"
-                >
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>
-                      {u.name} ({u.major})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-            </div>
-          </header>
-
-          {/* ========================================================= */}
-          {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT                         */}
-          {/* ========================================================= */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 md:pt-8">
-            
-            {/* Left Sidebar: Categories */}
-            <aside className="lg:col-span-2 space-y-4">
-              <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight font-display mb-3">
-                Categories
-              </h2>
-              
-              <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 custom-scroll">
-                <button
-                  onClick={() => setActiveCategory('All')}
-                  className={`text-left text-xs md:text-sm font-semibold px-3 py-2 rounded-xl transition-all whitespace-nowrap ${
-                    activeCategory === 'All' 
-                      ? 'bg-slate-900 text-white shadow-sm' 
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  All Items & Gigs
-                </button>
-
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`text-left text-xs md:text-sm font-medium px-3 py-1.5 rounded-xl transition-all whitespace-nowrap ${
-                      activeCategory === cat 
-                        ? 'bg-brand-orange text-white font-bold shadow-sm' 
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              {/* Quick links to core portal pages */}
-              <div className="hidden lg:block pt-6 border-t border-slate-100 space-y-2">
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Portal Pages</div>
-                <a href="create.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
-                  <i className="fa-solid fa-plus text-[10px] w-4"></i> Post a Gig
-                </a>
-                <a href="applications.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
-                  <i className="fa-solid fa-file-signature text-[10px] w-4"></i> My Applications
-                </a>
-                <a href="profile.html" className="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-brand-orange py-1">
-                  <i className="fa-solid fa-user text-[10px] w-4"></i> Student Profile
-                </a>
-              </div>
-            </aside>
-
-            {/* Right Main Content */}
-            <main className="lg:col-span-10 space-y-8">
-              
-              {/* ------------------------------------------------------- */}
-              {/* A. HERO PROMOTION BANNERS (Exact Match to Screenshot)  */}
-              {/* ------------------------------------------------------- */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                
-                {/* Big Sale Card (Left ~60%) */}
-                <div className="md:col-span-7 bg-[#fbf5f2] rounded-3xl md:rounded-4xl p-6 md:p-8 flex items-center justify-between relative overflow-hidden group shadow-xs hover:shadow-md transition-all">
-                  <div className="space-y-3 z-10 max-w-[240px]">
-                    <h3 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight font-display leading-tight">
-                      BIG SALE!
-                    </h3>
-                    <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed">
-                      Wireless headphones with noise canceling
-                    </p>
-                    <div className="pt-2">
-                      <button 
-                        onClick={() => showAppToast('Browsing wireless noise-canceling headphones!')}
-                        className="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold px-6 py-2.5 rounded-full shadow-lg shadow-orange-500/25 transition-transform group-hover:scale-105 active:scale-95"
-                      >
-                        Headphones
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* 3D Headphones Image */}
-                  <div className="w-[170px] md:w-[210px] lg:w-[240px] flex-shrink-0 relative group-hover:scale-105 transition-transform duration-300">
-                    <img 
-                      src="assets/headphones.jpg" 
-                      alt="3D Wireless Headphones" 
-                      className="w-full object-contain drop-shadow-xl"
-                    />
-                  </div>
-                </div>
-
-                {/* Stacked Right Promo Cards (Right ~40%) */}
-                <div className="md:col-span-5 flex flex-col gap-4">
-                  
-                  {/* Top Card: 20% OFF */}
-                  <div className="bg-[#fdeee9] rounded-3xl p-5 md:p-6 flex flex-col justify-center shadow-xs hover:shadow-md transition-all">
-                    <h4 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight font-display leading-snug">
-                      Get up to <span className="text-brand-orange">20%</span><br />OFF Headphones
-                    </h4>
-                    <p className="text-slate-500 text-xs font-medium mt-1">Exclusive student discounts</p>
-                  </div>
-
-                  {/* Bottom Card: Fujifilm Instax 11 */}
-                  <div className="bg-[#e8f1f5] rounded-3xl p-5 md:p-6 flex items-center justify-between relative overflow-hidden shadow-xs hover:shadow-md transition-all group">
-                    <div className="space-y-2 z-10">
-                      <h4 className="text-base md:text-lg font-black text-slate-900 tracking-tight font-display">
-                        Fujifilm Instax 11
-                      </h4>
-                      <button 
-                        onClick={() => showAppToast('Browsing Fujifilm Instax rental & sale!')}
-                        className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold px-4 py-2 rounded-full shadow-sm transition-transform group-hover:scale-105"
-                      >
-                        Shop now
-                      </button>
-                    </div>
-                    
-                    {/* 3D Instax Camera Image */}
-                    <div className="w-[90px] md:w-[110px] flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                      <img 
-                        src="assets/instax.jpg" 
-                        alt="Fujifilm Instax 11" 
-                        className="w-full object-contain drop-shadow-md"
-                      />
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* ------------------------------------------------------- */}
-              {/* B. EXPLORE POPULAR CATEGORIES (Exact to Screenshot)    */}
-              {/* ------------------------------------------------------- */}
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight font-display">
-                    Explore popular categories
-                  </h3>
-                  <button 
-                    onClick={() => setActiveTab('gigs')}
-                    className="text-xs font-bold text-slate-400 hover:text-slate-800 flex items-center gap-1 transition-colors"
-                  >
-                    See all <i className="fa-solid fa-arrow-right text-[10px]"></i>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  
-                  {/* Card 1: Household goods */}
-                  <div 
-                    onClick={() => { setActiveCategory('Home Design'); showAppToast('Filtered by Household Goods'); }}
-                    className="bg-brand-softBlue rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
-                  >
-                    <div className="w-full flex justify-start">
-                      <span className="bg-slate-400/20 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        -30%
-                      </span>
-                    </div>
-                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
-                      <img src="assets/kettle.jpg" alt="Household Goods" className="h-full object-contain drop-shadow-sm" />
-                    </div>
-                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
-                      Household goods
-                    </span>
-                  </div>
-
-                  {/* Card 2: Game controllers */}
-                  <div 
-                    onClick={() => { setActiveCategory('Computers'); showAppToast('Filtered by Game Controllers'); }}
-                    className="bg-brand-softBeige rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
-                  >
-                    <div className="w-full flex justify-start">
-                      <span className="bg-slate-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
-                        New
-                      </span>
-                    </div>
-                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
-                      <img src="assets/controller.jpg" alt="Game Controllers" className="h-full object-contain drop-shadow-sm" />
-                    </div>
-                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
-                      Game controllers
-                    </span>
-                  </div>
-
-                  {/* Card 3: Accessories */}
-                  <div 
-                    onClick={() => { setActiveCategory('Clothes'); showAppToast('Filtered by Accessories'); }}
-                    className="bg-[#f0f3f6] rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
-                  >
-                    <div className="w-full flex justify-start opacity-0">
-                      <span className="text-[10px]">-</span>
-                    </div>
-                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
-                      <img src="assets/totebag.jpg" alt="Accessories" className="h-full object-contain drop-shadow-sm" />
-                    </div>
-                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
-                      Accessories
-                    </span>
-                  </div>
-
-                  {/* Card 4: Furniture */}
-                  <div 
-                    onClick={() => { setActiveCategory('Home Design'); showAppToast('Filtered by Furniture'); }}
-                    className="bg-brand-softPeach rounded-3xl p-4 flex flex-col justify-between items-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all relative group"
-                  >
-                    <div className="w-full flex justify-start opacity-0">
-                      <span className="text-[10px]">-</span>
-                    </div>
-                    <div className="h-28 md:h-32 flex items-center justify-center my-1 group-hover:scale-110 transition-transform">
-                      <img src="assets/armchair.jpg" alt="Furniture" className="h-full object-contain drop-shadow-sm" />
-                    </div>
-                    <span className="text-xs md:text-sm font-bold text-slate-800 text-center">
-                      Furniture
-                    </span>
-                  </div>
-
-                </div>
-              </section>
-
-              {/* ------------------------------------------------------- */}
-              {/* C. CAMPUS GIGS & OPPORTUNITIES LIVE FEED               */}
-              {/* ------------------------------------------------------- */}
-              <section className="pt-4 border-t border-slate-100 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight font-display">
-                      Student Micro-Gigs & Peer SkillSwaps
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      Live data connected to Node.js & Express REST API ({gigs.length} opportunities available)
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <a 
-                      href="create.html" 
-                      className="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold px-4 py-2 rounded-full shadow-md shadow-orange-500/20 inline-flex items-center gap-1.5 transition-transform hover:scale-105"
-                    >
-                      <i className="fa-solid fa-plus text-[10px]"></i> Post New Gig
-                    </a>
-                  </div>
-                </div>
-
-                {loadingGigs ? (
-                  <div className="text-center py-12 text-slate-400 font-semibold text-sm">
-                    <i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Loading opportunities...
-                  </div>
-                ) : gigs.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-100">
-                    <div className="text-3xl text-slate-300 mb-2"><i class="fa-solid fa-inbox"></i></div>
-                    <p className="text-sm font-bold text-slate-700">No gigs found for this filter.</p>
-                    <button 
-                      onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
-                      className="mt-3 text-xs font-bold text-brand-orange underline"
-                    >
-                      Reset filters
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {gigs.map(gig => {
-                      const isOwner = gig.owner_id === currentUserId;
-                      const isOpen = gig.status === 'Open';
-
-                      return (
-                        <div 
-                          key={gig.id}
-                          className="bg-[#fbfcfd] hover:bg-white rounded-3xl p-5 border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all flex flex-col justify-between"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between gap-2 mb-3">
-                              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-200/70 text-slate-700">
-                                {gig.category}
-                              </span>
-
-                              {/* Status Badge */}
-                              <span className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
-                                gig.status === 'Open' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                                gig.status === 'In Progress' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                                gig.status === 'Completed' ? 'bg-purple-50 text-purple-600 border border-purple-200' :
-                                gig.status === 'Expired' ? 'bg-rose-50 text-rose-600 border border-rose-200 font-black' :
-                                'bg-slate-100 text-slate-600 border border-slate-200'
-                              }`}>
-                                {gig.status}
-                              </span>
-                            </div>
-
-                            <h4 className="text-sm md:text-base font-extrabold text-slate-900 leading-snug line-clamp-2 mb-1.5 font-display">
-                              <a href={`gig.html?id=${gig.id}`} className="hover:text-brand-orange transition-colors">
-                                {gig.title}
-                              </a>
-                            </h4>
-
-                            <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                              {gig.description}
-                            </p>
-
-                            <div className="flex items-center gap-2 flex-wrap mb-4">
-                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
-                                {gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}
-                              </span>
-
-                              <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-md ${
-                                gig.payment_type === 'Paid' ? 'bg-emerald-100/70 text-emerald-800' :
-                                gig.payment_type === 'SkillSwap' ? 'bg-blue-100/70 text-blue-800' :
-                                'bg-purple-100/70 text-purple-800'
-                              }`}>
-                                {gig.payment_type === 'Paid' ? `PKR ${Number(gig.budget || 0).toLocaleString()}` : gig.payment_type}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="pt-3 border-t border-slate-100/80 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">
-                                {(gig.owner_name || 'U').charAt(0)}
-                              </div>
-                              <span className="text-xs font-bold text-slate-700 truncate max-w-[90px]">
-                                {gig.owner_name}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-1.5">
-                              {isOpen && !isOwner && (
-                                <button
-                                  onClick={() => setQuickApplyModal(gig)}
-                                  className="text-xs font-bold bg-slate-900 hover:bg-brand-orange text-white px-3 py-1.5 rounded-full transition-all"
-                                >
-                                  Apply
-                                </button>
-                              )}
-                              <a 
-                                href={`gig.html?id=${gig.id}`}
-                                className="text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-full transition-all"
-                              >
-                                Details
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
-
-            </main>
-          </div>
-
-          {/* ========================================================= */}
-          {/* QUICK APPLY MODAL                                         */}
-          {/* ========================================================= */}
-          {quickApplyModal && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display font-black text-lg text-slate-900">
-                    Apply for Opportunity
-                  </h3>
-                  <button 
-                    onClick={() => setQuickApplyModal(null)}
-                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs"
-                  >
-                    <i className="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                  <div className="text-xs font-bold text-slate-900 line-clamp-1">{quickApplyModal.title}</div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">Posted by {quickApplyModal.owner_name}</div>
-                </div>
-
-                <form onSubmit={submitApplication} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">Your Proposal Message *</label>
-                    <textarea
-                      rows="3"
-                      required
-                      placeholder="Explain how you can help, your past tools/projects, and availability..."
-                      value={proposalMessage}
-                      onChange={(e) => setProposalMessage(e.target.value)}
-                      className="w-full text-xs font-medium bg-slate-50 focus:bg-white border border-slate-200 focus:border-brand-orange rounded-2xl p-3 outline-none transition-all placeholder:text-slate-400"
-                    ></textarea>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setQuickApplyModal(null)}
-                      className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 rounded-full text-xs font-bold bg-brand-orange hover:bg-brand-orangeHover text-white shadow-md shadow-orange-500/25"
-                    >
-                      Send Proposal
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
+      <div class="max-w-3xl space-y-4 relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide">
+          <i class="fa-solid fa-graduation-cap"></i> Verified University Student Marketplace
         </div>
-      );
+        
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight font-display">
+          Find Trusted Student Talent & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Swap Skills</span>
+        </h1>
+        
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+          Connect with peers across campus for technical development, UI/UX designs, academic research proofreading, and 1-on-1 exam tutoring.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="pt-2 max-w-2xl">
+          <div class="relative flex items-center">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-base"></i>
+            <input
+              type="text"
+              id="hero-search-input"
+              placeholder="Search by keywords, skills, or deliverables (e.g. Python, Figma, React, Proofreading)..."
+              class="w-full bg-white dark:bg-slate-800/90 text-slate-900 dark:text-white pl-12 pr-28 py-3.5 rounded-2xl text-sm font-medium outline-none border border-transparent focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 shadow-lg placeholder:text-slate-400 transition-all"
+            />
+            <button
+              id="hero-search-btn"
+              class="absolute right-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-transform active:scale-95"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Popular Tag Chips -->
+        <div class="pt-2 flex items-center gap-2 flex-wrap text-xs text-slate-300">
+          <span class="font-bold text-slate-400">Popular:</span>
+          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Node.js">Node.js</button>
+          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Figma">Figma UI/UX</button>
+          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Python">Python</button>
+          <button class="quick-chip hover:text-white px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition-colors" data-q="Tutoring">Tutoring</button>
+        </div>
+      </div>
+
+      <!-- Quick Platform Stats Cards -->
+      <div class="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
+        <div>
+          <div class="text-2xl font-black text-white font-display" id="stat-total-gigs">25</div>
+          <div class="text-xs text-slate-400 font-medium">Campus Opportunities</div>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-emerald-400 font-display" id="stat-open-gigs">8</div>
+          <div class="text-xs text-slate-400 font-medium">Open Right Now</div>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-white font-display">12</div>
+          <div class="text-xs text-slate-400 font-medium">Verified Students</div>
+        </div>
+        <div>
+          <div class="text-2xl font-black text-amber-400 font-display">4.8 ★</div>
+          <div class="text-xs text-slate-400 font-medium">Average Peer Rating</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Sort Bar (Upwork Style) -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
+      
+      <!-- Category Tabs Row -->
+      <div class="flex items-center justify-between gap-4 flex-wrap border-b border-slate-100 dark:border-slate-800/80 pb-4">
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 max-w-full" id="category-pills">
+          <button class="cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm" data-cat="">
+            <i class="fa-solid fa-border-all mr-1"></i> All Categories
+          </button>
+          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Programming">
+            <i class="fa-solid fa-code mr-1"></i> Programming
+          </button>
+          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Design">
+            <i class="fa-solid fa-pen-ruler mr-1"></i> Design
+          </button>
+          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Writing">
+            <i class="fa-solid fa-file-lines mr-1"></i> Writing
+          </button>
+          <button class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-cat="Tutoring">
+            <i class="fa-solid fa-graduation-cap mr-1"></i> Tutoring
+          </button>
+        </div>
+
+        <div class="text-xs font-bold text-slate-500 dark:text-slate-400">
+          Showing <span id="showing-count" class="text-slate-900 dark:text-white font-black">25</span> opportunities
+        </div>
+      </div>
+
+      <!-- Advanced Filter Controls -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 pt-1">
+        
+        <!-- Type Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Intent</label>
+          <select id="filter-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
+            <option value="">All Types</option>
+            <option value="Offering">📢 Offering Service</option>
+            <option value="Requesting">🙋 Requesting Help</option>
+          </select>
+        </div>
+
+        <!-- Compensation Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Compensation</label>
+          <select id="filter-payment" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
+            <option value="">All Types</option>
+            <option value="Paid">💰 Paid (PKR)</option>
+            <option value="SkillSwap">🤝 SkillSwap</option>
+            <option value="Free">🎁 Free</option>
+          </select>
+        </div>
+
+        <!-- Min Budget -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Min PKR</label>
+          <input
+            type="number"
+            id="filter-min-budget"
+            placeholder="0"
+            min="0"
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+          />
+        </div>
+
+        <!-- Max Budget -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Max PKR</label>
+          <input
+            type="number"
+            id="filter-max-budget"
+            placeholder="10000"
+            min="0"
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500"
+          />
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Status</label>
+          <select id="filter-status" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500">
+            <option value="">All Statuses</option>
+            <option value="Open">🟢 Open</option>
+            <option value="In Progress">🔵 In Progress</option>
+            <option value="Completed">🟣 Completed</option>
+            <option value="Expired">🔴 Expired</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="flex items-end">
+          <button
+            id="clear-filters-btn"
+            class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5"
+          >
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Marketplace Gigs List / Cards Grid -->
+    <section class="space-y-4">
+      
+      <div id="cards-loading" class="text-center py-16 text-slate-400 dark:text-slate-500 font-semibold text-sm">
+        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-2xl mb-2 block"></i>
+        Loading opportunities from campus...
+      </div>
+
+      <div id="no-results" class="hidden text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+        <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-3">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">No opportunities found</h3>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-sm mx-auto">
+          Try clearing your search terms or relaxing the filters.
+        </p>
+        <button id="reset-no-results-btn" class="mt-4 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
+          Reset All Filters
+        </button>
+      </div>
+
+      <!-- Upwork Style Job Grid -->
+      <div id="gigs-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+    </section>
+
+  </main>
+
+  <!-- Quick Proposal Modal -->
+  <div id="quick-modal" class="fixed inset-0 z-50 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="font-display font-extrabold text-lg text-slate-900 dark:text-white">
+          <i class="fa-solid fa-paper-plane text-emerald-600 mr-1.5"></i> Submit Proposal
+        </h3>
+        <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <div id="modal-gig-title" class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1"></div>
+        <div id="modal-gig-owner" class="text-xs text-slate-500 dark:text-slate-400 mt-1"></div>
+      </div>
+
+      <form id="quick-apply-form" class="space-y-4">
+        <input type="hidden" id="modal-gig-id" />
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+            Your Cover Letter / Proposal Message *
+          </label>
+          <textarea
+            id="modal-message"
+            rows="4"
+            required
+            placeholder="Explain why you are the ideal student for this gig, what tools you will use, and your estimated completion time..."
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 placeholder:text-slate-400"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2.5 pt-2">
+          <button type="button" id="cancel-modal-btn" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30">
+            Send Proposal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Professional Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800 dark:text-white">CampusGig & SkillSwap</span>
+        <span>•</span>
+        <span>Peer Freelancing for University Students</span>
+      </div>
+      <div>Built with Node.js, Express, MongoDB & Tailwind CSS</div>
+    </div>
+  </footer>
+
+  <!-- Page Scripts -->
+  <script type="module">
+    import { api, initNavbar, renderStatusBadge, renderPaymentBadge, formatDate, getCurrentUserId, showToast } from './js/app.js';
+
+    let currentCategory = '';
+    const heroInput = document.getElementById('hero-search-input');
+    const heroBtn = document.getElementById('hero-search-btn');
+    const filterType = document.getElementById('filter-type');
+    const filterPayment = document.getElementById('filter-payment');
+    const filterMinBudget = document.getElementById('filter-min-budget');
+    const filterMaxBudget = document.getElementById('filter-max-budget');
+    const filterStatus = document.getElementById('filter-status');
+    const clearBtn = document.getElementById('clear-filters-btn');
+    const resetNoResultsBtn = document.getElementById('reset-no-results-btn');
+    const gigsGrid = document.getElementById('gigs-grid');
+    const cardsLoading = document.getElementById('cards-loading');
+    const noResults = document.getElementById('no-results');
+    const showingCount = document.getElementById('showing-count');
+
+    // Modal elements
+    const quickModal = document.getElementById('quick-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+    const quickApplyForm = document.getElementById('quick-apply-form');
+
+    function closeModal() {
+      quickModal.classList.add('hidden');
+      quickModal.classList.remove('flex');
+      document.getElementById('modal-message').value = '';
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+
+    async function loadGigs() {
+      cardsLoading.classList.remove('hidden');
+      gigsGrid.classList.add('hidden');
+      noResults.classList.add('hidden');
+
+      const params = new URLSearchParams();
+      if (currentCategory) params.append('category', currentCategory);
+      if (heroInput.value.trim()) params.append('q', heroInput.value.trim());
+      if (filterType.value) params.append('type', filterType.value);
+      if (filterPayment.value) params.append('payment_type', filterPayment.value);
+      if (filterMinBudget.value) params.append('minBudget', filterMinBudget.value);
+      if (filterMaxBudget.value) params.append('maxBudget', filterMaxBudget.value);
+      if (filterStatus.value) params.append('status', filterStatus.value);
+
+      try {
+        const gigs = await api(`/gigs?${params.toString()}`);
+        cardsLoading.classList.add('hidden');
+
+        if (!gigs || gigs.length === 0) {
+          noResults.classList.remove('hidden');
+          showingCount.textContent = '0';
+          return;
+        }
+
+        showingCount.textContent = gigs.length;
+        gigsGrid.classList.remove('hidden');
+
+        const currentUserId = getCurrentUserId();
+
+        gigsGrid.innerHTML = gigs.map(gig => {
+          const isOwner = gig.owner_id === currentUserId;
+          const isOpen = gig.status === 'Open';
+
+          // Category icon
+          const catIcon = gig.category === 'Programming' ? 'fa-code' : gig.category === 'Design' ? 'fa-pen-ruler' : gig.category === 'Writing' ? 'fa-file-lines' : 'fa-graduation-cap';
+
+          return `
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group">
+              <div>
+                
+                <!-- Card Top: Category & Status -->
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    <i class="fa-solid ${catIcon} text-emerald-600 dark:text-emerald-400"></i> ${gig.category}
+                  </span>
+                  ${renderStatusBadge(gig.status)}
+                </div>
+
+                <!-- Title -->
+                <h3 class="font-display font-extrabold text-base sm:text-lg text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <a href="gig.html?id=${gig.id}">
+                    ${gig.title}
+                  </a>
+                </h3>
+
+                <!-- Description Snippet -->
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed font-normal">
+                  ${gig.description}
+                </p>
+
+                <!-- Compensation & Due date metadata -->
+                <div class="flex items-center gap-2 flex-wrap mb-4">
+                  ${renderPaymentBadge(gig.payment_type, gig.budget)}
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    ${gig.type === 'Offering' ? '📢 Offering' : '🙋 Requesting'}
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 text-slate-500 dark:text-slate-400">
+                    <i class="fa-regular fa-clock"></i> Due ${formatDate(gig.deadline)}
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- Card Footer: Owner Info & Action Buttons -->
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs">
+                    ${(gig.owner_name || 'U').charAt(0)}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${gig.owner_name}</div>
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${gig.owner_major || 'Student'} • ${gig.application_count || 0} applied</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  ${isOpen && !isOwner ? `
+                    <button 
+                      class="btn-apply-quick px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-transform active:scale-95"
+                      data-id="${gig.id}"
+                      data-title="${gig.title.replace(/"/g, '&quot;')}"
+                      data-owner="${gig.owner_name}"
+                    >
+                      Apply
+                    </button>
+                  ` : ''}
+
+                  <a 
+                    href="gig.html?id=${gig.id}" 
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Details <i class="fa-solid fa-arrow-right text-[10px] ml-0.5"></i>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Attach Quick Apply Modal buttons
+        document.querySelectorAll('.btn-apply-quick').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('modal-gig-id').value = btn.dataset.id;
+            document.getElementById('modal-gig-title').textContent = btn.dataset.title;
+            document.getElementById('modal-gig-owner').textContent = `Created by: ${btn.dataset.owner}`;
+            quickModal.classList.remove('hidden');
+            quickModal.classList.add('flex');
+          });
+        });
+
+        // Update open count
+        const openCount = gigs.filter(g => g.status === 'Open').length;
+        document.getElementById('stat-open-gigs').textContent = openCount;
+
+      } catch (err) {
+        cardsLoading.classList.add('hidden');
+        noResults.classList.remove('hidden');
+      }
+    }
+
+    // Quick Apply Form Submission
+    quickApplyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const gigId = document.getElementById('modal-gig-id').value;
+      const message = document.getElementById('modal-message').value.trim();
+
+      if (!message) return;
+
+      try {
+        await api('/applications', {
+          method: 'POST',
+          body: JSON.stringify({ gig_id: gigId, message }),
+        });
+        showToast('Proposal submitted successfully! Check My Applications.', 'success');
+        closeModal();
+        loadGigs();
+      } catch (err) {}
+    });
+
+    // Category Tabs click handler
+    document.getElementById('category-pills').addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-pill');
+      if (!btn) return;
+      document.querySelectorAll('#category-pills .cat-pill').forEach(b => {
+        b.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+      });
+      btn.className = 'cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
+      currentCategory = btn.dataset.cat || '';
+      loadGigs();
+    });
+
+    // Quick chips in hero
+    document.querySelectorAll('.quick-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        heroInput.value = chip.dataset.q;
+        loadGigs();
+      });
+    });
+
+    // Debounced search
+    let debounceTimer;
+    heroInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 250);
+    });
+    heroBtn.addEventListener('click', loadGigs);
+
+    filterType.addEventListener('change', loadGigs);
+    filterPayment.addEventListener('change', loadGigs);
+    filterStatus.addEventListener('change', loadGigs);
+
+    filterMinBudget.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 300);
+    });
+    filterMaxBudget.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadGigs, 300);
+    });
+
+    function resetAllFilters() {
+      heroInput.value = '';
+      filterType.value = '';
+      filterPayment.value = '';
+      filterMinBudget.value = '';
+      filterMaxBudget.value = '';
+      filterStatus.value = '';
+      currentCategory = '';
+      document.querySelectorAll('#category-pills .cat-pill').forEach(b => {
+        b.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+      });
+      document.querySelector('#category-pills .cat-pill[data-cat=""]').className = 'cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
+      loadGigs();
+    }
+
+    clearBtn.addEventListener('click', resetAllFilters);
+    resetNoResultsBtn.addEventListener('click', resetAllFilters);
+
+    initNavbar('browse');
+    loadGigs();
   </script>
 </body>
 </html>

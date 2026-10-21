@@ -1,142 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Applications — Campus Gig & SkillSwap Portal</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>My Proposals & Applications — Campus Gig & SkillSwap Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
   <!-- Navbar Mount -->
   <div id="navbar-mount"></div>
 
-  <main class="main-content">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Page Header & Action -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="hero-title" style="text-align: left; font-size: 2.2rem; margin-bottom: 0.35rem;">
-          My Applications <span>Dashboard</span>
+        <h1 class="font-display font-black text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
+          My Submitted <span class="text-emerald-600 dark:text-emerald-400">Proposals</span>
         </h1>
-        <p style="color: #64748b; font-size: 0.95rem;">
-          Track all your submitted gig proposals, review acceptances, and monitor peer collaboration statuses.
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          Track the status of your micro-gig proposals, client responses, and accepted collaborations.
         </p>
       </div>
-      <a href="index.html" class="btn-primary">
-        <i class="fa-solid fa-compass"></i> Explore Gigs
+
+      <a href="index.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-transform active:scale-95">
+        <i class="fa-solid fa-compass"></i> Explore More Gigs
       </a>
     </div>
 
-    <!-- Filter Tabs Row -->
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;" id="status-tabs">
-      <button class="cat-btn active" data-status="">All Applications (<span id="count-all">0</span>)</button>
-      <button class="cat-btn" data-status="Pending"><i class="fa-solid fa-clock" style="color: #f59e0b;"></i> Pending (<span id="count-pending">0</span>)</button>
-      <button class="cat-btn" data-status="Accepted"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Accepted (<span id="count-accepted">0</span>)</button>
-      <button class="cat-btn" data-status="Rejected"><i class="fa-solid fa-circle-xmark" style="color: #ef4444;"></i> Rejected (<span id="count-rejected">0</span>)</button>
+    <!-- Filter Tabs (Upwork Proposals Status Tabs) -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-1" id="status-tabs">
+      <button class="status-tab active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm" data-status="">
+        All Proposals (<span id="count-all">0</span>)
+      </button>
+      <button class="status-tab px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" data-status="Pending">
+        <i class="fa-solid fa-clock text-amber-500 mr-1"></i> Pending (<span id="count-pending">0</span>)
+      </button>
+      <button class="status-tab px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" data-status="Accepted">
+        <i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Accepted (<span id="count-accepted">0</span>)
+      </button>
+      <button class="status-tab px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" data-status="Rejected">
+        <i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Rejected (<span id="count-rejected">0</span>)
+      </button>
     </div>
 
-    <div class="content-box">
-      <div id="loading" style="text-align: center; padding: 3rem; color: #64748b; font-weight: 600;">
-        <i class="fa-solid fa-circle-notch fa-spin"></i> Loading your application history...
+    <!-- Table Container -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+      
+      <div id="loading" class="text-center py-16 text-slate-400 dark:text-slate-500 font-semibold text-sm">
+        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-2xl mb-2 block"></i>
+        Loading your proposal records...
       </div>
 
-      <div id="empty-state" style="display: none; text-align: center; padding: 4rem 1rem;">
-        <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 0.75rem;"><i class="fa-solid fa-file-circle-question"></i></div>
-        <h3 style="font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">No applications in this view</h3>
-        <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't submitted any proposals matching this status filter.</p>
-        <a href="index.html" class="btn-primary">Browse Marketplace Opportunities →</a>
+      <div id="empty-state" class="hidden text-center py-16 px-4">
+        <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-3">
+          <i class="fa-regular fa-folder-open"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white">No proposals found</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+          You haven't submitted any proposals under this status filter.
+        </p>
+        <a href="index.html" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
+          Browse Open Gigs →
+        </a>
       </div>
 
-      <div class="table-wrap" id="table-wrap" style="display: none;">
-        <table class="custom-table">
+      <div id="table-wrap" class="hidden overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
-            <tr>
-              <th>Opportunity & Category</th>
-              <th>Creator</th>
-              <th>Compensation</th>
-              <th>Gig Status</th>
-              <th>Application Status & Stepper</th>
-              <th>Applied Date</th>
-              <th>Action</th>
+            <tr class="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">
+              <th class="p-4 sm:p-5">Opportunity & Category</th>
+              <th class="p-4 sm:p-5">Creator</th>
+              <th class="p-4 sm:p-5">Compensation</th>
+              <th class="p-4 sm:p-5">Gig Status</th>
+              <th class="p-4 sm:p-5">Proposal Status</th>
+              <th class="p-4 sm:p-5">Submitted Date</th>
+              <th class="p-4 sm:p-5 text-right">Action</th>
             </tr>
           </thead>
-          <tbody id="apps-tbody"></tbody>
+          <tbody id="apps-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
         </table>
       </div>
+
     </div>
+
   </main>
 
-  <footer class="footer">
-    <p>Campus Gig & SkillSwap Portal &copy; 2026. Designed with professional Stitch & Lovable UI standards.</p>
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+      CampusGig &copy; 2026. Built with Node.js, Express & MongoDB.
+    </div>
   </footer>
 
+  <!-- Scripts -->
   <script type="module">
     import { api, initNavbar, renderStatusBadge, renderPaymentBadge, formatDate, getCurrentUserId } from './js/app.js';
 
     let allApps = [];
-    let currentStatusFilter = '';
+    let currentFilter = '';
 
-    function renderApps() {
+    function renderTable() {
       const loading = document.getElementById('loading');
       const emptyState = document.getElementById('empty-state');
       const tableWrap = document.getElementById('table-wrap');
       const tbody = document.getElementById('apps-tbody');
 
-      loading.style.display = 'none';
+      loading.classList.add('hidden');
 
       let filtered = allApps;
-      if (currentStatusFilter) {
-        filtered = allApps.filter(a => a.status === currentStatusFilter);
+      if (currentFilter) {
+        filtered = allApps.filter(a => a.status === currentFilter);
       }
 
       if (filtered.length === 0) {
-        emptyState.style.display = 'block';
-        tableWrap.style.display = 'none';
+        emptyState.classList.remove('hidden');
+        tableWrap.classList.add('hidden');
         return;
       }
 
-      emptyState.style.display = 'none';
-      tableWrap.style.display = 'block';
+      emptyState.classList.add('hidden');
+      tableWrap.classList.remove('hidden');
 
       tbody.innerHTML = filtered.map(a => {
         const isAccepted = a.status === 'Accepted';
         const isRejected = a.status === 'Rejected';
 
         return `
-          <tr>
-            <td>
-              <strong style="color: #0f172a; font-size: 0.95rem;">
-                <a href="gig.html?id=${a.gig_id}" style="text-decoration: none; color: inherit;" class="card-title">
-                  ${a.gig_title}
-                </a>
-              </strong>
-              <div style="margin-top: 0.3rem;">
-                <span class="cat-badge ${a.gig_category}">${a.gig_category}</span>
-              </div>
-            </td>
-            <td>
-              <div style="font-weight: 600; color: #0f172a;">${a.gig_owner_name}</div>
-              <div style="font-size: 0.75rem; color: #64748b;">Creator</div>
-            </td>
-            <td>${renderPaymentBadge(a.gig_payment_type, a.gig_budget)}</td>
-            <td>${renderStatusBadge(a.effective_gig_status)}</td>
-            <td>
-              <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
-                <span class="status-pill ${a.status}">
-                  <i class="fa-solid ${isAccepted ? 'fa-check-double' : isRejected ? 'fa-xmark' : 'fa-hourglass-half'}"></i>
-                  ${a.status}
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="p-4 sm:p-5">
+              <a href="gig.html?id=${a.gig_id}" class="font-extrabold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-1">
+                ${a.gig_title}
+              </a>
+              <div class="mt-1">
+                <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  ${a.gig_category}
                 </span>
               </div>
-              <div style="font-size: 0.78rem; color: #475569; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${a.message}">
-                "${a.message}"
-              </div>
             </td>
-            <td style="color: #64748b; font-size: 0.85rem;">
-              <i class="fa-solid fa-calendar-check" style="color: #94a3b8; margin-right: 4px;"></i>
+            <td class="p-4 sm:p-5">
+              <div class="font-bold text-slate-900 dark:text-white">${a.gig_owner_name}</div>
+              <div class="text-[11px] text-slate-400">Owner</div>
+            </td>
+            <td class="p-4 sm:p-5">
+              ${renderPaymentBadge(a.gig_payment_type, a.gig_budget)}
+            </td>
+            <td class="p-4 sm:p-5">
+              ${renderStatusBadge(a.effective_gig_status)}
+            </td>
+            <td class="p-4 sm:p-5">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                isAccepted 
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                  : isRejected
+                  ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
+                  : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+              }">
+                <i class="fa-solid ${isAccepted ? 'fa-check' : isRejected ? 'fa-xmark' : 'fa-hourglass-half'}"></i>
+                ${a.status}
+              </span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 max-w-[200px] truncate" title="${a.message}">"${a.message}"</p>
+            </td>
+            <td class="p-4 sm:p-5 text-slate-500 dark:text-slate-400 whitespace-nowrap">
               ${formatDate(a.created_at)}
             </td>
-            <td>
-              <a href="gig.html?id=${a.gig_id}" class="btn-card-action" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                View Gig <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <td class="p-4 sm:p-5 text-right whitespace-nowrap">
+              <a href="gig.html?id=${a.gig_id}" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                View Gig →
               </a>
             </td>
           </tr>
@@ -149,26 +201,27 @@
       try {
         allApps = await api(`/applications?applicant_id=${currentUserId}`);
 
-        // Update counts
         document.getElementById('count-all').textContent = allApps.length;
         document.getElementById('count-pending').textContent = allApps.filter(a => a.status === 'Pending').length;
         document.getElementById('count-accepted').textContent = allApps.filter(a => a.status === 'Accepted').length;
         document.getElementById('count-rejected').textContent = allApps.filter(a => a.status === 'Rejected').length;
 
-        renderApps();
+        renderTable();
       } catch (err) {
-        document.getElementById('loading').innerHTML = `<span style="color:#ef4444;"><i class="fa-solid fa-circle-exclamation"></i> Error loading applications.</span>`;
+        document.getElementById('loading').innerHTML = `<span class="text-rose-500 font-bold">Error loading applications.</span>`;
       }
     }
 
-    // Status filter clicks
+    // Tabs filter listener
     document.getElementById('status-tabs').addEventListener('click', (e) => {
-      const btn = e.target.closest('.cat-btn');
+      const btn = e.target.closest('.status-tab');
       if (!btn) return;
-      document.querySelectorAll('#status-tabs .cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentStatusFilter = btn.dataset.status || '';
-      renderApps();
+      document.querySelectorAll('#status-tabs .status-tab').forEach(b => {
+        b.className = 'status-tab px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800';
+      });
+      btn.className = 'status-tab active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
+      currentFilter = btn.dataset.status || '';
+      renderTable();
     });
 
     initNavbar('applications');
