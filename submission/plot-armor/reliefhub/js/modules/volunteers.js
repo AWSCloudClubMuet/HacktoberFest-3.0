@@ -99,6 +99,65 @@
       return root;
     },
 
+    /* ---------- assignment: one camp at a time, never a Closed camp ---------- */
+    async openAssign(volunteer) {
+      let camps;
+      try { camps = await API.list('camps'); }
+      catch (err) { UI.toast('Could not load camps: ' + err.message, 'error'); return; }
+
+      /* closed camps can't take volunteers — keep them out of the picker */
+      const openCamps = camps.filter(c => c.status !== 'Closed');
+      if (!openCamps.length) {
+        UI.toast('No open camps available for assignment', 'error');
+        return;
+      }
+
+      const campSelect = UI.h('select', {}, openCamps.map(c =>
+        UI.h('option', { value: String(c.id) }, `${c.name} (${c.district}) — ${c.status}`)));
+      if (volunteer.camp_id != null) {
+        const current = openCamps.find(c => c.id === volunteer.camp_id);
+        if (current) campSelect.value = String(current.id); /* preselect current camp for reassignment */
+      }
+      const note = UI.h('p', { class: 'hint' },
+        `${volunteer.name} can only hold one camp assignment — assigning moves them from their current camp. Closed camps are not listed.`);
+
+      const { close } = UI.modal(`Assign ${volunteer.name}`, UI.h('div', {}, [
+        UI.h('div', { class: 'form' }, [
+          UI.h('label', { class: 'field' }, [UI.h('span', {}, 'Camp'), campSelect]),
+        ]),
+        note,
+        UI.h('div', { class: 'form-actions' }, [
+          UI.h('button', { class: 'btn btn-ghost', onclick: () => close() }, 'Cancel'),
+          UI.h('button', { class: 'btn btn-primary', onclick: async () => {
+              const camp = camps.find(c => c.id === +campSelect.value);
+              if (!camp) { UI.toast('Pick a camp first', 'error'); return; }
+              if (camp.status === 'Closed') { UI.toast('Cannot assign a volunteer to a Closed camp', 'error'); return; }
+              try {
+                /* camp_id is a single field, so this replaces any previous assignment */
+                await API.update('volunteers', volunteer.id, { camp_id: camp.id });
+                UI.toast(`${volunteer.name} assigned to ${camp.name}`, 'success');
+                close();
+                App.render();
+              } catch (err) {
+                UI.toast('Could not assign volunteer: ' + err.message, 'error');
+              }
+            } }, 'Assign'),
+        ]),
+      ]));
+    },
+
+    async unassign(volunteer) {
+      if (volunteer.camp_id == null) return;
+      if (!UI.confirm(`Unassign ${volunteer.name} from their camp? They will be marked available.`)) return;
+      try {
+        await API.update('volunteers', volunteer.id, { camp_id: null });
+        UI.toast(`${volunteer.name} is now available`, 'success');
+        App.render();
+      } catch (err) {
+        UI.toast('Could not unassign volunteer: ' + err.message, 'error');
+      }
+    },
+
     /* ---------- register: name + one of the five fixed skills ---------- */
     openRegister() {
       const form = UI.form([
