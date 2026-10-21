@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* User-Specified Light Theme */
+  --bg-page: #F5F7FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-secondary: #EDF2F7;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #E2E8F0;
+  --bg-input: #FFFFFF;
+  --text-primary: #172033;
+  --text-secondary: #526176;
+  --text-muted: #718096;
+  --border-color: #D8E0EA;
+  --border-subtle: #E8EEF5;
+  --primary-emerald: #008F72;
+  --primary-emerald-hover: #00765E;
+  --primary-emerald-light: #E6F5F1;
+  --primary-emerald-text: #006853;
+  --accent-indigo: #5146D8;
+  --accent-indigo-light: #EEF0FD;
+  --accent-indigo-text: #4135BF;
+  --link-color: #315CCB;
+  --focus-outline: #008F72;
+
+  /* Badges */
+  --badge-programming: #EBF4FF;
+  --badge-programming-border: #BFDBFE;
+  --badge-programming-text: #1E40AF;
+  --badge-design: #FAF5FF;
+  --badge-design-border: #E9D5FF;
+  --badge-design-text: #6B21A8;
+  --badge-writing: #FFFBEB;
+  --badge-writing-border: #FDE68A;
+  --badge-writing-text: #92400E;
+  --badge-tutoring: #ECFDF5;
+  --badge-tutoring-border: #A7F3D0;
+  --badge-tutoring-text: #065F46;
+}
+
+.dark {
+  /* User-Specified Dark Theme */
+  --bg-page: #0B1020;
+  --bg-surface: #121A2B;
+  --bg-surface-secondary: #182338;
+  --bg-elevated: #182338;
+  --bg-hover: #202E45;
+  --bg-input: #10192A;
+  --text-primary: #F1F5FB;
+  --text-secondary: #B3C0D4;
+  --text-muted: #91A0B8;
+  --border-color: #2D3B52;
+  --border-subtle: #1D2A40;
+  --primary-emerald: #34D399;
+  --primary-emerald-hover: #6EE7B7;
+  --primary-emerald-light: rgba(52, 211, 153, 0.15);
+  --primary-emerald-text: #6EE7B7;
+  --accent-indigo: #A5B4FC;
+  --accent-indigo-light: rgba(165, 180, 252, 0.15);
+  --accent-indigo-text: #C7D2FE;
+  --link-color: #93B4FF;
+  --focus-outline: #7DD3FC;
+
+  /* Badges Dark */
+  --badge-programming: #172554;
+  --badge-programming-border: #1E3A8A;
+  --badge-programming-text: #93C5FD;
+  --badge-design: #2E1065;
+  --badge-design-border: #4C1D95;
+  --badge-design-text: #D8B4FE;
+  --badge-writing: #451A03;
+  --badge-writing-border: #78350F;
+  --badge-writing-text: #FDE68A;
+  --badge-tutoring: #064E3B;
+  --badge-tutoring-border: #065F46;
+  --badge-tutoring-text: #A7F3D0;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
