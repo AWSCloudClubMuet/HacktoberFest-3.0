@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sealed-Bid Auction House</title>
+<style>
+  :root {
+    --bg:#f7f8fa; --surface:#ffffff; --line:#e6e8ee; --line-2:#d5d9e2;
+    --text:#0f1522; --text-2:#4b5566; --muted:#8a93a3;
+    --brand:#2f6bff; --brand-ink:#1f4fd1; --brand-tint:#e9efff;
+    --mint:#dff6ec; --mint-ink:#0d7a52; --peach:#ffeadf; --peach-ink:#c2410c; --lilac:#ece8ff; --lilac-ink:#5b3fd6; --sun:#fff4cc; --sun-ink:#8a5a00;
+    --radius:16px; --radius-s:10px;
+    --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 var(--font); -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+
+  /* Top bar */
+  .bar { position:sticky; top:0; z-index:5; background:rgba(247,248,250,.85); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  .bar .in { max-width:1120px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .logo { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; }
+  .logo .mark { position:relative; width:28px; height:28px; }
+  .logo .mark i { position:absolute; display:block; }
+  .logo .mark .a { left:0; top:0; width:18px; height:18px; border-radius:50%; background:var(--brand); }
+  .logo .mark .b { right:0; top:4px; width:14px; height:14px; border-radius:4px; background:#ffb020; }
+  .logo .mark .c { left:6px; bottom:0; width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:14px solid #1ec28b; }
+  .chip { display:inline-flex; align-items:center; gap:8px; padding:6px 10px 6px 8px; border:1px solid var(--line); background:var(--surface); border-radius:999px; font-size:13px; color:var(--text-2); font-family:var(--mono); max-width:100%; }
+  .chip .dot { width:8px; height:8px; border-radius:50%; background:var(--line-2); }
+  .chip.on .dot { background:#1ec28b; }
+
+  .wrap { max-width:1120px; margin:0 auto; padding:28px 20px 60px; }
+
+  /* Hero */
+  .hero { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; align-items:center; margin:8px 0 26px; }
+  @media (max-width:900px) { .hero { grid-template-columns:1fr; } }
+  .hero h1 { font-size:40px; line-height:1.08; letter-spacing:-.025em; margin:0 0 10px; font-weight:800; }
+  .hero h1 span { color:var(--brand); }
+  .hero p { margin:0; color:var(--text-2); font-size:16px; max-width:52ch; }
+
+  /* Phase tracker */
+  .track { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; }
+  .track .ttl { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; display:flex; justify-content:space-between; }
+  .steps3 { display:grid; grid-template-columns:1fr 1fr 1fr; position:relative; }
+  .steps3:before { content:""; position:absolute; left:16.6%; right:16.6%; top:17px; height:3px; background:var(--line); border-radius:3px; }
+  .st { text-align:center; position:relative; }
+  .st .shape { width:36px; height:36px; margin:0 auto 8px; display:grid; place-items:center; background:var(--surface); border:3px solid var(--line-2); color:var(--muted); font-weight:700; font-size:13px; transition:all .25s; }
+  .st:nth-child(1) .shape { border-radius:50%; }
+  .st:nth-child(2) .shape { border-radius:9px; }
+  .st:nth-child(3) .shape { border-radius:50% 50% 8px 8px; }
+  .st b { display:block; font-size:13.5px; font-weight:600; }
+  .st small { color:var(--muted); font-size:12px; }
+  .st.done .shape { background:var(--brand); border-color:var(--brand); color:#fff; }
+  .st.now .shape { border-color:var(--brand); color:var(--brand); box-shadow:0 0 0 6px var(--brand-tint); }
+  .st.now b { color:var(--brand-ink); }
+
+  /* Layout */
+  .cols { display:grid; grid-template-columns:7fr 5fr; gap:20px; align-items:start; }
+  @media (max-width:900px) { .cols { grid-template-columns:1fr; } .side { position:static !important; } }
+  .side { position:sticky; top:72px; }
+
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; margin-bottom:16px; }
+  .card h2 { font-size:18px; margin:0; letter-spacing:-.01em; display:flex; align-items:center; gap:10px; }
+  .card .lead { color:var(--text-2); margin:6px 0 4px; font-size:14px; }
+  .ico { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; flex:0 0 auto; }
+  .ico svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .i-blue { background:var(--brand-tint); color:var(--brand-ink); } .i-mint { background:var(--mint); color:var(--mint-ink); }
+  .i-lilac { background:var(--lilac); color:var(--lilac-ink); } .i-peach { background:var(--peach); color:var(--peach-ink); } .i-sun { background:var(--sun); color:var(--sun-ink); }
+
+  label { display:block; font-size:12.5px; font-weight:600; color:var(--text-2); margin:12px 0 6px; }
+  input { width:100%; padding:10px 12px; border:1px solid var(--line-2); border-radius:var(--radius-s); background:#fff; font:inherit; color:var(--text); outline:none; transition:border .15s, box-shadow .15s; }
+  input.mono { font-family:var(--mono); font-size:13.5px; }
+  input:focus { border-color:var(--brand); box-shadow:0 0 0 4px var(--brand-tint); }
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  .row > div { flex:1; min-width:140px; }
+  button { font:inherit; font-weight:600; font-size:14px; padding:10px 16px; border-radius:var(--radius-s); border:1px solid var(--brand); background:var(--brand); color:#fff; cursor:pointer; margin:14px 8px 0 0; transition:transform .05s, background .15s; }
+  button:hover { background:var(--brand-ink); }
+  button:active { transform:translateY(1px); }
+  button.ghost { background:#fff; color:var(--text); border-color:var(--line-2); }
+  button.ghost:hover { background:var(--bg); }
+  button.sm { padding:7px 12px; font-size:13px; margin:0; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .hashbox { margin-top:10px; padding:10px 12px; background:var(--bg); border:1px dashed var(--line-2); border-radius:var(--radius-s); font-family:var(--mono); font-size:12.5px; color:var(--text-2); word-break:break-all; }
+  .tip { font-size:13px; color:var(--muted); margin:10px 0 0; }
+
+  /* Lot card */
+  .lot .top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .lot .top .pick { display:flex; align-items:center; gap:8px; }
+  .lot .top input { width:84px; text-align:center; font-family:var(--mono); padding:8px; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:12.5px; font-weight:600; }
+  .pill:before { content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+  .p0 { background:var(--brand-tint); color:var(--brand-ink); } .p1 { background:var(--sun); color:var(--sun-ink); } .p2 { background:#eef0f4; color:var(--text-2); } .p3 { background:var(--mint); color:var(--mint-ink); }
+  .item { font-size:20px; font-weight:700; letter-spacing:-.01em; margin:14px 0 2px; }
+  .tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:14px 0; }
+  .tile { background:var(--bg); border-radius:12px; padding:10px 12px; }
+  .tile small { display:block; font-size:11.5px; color:var(--muted); font-weight:600; letter-spacing:.03em; text-transform:uppercase; }
+  .tile span { display:block; font-weight:700; font-size:15px; margin-top:2px; word-break:break-word; }
+  .facts { font-size:13.5px; }
+  .facts div { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid var(--line); }
+  .facts div b { color:var(--muted); font-weight:500; white-space:nowrap; }
+  .facts div span { text-align:right; word-break:break-all; font-family:var(--mono); font-size:12.5px; }
+  .owed { display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--mint); color:var(--mint-ink); border-radius:12px; padding:10px 12px; margin-top:12px; font-weight:600; }
+  .owed button { margin:0; background:var(--mint-ink); border-color:var(--mint-ink); }
+
+  details { margin-top:12px; border:1px solid var(--line); border-radius:12px; padding:10px 14px; background:var(--surface); font-size:13.5px; }
+  summary { cursor:pointer; font-weight:600; color:var(--text-2); }
+  .inline { display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .inline input { width:90px; padding:7px 10px; }
+
+  /* Activity */
+  .feed { max-height:260px; overflow:auto; }
+  .feed div { display:grid; grid-template-columns:70px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--line); font-size:13px; }
+  .feed div:first-child { border-top:0; }
+  .feed time { color:var(--muted); font-family:var(--mono); font-size:12px; padding-top:1px; }
+  .feed .ok { color:var(--mint-ink); } .feed .bad { color:var(--peach-ink); } .feed .dim { color:var(--text-2); }
+  .feed .msg { word-break:break-word; }
+  footer { margin-top:20px; color:var(--muted); font-size:12.5px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="in">
+  <div class="logo"><span class="mark"><i class="a"></i><i class="b"></i><i class="c"></i></span>Sealed Bid</div>
+  <div class="chip" id="chipConn"><span class="dot"></span><span id="account">Not connected</span></div>
+</div></div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div>
+      <h1>Bid in secret.<br><span>Win in the open.</span></h1>
+      <p>Mehran University sells surplus equipment here. You lock in a hidden bid, everyone opens theirs later, and the contract settles the lot without ever touching your wallet uninvited.</p>
+    </div>
+    <div class="track">
+      <div class="ttl"><span>Where this lot is</span><span id="trackTime"></span></div>
+      <div class="steps3">
+        <div class="st" id="tl0"><div class="shape">1</div><b>Seal</b><small>bids are hidden</small></div>
+        <div class="st" id="tl1"><div class="shape">2</div><b>Open</b><small>bids are revealed</small></div>
+        <div class="st" id="tl2"><div class="shape">3</div><b>Settle</b><small>everyone gets paid</small></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <main>
+
+      <div class="card">
+        <h2><span class="ico i-blue"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="3"/><path d="M16 13h2"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg></span>Connect and load</h2>
+        <p class="lead">Plug in a wallet, then point the page at the auction house.</p>
+        <button id="btnConnect">Connect wallet</button>
+        <div class="row" style="align-items:flex-end">
+          <div style="flex:3"><label>Contract address</label><input id="contractAddr" class="mono" placeholder="0x… from forge create"></div>
+          <div style="flex:0 0 auto"><button id="btnLoad" class="ghost" style="margin-top:0">Load</button></div>
+        </div>
+        <div class="row tip"><div>Chain: <span id="chain">—</span></div><div>Balance: <span id="balance">—</span></div><div>Lots: <span id="auctionCount">—</span></div></div>
+      </div>
+
+      <div class="card">
+        <h2><span class="ico i-lilac"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>List an item</h2>
+        <p class="lead">For sellers. Set a floor, pick two windows, done.</p>
+        <label>What are you selling?</label>
+        <input id="cDesc" value="Dell OptiPlex 7090 desktop">
+        <div class="row">
+          <div><label>Reserve price (ETH)</label><input id="cReserve" class="mono" value="1"></div>
+          <div><label>Sealing window (min)</label><input id="cBidMin" type="number" value="10"></div>
+          <div><label>Opening window (min)</label><input id="cRevMin" type="number" value="10"></div>
+        </div>
+        <button id="btnCreate">List it</button>
+        <p class="tip">Windows start from the chain’s latest block time, so they line up with anvil, not your laptop clock.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="ico i-mint"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Seal a bid</h2>
+        <p class="lead">Nobody can peek. Not the seller, not the other bidders, not us.</p>
+        <div class="row">
+          <div><label>Your bid (ETH)</label><input id="bAmount" class="mono" value="2"></div>
+          <div><label>Deposit to lock (ETH)</label><input id="bDeposit" class="mono" value="2.5"></div>
+        </div>
+        <div class="row" style="align-items:flex-end">
+          <div style="flex:3"><label>Secret phrase</label><input id="bSecret" placeholder="anything memorable"></div>
+          <div style="flex:0 0 auto"><button id="btnRandom" class="ghost sm" style="margin-bottom:1px">Surprise me</button></div>
+        </div>
+        <div class="hashbox" id="bHash">Type a bid and a secret to see your sealed hash.</div>
+        <button id="btnCommit">Seal it</button>
+        <p class="tip">Deposit at least the reserve and at least your bid. Extra comes back after settlement. We keep the secret in this browser for you, but write it down anyway.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="ico i-sun"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>Open your bid</h2>
+        <p class="lead">Prove what you sealed. Same wallet, same numbers.</p>
+        <div class="row">
+          <div><label>Bid you sealed (ETH)</label><input id="rAmount" class="mono"></div>
+          <div><label>Secret phrase</label><input id="rSecret"></div>
+        </div>
+        <button id="btnReveal">Open it</button>
+        <button id="btnLoadSaved" class="ghost">Use saved secret</button>
+        <p class="tip">Only works during the opening window. Forget to open and your deposit goes to the seller. Harsh, but that is what keeps bids honest.</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="ico i-peach"><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 15l6-10 6 10"/></svg></span>Activity</h2>
+        <div class="feed" id="log"></div>
+      </div>
+
+    </main>
+
+    <aside class="side">
+      <div class="card lot">
+        <div class="top">
+          <div class="pick"><label style="margin:0">Lot</label><input id="aId" type="number" value="0" min="0"></div>
+          <div style="display:flex;gap:8px;align-items:center"><span id="sPhase"></span><button id="btnRefresh" class="ghost sm">Refresh</button></div>
+        </div>
+        <div class="item" id="sDesc">No lot loaded</div>
+        <div class="facts" style="border:0"><div style="border:0;padding-top:0"><b>Seller</b><span id="sSeller">—</span></div></div>
+        <div class="tiles">
+          <div class="tile"><small>Reserve</small><span id="sReserve">—</span></div>
+          <div class="tile"><small>Sealed bids</small><span id="sBidders">—</span></div>
+          <div class="tile"><small>Highest open</small><span id="sHigh">—</span></div>
+        </div>
+        <div class="facts">
+          <div><b>Sealing closes</b><span id="sBidEnd">—</span></div>
+          <div><b>Opening closes</b><span id="sRevEnd">—</span></div>
+          <div><b>Leading</b><span id="sLeader">—</span></div>
+          <div><b>Your bid</b><span id="sMine">—</span></div>
+        </div>
+        <button id="btnFinalize" style="width:100%;margin-right:0">Settle this lot</button>
+        <p class="tip" style="margin-top:8px">Anyone can press this once opening closes. Even your rival. It only writes down who is owed what.</p>
+        <div class="owed"><span>You are owed <span id="pending">—</span></span><button id="btnWithdraw" class="sm">Withdraw</button></div>
+      </div>
+
+      <details>
+        <summary>Time machine (local anvil only)</summary>
+        <div class="inline">
+          <button id="btnTime" class="ghost sm">Jump ahead</button>
+          <input id="timeSecs" type="number" value="3600"> <span>seconds</span>
+        </div>
+        <p class="tip">Skips the chain clock so you do not have to wait out the windows during a demo.</p>
+      </details>
+    </aside>
+  </div>
+
+  <footer>Commitment = keccak256(abi.encode(amount, keccak256(secret), bidder)) · ties go to the first to open · settlement never sends ETH, you pull it.</footer>
+</div>
+
+<script src="vendor/ethers.umd.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js'"></script>
+<script>
+// ---------------------------------------------------------------------------
+// Contract interface: must match task-1/contracts/Auction.sol
+// ---------------------------------------------------------------------------
+const ABI = [
+  "function createAuction(string description,uint256 reservePrice,uint256 biddingEnd,uint256 revealEnd) returns (uint256)",
+  "function commitBid(uint256 auctionId,bytes32 commitment) payable",
+  "function revealBid(uint256 auctionId,uint256 amount,bytes32 secret)",
+  "function finalize(uint256 auctionId)",
+  "function withdraw()",
+  "function getPhase(uint256 auctionId) view returns (uint8)",
+  "function getBidderCount(uint256 auctionId) view returns (uint256)",
+  "function computeCommitment(uint256 amount,bytes32 secret,address bidder) pure returns (bytes32)",
+  "function auctions(uint256) view returns (address seller,string description,uint256 reservePrice,uint256 biddingEnd,uint256 revealEnd,uint256 highestBid,address highestBidder,bool finalized)",
+  "function bids(uint256,address) view returns (bytes32 commitment,uint256 deposit,bool revealed)",
+  "function pendingWithdrawals(address) view returns (uint256)",
+  "function nextAuctionId() view returns (uint256)",
+  "function MAX_BIDDERS() view returns (uint256)",
+  "event AuctionCreated(uint256 indexed auctionId,address indexed seller,string description,uint256 reservePrice,uint256 biddingEnd,uint256 revealEnd)",
+  "event BidCommitted(uint256 indexed auctionId,address indexed bidder,bytes32 commitment)",
+  "event BidRevealed(uint256 indexed auctionId,address indexed bidder,uint256 amount)",
+  "event DepositForfeited(uint256 indexed auctionId,address indexed bidder,uint256 deposit)",
+  "event AuctionFinalized(uint256 indexed auctionId,address indexed winner,uint256 winningBid)",
+  "event Withdrawal(address indexed account,uint256 amount)",
+  "error InvalidReserve()","error InvalidBiddingDeadline()","error InvalidRevealDeadline()",
+  "error AuctionDoesNotExist(uint256 auctionId)","error BiddingClosed()","error DepositTooLow(uint256 sent,uint256 required)",
+  "error EmptyCommitment()","error AlreadyCommitted()","error TooManyBidders(uint256 maxBidders)","error NotRevealPhase()",
+  "error NoCommitment()","error AlreadyRevealed()","error InvalidReveal()","error DepositDoesNotCoverBid(uint256 deposit,uint256 amount)",
+  "error BidBelowReserve(uint256 amount,uint256 reservePrice)","error AuctionStillRunning()","error AlreadyFinalized()",
+  "error NothingToWithdraw()","error WithdrawFailed()"
+];
+const PHASES = ["Sealing", "Opening", "Ready to settle", "Settled"];
+const iface = new ethers.Interface(ABI);
+
+let provider, signer, account, contract;
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+const $ = (id) => document.getElementById(id);
+const fmtEth = (wei) => ethers.formatEther(wei) + " ETH";
+const fmtEthShort = (wei) => Number(ethers.formatEther(wei)).toLocaleString(undefined, { maximumFractionDigits: 4 }) + " ETH";
+const chainName = (net) => net.chainId === 31337n ? "anvil" : net.name;
+const fmtTime = (ts) => new Date(Number(ts) * 1000).toLocaleString();
+const short = (a) => a === ethers.ZeroAddress ? "nobody yet" : a.slice(0, 6) + "…" + a.slice(-4);
+const secretToBytes32 = (text) => ethers.keccak256(ethers.toUtf8Bytes(text));
+const storageKey = (id) => `auction:${(contract && contract.target || "").toLowerCase()}:${id}:${(account || "").toLowerCase()}`;
+
+function log(msg, cls) {
+  const el = $("log");
+  const line = document.createElement("div");
+  const t = document.createElement("time");
+  t.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const m = document.createElement("span");
+  m.className = "msg " + (cls || "");
+  m.textContent = msg;
+  line.append(t, m);
+  el.prepend(line);
+}
+
+// Turn an ethers / MetaMask error into the contract's custom error name when possible.
+function explain(e) {
+  const data = e?.data ?? e?.info?.error?.data ?? e?.error?.data ?? e?.revert?.data;
+  if (typeof data === "string" && data.startsWith("0x") && data.length >= 10) {
+    try {
+      const parsed = iface.parseError(data);
+      if (parsed) return `${parsed.name}(${parsed.args.map(String).join(", ")})`;
+    } catch (_) {}
+  }
+  if (e?.revert?.name) return `${e.revert.name}(${e.revert.args.map(String).join(", ")})`;
+  return e?.shortMessage || e?.reason || e?.message || String(e);
+}
+
+async function run(label, fn) {
+  try {
+    log(`${label}…`, "dim");
+    return await fn();
+  } catch (e) {
+    log(`${label} didn’t go through: ${explain(e)}`, "bad");
+    console.error(e);
+  }
+}
+
+async function sendTx(label, promise) {
+  const tx = await promise;
+  log(`${label} sent · ${tx.hash.slice(0, 12)}…`, "dim");
+  const rc = await tx.wait();
+  log(`${label} confirmed in block ${rc.blockNumber} (gas ${rc.gasUsed})`, "ok");
+  return rc;
+}
+
+function need() {
+  if (!contract) throw new Error("Load the contract first.");
+  if (!signer) throw new Error("Connect a wallet first.");
+}
+
+async function chainNow() {
+  const b = await provider.getBlock("latest");
+  return Number(b.timestamp);
+}
+
+function setTrack(phase) {
+  // phase: 0 sealing, 1 opening, 2 closed, 3 settled, -1 none
+  for (let i = 0; i < 3; i++) {
+    const el = $("tl" + i);
+    el.classList.remove("done", "now");
+    if (phase < 0) continue;
+    if (phase === 3 || i < phase) el.classList.add("done");
+    else if (i === phase) el.classList.add("now");
+  }
+  $("tl2").querySelector(".shape").textContent = phase === 3 ? "✓" : "3";
+}
+
+// ---------------------------------------------------------------------------
+// Connect and load
+// ---------------------------------------------------------------------------
+$("btnConnect").onclick = () => run("Connecting", async () => {
+  if (!window.ethereum) throw new Error("No wallet found. Install MetaMask and add http://127.0.0.1:8545 (chain id 31337).");
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  account = await signer.getAddress();
+  const net = await provider.getNetwork();
+  $("account").textContent = short(account);
+  $("account").title = account;
+  $("chipConn").classList.add("on");
+  $("chain").textContent = `${chainName(net)} (${net.chainId})`;
+  $("balance").textContent = fmtEthShort(await provider.getBalance(account));
+  log(`Connected as ${account} on chain ${net.chainId}`, "ok");
+  if (contract) { contract = contract.connect(signer); await refreshGlobal(); await refreshAuction(); }
+  window.ethereum.on?.("accountsChanged", () => location.reload());
+  window.ethereum.on?.("chainChanged", () => location.reload());
+  updateHash();
+});
+
+$("btnLoad").onclick = () => run("Loading contract", async () => {
+  if (!signer) throw new Error("Connect a wallet first.");
+  const addr = $("contractAddr").value.trim();
+  if (!ethers.isAddress(addr)) throw new Error("That is not a valid address.");
+  const code = await provider.getCode(addr);
+  if (code === "0x") throw new Error("No contract at that address on this chain. Did you deploy to anvil?");
+  contract = new ethers.Contract(addr, ABI, signer);
+  localStorage.setItem("auction:lastContract", addr);
+  log(`Auction house loaded at ${addr}. Up to ${await contract.MAX_BIDDERS()} bidders per lot.`, "ok");
+  await refreshGlobal();
+  await refreshAuction();
+});
+
+async function refreshGlobal() {
+  if (!contract) return;
+  $("auctionCount").textContent = String(await contract.nextAuctionId());
+  $("pending").textContent = fmtEth(await contract.pendingWithdrawals(account));
+  $("balance").textContent = fmtEthShort(await provider.getBalance(account));
+}
+
+$("btnWithdraw").onclick = () => run("Withdrawing", async () => {
+  need();
+  await sendTx("withdraw()", contract.withdraw());
+  await refreshGlobal();
+});
+
+$("btnTime").onclick = () => run("Jumping ahead", async () => {
+  if (!provider) throw new Error("Connect first.");
+  const secs = Number($("timeSecs").value || 0);
+  await provider.send("evm_increaseTime", [secs]);
+  await provider.send("evm_mine", []);
+  log(`Chain clock moved ${secs}s forward. It is now ${fmtTime(await chainNow())} on-chain.`, "ok");
+  await refreshAuction();
+});
+
+// ---------------------------------------------------------------------------
+// List
+// ---------------------------------------------------------------------------
+$("btnCreate").onclick = () => run("Listing item", async () => {
+  need();
+  const now = await chainNow();
+  const biddingEnd = now + Number($("cBidMin").value) * 60;
+  const revealEnd = biddingEnd + Number($("cRevMin").value) * 60;
+  const reserve = ethers.parseEther($("cReserve").value);
+  const rc = await sendTx("createAuction()", contract.createAuction($("cDesc").value, reserve, biddingEnd, revealEnd));
+  const ev = rc.logs.map(l => { try { return iface.parseLog(l); } catch { return null; } }).find(p => p && p.name === "AuctionCreated");
+  if (ev) {
+    log(`Lot ${ev.args.auctionId} is live. Reserve ${fmtEth(ev.args.reservePrice)}. Sealing closes ${fmtTime(ev.args.biddingEnd)}, opening closes ${fmtTime(ev.args.revealEnd)}.`, "ok");
+    $("aId").value = String(ev.args.auctionId);
+  }
+  await refreshGlobal();
+  await refreshAuction();
+});
+
+// ---------------------------------------------------------------------------
+// Lot card and settlement
+// ---------------------------------------------------------------------------
+async function refreshAuction() {
+  if (!contract) return;
+  const id = Number($("aId").value);
+  try {
+    const a = await contract.auctions(id);
+    if (a.seller === ethers.ZeroAddress) throw new Error(`AuctionDoesNotExist(${id})`);
+    const phase = Number(await contract.getPhase(id));
+    const count = await contract.getBidderCount(id);
+    const mine = await contract.bids(id, account);
+    const now = await chainNow();
+    $("sPhase").innerHTML = `<span class="pill p${phase}">${PHASES[phase]}</span>`;
+    setTrack(phase);
+    $("trackTime").textContent = `chain time ${new Date(now * 1000).toLocaleTimeString()}`;
+    $("sDesc").textContent = a.description;
+    $("sSeller").textContent = short(a.seller) + (a.seller.toLowerCase() === account.toLowerCase() ? " (you)" : "");
+    $("sReserve").textContent = fmtEth(a.reservePrice);
+    $("sBidEnd").textContent = fmtTime(a.biddingEnd) + (now < a.biddingEnd ? ` · in ${Number(a.biddingEnd) - now}s` : " · passed");
+    $("sRevEnd").textContent = fmtTime(a.revealEnd) + (now < a.revealEnd ? ` · in ${Number(a.revealEnd) - now}s` : " · passed");
+    $("sBidders").textContent = String(count);
+    $("sHigh").textContent = a.highestBid === 0n ? "—" : fmtEth(a.highestBid);
+    $("sLeader").textContent = short(a.highestBidder) + (a.highestBidder.toLowerCase() === account.toLowerCase() ? " (you)" : "");
+    $("sMine").textContent = mine.commitment === ethers.ZeroHash
+      ? "none sealed"
+      : `${fmtEth(mine.deposit)} locked · ${mine.revealed ? "opened" : "still sealed"}`;
+  } catch (e) {
+    $("sPhase").innerHTML = `<span class="pill p2">${explain(e)}</span>`;
+    setTrack(-1);
+    $("sDesc").textContent = "No lot loaded";
+    ["sSeller","sReserve","sBidEnd","sRevEnd","sBidders","sHigh","sLeader","sMine"].forEach(k => $(k).textContent = "—");
+  }
+}
+$("btnRefresh").onclick = () => run("Refreshing", async () => { need(); await refreshGlobal(); await refreshAuction(); });
+$("aId").onchange = () => refreshAuction();
+
+$("btnFinalize").onclick = () => run("Settling", async () => {
+  need();
+  const id = Number($("aId").value);
+  const rc = await sendTx(`finalize(${id})`, contract.finalize(id));
+  for (const l of rc.logs) {
+    try {
+      const p = iface.parseLog(l);
+      if (p?.name === "DepositForfeited") log(`${short(p.args.bidder)} never opened their bid: ${fmtEth(p.args.deposit)} goes to the seller.`, "ok");
+      if (p?.name === "AuctionFinalized") log(p.args.winner === ethers.ZeroAddress ? `Lot ${id} settled with no winner.` : `Lot ${id} settled: ${short(p.args.winner)} wins at ${fmtEth(p.args.winningBid)}.`, "ok");
+    } catch {}
+  }
+  await refreshGlobal();
+  await refreshAuction();
+});
+
+// ---------------------------------------------------------------------------
+// Seal
+// ---------------------------------------------------------------------------
+function updateHash() {
+  try {
+    if (!account) { $("bHash").textContent = "Connect a wallet to see your sealed hash."; return; }
+    const amount = ethers.parseEther($("bAmount").value || "0");
+    const secret = $("bSecret").value;
+    if (!secret) { $("bHash").textContent = "Type a bid and a secret to see your sealed hash."; return; }
+    $("bHash").textContent = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["uint256","bytes32","address"], [amount, secretToBytes32(secret), account]));
+  } catch (e) { $("bHash").textContent = "That amount does not look right."; }
+}
+["bAmount","bSecret"].forEach(id => $(id).oninput = updateHash);
+$("btnRandom").onclick = () => { $("bSecret").value = ethers.hexlify(ethers.randomBytes(16)); updateHash(); };
+
+$("btnCommit").onclick = () => run("Sealing bid", async () => {
+  need();
+  const id = Number($("aId").value);
+  const amount = ethers.parseEther($("bAmount").value);
+  const deposit = ethers.parseEther($("bDeposit").value);
+  const secret = $("bSecret").value;
+  if (!secret) throw new Error("Pick a secret phrase first.");
+  if (deposit < amount) throw new Error("Deposit must be at least your bid, or you will not be able to open it.");
+  const secretB32 = secretToBytes32(secret);
+  const commitment = await contract.computeCommitment(amount, secretB32, account);
+  await sendTx(`commitBid(${id}) with ${fmtEth(deposit)}`, contract.commitBid(id, commitment, { value: deposit }));
+  localStorage.setItem(storageKey(id), JSON.stringify({ amount: $("bAmount").value, secret }));
+  $("rAmount").value = $("bAmount").value;
+  $("rSecret").value = secret;
+  log(`Sealed. Your secret for lot ${id} is saved in this browser. The amount stays hidden until you open it.`, "ok");
+  await refreshGlobal();
+  await refreshAuction();
+});
+
+// ---------------------------------------------------------------------------
+// Open
+// ---------------------------------------------------------------------------
+$("btnLoadSaved").onclick = () => {
+  const id = Number($("aId").value);
+  const saved = localStorage.getItem(storageKey(id));
+  if (!saved) { log(`No saved secret for lot ${id} with this wallet.`, "bad"); return; }
+  const { amount, secret } = JSON.parse(saved);
+  $("rAmount").value = amount; $("rSecret").value = secret;
+  log(`Loaded your saved secret for lot ${id}.`, "ok");
+};
+
+$("btnReveal").onclick = () => run("Opening bid", async () => {
+  need();
+  const id = Number($("aId").value);
+  const amount = ethers.parseEther($("rAmount").value);
+  const secret = $("rSecret").value;
+  if (!secret) throw new Error("Enter the secret phrase you sealed with.");
+  await sendTx(`revealBid(${id}, ${fmtEth(amount)})`, contract.revealBid(id, amount, secretToBytes32(secret)));
+  await refreshAuction();
+});
+
+// ---------------------------------------------------------------------------
+// Boot
+// ---------------------------------------------------------------------------
+(function boot() {
+  const last = localStorage.getItem("auction:lastContract");
+  if (last) $("contractAddr").value = last;
+  setTrack(-1);
+  log("Ready when you are. Connect a wallet, load the contract, then list, seal, open, settle, withdraw.", "dim");
+  if (typeof ethers === "undefined") log("ethers.js failed to load. Check ui/vendor/ethers.umd.min.js or your connection.", "bad");
+})();
+</script>
+</body>
+</html>

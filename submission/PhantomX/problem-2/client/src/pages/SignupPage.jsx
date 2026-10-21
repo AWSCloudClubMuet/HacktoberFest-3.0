@@ -1,0 +1,118 @@
+import { useState } from 'react';
+import { useApp, useAuth } from '../context.js';
+import { Alert, Field, Link, PasswordField, buttonClass, inputClass, textLinkClass } from '../components.jsx';
+import { readSection } from '../section.js';
+import { AuthBanner } from '../ui.jsx';
+
+const empty = {
+  name: '',
+  email: '',
+  password: '',
+  major: '',
+  semester: '',
+  bio: '',
+  skills: '',
+};
+
+export function SignupPage() {
+  const { navigate } = useApp();
+  const { signup } = useAuth();
+  const [form, setForm] = useState(empty);
+  const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  function update(field, value) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function validate(values) {
+    const next = {};
+    if (!values.name.trim()) next.name = 'name is required';
+    else if (values.name.trim().length > 80) next.name = 'name must be 80 characters or fewer';
+    if (!values.email.trim()) next.email = 'email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) next.email = 'email must be a valid email address';
+    if (!values.password) next.password = 'password is required';
+    else if (values.password.length < 8) next.password = 'password must be at least 8 characters';
+    if (!values.major.trim()) next.major = 'major is required';
+    else if (values.major.trim().length > 80) next.major = 'major must be 80 characters or fewer';
+    if (values.semester === '') next.semester = 'semester is required';
+    else if (!Number.isInteger(Number(values.semester)) || Number(values.semester) < 1 || Number(values.semester) > 12) {
+      next.semester = 'semester must be an integer from 1 to 12';
+    }
+    if (values.bio.trim().length > 500) next.bio = 'bio must be 500 characters or fewer';
+    return next;
+  }
+
+  async function onSubmit(event) {
+    event.preventDefault();
+    const next = validate(form);
+    setErrors(next);
+    setFormError('');
+    if (Object.keys(next).length > 0) return;
+    const skills = form.skills.split(',').map((item) => item.trim()).filter(Boolean);
+    setSaving(true);
+    try {
+      await signup({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+        major: form.major.trim(),
+        semester: Number(form.semester),
+        bio: form.bio.trim(),
+        skills,
+      });
+      navigate(`/${readSection()}`);
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2">
+      <AuthBanner
+        tone="request"
+        headline="Join your campus marketplace"
+        subtitle="Offer a skill, request help, swap talents and build your reputation."
+      />
+      <div className="flex items-start p-4 sm:p-6 lg:items-center lg:py-8">
+        <form className="mx-auto w-full max-w-md space-y-3" noValidate onSubmit={onSubmit}>
+          <div>
+            <h1 className="page-title text-ink">Create your account</h1>
+            <p className="mt-1 text-sm text-muted">You can post and apply right away.</p>
+          </div>
+          <Alert>{formError}</Alert>
+          <Field label="Name" error={errors.name}>
+            <input className={inputClass} value={form.name} onChange={(event) => update('name', event.target.value)} />
+          </Field>
+          <Field label="Email" error={errors.email}>
+            <input className={inputClass} type="email" autoComplete="username" value={form.email} onChange={(event) => update('email', event.target.value)} />
+          </Field>
+          <PasswordField label="Password" error={errors.password} autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Major" error={errors.major}>
+              <input className={inputClass} value={form.major} onChange={(event) => update('major', event.target.value)} />
+            </Field>
+            <Field label="Semester" error={errors.semester}>
+              <input className={inputClass} type="number" min="1" max="12" value={form.semester} onChange={(event) => update('semester', event.target.value)} />
+            </Field>
+          </div>
+          <Field label="Bio" error={errors.bio}>
+            <textarea className={inputClass} rows="2" value={form.bio} onChange={(event) => update('bio', event.target.value)} placeholder="Optional" />
+          </Field>
+          <Field label="Skills">
+            <input className={inputClass} value={form.skills} onChange={(event) => update('skills', event.target.value)} placeholder="Optional, separated by commas" />
+          </Field>
+          <button className={`${buttonClass} w-full fill-request`} type="submit" disabled={saving}>
+            {saving ? 'Creating account…' : 'Sign up'}
+          </button>
+          <p className="text-base text-muted">
+            Already have an account? <Link to="/login" className={textLinkClass}>Log in</Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+}
