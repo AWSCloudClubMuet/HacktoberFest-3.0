@@ -1,0 +1,54 @@
+{
+  "brandTagline": "Made for growers. Built for fairer trade.",
+  "nav": { "logout": "Log out", "prices": "Market prices", "marketplace": "Marketplace", "alerts": "Alerts", "myListings": "My listings", "purpose": "Our purpose" },
+  "common": { "loading": "Loading…", "retry": "Try again", "refresh": "Refresh", "details": "Details", "back": "Back", "all": "All", "today": "Today", "perUnit": "PKR per 40 kg", "phaseTwo": "Phase 2", "notAvailable": "Not available", "edit": "Edit", "delete": "Delete", "save": "Save", "saving": "Saving…", "cancel": "Cancel" },
+  "language": "اردو ↗",
+  "demo": { "eyebrow": "Demo mode", "title": "Choose a demo account", "text": "Sample accounts with fictional data. Pick one to sign in instantly — farmers see alerts and listings, buyers browse prices and the marketplace.", "link": "Just exploring? Use a demo account →", "manual": "← Sign in with your own details", "badge": "DEMO", "failed": "We could not sign in to the demo account. Please try again." },
+  "onboarding": {
+    "eyebrow": "A fairer way to trade",
+    "titleStart": "Know your price.", "titleEnd": "Grow with confidence.",
+    "description": "Clear mandi prices, useful market insights, and direct connections between the people who grow our food and the people who buy it.",
+    "cardTitle": "Welcome to KisanMandi", "cardText": "Tell us a little about yourself to continue.",
+    "name": "Your name", "namePlaceholder": "e.g. Ali Raza", "phone": "Phone number", "phonePlaceholder": "03001234567",
+    "district": "District", "role": "I am a", "farmer": "Farmer", "buyer": "Buyer", "submit": "Continue to KisanMandi ↗",
+    "required": "This field is required", "phoneError": "Enter 11 digits starting with 03", "failed": "We could not create your profile. Please try again.",
+    "visualTitle": "From field to fair price.", "visualText": "Better information. Better decisions."
+  },
+  "prices": {
+    "heroEyebrow": "Clearer crop decisions", "heroTitle": "Today’s mandi prices, without the guesswork.",
+    "heroText": "Compare current prices, follow daily movement and find the market offering the strongest price for your crop.",
+    "explore": "Explore today’s prices", "browse": "Browse produce", "proof": "Made for the people who feed us.",
+    "pulse": "Market pulse · Today", "pulseTitle": "Know where the market stands.", "sampleUnit": "Latest prices · PKR per 40 kg",
+    "eyebrow": "Price discovery", "title": "Today’s market prices", "subtitle": "Compare crops at a glance. Choose your market and make your next move with confidence.",
+    "search": "Search crops…", "category": "All categories", "market": "Choose market", "crop": "Crop", "price": "Today’s price", "change": "Daily change", "action": "Action",
+    "empty": "No crops match your search.", "error": "Market prices could not be loaded.", "refreshed": "Prices have been refreshed.", "pull": "Pull down to refresh on mobile.",
+    "trend": "Price trend", "days": "Last 14 days", "best": "Best market today", "highest": "Highest listed price", "compare": "Compare markets",
+    "stats": "14-day overview", "minimum": "Minimum", "maximum": "Maximum", "average": "Average", "historyError": "Price history could not be loaded.", "comparisonError": "Market comparison could not be loaded."
+  },
+  "marketplace": {
+    "eyebrow": "From farms to buyers", "title": "Fresh listings, direct connections.", "subtitle": "Explore what farmers have available today.",
+    "search": "Search produce…", "district": "All districts", "grade": "All grades", "newest": "Newest first", "priceAsc": "Price: low to high",
+    "empty": "No listings found. Try another search.", "error": "Marketplace listings could not be loaded.", "available": "units available", "gradeLabel": "Grade {{grade}}",
+    "belowMarket": "Below market", "atMarket": "At market", "aboveMarket": "Above market", "contact": "View listing", "seller": "Seller", "availableFrom": "Available from",
+    "quantity": "Quantity", "askingPrice": "Asking price", "call": "Call seller", "whatsapp": "Open WhatsApp", "detailError": "This listing could not be loaded."
+  },
+  "alerts": {
+    "eyebrow": "Farmer price alerts", "title": "Watch the market for the right price.", "subtitle": "We compare active targets with the newest mandi price whenever prices refresh.", "add": "Add alert", "empty": "You have not created any price alerts yet.", "error": "Your alerts could not be loaded.", "actionError": "That alert could not be updated.",
+    "triggered": "Target reached", "watching": "Watching", "paused": "Paused", "condition": "Condition", "latest": "Latest price", "above": "Above", "below": "Below", "deleteConfirm": "Delete this price alert?",
+    "create": "New price alert", "edit": "Edit price alert", "createTitle": "Set a price target.", "editTitle": "Update your price target.", "formText": "Choose a crop, market and target. Active alerts are checked against the latest available price.", "crop": "Crop", "market": "Market", "target": "Target price", "formLoadError": "The alert form could not be loaded.", "saveError": "The alert could not be saved."
+  },
+  "myListings": {
+    "eyebrow": "Your produce", "title": "Manage your listings.", "subtitle": "Create offers, update details and mark produce as sold.", "add": "Add listing", "empty": "You have not created any produce listings yet.", "error": "Your listings could not be loaded.", "actionError": "That listing could not be updated.", "active": "Active", "sold": "Sold", "markSold": "Mark sold", "soldConfirm": "Mark this listing as sold?", "deleteConfirm": "Delete this listing permanently?"
+  },
+  "listingForm": {
+    "create": "New produce listing", "edit": "Edit produce listing", "createTitle": "List your produce.", "editTitle": "Update your listing.", "text": "Add clear details so buyers can quickly understand what you are offering.", "crop": "Crop", "grade": "Grade", "quantity": "Quantity (40 kg units)", "price": "Asking price per 40 kg", "district": "District", "availableFrom": "Available from", "phone": "Contact phone", "loadError": "The listing form could not be loaded.", "saveError": "The listing could not be saved."
+  },
+  "profit": {
+    "open": "Estimate your profit", "eyebrow": "Farmer tools", "title": "Know your numbers before you sell.", "text": "Estimate revenue, production costs and profit. Adjust the expected price to see how your result could change.", "unit": "All calculations use the same unit: PKR per 40 kg.", "crop": "Crop", "market": "Market", "quantity": "Quantity (40 kg units)", "cost": "Cost per unit", "adjustedPrice": "Working price", "shift": "What-if price change", "current": "Current price", "revenue": "Estimated revenue", "totalCost": "Total cost", "profit": "Estimated profit", "loss": "Estimated loss", "margin": "Profit margin", "error": "Current price data could not be loaded."
+  },
+  "validation": { "positive": "Must be greater than zero", "pastDate": "Date cannot be in the past" },
+  "phase": { "title": "Coming in Phase 2", "text": "This farmer tool is planned for the next frontend phase. Phase 1 currently covers prices, market comparison and marketplace browsing." },
+  "footer": { "prices": "Market prices", "marketplace": "Marketplace", "phase": "Complete build · 2026" },
+  "categories": { "Grains": "Grains", "Vegetables": "Vegetables", "Fruits": "Fruits", "Cash Crops": "Cash Crops", "Spices": "Spices" },
+  "districts": { "Hyderabad": "Hyderabad", "Sukkur": "Sukkur", "Mirpurkhas": "Mirpurkhas", "Karachi": "Karachi", "Shikarpur": "Shikarpur" }
+}
