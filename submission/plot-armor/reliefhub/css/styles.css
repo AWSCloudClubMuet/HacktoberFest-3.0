@@ -577,6 +577,7 @@ p.empty { display: block; padding: var(--sp-5); }
   .reveal { opacity: 1; transform: none; }
   .home-mission .feature-card { animation: none; } /* breathing float off */
   .feature-tilt { transform: none; }
+  .home-needs .progress > div { transition-delay: 0ms; }
 }
 
 /* ==========================================================================
@@ -751,6 +752,14 @@ body.route-home .view > * { animation: none; } /* sections use .reveal instead *
 .gap-item { font-weight: 600; font-size: var(--fs-sm); }
 .gap-camp { font-size: var(--fs-xs); color: var(--muted); }
 .gap-none { color: var(--muted); font-size: var(--fs-sm); margin: 0 0 var(--sp-5); }
+/* teaser bars start empty and ease to their target width once the row
+   reveals (app.js sets the width when the reveal observer fires; --d and its
+   stagger inherit from .gap-row) */
+.home-needs .progress { width: clamp(160px, 30vw, 300px); }
+.home-needs .progress > div {
+  transition: width 1s var(--ease);
+  transition-delay: calc(var(--d, 0ms) + 150ms);
+}
 
 /* ---- Mid-page motion: section rhythm + mission card tilt/float ---- */
 /* Rhythm: roomy scroll anchors and a soft vertical brand connector at the top

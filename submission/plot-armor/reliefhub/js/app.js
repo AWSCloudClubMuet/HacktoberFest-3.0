@@ -121,24 +121,35 @@ const App = {
     });
   },
 
-  /* Fade+slide reveal for .reveal elements once they enter the viewport. */
+  /* Fade+slide reveal for .reveal elements once they enter the viewport.
+   * Revealing a row also triggers any data-w progress fills inside it. */
   observeReveals(root) {
     if (this._revealIO) this._revealIO.disconnect();
     const els = root.querySelectorAll('.reveal');
     if (!els.length) return;
     if (!('IntersectionObserver' in window)) {
-      els.forEach(el => el.classList.add('revealed'));
+      els.forEach(el => { el.classList.add('revealed'); this._fillBars(el); });
       return;
     }
     this._revealIO = new IntersectionObserver(entries => {
       for (const en of entries) {
         if (en.isIntersecting) {
           en.target.classList.add('revealed');
+          this._fillBars(en.target);
           this._revealIO.unobserve(en.target);
         }
       }
     }, { threshold: 0.15, rootMargin: '0px 0px -36px 0px' });
     els.forEach(el => this._revealIO.observe(el));
+  },
+
+  /* Progress fills tagged data-w render at width:0 and ease to their target
+   * once their row reveals (critical-needs teaser on #/home). Bars without
+   * data-w — every module page — are untouched. */
+  _fillBars(scope) {
+    scope.querySelectorAll('.progress > div[data-w]').forEach(f => {
+      f.style.width = f.dataset.w + '%';
+    });
   },
 
   _reduceMotion() {
@@ -354,7 +365,8 @@ App.registerModule({
             UI.h('span', { class: 'gap-camp' }, 'at ' + ((campById[n.camp_id] || {}).name || 'Camp ' + n.camp_id)),
           ]),
           UI.h('div', { class: 'need-progress' }, [
-            UI.h('div', { class: 'progress' }, UI.h('div', { style: `width:${Math.min(p, 100)}%;background:${color}` })),
+            /* starts empty; eases to the data-w target once the row reveals */
+            UI.h('div', { class: 'progress' }, UI.h('div', { style: `width:0%;background:${color}`, 'data-w': String(Math.min(p, 100)) })),
             UI.h('span', {}, p + '%'),
           ]),
         ]);
@@ -416,14 +428,15 @@ App.registerModule({
     const run = () => this._runCountUps(root, stats);
     const band = root.querySelector('.home-stats');
     if (App._reduceMotion() || !band || !('IntersectionObserver' in window)) return run();
-    if (this._statsIO) this._statsIO.disconnect();
-    this._statsIO = new IntersectionObserver(entries => {
+    /* lives on App so render()'s route-change cleanup can disconnect it */
+    if (App._statsIO) App._statsIO.disconnect();
+    App._statsIO = new IntersectionObserver(entries => {
       if (entries.some(en => en.isIntersecting)) {
-        this._statsIO.disconnect();
+        App._statsIO.disconnect();
         run();
       }
     }, { threshold: 0.3 });
-    this._statsIO.observe(band);
+    App._statsIO.observe(band);
   },
 
   _runCountUps(root, stats) {
