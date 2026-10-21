@@ -1,0 +1,749 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Ayesha Khan",
+      "major": "Computer Science",
+      "semester": 5,
+      "bio": "Web developer who loves React.",
+      "skills": [
+        "React",
+        "JavaScript",
+        "Node.js"
+      ]
+    },
+    {
+      "id": "u2",
+      "name": "Hamza Ali",
+      "major": "Software Engineering",
+      "semester": 6,
+      "bio": "Android and Java tutor.",
+      "skills": [
+        "Java",
+        "Android",
+        "Tutoring"
+      ]
+    },
+    {
+      "id": "u3",
+      "name": "Fatima Noor",
+      "major": "Design",
+      "semester": 4,
+      "bio": "Graphic designer for posters and logos.",
+      "skills": [
+        "Photoshop",
+        "Illustrator",
+        "Branding"
+      ]
+    },
+    {
+      "id": "u4",
+      "name": "Usman Raza",
+      "major": "Computer Science",
+      "semester": 7,
+      "bio": "Backend and database projects.",
+      "skills": [
+        "Python",
+        "SQL",
+        "Django"
+      ]
+    },
+    {
+      "id": "u5",
+      "name": "Sana Malik",
+      "major": "English",
+      "semester": 3,
+      "bio": "Content writer and proofreader.",
+      "skills": [
+        "Writing",
+        "Editing",
+        "Proofreading"
+      ]
+    },
+    {
+      "id": "u6",
+      "name": "Bilal Ahmed",
+      "major": "Electrical Engineering",
+      "semester": 5,
+      "bio": "Math and physics tutor.",
+      "skills": [
+        "Mathematics",
+        "Physics",
+        "Tutoring"
+      ]
+    },
+    {
+      "id": "u7",
+      "name": "Zainab Shah",
+      "major": "Computer Science",
+      "semester": 3,
+      "bio": "Learning UI/UX, love Figma.",
+      "skills": [
+        "Figma",
+        "UI/UX",
+        "HTML/CSS"
+      ]
+    },
+    {
+      "id": "u8",
+      "name": "Ali Hassan",
+      "major": "Business",
+      "semester": 6,
+      "bio": "Video editor and presentation maker.",
+      "skills": [
+        "Video Editing",
+        "PowerPoint",
+        "Canva"
+      ]
+    },
+    {
+      "id": "u9",
+      "name": "Mariam Iqbal",
+      "major": "Software Engineering",
+      "semester": 4,
+      "bio": "Flutter and mobile app builder.",
+      "skills": [
+        "Flutter",
+        "Dart",
+        "Firebase"
+      ]
+    },
+    {
+      "id": "u10",
+      "name": "Daniyal Sheikh",
+      "major": "Computer Science",
+      "semester": 8,
+      "bio": "DSA and C++ mentor.",
+      "skills": [
+        "C++",
+        "DSA",
+        "Tutoring"
+      ]
+    },
+    {
+      "id": "u11",
+      "name": "Hira Baig",
+      "major": "Mass Communication",
+      "semester": 5,
+      "bio": "Copywriting and social media content.",
+      "skills": [
+        "Copywriting",
+        "Social Media",
+        "Writing"
+      ]
+    },
+    {
+      "id": "u12",
+      "name": "Saad Memon",
+      "major": "Computer Science",
+      "semester": 2,
+      "bio": "Beginner developer looking for guidance.",
+      "skills": [
+        "HTML/CSS",
+        "JavaScript"
+      ]
+    }
+  ],
+  "gigs": [
+    {
+      "id": "g1",
+      "user_id": "u1",
+      "title": "React landing page development",
+      "description": "I will build a responsive React landing page for your club or project.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 3000,
+      "deadline": "2026-11-15",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g2",
+      "user_id": "u2",
+      "title": "Java OOP tutoring sessions",
+      "description": "One-on-one Java and OOP help with practice problems.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 1500,
+      "deadline": "2026-11-20",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g3",
+      "user_id": "u3",
+      "title": "Logo and poster design",
+      "description": "Custom logo or event poster in 2 revisions.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 2000,
+      "deadline": "2026-11-10",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g4",
+      "user_id": "u4",
+      "title": "Need REST API in Express",
+      "description": "Looking for someone to build a simple REST API with CRUD routes.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 5000,
+      "deadline": "2026-11-25",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g5",
+      "user_id": "u5",
+      "title": "Free proofreading for assignments",
+      "description": "I will proofread and fix grammar in your reports.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-12-01",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g6",
+      "user_id": "u6",
+      "title": "Math tutoring in exchange for design help",
+      "description": "I teach calculus, you help me with a poster.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-18",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g7",
+      "user_id": "u7",
+      "title": "Need a logo, can teach HTML/CSS",
+      "description": "Swap: you design a logo, I teach you HTML and CSS basics.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-22",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g8",
+      "user_id": "u8",
+      "title": "Video editing for reels",
+      "description": "Short reels and promo video editing with captions.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 1800,
+      "deadline": "2026-11-30",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g9",
+      "user_id": "u9",
+      "title": "Help debugging Flutter app",
+      "description": "Need a quick pair of eyes on a Flutter state bug.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-12",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g10",
+      "user_id": "u10",
+      "title": "Free DSA doubt sessions",
+      "description": "Weekly DSA and C++ doubt-clearing sessions.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-12-05",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g11",
+      "user_id": "u11",
+      "title": "Blog posts for club website",
+      "description": "Need 3 short blog posts for our club website.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 1000,
+      "deadline": "2026-11-28",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g12",
+      "user_id": "u12",
+      "title": "Need a JavaScript tutor",
+      "description": "Beginner looking for help with JS basics and DOM.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 800,
+      "deadline": "2026-11-16",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g13",
+      "user_id": "u1",
+      "title": "Club banner design",
+      "description": "Need a banner for our tech club event.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 2500,
+      "deadline": "2026-11-05",
+      "status": "In Progress",
+      "accepted_applicant_id": "u3",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g14",
+      "user_id": "u4",
+      "title": "Database design for UI mockups",
+      "description": "I design your database, you make UI mockups.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-08",
+      "status": "In Progress",
+      "accepted_applicant_id": "u7",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g15",
+      "user_id": "u2",
+      "title": "Project report editing",
+      "description": "Need my final report edited and formatted.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 1200,
+      "deadline": "2026-11-03",
+      "status": "In Progress",
+      "accepted_applicant_id": "u5",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g16",
+      "user_id": "u9",
+      "title": "Firebase crash course",
+      "description": "Quick course on Firebase auth and database.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 1000,
+      "deadline": "2026-11-09",
+      "status": "In Progress",
+      "accepted_applicant_id": "u12",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g17",
+      "user_id": "u10",
+      "title": "Build a quiz web app",
+      "description": "Need a simple quiz app with score tracking.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 3500,
+      "deadline": "2026-11-14",
+      "status": "In Progress",
+      "accepted_applicant_id": "u1",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g18",
+      "user_id": "u3",
+      "title": "Business card design",
+      "description": "Business card design with print-ready files.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 1500,
+      "deadline": "2026-10-10",
+      "status": "Completed",
+      "accepted_applicant_id": "u8",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g19",
+      "user_id": "u5",
+      "title": "Resume writing help",
+      "description": "Helped polish a student resume.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-05",
+      "status": "Completed",
+      "accepted_applicant_id": "u12",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g20",
+      "user_id": "u6",
+      "title": "Chemistry tutoring",
+      "description": "Need help preparing for a chemistry quiz.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 700,
+      "deadline": "2026-10-12",
+      "status": "Completed",
+      "accepted_applicant_id": "u11",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g21",
+      "user_id": "u1",
+      "title": "Portfolio website",
+      "description": "Personal portfolio website using React.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 2000,
+      "deadline": "2026-10-15",
+      "status": "Completed",
+      "accepted_applicant_id": "u9",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g22",
+      "user_id": "u8",
+      "title": "Thumbnail design for video edit",
+      "description": "Swap: thumbnails for video editing help.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-08",
+      "status": "Completed",
+      "accepted_applicant_id": "u3",
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g23",
+      "user_id": "u7",
+      "title": "Fix CSS bugs",
+      "description": "Need help fixing layout bugs on my site.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 1500,
+      "deadline": "2026-09-30",
+      "status": "Expired",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g24",
+      "user_id": "u11",
+      "title": "Caption writing",
+      "description": "Writing captions for social media posts.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 600,
+      "deadline": "2026-10-01",
+      "status": "Expired",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "g25",
+      "user_id": "u4",
+      "title": "Linear algebra revision",
+      "description": "Need revision help before midterms.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-11-02",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-01"
+    },
+    {
+      "id": "gekgSui",
+      "user_id": "u1",
+      "title": "Poster design for tech clubs",
+      "description": "I can design event posters and banners for student clubs.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-12-31",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-21"
+    }
+  ],
+  "applications": [
+    {
+      "id": "a1",
+      "gig_id": "g13",
+      "applicant_id": "u3",
+      "message": "I can design this banner in 2 days.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a2",
+      "gig_id": "g14",
+      "applicant_id": "u7",
+      "message": "I would love to make the UI mockups.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a3",
+      "gig_id": "g15",
+      "applicant_id": "u5",
+      "message": "I have edited many reports before.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a4",
+      "gig_id": "g16",
+      "applicant_id": "u12",
+      "message": "I want to learn Firebase, please accept me.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a5",
+      "gig_id": "g17",
+      "applicant_id": "u1",
+      "message": "I can build this quiz app in React.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a6",
+      "gig_id": "g18",
+      "applicant_id": "u8",
+      "message": "I need business cards for my startup.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a7",
+      "gig_id": "g19",
+      "applicant_id": "u12",
+      "message": "My resume needs help, thank you!",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a8",
+      "gig_id": "g20",
+      "applicant_id": "u11",
+      "message": "I can teach chemistry basics clearly.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a9",
+      "gig_id": "g21",
+      "applicant_id": "u9",
+      "message": "I need a portfolio for internships.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a10",
+      "gig_id": "g22",
+      "applicant_id": "u3",
+      "message": "I can make eye-catching thumbnails.",
+      "status": "Accepted",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a11",
+      "gig_id": "g13",
+      "applicant_id": "u7",
+      "message": "I can also design banners.",
+      "status": "Rejected",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a12",
+      "gig_id": "g15",
+      "applicant_id": "u11",
+      "message": "I can edit your report quickly.",
+      "status": "Rejected",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a13",
+      "gig_id": "g17",
+      "applicant_id": "u4",
+      "message": "I can build the backend part.",
+      "status": "Rejected",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a14",
+      "gig_id": "g21",
+      "applicant_id": "u12",
+      "message": "I would like a portfolio too.",
+      "status": "Rejected",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a15",
+      "gig_id": "g1",
+      "applicant_id": "u12",
+      "message": "I need a landing page for my club.",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a16",
+      "gig_id": "g1",
+      "applicant_id": "u7",
+      "message": "Can we adjust the design together?",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a17",
+      "gig_id": "g4",
+      "applicant_id": "u9",
+      "message": "I can build the Express API.",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a18",
+      "gig_id": "g9",
+      "applicant_id": "u1",
+      "message": "Happy to help with your Flutter bug.",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a19",
+      "gig_id": "g11",
+      "applicant_id": "u5",
+      "message": "I write blog posts regularly.",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    },
+    {
+      "id": "a20",
+      "gig_id": "g12",
+      "applicant_id": "u10",
+      "message": "I can teach you JavaScript basics.",
+      "status": "Pending",
+      "created_at": "2026-10-05"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "r1",
+      "gig_id": "g18",
+      "reviewer_id": "u3",
+      "reviewee_id": "u8",
+      "rating": 5,
+      "comment": "Clear feedback and paid on time."
+    },
+    {
+      "id": "r2",
+      "gig_id": "g18",
+      "reviewer_id": "u8",
+      "reviewee_id": "u3",
+      "rating": 4,
+      "comment": "Great design, small delay in delivery."
+    },
+    {
+      "id": "r3",
+      "gig_id": "g19",
+      "reviewer_id": "u5",
+      "reviewee_id": "u12",
+      "rating": 4,
+      "comment": "Polite and open to suggestions."
+    },
+    {
+      "id": "r4",
+      "gig_id": "g19",
+      "reviewer_id": "u12",
+      "reviewee_id": "u5",
+      "rating": 5,
+      "comment": "My resume looks amazing now."
+    },
+    {
+      "id": "r5",
+      "gig_id": "g20",
+      "reviewer_id": "u6",
+      "reviewee_id": "u11",
+      "rating": 5,
+      "comment": "Very attentive student."
+    },
+    {
+      "id": "r6",
+      "gig_id": "g20",
+      "reviewer_id": "u11",
+      "reviewee_id": "u6",
+      "rating": 4,
+      "comment": "Explained difficult topics well."
+    },
+    {
+      "id": "r7",
+      "gig_id": "g21",
+      "reviewer_id": "u1",
+      "reviewee_id": "u9",
+      "rating": 5,
+      "comment": "Smooth and professional."
+    },
+    {
+      "id": "r8",
+      "gig_id": "g22",
+      "reviewer_id": "u3",
+      "reviewee_id": "u8",
+      "rating": 4,
+      "comment": "Good video editing help."
+    },
+    {
+      "id": "rTB9tta",
+      "gig_id": "g21",
+      "reviewer_id": "u9",
+      "reviewee_id": "u1",
+      "rating": 4,
+      "comment": "Clear requirements and quick replies."
+    }
+  ]
+}
