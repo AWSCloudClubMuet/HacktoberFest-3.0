@@ -343,11 +343,11 @@ export default function Page() {
         <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
         <nav className="main-nav" aria-label="Main navigation">
           <span className="nav-label">Workspace</span>
-          <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
+          <button className={`nav-item ${view === 'Discover' && !savedOnly ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
           <button className={`nav-item ${view === 'My activity' ? 'active' : ''}`} onClick={() => setView('My activity')}><LayoutDashboard />My activity{(myApplications.length + reviewableGigs.length) > 0 && <span className="nav-count">{myApplications.length + reviewableGigs.length}</span>}</button>
           <span className="nav-label nav-label-spaced">Your space</span>
           <button className="nav-item" onClick={() => { setActivityTab('my-gigs'); setView('My activity') }}><BriefcaseBusiness />My gigs{myGigs.length > 0 && <span className="nav-count">{myGigs.length}</span>}</button>
-          <button className="nav-item" onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
+          <button className={`nav-item ${savedOnly ? 'active' : ''}`} onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
         </nav>
         <div className="sidebar-bottom">
           <button className="nav-item" onClick={() => me && openProfile(me.id)}><Settings />My profile</button>
@@ -450,7 +450,9 @@ export default function Page() {
                   ))}
                 </div>
               )}
-              {!loading && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
+              {!loading && visibleGigs.length === 0 && (savedOnly
+                ? <div className="empty-state"><Heart /><h3>No saved gigs yet</h3><p>Tap the heart on any gig and it will be kept here.</p></div>
+                : <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>)}
 
             </>
           )}
