@@ -66,6 +66,57 @@ a { text-decoration: none; color: inherit; }
 }
 .top-bar-brand { font-size: 1.2rem; font-weight: 700; letter-spacing: -.3px; }
 .top-bar-brand span { color: #a5d6a7; font-size: .75rem; display: block; font-weight: 400; }
+
+.top-bar-brand-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  text-align: left;
+  color: var(--white);
+  transition: opacity 0.15s ease;
+}
+.top-bar-brand-btn:hover {
+  opacity: 0.95;
+}
+.top-bar-brand-btn:focus-visible {
+  outline: 2px solid #a5d6a7;
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+.navbar-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.top-bar-brand-btn:hover .navbar-logo {
+  transform: scale(1.05);
+}
+
+.auth-logo-wrap {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+.auth-logo {
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 4px;
+  box-shadow: var(--shadow);
+  display: block;
+}
 .top-bar-right { display: flex; align-items: center; gap: .5rem; }
 .demo-user-btn {
   background: rgba(255,255,255,.15);
@@ -459,7 +510,9 @@ input[type=range]::-webkit-slider-thumb {
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 400px) {
-  .top-bar-brand { font-size: 1rem; }
+  .top-bar-brand { font-size: 0.95rem; }
+  .top-bar-brand span { font-size: 0.68rem; }
+  .navbar-logo { width: 30px; height: 30px; }
   .price-main { font-size: 1.1rem; }
   .chart-stats { grid-template-columns: repeat(3,1fr); gap: .3rem; }
   .stat-value { font-size: .9rem; }

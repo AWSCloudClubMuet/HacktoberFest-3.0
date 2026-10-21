@@ -8,7 +8,14 @@ export default function AccountModal({ user, onClose, onLogout }) {
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="acc-title">
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 id="acc-title" className="modal-title" style={{ margin: 0 }}>My Account</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            <img
+              src="/images/kisanmandi-logo.png"
+              alt="KisanMandi logo"
+              style={{ width: 28, height: 28, objectFit: 'contain', borderRadius: '4px', background: 'var(--white)' }}
+            />
+            <h2 id="acc-title" className="modal-title" style={{ margin: 0 }}>My Account</h2>
+          </div>
           <button className="btn-icon" onClick={onClose} aria-label="Close modal">✕</button>
         </div>
 
@@ -71,3 +78,4 @@ export default function AccountModal({ user, onClose, onLogout }) {
     </div>
   );
 }
+

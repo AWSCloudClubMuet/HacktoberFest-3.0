@@ -56,10 +56,22 @@ export default function AppShell({ currentUser, onLogout }) {
     <div className="app-wrapper">
       {/* Top Bar */}
       <header className="top-bar">
-        <div className="top-bar-brand">
-          🌾 KisanMandi
-          <span>Sindh Produce Marketplace</span>
-        </div>
+        <button
+          className="top-bar-brand-btn"
+          onClick={() => setTab('prices')}
+          title="KisanMandi — Back to Home"
+          aria-label="KisanMandi Home"
+        >
+          <img
+            src="/images/kisanmandi-logo.png"
+            alt="KisanMandi logo"
+            className="navbar-logo"
+          />
+          <div className="top-bar-brand">
+            KisanMandi
+            <span>Sindh Produce Marketplace</span>
+          </div>
+        </button>
         <div className="top-bar-right">
           <button
             className="demo-user-btn"

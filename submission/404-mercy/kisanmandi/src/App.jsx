@@ -83,6 +83,11 @@ export default function App() {
     return (
       <div className="onboard-wrap">
         <div style={{ textAlign: 'center', color: 'var(--white)' }}>
+          <img
+            src="/images/kisanmandi-logo.png"
+            alt="KisanMandi logo"
+            style={{ width: 80, height: 80, objectFit: 'contain', margin: '0 auto 1rem', display: 'block', borderRadius: 12, background: 'var(--white)', padding: 4, boxShadow: 'var(--shadow)' }}
+          />
           <div className="spinner" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'var(--white)', margin: '0 auto 1rem' }} />
           <p style={{ fontSize: '.9rem' }}>Loading KisanMandi…</p>
         </div>

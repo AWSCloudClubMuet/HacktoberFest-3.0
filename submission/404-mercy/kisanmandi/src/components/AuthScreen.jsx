@@ -176,7 +176,13 @@ export default function AuthScreen({ onAuthSuccess }) {
   return (
     <div className="onboard-wrap">
       <div className="onboard-card" style={{ maxWidth: 460 }}>
-        <div className="onboard-logo">🌾</div>
+        <div className="auth-logo-wrap">
+          <img
+            src="/images/kisanmandi-logo.png"
+            alt="KisanMandi logo"
+            className="auth-logo"
+          />
+        </div>
         <h1 className="onboard-title">KisanMandi</h1>
         <p className="onboard-sub">Sindh Agricultural Marketplace</p>
 
@@ -378,3 +384,4 @@ export default function AuthScreen({ onAuthSuccess }) {
     </div>
   );
 }
+

@@ -41,6 +41,14 @@
       "phone": "03556789012",
       "district": "Hyderabad",
       "role": "buyer"
+    },
+    {
+      "name": "Ali",
+      "email": "ali@gmail.com",
+      "phone": "03033532363",
+      "district": "Nawabshah",
+      "role": "farmer",
+      "id": "TG8j3VKDCy8"
     }
   ],
   "crops": [
@@ -2673,5 +2681,6 @@
       "active": true,
       "triggered": false
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
