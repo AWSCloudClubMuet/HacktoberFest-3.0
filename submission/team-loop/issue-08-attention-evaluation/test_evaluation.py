@@ -15,6 +15,15 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(cost_threshold(200, 0), 0)
         self.assertEqual(cost_threshold(0, 5), 1)
 
+    def test_large_finite_costs_do_not_overflow_the_threshold(self):
+        self.assertEqual(cost_threshold(1e308, 1e308), 0.5)
+        self.assertAlmostEqual(cost_threshold(1e308, 5e307), 1 / 3)
+
+    def test_numeric_inputs_are_converted_consistently(self):
+        self.assertAlmostEqual(cost_threshold('200', '5'), 1 / 41)
+        self.assertEqual(decision_cost('0.1', False, '200', '5'), 20)
+        self.assertEqual(decision_cost('0.1', True, '200', '5'), 4.5)
+
     def test_invalid_costs(self):
         for fn, fp in [(0, 0), (-1, 5), (200, -1), (float('nan'), 5), (200, float('inf'))]:
             with self.subTest(fn=fn, fp=fp), self.assertRaises(ValueError):

@@ -57,7 +57,7 @@ Run components separately:
 ..\.venv\Scripts\python.exe evaluation.py
 ```
 
-Verification exits nonzero on failed tests or gradient checks. Recorded results: 22 tests passed, and all 15 gradient-array checks passed across unmasked, causal and custom-mask cases. The fixed-cost threshold is 5/205, approximately 2.439%. Numerical step size is 1e-6 in float64, with maximum absolute error <=1e-7 and relative L2 error <=1e-6. The JSON files contain actual measured errors.
+Verification exits nonzero on failed tests or gradient checks. Recorded results: 26 tests passed, and all 15 gradient-array checks passed across unmasked, causal and custom-mask cases. The final audit also checks forward output against an independent scalar-loop reference across four seeds and both causal/noncausal modes, zero upstream gradients, and cost-helper overflow/input consistency. The fixed-cost threshold is 5/205, approximately 2.439%. Numerical step size is 1e-6 in float64, with maximum absolute error <=1e-7 and relative L2 error <=1e-6. The JSON files contain actual measured errors. See [FINAL-AUDIT.md](FINAL-AUDIT.md) for scope and remaining presentation/submission steps.
 
 ## Requirement coverage
 

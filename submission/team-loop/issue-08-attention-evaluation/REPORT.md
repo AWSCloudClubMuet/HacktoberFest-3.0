@@ -72,7 +72,7 @@ Settings: NumPy float64, seed 42, central step h=1e-6. Each gradient must satisf
 
 The executable checks cover rectangular unmasked attention, square causal attention, and a custom sparse boolean mask. Q, K, V, intermediate probabilities P and pre-mask scores S are each checked numerically. Perturbations of forbidden pre-mask scores have no effect. The checker exits nonzero if any condition fails.
 
-Recorded local run: 22 unittest tests passed. Across the 15 gradient-array checks, the largest maximum absolute error was approximately 2.624e-10 and the largest relative L2 error approximately 4.515e-10. Exact machine-readable results are in [results/gradient_checks.json](results/gradient_checks.json). Last digits can vary with numerical libraries/platforms. These small synthetic checks establish local derivative consistency and tested edge behavior; they are not a proof for every possible input or a model-quality benchmark.
+Recorded final audit: 26 unittest tests passed, including an independent scalar-loop forward reference across four seeds and causal/noncausal modes, zero upstream gradients, and cost-helper robustness. Across the 15 gradient-array checks, the largest maximum absolute error was approximately 2.624e-10 and the largest relative L2 error approximately 4.515e-10. Exact machine-readable results are in [results/gradient_checks.json](results/gradient_checks.json). Last digits can vary with numerical libraries/platforms. These small synthetic checks establish local derivative consistency and tested edge behavior; they are not a proof for every possible input or a model-quality benchmark.
 
 ### Memory growth and FlashAttention
 

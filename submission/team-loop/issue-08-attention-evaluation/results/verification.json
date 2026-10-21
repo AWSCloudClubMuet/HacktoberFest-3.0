@@ -2,7 +2,7 @@
   "python": "3.11.9",
   "numpy": "2.4.6",
   "tests": {
-    "run": 22,
+    "run": 26,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
@@ -13,7 +13,7 @@
     "fraud_prevalence": 0.001,
     "always_normal_accuracy": 0.999,
     "always_normal_fraud_recall": 0.0,
-    "theoretical_cost_threshold": 0.024390243902439025,
+    "theoretical_cost_threshold": 0.02439024390243903,
     "illustrative_transactions": 100000,
     "expected_frauds_at_given_prevalence": 100,
     "always_normal_expected_cost_at_100000_transactions": 20000,

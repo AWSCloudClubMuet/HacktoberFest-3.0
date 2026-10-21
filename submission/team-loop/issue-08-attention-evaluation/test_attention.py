@@ -1,4 +1,5 @@
 import unittest
+import math
 import numpy as np
 from attention import forward, backward
 from check_gradients import run_checks
@@ -65,6 +66,32 @@ class AttentionTests(unittest.TestCase):
     def test_all_analytic_gradients_match_finite_differences(self):
         report = run_checks()
         self.assertTrue(report['passed'], report)
+
+    def test_forward_matches_independent_loop_reference(self):
+        for seed in [0, 7, 19, 64]:
+            rng = np.random.default_rng(seed)
+            for causal in [False, True]:
+                nq, nk, d, dv = (4, 4, 3, 2) if causal else (3, 5, 2, 3)
+                q, k, v = rng.normal(size=(nq, d)), rng.normal(size=(nk, d)), rng.normal(size=(nk, dv))
+                mask = rng.random((nq, nk)) > 0.4
+                for i in range(nq):
+                    mask[i, min(i, nk - 1)] = True
+                expected = []
+                for i in range(nq):
+                    indices = [j for j in range(nk) if mask[i, j] and (not causal or j <= i)]
+                    scores = [sum(float(q[i, t]) * float(k[j, t]) for t in range(d)) / math.sqrt(d) for j in indices]
+                    weights = [math.exp(s - max(scores)) for s in scores]
+                    expected.append([sum(w * float(v[j, col]) for j, w in zip(indices, weights)) / sum(weights)
+                                     for col in range(dv)])
+                with self.subTest(seed=seed, causal=causal):
+                    actual, _ = forward(q, k, v, causal=causal, mask=mask)
+                    np.testing.assert_allclose(actual, expected, rtol=1e-12, atol=1e-12)
+
+    def test_zero_upstream_gradient_gives_zero_gradients(self):
+        out, cache = forward(self.q, self.k, self.v, causal=True)
+        for name, gradient in backward(np.zeros_like(out), cache).items():
+            with self.subTest(gradient=name):
+                np.testing.assert_array_equal(gradient, np.zeros_like(gradient))
 
     def test_rejects_shape_errors(self):
         bad = [([], self.k, self.v), ([1, 2], self.k, self.v),

@@ -14,7 +14,7 @@ The chosen issues and working ownership are below. See [COORDINATION.md](COORDIN
 
 | Issue | Owner | Deliverables | Status |
 | --- | --- | --- | --- |
-| [#8 Debugging, Attention Gradients & Evaluation](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/8) | Moksh | [Analysis, NumPy attention, numerical gradient checks, training fixes](issue-08-attention-evaluation/README.md) | Implemented and locally verified: 22 tests and all numerical checks passed |
+| [#8 Debugging, Attention Gradients & Evaluation](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/8) | Moksh | [Analysis, NumPy attention, numerical gradient checks, training fixes](issue-08-attention-evaluation/README.md) | Implemented and audited: 26 tests and all numerical checks passed |
 | [#9 Noisy Labels: HelpDeskNet-50K](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/9) | Laksh | Calculations, annotation-quality analysis, review and evaluation plan | Awaiting owner's push and verification |
 | [#13 TuneWave Music Player](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/13) | Kartik | Data-structure core, tests, demo and complexity notes | Awaiting owner's push and verification |
 

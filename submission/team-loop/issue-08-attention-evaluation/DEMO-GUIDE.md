@@ -46,7 +46,7 @@ Issue folder mein:
 ..\.venv\Scripts\python.exe verify.py
 ```
 
-Expected: 22 tests, zero failures/errors, gradient_checks_passed true. Last digits of numerical errors platform ke hisaab se thore badal sakte hain; tolerances ke andar rehna chahiye.
+Expected: 26 tests, zero failures/errors, gradient_checks_passed true. Final audit mein independent loop reference, zero upstream gradient aur large-cost edge cases bhi check kiye hain. Last digits of numerical errors platform ke hisaab se thore badal sakte hain; tolerances ke andar rehna chahiye.
 
 ## Jo claims nahi karne
 

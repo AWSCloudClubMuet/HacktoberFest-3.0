@@ -2,6 +2,7 @@ test_all_analytic_gradients_match_finite_differences (test_attention.AttentionTe
 test_cache_does_not_alias_inputs (test_attention.AttentionTests.test_cache_does_not_alias_inputs) ... ok
 test_causal_and_custom_masks_combine (test_attention.AttentionTests.test_causal_and_custom_masks_combine) ... ok
 test_causal_output_cannot_see_future_keys (test_attention.AttentionTests.test_causal_output_cannot_see_future_keys) ... ok
+test_forward_matches_independent_loop_reference (test_attention.AttentionTests.test_forward_matches_independent_loop_reference) ... ok
 test_large_scores_remain_finite (test_attention.AttentionTests.test_large_scores_remain_finite) ... ok
 test_masked_score_gradients_are_zero (test_attention.AttentionTests.test_masked_score_gradients_are_zero) ... ok
 test_one_key_returns_its_value (test_attention.AttentionTests.test_one_key_returns_its_value) ... ok
@@ -14,14 +15,17 @@ test_rejects_shape_errors (test_attention.AttentionTests.test_rejects_shape_erro
 test_rejects_wrong_output_gradient (test_attention.AttentionTests.test_rejects_wrong_output_gradient) ... ok
 test_scale_is_inverse_sqrt_feature_count (test_attention.AttentionTests.test_scale_is_inverse_sqrt_feature_count) ... ok
 test_zero_scores_average_values (test_attention.AttentionTests.test_zero_scores_average_values) ... ok
+test_zero_upstream_gradient_gives_zero_gradients (test_attention.AttentionTests.test_zero_upstream_gradient_gives_zero_gradients) ... ok
 test_baseline_arithmetic (test_evaluation.EvaluationTests.test_baseline_arithmetic) ... ok
 test_invalid_costs (test_evaluation.EvaluationTests.test_invalid_costs) ... ok
 test_invalid_probabilities (test_evaluation.EvaluationTests.test_invalid_probabilities) ... ok
+test_large_finite_costs_do_not_overflow_the_threshold (test_evaluation.EvaluationTests.test_large_finite_costs_do_not_overflow_the_threshold) ... ok
+test_numeric_inputs_are_converted_consistently (test_evaluation.EvaluationTests.test_numeric_inputs_are_converted_consistently) ... ok
 test_preferred_decision_on_each_side (test_evaluation.EvaluationTests.test_preferred_decision_on_each_side) ... ok
 test_threshold_derivation (test_evaluation.EvaluationTests.test_threshold_derivation) ... ok
 test_zero_cost_boundaries (test_evaluation.EvaluationTests.test_zero_cost_boundaries) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.297s
+Ran 26 tests in 0.256s
 
 OK
