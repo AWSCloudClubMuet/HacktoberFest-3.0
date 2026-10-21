@@ -1,0 +1,172 @@
+========================================================================
+                        CodeCrafters BANK - ATM
+========================================================================
+                    Smart ATM Transaction Simulator
+             Educational simulation. All data is fictional.
+------------------------------------------------------------------------
+  Maximum PIN attempts      : 3
+========================================================================
+========================================================================
+                             AUTHENTICATION
+========================================================================
+Enter your 4-digit PIN: 1234
+[SUCCESS] PIN accepted. Welcome!
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): -1
+[ERROR]   Invalid selection. Please enter a whole number from 1 to 6.
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 7
+[ERROR]   Invalid selection. Please enter a whole number from 1 to 6.
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 1
+========================================================================
+                            BALANCE ENQUIRY
+========================================================================
+  Available Balance         : Rs. 30,000
+------------------------------------------------------------------------
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 2
+========================================================================
+                             DEPOSIT MONEY
+========================================================================
+[INFO]    Whole rupees only. Maximum balance: Rs. 100,000,000
+Enter deposit amount: Rs. 12000
+[SUCCESS] Deposit completed. Your new balance is Rs. 42,000.
+========================================================================
+                          TRANSACTION RECEIPT
+                     CodeCrafters BANK (Simulated)
+------------------------------------------------------------------------
+  Transaction No.           : TXN-0001
+  Transaction Type          : Deposit
+  Amount                    : Rs. 12,000
+  Transaction Fee           : Rs. 0
+  Total Credited            : Rs. 12,000
+  Previous Balance          : Rs. 30,000
+  Updated Balance           : Rs. 42,000
+  Status                    : COMPLETED
+========================================================================
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 3
+========================================================================
+                             WITHDRAW MONEY
+========================================================================
+[INFO]    Limit per withdrawal: Rs. 25,000
+[INFO]    Fee: Rs. 50 for amounts above Rs. 10,000
+[INFO]    Session withdrawal allowance left: Rs. 50,000
+Enter withdrawal amount: Rs. 12000
+[SUCCESS] Withdrawal completed. Please take your cash.
+  Withdrawal amount         : Rs. 12,000
+  Transaction fee           : Rs. 50
+  Updated balance           : Rs. 29,950
+========================================================================
+                          TRANSACTION RECEIPT
+                     CodeCrafters BANK (Simulated)
+------------------------------------------------------------------------
+  Transaction No.           : TXN-0002
+  Transaction Type          : Withdrawal
+  Amount                    : Rs. 12,000
+  Transaction Fee           : Rs. 50
+  Total Deducted            : Rs. 12,050
+  Previous Balance          : Rs. 42,000
+  Updated Balance           : Rs. 29,950
+  Status                    : COMPLETED
+========================================================================
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 5
+========================================================================
+                          ACCOUNT INFORMATION
+========================================================================
+[WARNING] SIMULATED DEMONSTRATION DATA - not a real bank account.
+  Account Holder            : CodeCrafters
+  Account Number            : XXXX-XXXX-4821
+  Account Type              : Savings
+  Current Balance           : Rs. 29,950
+  Per-Withdrawal Limit      : Rs. 25,000
+  Session Allowance Left    : Rs. 38,000
+------------------------------------------------------------------------
+
+========================================================================
+                               MAIN MENU
+========================================================================
+  1. Check Balance
+  2. Deposit Money
+  3. Withdraw Money
+  4. Transaction History
+  5. Account Information
+  6. Exit
+------------------------------------------------------------------------
+Select an option (1-6): 6
+
+========================================================================
+                            SESSION SUMMARY
+========================================================================
+  Opening Balance           : Rs. 30,000
+  Successful Deposits       : 1
+  Successful Withdrawals    : 1
+  Completed Transactions    : 2
+  Total Fees Charged        : Rs. 50
+  Final Balance             : Rs. 29,950
+========================================================================
+             Thank you for banking with CodeCrafters BANK.
+                    Please take your card. Goodbye!
+========================================================================
