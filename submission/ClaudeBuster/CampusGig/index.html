@@ -4,22 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Gig & SkillSwap</title>
+    <title>TaskPeer — Turn your major skills into campus currency</title>
     <meta name="description"
-        content="A student marketplace where students post or apply to small gigs for payment, skill swap, or peer help.">
+        content="TaskPeer — Turn your major skills into campus currency. A student marketplace for campus gigs, peer help, and skill trades.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
     <!-- =======================================================================
-       HEADER
+       2-SECOND SPLASH SCREEN
        ======================================================================= -->
-    <header>
-        <div class="header-inner">
-            <a href="#" class="site-title" id="nav-brand">Campus Gig & SkillSwap</a>
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-avatar-wrap">
+                <svg width="68" height="68" viewBox="0 0 44 44" fill="none" class="blob-avatar" aria-hidden="true">
+                    <circle cx="22" cy="22" r="22" fill="#6EE7A0"/>
+                    <circle cx="16" cy="18" r="2.5" fill="#0B0B1A"/>
+                    <circle cx="28" cy="18" r="2.5" fill="#0B0B1A"/>
+                    <path d="M15 25C17 29 27 29 29 25" stroke="#0B0B1A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                </svg>
+            </div>
+            <h1 class="splash-title">TaskPeer</h1>
+            <p class="splash-tagline">Turn your major skills into campus currency.</p>
+        </div>
+    </div>
 
-            <nav class="main-nav" role="tablist">
+    <!-- =======================================================================
+       TOP BAR / HEADER
+       ======================================================================= -->
+    <header class="app-header">
+        <div class="header-inner">
+            <a href="#" class="site-title" id="nav-brand">TaskPeer</a>
+
+            <!-- Desktop Nav -->
+            <nav class="desktop-nav" role="tablist">
                 <button class="nav-link active" id="nav-tab-browse" data-view="view-browse">Browse</button>
                 <button class="nav-link" id="nav-tab-post" data-view="view-post">Post a gig</button>
                 <button class="nav-link" id="nav-tab-activity" data-view="view-activity">
@@ -28,24 +51,58 @@
                 <button class="nav-link" id="nav-tab-profile" data-view="view-profile">Profile</button>
             </nav>
 
+            <!-- User Switcher on the Right -->
             <div class="header-auth-area" id="header-auth-area">
-                <!-- Rendered dynamically: Log in button or Active student info with Switch / Log out -->
+                <!-- Rendered dynamically by app.js: Viewing as [Avatar] [First Name] dropdown or Sign in -->
             </div>
         </div>
     </header>
 
     <!-- =======================================================================
-       MAIN CONTENT WRAPPER
+       MAIN CONTENT CONTAINER
        ======================================================================= -->
     <main class="content-wrapper">
 
         <!-- -------------------------------------------------------------------
-         VIEW 1: BROWSE (DEFAULT HOME - NO HERO)
+         VIEW 1: BROWSE
          ------------------------------------------------------------------- -->
         <div class="view-panel active" id="view-browse">
-            <div class="browse-layout">
+            <div class="browse-header-area">
+                <h1 class="browse-page-title">Find a gig</h1>
 
-                <!-- Left Sidebar Filters -->
+                <!-- Search bar pill -->
+                <div class="search-pill-box">
+                    <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" class="search-input-pill" id="search-input"
+                        placeholder="Search gigs by title or keywords..." autocomplete="off">
+                </div>
+
+                <!-- Horizontally scrolling filter chips on mobile -->
+                <div class="filter-chips-scroll" id="mobile-filter-chips">
+                    <button class="filter-chip-btn" id="btn-mobile-cat-filter">
+                        <span id="label-mobile-cat">Category: All</span> ▾
+                    </button>
+                    <button class="filter-chip-btn" id="btn-mobile-type-filter">
+                        <span id="label-mobile-type">Type: All</span> ▾
+                    </button>
+                    <button class="filter-chip-btn" id="btn-mobile-payment-filter">
+                        <span id="label-mobile-payment">Payment: All</span> ▾
+                    </button>
+                    <button class="filter-chip-btn" id="btn-mobile-budget-filter">
+                        <span>Budget</span> ▾
+                    </button>
+                    <button class="filter-chip-btn" id="btn-mobile-reset-filter" style="color: var(--royal-blue);">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="browse-layout">
+                <!-- Desktop Sidebar Filters -->
                 <aside class="sidebar-filters">
                     <div class="filter-section">
                         <div class="filter-heading">Category</div>
@@ -101,7 +158,6 @@
                         </div>
                     </div>
 
-
                     <div class="filter-section">
                         <div class="filter-heading">Budget ($)</div>
                         <div class="budget-row">
@@ -116,54 +172,34 @@
                     </div>
                 </aside>
 
-                <!-- Main Listing -->
+                <!-- Main Gigs Listing -->
                 <section class="gigs-main">
-                    <div class="search-bar-row">
-                        <div class="search-input-wrap">
-                            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input type="text" id="search-input" placeholder="Search gigs by title or description..."
-                                autocomplete="off">
-                        </div>
-                    </div>
-
                     <div class="results-meta">
-                        <span id="results-count-text">Loading gigs...</span>
-                        <span style="font-size: 12px; color: var(--text-subtle);">Click a row for details</span>
+                        <span class="results-count-text" id="results-count-text">Loading gigs...</span>
                     </div>
 
-                    <!-- Dense Rows Table -->
-                    <div class="gigs-table-wrap">
-                        <table class="gigs-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 42%;">Title</th>
-                                    <th style="width: 14%;">Category</th>
-                                    <th style="width: 12%;">Type</th>
-                                    <th style="width: 14%;">Payment</th>
-                                    <th style="width: 10%;">Deadline</th>
-                                    <th style="width: 8%;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="gigs-table-body">
-                                <!-- Rendered dynamically as dense rows -->
-                            </tbody>
-                        </table>
+                    <!-- Gigs Stacked Cards List -->
+                    <div class="gigs-cards-list" id="gigs-cards-list">
+                        <!-- Populated dynamically as stacked cards -->
                     </div>
+
+                    <table style="display: none;">
+                        <tbody id="gigs-table-body"></tbody>
+                    </table>
                 </section>
-
             </div>
         </div>
 
         <!-- -------------------------------------------------------------------
-         VIEW 2: GIG DETAIL
+         VIEW 2: GIG DETAIL (CENTERED)
          ------------------------------------------------------------------- -->
         <div class="view-panel" id="view-detail">
-            <div class="detail-container">
-                <a class="back-link" id="btn-back-to-browse">← Back to browse</a>
+            <div class="detail-center-container">
+                <div style="margin-bottom: 14px;">
+                    <button class="btn-secondary" id="btn-back-to-browse" style="padding: 5px 14px; font-size: 13px;">
+                        ← Back to browse
+                    </button>
+                </div>
                 <div id="detail-content-area">
                     <!-- Rendered dynamically -->
                 </div>
@@ -171,20 +207,20 @@
         </div>
 
         <!-- -------------------------------------------------------------------
-         VIEW 3: POST A GIG (Single Column, Plain Text Errors)
+         VIEW 3: POST A GIG (CENTERED)
          ------------------------------------------------------------------- -->
         <div class="view-panel" id="view-post">
-            <div class="form-single-col">
+            <div class="post-form-card">
                 <h2 style="margin-bottom: 0.35rem;">Post a gig</h2>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 1.5rem;">
-                    Post what you're offering to do or what you need help with.
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 1.5rem;">
+                    Post what you are offering to do or what you need help with.
                 </p>
 
                 <form id="form-post-gig" novalidate>
                     <div class="form-field">
                         <label for="post-title">Title</label>
-                        <input type="text" id="post-title" placeholder="e.g. need help w/ my java loop bug, due fri">
-                        <div class="field-error" id="err-title">Please enter a title.</div>
+                        <input type="text" id="post-title" placeholder="e.g. need help w/ java loop bug, due fri">
+                        <div class="field-error" id="err-title">Title is required.</div>
                     </div>
 
                     <div class="form-field">
@@ -199,24 +235,33 @@
                     </div>
 
                     <div class="form-field">
-                        <label for="post-type">Type</label>
-                        <select id="post-type">
-                            <option value="Offering">Offering a service</option>
+                        <label>Type</label>
+                        <div class="segmented-pill-wrap" id="toggle-post-type">
+                            <button type="button" class="segmented-pill-btn active" data-value="Requesting">Requesting help</button>
+                            <button type="button" class="segmented-pill-btn" data-value="Offering">Offering service</button>
+                        </div>
+                        <select id="post-type" style="display: none;">
                             <option value="Requesting" selected>Requesting help</option>
+                            <option value="Offering">Offering service</option>
                         </select>
                     </div>
 
                     <div class="form-field">
                         <label for="post-desc">Description</label>
                         <textarea id="post-desc" rows="4"
-                            placeholder="Be direct about what you need done, materials or links, and expectations."></textarea>
-                        <div class="field-error" id="err-desc">Please write a description.</div>
+                            placeholder="State what you need done, materials or links, and expectations."></textarea>
+                        <div class="field-error" id="err-desc">Description is required.</div>
                     </div>
 
                     <div class="form-field">
-                        <label for="post-payment">Payment</label>
-                        <select id="post-payment">
-                            <option value="Paid">Paid</option>
+                        <label>Payment</label>
+                        <div class="segmented-pill-wrap" id="toggle-post-payment">
+                            <button type="button" class="segmented-pill-btn active" data-value="Paid">Paid</button>
+                            <button type="button" class="segmented-pill-btn" data-value="SkillSwap">Skill swap</button>
+                            <button type="button" class="segmented-pill-btn" data-value="Free">Free</button>
+                        </div>
+                        <select id="post-payment" style="display: none;">
+                            <option value="Paid" selected>Paid</option>
                             <option value="SkillSwap">Skill swap</option>
                             <option value="Free">Free</option>
                         </select>
@@ -244,19 +289,21 @@
         </div>
 
         <!-- -------------------------------------------------------------------
-         VIEW 4: MY ACTIVITY (Two Sub-Tabs)
+         VIEW 4: MY ACTIVITY (CENTERED)
          ------------------------------------------------------------------- -->
         <div class="view-panel" id="view-activity">
-            <div style="max-width: 1000px;">
-                <h2>My activity</h2>
+            <div class="activity-center-container">
+                <h2 style="margin-bottom: 0.75rem;">My activity</h2>
 
-                <div class="sub-nav">
-                    <button class="sub-nav-btn active" id="subtab-my-gigs">My gigs</button>
-                    <button class="sub-nav-btn" id="subtab-my-apps">My applications</button>
+                <div class="activity-tabs-row">
+                    <div class="segmented-pill-wrap">
+                        <button class="segmented-pill-btn active" id="subtab-my-gigs">My gigs</button>
+                        <button class="segmented-pill-btn" id="subtab-my-apps">My applications</button>
+                    </div>
                 </div>
 
-                <div id="activity-content-area">
-                    <!-- Rendered dynamically -->
+                <div id="activity-content-area" class="activity-cards-list">
+                    <!-- Rendered dynamically as stacked cards -->
                 </div>
             </div>
         </div>
@@ -265,29 +312,76 @@
          VIEW 5: PROFILE
          ------------------------------------------------------------------- -->
         <div class="view-panel" id="view-profile">
-            <div class="profile-layout" id="profile-container">
+            <div class="profile-center-container" id="profile-container">
                 <!-- Rendered dynamically -->
             </div>
         </div>
 
-        </div>
     </main>
+
+    <!-- =======================================================================
+       STICKY BOTTOM TAB BAR (MOBILE)
+       ======================================================================= -->
+    <nav class="bottom-tab-bar" id="bottom-tab-bar" role="tablist">
+        <button class="tab-item active" data-view="view-browse">
+            <svg class="tab-icon" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Browse</span>
+        </button>
+        <button class="tab-item" data-view="view-post">
+            <svg class="tab-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span>Post</span>
+        </button>
+        <button class="tab-item" data-view="view-activity">
+            <svg class="tab-icon" viewBox="0 0 24 24">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+            </svg>
+            <span>Activity</span>
+        </button>
+        <button class="tab-item" data-view="view-profile">
+            <svg class="tab-icon" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+        </button>
+    </nav>
+
+    <!-- =======================================================================
+       FOOTER (WITH TASKPEER & SMALL DEV LINK)
+       ======================================================================= -->
+    <footer class="site-footer">
+        <span>TaskPeer</span>
+        <button class="dev-link" id="btn-dev-link">Dev</button>
+    </footer>
 
     <!-- =======================================================================
        STUDENT LOGIN / SWITCH ACCOUNT MODAL
        ======================================================================= -->
     <div class="modal-shim" id="modal-login">
-        <div class="modal-box" style="max-width: 480px;">
+        <div class="modal-box">
             <div class="modal-top">
-                <h3>Student Sign In</h3>
-                <button class="close-btn" id="btn-close-login-modal" aria-label="Close">&times;</button>
+                <h3>Select student account</h3>
+                <button class="btn-icon" id="btn-close-login-modal" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 1rem;">
-                Select your campus student account to sign in:
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 1rem;">
+                Select your campus profile:
             </p>
 
             <div id="login-students-list"
-                style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
+                style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 400px; overflow-y: auto;">
                 <!-- Populated dynamically with students -->
             </div>
 
@@ -298,32 +392,59 @@
     </div>
 
     <!-- =======================================================================
-       MUTUAL REVIEW MODAL
+       MUTUAL REVIEW MODAL (5 CLICKABLE VISUAL STARS)
        ======================================================================= -->
     <div class="modal-shim" id="modal-review">
         <div class="modal-box">
             <div class="modal-top">
                 <h3 id="review-modal-title">Rate collaboration</h3>
-                <button class="close-btn" id="btn-close-review-modal" aria-label="Close">&times;</button>
+                <button class="btn-icon" id="btn-close-review-modal" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <form id="form-review" novalidate>
                 <input type="hidden" id="review-gig-id">
+                
                 <div class="form-field">
-                    <label id="review-target-label">Rating (1 to 5)</label>
-                    <select id="review-rating-select">
-                        <option value="5">5 — Excellent work / great communication</option>
-                        <option value="4">4 — Good, would work with again</option>
-                        <option value="3">3 — Fair, met minimum expectations</option>
-                        <option value="2">2 — Below expectations</option>
-                        <option value="1">1 — Poor</option>
+                    <label id="review-target-label">Rating</label>
+                    
+                    <!-- 5 Interactive Visual Stars -->
+                    <div class="interactive-stars-wrap" id="interactive-stars" role="radiogroup" aria-label="Rating out of 5 stars">
+                        <button type="button" class="star-btn active" data-val="1" aria-label="1 star">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <button type="button" class="star-btn active" data-val="2" aria-label="2 stars">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <button type="button" class="star-btn active" data-val="3" aria-label="3 stars">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <button type="button" class="star-btn active" data-val="4" aria-label="4 stars">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <span class="rating-text-hint" id="rating-text-hint">5 stars</span>
+                    </div>
+
+                    <select id="review-rating-select" style="display: none;">
+                        <option value="5" selected>5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
                     </select>
                 </div>
 
                 <div class="form-field">
                     <label for="review-comment-input">Comment</label>
                     <textarea id="review-comment-input" rows="3"
-                        placeholder="Write an honest note about how the gig went..."></textarea>
-                    <div class="field-error" id="err-review-comment">Please write a short comment.</div>
+                        placeholder="Write a note about how the collaboration went..."></textarea>
+                    <div class="field-error" id="err-review-comment">Comment is required.</div>
                 </div>
 
                 <div style="margin-top: 1.25rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
@@ -331,6 +452,57 @@
                     <button type="submit" class="btn-primary">Submit review</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- =======================================================================
+       MOBILE FILTER BOTTOM SHEET MODAL
+       ======================================================================= -->
+    <div class="modal-shim" id="modal-filter-sheet">
+        <div class="modal-box" style="align-self: flex-end; width: 100%; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+            <div class="modal-top">
+                <h3 id="sheet-title">Filters</h3>
+                <button class="btn-icon" id="btn-close-filter-sheet" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="filter-sheet-body" style="margin-bottom: 1.25rem;">
+                <!-- Filter controls cloned or placed here -->
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button type="button" class="btn-secondary" id="btn-sheet-reset">Reset</button>
+                <button type="button" class="btn-primary" id="btn-sheet-apply">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================================
+       DEV CONSOLE MODAL
+       ======================================================================= -->
+    <div class="modal-shim" id="modal-dev">
+        <div class="modal-box">
+            <div class="modal-top">
+                <h3>Developer tools</h3>
+                <button class="btn-icon" id="btn-close-dev-modal" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 1rem;">
+                Manage local TaskPeer state:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-secondary" id="btn-dev-reset-db">Reset database to seed data</button>
+                <button class="btn-secondary" id="btn-dev-clear-session">Clear student session</button>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-primary" id="btn-close-dev">Close</button>
+            </div>
         </div>
     </div>
 

@@ -1,18 +1,76 @@
 /**
- * Campus Gig & SkillSwap Portal — Handcrafted Frontend Controller
- * Follows strict student marketplace visual rules:
- * - Left-aligned, Source Serif 4 headings, IBM Plex Sans body
- * - Dense rows, plain text status colors
- * - Zero corporate buzzwords (no seamless, unlock, empower, discover, welcome back)
- * - Instant pointer feedback & dedicated Student Authentication / Login System
- * - Editable profile bio/skills & visit any student's public profile
+ * TaskPeer — Campus Marketplace Portal Controller
+ * Refined Features:
+ * - 2-Second Splash screen with TaskPeer and tagline
+ * - Solid green buttons (no gradients)
+ * - 5 interactive clickable visual star rating buttons in Review Modal
+ * - Centered Post a Gig, My Activity, and Gig Detail screens
+ * - SkillSwap dedicated return-service field
+ * - Star rating icons & pencil edit icons
+ * - Proper crisp corners
  */
 
 import { mockDb } from './mockApi.js';
 
+// Blob Face Avatar generator (SVG)
+export function getBlobAvatarSvg(userId, size = 40, isSleepy = false) {
+    const colors = ['#FF6B6B', '#FFE94A', '#3A3FB0', '#8B5CF6', '#6EE7A0'];
+    let hash = 0;
+    const str = String(userId || 'guest');
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
+    }
+    const colorIndex = Math.abs(hash) % colors.length;
+    const bgColor = colors[colorIndex];
+    const faceColor = (bgColor === '#3A3FB0' || bgColor === '#8B5CF6') ? '#FFFFFF' : '#0B0B1A';
+
+    if (isSleepy) {
+        return `<svg width="${size}" height="${size}" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" class="blob-avatar" aria-hidden="true">
+            <circle cx="22" cy="22" r="22" fill="${bgColor}"/>
+            <path d="M13 20C15 17 19 17 21 20" stroke="${faceColor}" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M23 20C25 17 29 17 31 20" stroke="${faceColor}" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M18 28C20 27 24 27 26 28" stroke="${faceColor}" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>`;
+    }
+
+    return `<svg width="${size}" height="${size}" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" class="blob-avatar" aria-hidden="true">
+        <circle cx="22" cy="22" r="22" fill="${bgColor}"/>
+        <circle cx="16" cy="18" r="2.5" fill="${faceColor}"/>
+        <circle cx="28" cy="18" r="2.5" fill="${faceColor}"/>
+        <path d="M15 25C17 29 27 29 29 25" stroke="${faceColor}" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    </svg>`;
+}
+
+// Single Star Icon SVG
+export function renderSingleStarSvg(size = 14) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#FFE94A" stroke="#B45309" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="star-icon" aria-hidden="true">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>`;
+}
+
+// 5-Star Rating Icons SVG Group
+export function renderStarRatingSvg(rating, max = 5, size = 15) {
+    let stars = '';
+    const rounded = Math.round(Number(rating) || 0);
+    for (let i = 1; i <= max; i++) {
+        const isFilled = i <= rounded;
+        stars += `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${isFilled ? '#FFE94A' : '#E2E8F0'}" stroke="${isFilled ? '#B45309' : '#94A3B8'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="star-icon" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>`;
+    }
+    return `<span class="star-rating-row">${stars}</span>`;
+}
+
+// Pencil Edit Icon SVG
+export function getPencilIconSvg(size = 14) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+    </svg>`;
+}
+
 class CampusGigApp {
     constructor() {
-        // Read persisted student session or default to Ayesha Khan
         this.activeUserId = localStorage.getItem("campus_active_user") || "usr_1";
         this.currentView = "view-browse";
         this.activeSubtab = "my-gigs";
@@ -23,21 +81,36 @@ class CampusGigApp {
         this.isEditingSkills = false;
         this.debounceTimer = null;
 
+        this.initSplash();
         this.initElements();
         this.bindEvents();
+        this.initInteractiveStars();
         this.render();
     }
 
+    // 2-Second Splash Screen that disappears on its own
+    initSplash() {
+        setTimeout(() => {
+            const splash = document.getElementById("splash-screen");
+            if (splash) {
+                splash.classList.add("fade-out");
+                setTimeout(() => splash.remove(), 280);
+            }
+        }, 2000);
+    }
+
     initElements() {
-        // Header & Auth
+        // Header & Nav
         this.headerAuthArea = document.getElementById("header-auth-area");
         this.headerActivityCount = document.getElementById("header-activity-count");
-        this.navLinks = document.querySelectorAll(".nav-link");
+        this.desktopNavLinks = document.querySelectorAll(".desktop-nav .nav-link");
+        this.bottomTabItems = document.querySelectorAll(".bottom-tab-bar .tab-item");
         this.viewPanels = document.querySelectorAll(".view-panel");
 
-        // Browse filters & elements
+        // Browse elements
         this.searchInput = document.getElementById("search-input");
         this.resultsCountText = document.getElementById("results-count-text");
+        this.gigsCardsList = document.getElementById("gigs-cards-list");
         this.gigsTableBody = document.getElementById("gigs-table-body");
         this.filterCatRadios = document.querySelectorAll("input[name='filter-cat']");
         this.filterTypeRadios = document.querySelectorAll("input[name='filter-type']");
@@ -45,6 +118,23 @@ class CampusGigApp {
         this.filterMinBudget = document.getElementById("filter-min-budget");
         this.filterMaxBudget = document.getElementById("filter-max-budget");
         this.btnResetFilters = document.getElementById("btn-reset-filters");
+
+        // Mobile Filter Chips & Bottom Sheet
+        this.btnMobileCat = document.getElementById("btn-mobile-cat-filter");
+        this.btnMobileType = document.getElementById("btn-mobile-type-filter");
+        this.btnMobilePayment = document.getElementById("btn-mobile-payment-filter");
+        this.btnMobileBudget = document.getElementById("btn-mobile-budget-filter");
+        this.btnMobileReset = document.getElementById("btn-mobile-reset-filter");
+        this.modalFilterSheet = document.getElementById("modal-filter-sheet");
+        this.filterSheetBody = document.getElementById("filter-sheet-body");
+        this.btnCloseFilterSheet = document.getElementById("btn-close-filter-sheet");
+        this.btnSheetApply = document.getElementById("btn-sheet-apply");
+        this.btnSheetReset = document.getElementById("btn-sheet-reset");
+        this.sheetTitle = document.getElementById("sheet-title");
+
+        this.labelMobileCat = document.getElementById("label-mobile-cat");
+        this.labelMobileType = document.getElementById("label-mobile-type");
+        this.labelMobilePayment = document.getElementById("label-mobile-payment");
 
         // Detail elements
         this.detailContentArea = document.getElementById("detail-content-area");
@@ -55,8 +145,10 @@ class CampusGigApp {
         this.postTitle = document.getElementById("post-title");
         this.postCategory = document.getElementById("post-category");
         this.postType = document.getElementById("post-type");
+        this.togglePostType = document.getElementById("toggle-post-type");
         this.postDesc = document.getElementById("post-desc");
         this.postPayment = document.getElementById("post-payment");
+        this.togglePostPayment = document.getElementById("toggle-post-payment");
         this.wrapPostBudget = document.getElementById("wrap-post-budget");
         this.postBudget = document.getElementById("post-budget");
         this.postDeadline = document.getElementById("post-deadline");
@@ -64,6 +156,7 @@ class CampusGigApp {
 
         // Errors
         this.errTitle = document.getElementById("err-title");
+        this.errCategory = document.getElementById("err-category");
         this.errDesc = document.getElementById("err-desc");
         this.errBudget = document.getElementById("err-budget");
         this.errDeadline = document.getElementById("err-deadline");
@@ -88,58 +181,84 @@ class CampusGigApp {
         this.reviewGigId = document.getElementById("review-gig-id");
         this.reviewTargetLabel = document.getElementById("review-target-label");
         this.reviewRatingSelect = document.getElementById("review-rating-select");
+        this.interactiveStars = document.getElementById("interactive-stars");
+        this.ratingTextHint = document.getElementById("rating-text-hint");
         this.reviewCommentInput = document.getElementById("review-comment-input");
         this.errReviewComment = document.getElementById("err-review-comment");
         this.btnCloseReviewModal = document.getElementById("btn-close-review-modal");
         this.btnCancelReviewModal = document.getElementById("btn-cancel-review-modal");
 
+        // Dev Modal
+        this.btnDevLink = document.getElementById("btn-dev-link");
+        this.modalDev = document.getElementById("modal-dev");
+        this.btnCloseDevModal = document.getElementById("btn-close-dev-modal");
+        this.btnCloseDev = document.getElementById("btn-close-dev");
+        this.btnDevResetDb = document.getElementById("btn-dev-reset-db");
+        this.btnDevClearSession = document.getElementById("btn-dev-clear-session");
+
         // Toast
         this.toastMsg = document.getElementById("toast-msg");
     }
 
-    bindEvents() {
-        // Zero-delay pointer feedback on buttons
-        document.addEventListener("pointerdown", (e) => {
-            const btn = e.target.closest("button");
-            if (btn) btn.style.opacity = "0.85";
-        });
-        document.addEventListener("pointerup", (e) => {
-            const btn = e.target.closest("button");
-            if (btn) btn.style.opacity = "1";
-        });
+    // 5 Interactive visual stars in review modal
+    initInteractiveStars() {
+        if (!this.interactiveStars) return;
 
-        // Nav Links
-        this.navLinks.forEach(link => {
-            link.addEventListener("click", () => {
-                const view = link.dataset.view;
-                if ((view === "view-post" || view === "view-activity" || view === "view-profile") && !this.activeUserId) {
-                    this.openLoginModal("Please sign in as a student to access this page.");
-                    return;
+        const starBtns = this.interactiveStars.querySelectorAll(".star-btn");
+        const setRating = (rating) => {
+            if (this.reviewRatingSelect) {
+                this.reviewRatingSelect.value = String(rating);
+            }
+            if (this.ratingTextHint) {
+                this.ratingTextHint.textContent = `${rating} ${rating === 1 ? 'star' : 'stars'}`;
+            }
+            starBtns.forEach(btn => {
+                const val = Number(btn.dataset.val);
+                const isFilled = val <= rating;
+                const polygon = btn.querySelector("polygon");
+                if (polygon) {
+                    polygon.setAttribute("fill", isFilled ? "#FFE94A" : "#E2E8F0");
+                    polygon.setAttribute("stroke", isFilled ? "#B45309" : "#94A3B8");
                 }
+            });
+        };
 
-                if (view === "view-profile") {
-                    this.currentProfileUserId = this.activeUserId;
-                    this.isEditingBio = false;
-                    this.isEditingSkills = false;
-                }
-
-                this.switchView(view);
+        starBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const val = Number(btn.dataset.val);
+                setRating(val);
             });
         });
 
-        // Brand link -> Browse
-        document.getElementById("nav-brand").addEventListener("click", (e) => {
+        // Default to 5 stars
+        setRating(5);
+    }
+
+    bindEvents() {
+        this.desktopNavLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                const view = link.dataset.view;
+                this.handleNavViewRequest(view);
+            });
+        });
+
+        this.bottomTabItems.forEach(tab => {
+            tab.addEventListener("click", () => {
+                const view = tab.dataset.view;
+                this.handleNavViewRequest(view);
+            });
+        });
+
+        document.getElementById("nav-brand")?.addEventListener("click", (e) => {
             e.preventDefault();
             this.switchView("view-browse");
         });
 
-        // Search input (debounced)
-        this.searchInput.addEventListener("input", () => {
+        this.searchInput?.addEventListener("input", () => {
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => this.renderBrowse(), 150);
         });
 
-        // Filter radios & budget
         const filterInputs = [
             ...this.filterCatRadios,
             ...this.filterTypeRadios,
@@ -148,82 +267,277 @@ class CampusGigApp {
             this.filterMaxBudget
         ];
         filterInputs.forEach(input => {
-            input.addEventListener("change", () => this.renderBrowse());
-            input.addEventListener("input", () => this.renderBrowse());
+            if (!input) return;
+            input.addEventListener("change", () => {
+                this.updateMobileFilterLabels();
+                this.renderBrowse();
+            });
+            input.addEventListener("input", () => {
+                this.renderBrowse();
+            });
         });
 
-        // Reset filters
-        this.btnResetFilters.addEventListener("click", () => {
-            this.searchInput.value = "";
-            document.querySelector("input[name='filter-cat'][value='All']").checked = true;
-            document.querySelector("input[name='filter-type'][value='All']").checked = true;
-            document.querySelector("input[name='filter-payment'][value='All']").checked = true;
-            this.filterMinBudget.value = "";
-            this.filterMaxBudget.value = "";
+        const resetAction = () => {
+            if (this.searchInput) this.searchInput.value = "";
+            const catAll = document.querySelector("input[name='filter-cat'][value='All']");
+            if (catAll) catAll.checked = true;
+            const typeAll = document.querySelector("input[name='filter-type'][value='All']");
+            if (typeAll) typeAll.checked = true;
+            const payAll = document.querySelector("input[name='filter-payment'][value='All']");
+            if (payAll) payAll.checked = true;
+            if (this.filterMinBudget) this.filterMinBudget.value = "";
+            if (this.filterMaxBudget) this.filterMaxBudget.value = "";
+            this.updateMobileFilterLabels();
+            this.renderBrowse();
+        };
+
+        this.btnResetFilters?.addEventListener("click", resetAction);
+        this.btnMobileReset?.addEventListener("click", resetAction);
+
+        this.btnMobileCat?.addEventListener("click", () => this.openFilterSheet("category"));
+        this.btnMobileType?.addEventListener("click", () => this.openFilterSheet("type"));
+        this.btnMobilePayment?.addEventListener("click", () => this.openFilterSheet("payment"));
+        this.btnMobileBudget?.addEventListener("click", () => this.openFilterSheet("budget"));
+
+        const closeSheet = () => this.modalFilterSheet?.classList.remove("open");
+        this.btnCloseFilterSheet?.addEventListener("click", closeSheet);
+        this.btnSheetApply?.addEventListener("click", () => {
+            closeSheet();
+            this.updateMobileFilterLabels();
             this.renderBrowse();
         });
+        this.btnSheetReset?.addEventListener("click", () => {
+            resetAction();
+            closeSheet();
+        });
+        this.modalFilterSheet?.addEventListener("click", (e) => {
+            if (e.target === this.modalFilterSheet) closeSheet();
+        });
 
-        // Back to browse from detail
-        this.btnBackToBrowse.addEventListener("click", () => {
+        this.btnBackToBrowse?.addEventListener("click", () => {
             this.switchView("view-browse");
         });
 
-        // Toggle budget input on post payment change
-        this.postPayment.addEventListener("change", () => {
-            const isPaid = this.postPayment.value === "Paid";
-            this.wrapPostBudget.style.display = isPaid ? "block" : "none";
-            if (!isPaid) {
-                this.postBudget.value = "";
-                this.errBudget.classList.remove("visible");
-            }
+        this.togglePostType?.querySelectorAll(".segmented-pill-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                this.togglePostType.querySelectorAll(".segmented-pill-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                if (this.postType) {
+                    this.postType.value = btn.dataset.value;
+                }
+            });
         });
 
-        // Cancel post
-        this.btnCancelPost.addEventListener("click", () => {
+        this.togglePostPayment?.querySelectorAll(".segmented-pill-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                this.togglePostPayment.querySelectorAll(".segmented-pill-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                const val = btn.dataset.value;
+                if (this.postPayment) {
+                    this.postPayment.value = val;
+                }
+                const isPaid = val === "Paid";
+                if (this.wrapPostBudget) {
+                    this.wrapPostBudget.style.display = isPaid ? "block" : "none";
+                }
+                if (!isPaid && this.postBudget) {
+                    this.postBudget.value = "";
+                    this.errBudget?.classList.remove("visible");
+                }
+            });
+        });
+
+        this.btnCancelPost?.addEventListener("click", () => {
             this.switchView("view-browse");
         });
 
-        // Post form submit
-        this.formPostGig.addEventListener("submit", (e) => {
+        this.formPostGig?.addEventListener("submit", (e) => {
             e.preventDefault();
             this.handlePostSubmit();
         });
 
-        // Sub-tabs in My Activity
-        this.subtabMyGigs.addEventListener("click", () => {
+        this.subtabMyGigs?.addEventListener("click", () => {
             this.activeSubtab = "my-gigs";
             this.subtabMyGigs.classList.add("active");
             this.subtabMyApps.classList.remove("active");
             this.renderActivity();
         });
-        this.subtabMyApps.addEventListener("click", () => {
+        this.subtabMyApps?.addEventListener("click", () => {
             this.activeSubtab = "my-apps";
             this.subtabMyApps.classList.add("active");
             this.subtabMyGigs.classList.remove("active");
             this.renderActivity();
         });
 
-        // Login modal close
-        const closeLogin = () => this.modalLogin.classList.remove("open");
-        this.btnCloseLoginModal.addEventListener("click", closeLogin);
-        this.btnCancelLoginModal.addEventListener("click", closeLogin);
-        this.modalLogin.addEventListener("click", (e) => {
+        const closeLogin = () => this.modalLogin?.classList.remove("open");
+        this.btnCloseLoginModal?.addEventListener("click", closeLogin);
+        this.btnCancelLoginModal?.addEventListener("click", closeLogin);
+        this.modalLogin?.addEventListener("click", (e) => {
             if (e.target === this.modalLogin) closeLogin();
         });
 
-        // Review modal close
-        const closeReview = () => this.modalReview.classList.remove("open");
-        this.btnCloseReviewModal.addEventListener("click", closeReview);
-        this.btnCancelReviewModal.addEventListener("click", closeReview);
-        this.modalReview.addEventListener("click", (e) => {
+        const closeReview = () => this.modalReview?.classList.remove("open");
+        this.btnCloseReviewModal?.addEventListener("click", closeReview);
+        this.btnCancelReviewModal?.addEventListener("click", closeReview);
+        this.modalReview?.addEventListener("click", (e) => {
             if (e.target === this.modalReview) closeReview();
         });
 
-        // Submit review form
-        this.formReview.addEventListener("submit", (e) => {
+        this.formReview?.addEventListener("submit", (e) => {
             e.preventDefault();
             this.handleReviewSubmit();
         });
+
+        const closeDev = () => this.modalDev?.classList.remove("open");
+        this.btnDevLink?.addEventListener("click", () => this.modalDev?.classList.add("open"));
+        this.btnCloseDevModal?.addEventListener("click", closeDev);
+        this.btnCloseDev?.addEventListener("click", closeDev);
+        this.modalDev?.addEventListener("click", (e) => {
+            if (e.target === this.modalDev) closeDev();
+        });
+
+        this.btnDevResetDb?.addEventListener("click", () => {
+            mockDb.reset();
+            closeDev();
+            this.showToast("Database reset to seed data.");
+            this.render();
+        });
+
+        this.btnDevClearSession?.addEventListener("click", () => {
+            this.handleLogout();
+            closeDev();
+        });
+    }
+
+    handleNavViewRequest(view) {
+        if ((view === "view-post" || view === "view-activity" || view === "view-profile") && !this.activeUserId) {
+            this.openLoginModal("Sign in as a student to access this page.");
+            return;
+        }
+
+        if (view === "view-profile") {
+            this.currentProfileUserId = this.activeUserId;
+            this.isEditingBio = false;
+            this.isEditingSkills = false;
+        }
+
+        this.switchView(view);
+    }
+
+    updateMobileFilterLabels() {
+        const catVal = document.querySelector("input[name='filter-cat']:checked")?.value || "All";
+        const typeVal = document.querySelector("input[name='filter-type']:checked")?.value || "All";
+        const payVal = document.querySelector("input[name='filter-payment']:checked")?.value || "All";
+
+        if (this.labelMobileCat) this.labelMobileCat.textContent = `Category: ${catVal}`;
+        if (this.labelMobileType) this.labelMobileType.textContent = `Type: ${typeVal}`;
+        if (this.labelMobilePayment) this.labelMobilePayment.textContent = `Payment: ${payVal}`;
+
+        if (this.btnMobileCat) this.btnMobileCat.classList.toggle("active", catVal !== "All");
+        if (this.btnMobileType) this.btnMobileType.classList.toggle("active", typeVal !== "All");
+        if (this.btnMobilePayment) this.btnMobilePayment.classList.toggle("active", payVal !== "All");
+    }
+
+    openFilterSheet(focusSection = "all") {
+        if (!this.filterSheetBody) return;
+
+        let content = "";
+        const catVal = document.querySelector("input[name='filter-cat']:checked")?.value || "All";
+        const typeVal = document.querySelector("input[name='filter-type']:checked")?.value || "All";
+        const payVal = document.querySelector("input[name='filter-payment']:checked")?.value || "All";
+        const minVal = this.filterMinBudget?.value || "";
+        const maxVal = this.filterMaxBudget?.value || "";
+
+        if (focusSection === "category") {
+            this.sheetTitle.textContent = "Filter Category";
+            content = `
+                <div class="filter-options">
+                    ${["All", "Programming", "Design", "Writing", "Tutoring"].map(c => `
+                        <label class="filter-radio-label">
+                            <input type="radio" name="sheet-cat" value="${c}" ${catVal === c ? 'checked' : ''}> ${c === 'All' ? 'All categories' : c}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+        } else if (focusSection === "type") {
+            this.sheetTitle.textContent = "Filter Type";
+            content = `
+                <div class="filter-options">
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-type" value="All" ${typeVal === 'All' ? 'checked' : ''}> All types
+                    </label>
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-type" value="Offering" ${typeVal === 'Offering' ? 'checked' : ''}> Offering service
+                    </label>
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-type" value="Requesting" ${typeVal === 'Requesting' ? 'checked' : ''}> Requesting help
+                    </label>
+                </div>
+            `;
+        } else if (focusSection === "payment") {
+            this.sheetTitle.textContent = "Filter Payment";
+            content = `
+                <div class="filter-options">
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-pay" value="All" ${payVal === 'All' ? 'checked' : ''}> All payment
+                    </label>
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-pay" value="Paid" ${payVal === 'Paid' ? 'checked' : ''}> Paid
+                    </label>
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-pay" value="SkillSwap" ${payVal === 'SkillSwap' ? 'checked' : ''}> Skill swap
+                    </label>
+                    <label class="filter-radio-label">
+                        <input type="radio" name="sheet-pay" value="Free" ${payVal === 'Free' ? 'checked' : ''}> Free
+                    </label>
+                </div>
+            `;
+        } else {
+            this.sheetTitle.textContent = "Filter Budget";
+            content = `
+                <div class="budget-row" style="margin-top: 10px;">
+                    <input type="number" id="sheet-min-budget" placeholder="Min" min="0" value="${minVal}">
+                    <span class="budget-sep">–</span>
+                    <input type="number" id="sheet-max-budget" placeholder="Max" min="0" value="${maxVal}">
+                </div>
+            `;
+        }
+
+        this.filterSheetBody.innerHTML = content;
+
+        if (focusSection === "category") {
+            this.filterSheetBody.querySelectorAll("input[name='sheet-cat']").forEach(r => {
+                r.addEventListener("change", () => {
+                    const target = document.querySelector(`input[name='filter-cat'][value='${r.value}']`);
+                    if (target) target.checked = true;
+                });
+            });
+        } else if (focusSection === "type") {
+            this.filterSheetBody.querySelectorAll("input[name='sheet-type']").forEach(r => {
+                r.addEventListener("change", () => {
+                    const target = document.querySelector(`input[name='filter-type'][value='${r.value}']`);
+                    if (target) target.checked = true;
+                });
+            });
+        } else if (focusSection === "payment") {
+            this.filterSheetBody.querySelectorAll("input[name='sheet-pay']").forEach(r => {
+                r.addEventListener("change", () => {
+                    const target = document.querySelector(`input[name='filter-payment'][value='${r.value}']`);
+                    if (target) target.checked = true;
+                });
+            });
+        } else if (focusSection === "budget") {
+            const sheetMin = document.getElementById("sheet-min-budget");
+            const sheetMax = document.getElementById("sheet-max-budget");
+            sheetMin?.addEventListener("input", () => {
+                if (this.filterMinBudget) this.filterMinBudget.value = sheetMin.value;
+            });
+            sheetMax?.addEventListener("input", () => {
+                if (this.filterMaxBudget) this.filterMaxBudget.value = sheetMax.value;
+            });
+        }
+
+        this.modalFilterSheet.classList.add("open");
     }
 
     // =========================================================================
@@ -239,32 +553,29 @@ class CampusGigApp {
         const user = this.getActiveUser();
 
         if (user) {
-            this.headerAuthArea.innerHTML = `
-        <span class="auth-user-badge">
-          <button class="btn-link" id="btn-header-own-profile" style="font-weight: 600; text-decoration: none; color: var(--text-main);">
-            ${this.escapeHtml(user.name)}
-          </button>
-          <span class="auth-user-major">· ${user.major}</span>
-        </span>
-        <button class="btn-link" id="btn-switch-account" style="margin-left: 2px;">Switch account</button>
-        <button class="btn-link" id="btn-logout" style="color: var(--text-subtle); margin-left: 4px;">Log out</button>
-      `;
+            const firstName = user.name.split(" ")[0];
+            const avatarSvg = getBlobAvatarSvg(user.id, 30);
 
-            document.getElementById("btn-header-own-profile")?.addEventListener("click", () => {
-                this.openUserProfile(user.id);
-            });
+            this.headerAuthArea.innerHTML = `
+                <button class="user-switcher-btn" id="btn-switch-account" aria-label="Switch student account">
+                    ${avatarSvg}
+                    <div class="switcher-text">
+                        <span class="switcher-viewing">Viewing as</span>
+                        <span class="switcher-name">${this.escapeHtml(firstName)}</span>
+                    </div>
+                    <svg class="switcher-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+            `;
 
             document.getElementById("btn-switch-account")?.addEventListener("click", () => {
                 this.openLoginModal();
             });
-
-            document.getElementById("btn-logout")?.addEventListener("click", () => {
-                this.handleLogout();
-            });
         } else {
             this.headerAuthArea.innerHTML = `
-        <button class="btn-primary" id="btn-open-login" style="padding: 0.35rem 0.85rem; font-size: 13px;">Log in</button>
-      `;
+                <button class="btn-primary" id="btn-open-login" style="padding: 6px 16px; font-size: 13px;">Sign in</button>
+            `;
 
             document.getElementById("btn-open-login")?.addEventListener("click", () => {
                 this.openLoginModal();
@@ -276,17 +587,21 @@ class CampusGigApp {
         const users = mockDb.users;
         this.loginStudentsList.innerHTML = users.map(u => {
             const isCurrent = this.activeUserId === u.id;
+            const avatarSvg = getBlobAvatarSvg(u.id, 34);
             return `
-        <div class="student-login-row" data-user-id="${u.id}">
-          <div>
-            <strong>${this.escapeHtml(u.name)}</strong> ${isCurrent ? '<span style="font-size: 11px; color: var(--accent); font-weight: 600;">(Current)</span>' : ''}
-            <div style="font-size: 12px; color: var(--text-muted);">${u.major} · ${u.semester} semester</div>
-          </div>
-          <button class="btn-secondary" style="font-size: 12px; padding: 0.25rem 0.65rem;">
-            ${isCurrent ? 'Active' : 'Sign in'}
-          </button>
-        </div>
-      `;
+                <div class="student-login-row" data-user-id="${u.id}">
+                    <div class="student-login-info">
+                        ${avatarSvg}
+                        <div>
+                            <strong>${this.escapeHtml(u.name)}</strong>
+                            <div style="font-size: 12px; color: var(--text-muted);">${u.major} · ${u.semester} semester</div>
+                        </div>
+                    </div>
+                    <button class="${isCurrent ? 'btn-primary' : 'btn-secondary'}" style="font-size: 12px; padding: 4px 14px; min-height: 30px;">
+                        ${isCurrent ? 'Active' : 'Sign in'}
+                    </button>
+                </div>
+            `;
         }).join("");
 
         this.loginStudentsList.querySelectorAll(".student-login-row").forEach(row => {
@@ -310,7 +625,7 @@ class CampusGigApp {
         localStorage.setItem("campus_active_user", userId);
         this.modalLogin.classList.remove("open");
         const u = this.getActiveUser();
-        this.showToast(`Signed in as ${u ? u.name : 'Student'}`);
+        this.showToast(`Signed in as ${u ? u.name : 'Student'}.`);
         this.render();
     }
 
@@ -330,20 +645,22 @@ class CampusGigApp {
 
     switchView(viewId) {
         this.currentView = viewId;
-        this.navLinks.forEach(link => {
+
+        this.desktopNavLinks.forEach(link => {
             link.classList.toggle("active", link.dataset.view === viewId);
+        });
+
+        this.bottomTabItems.forEach(tab => {
+            tab.classList.toggle("active", tab.dataset.view === viewId);
         });
 
         this.viewPanels.forEach(panel => {
             panel.classList.toggle("active", panel.id === viewId);
         });
 
+        window.scrollTo({ top: 0, behavior: 'instant' });
         this.render();
     }
-
-    // =========================================================================
-    // PUBLIC PROFILE VISITOR
-    // =========================================================================
 
     openUserProfile(userId) {
         if (!userId) return;
@@ -357,17 +674,19 @@ class CampusGigApp {
     render() {
         this.renderAuthHeader();
 
-        // Update nav activity count if logged in
         if (this.activeUserId) {
             const myGigs = mockDb.getGigs({ user_id: this.activeUserId, status: "All" });
             const myApps = mockDb.getApplicationsForUser(this.activeUserId);
             const totalActivity = myGigs.length + myApps.length;
-            this.headerActivityCount.textContent = totalActivity > 0 ? `(${totalActivity})` : "";
+            if (this.headerActivityCount) {
+                this.headerActivityCount.textContent = totalActivity > 0 ? `(${totalActivity})` : "";
+            }
         } else {
-            this.headerActivityCount.textContent = "";
+            if (this.headerActivityCount) {
+                this.headerActivityCount.textContent = "";
+            }
         }
 
-        // Route active view
         if (this.currentView === "view-browse") {
             this.renderBrowse();
         } else if (this.currentView === "view-detail") {
@@ -382,7 +701,7 @@ class CampusGigApp {
     }
 
     // =========================================================================
-    // VIEW 1: BROWSE (DENSE ROWS, NO HERO)
+    // VIEW 1: BROWSE (STACKED CARDS, PROPER CORNERS)
     // =========================================================================
 
     renderBrowse() {
@@ -391,68 +710,105 @@ class CampusGigApp {
         const payVal = document.querySelector("input[name='filter-payment']:checked")?.value || "All";
 
         const filters = {
-            q: this.searchInput.value,
+            q: this.searchInput ? this.searchInput.value : "",
             category: catVal,
             type: typeVal,
             payment_type: payVal,
             status: "Open",
-            min_budget: this.filterMinBudget.value,
-            max_budget: this.filterMaxBudget.value
+            min_budget: this.filterMinBudget ? this.filterMinBudget.value : "",
+            max_budget: this.filterMaxBudget ? this.filterMaxBudget.value : ""
         };
 
         const gigs = mockDb.getGigs(filters);
-        this.resultsCountText.textContent = `${gigs.length} ${gigs.length === 1 ? 'gig' : 'gigs'} found`;
+        if (this.resultsCountText) {
+            this.resultsCountText.textContent = `${gigs.length} ${gigs.length === 1 ? 'gig' : 'gigs'} found`;
+        }
 
         if (gigs.length === 0) {
-            this.gigsTableBody.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty-state">
-            <h4>Nothing matches. Try fewer filters.</h4>
-            <p style="font-size: 13px; margin-top: 4px;">Clear your search or switch to all categories.</p>
-          </td>
-        </tr>
-      `;
+            const emptyHtml = `
+                <div class="empty-state">
+                    ${getBlobAvatarSvg('sleepy', 52, true)}
+                    <div>
+                        <h4>Nothing matches. Try fewer filters.</h4>
+                        <p style="margin-top: 4px;">Clear your search or switch to all categories.</p>
+                    </div>
+                </div>
+            `;
+            if (this.gigsCardsList) this.gigsCardsList.innerHTML = emptyHtml;
+            if (this.gigsTableBody) this.gigsTableBody.innerHTML = `<tr><td colspan="6">${emptyHtml}</td></tr>`;
             return;
         }
 
-        this.gigsTableBody.innerHTML = gigs.map(gig => {
+        const cardsHtml = gigs.map(gig => {
             const isOffering = gig.type === "Offering";
+            const owner = gig.owner || { name: "Student", average_rating: 0, reviews_count: 0 };
+            const posterAvatar = getBlobAvatarSvg(gig.user_id, 34);
+
+            const ratingDisplay = owner.average_rating > 0
+                ? `${renderSingleStarSvg(13)} <span style="font-weight: 600;">${owner.average_rating}</span>`
+                : `${renderSingleStarSvg(13)} <span>New</span>`;
+
             const paymentStr = gig.payment_type === "Paid"
                 ? `Paid $${gig.budget}`
                 : (gig.payment_type === "SkillSwap" ? "Skill swap" : "Free");
 
             const paymentClass = gig.payment_type === "Paid"
-                ? "payment-paid-val"
-                : (gig.payment_type === "SkillSwap" ? "payment-swap-val" : "payment-free-val");
+                ? "payment-paid"
+                : (gig.payment_type === "SkillSwap" ? "payment-swap" : "payment-free");
 
             const deadlineInfo = this.formatDeadline(gig.deadline, gig.status);
             const statusClass = "status-" + gig.status.toLowerCase().replace(/\s+/g, "-");
 
             return `
-        <tr data-gig-id="${gig.id}">
-          <td>
-            <div class="gig-row-title">${this.escapeHtml(gig.title)}</div>
-            <div class="gig-row-desc-preview">${this.escapeHtml(gig.description)}</div>
-          </td>
-          <td style="color: var(--text-muted);">${gig.category}</td>
-          <td>
-            <span class="${isOffering ? 'type-offering' : 'type-requesting'}">
-              ${isOffering ? 'Offering' : 'Requesting'}
-            </span>
-          </td>
-          <td><span class="${paymentClass}">${paymentStr}</span></td>
-          <td>${deadlineInfo}</td>
-          <td><span class="status-text ${statusClass}">${gig.status}</span></td>
-        </tr>
-      `;
+                <article class="gig-card" data-gig-id="${gig.id}">
+                    <div class="gig-card-header">
+                        <div class="gig-poster-info">
+                            ${posterAvatar}
+                            <div class="gig-poster-text">
+                                <span class="gig-poster-name">${this.escapeHtml(owner.name)}</span>
+                                <span class="gig-poster-rating">${ratingDisplay}</span>
+                            </div>
+                        </div>
+                        <span class="status-chip ${statusClass}">${gig.status}</span>
+                    </div>
+
+                    <h3 class="gig-card-title">${this.escapeHtml(gig.title)}</h3>
+                    <p class="gig-card-desc">${this.escapeHtml(gig.description)}</p>
+
+                    <div class="gig-card-chips">
+                        <span class="category-chip">${gig.category}</span>
+                        <span class="type-chip">${isOffering ? 'Offering' : 'Requesting'}</span>
+                        <span class="payment-chip ${paymentClass}">${paymentStr}</span>
+                    </div>
+
+                    <div class="gig-card-footer">
+                        <span class="deadline-info">${deadlineInfo}</span>
+                        <button class="btn-apply btn-card-apply" data-gig-id="${gig.id}">Apply</button>
+                    </div>
+                </article>
+            `;
         }).join("");
 
-        this.gigsTableBody.querySelectorAll("tr[data-gig-id]").forEach(row => {
-            row.addEventListener("click", () => {
-                this.currentGigDetailId = row.dataset.gigId;
-                this.switchView("view-detail");
+        if (this.gigsCardsList) {
+            this.gigsCardsList.innerHTML = cardsHtml;
+
+            this.gigsCardsList.querySelectorAll(".gig-card").forEach(card => {
+                card.addEventListener("click", () => {
+                    const gigId = card.dataset.gigId;
+                    this.currentGigDetailId = gigId;
+                    this.switchView("view-detail");
+                });
             });
-        });
+
+            this.gigsCardsList.querySelectorAll(".btn-card-apply").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const gigId = btn.dataset.gigId;
+                    this.currentGigDetailId = gigId;
+                    this.switchView("view-detail");
+                });
+            });
+        }
     }
 
     formatDeadline(deadlineDate, status) {
@@ -474,7 +830,7 @@ class CampusGigApp {
     }
 
     // =========================================================================
-    // VIEW 2: GIG DETAIL
+    // VIEW 2: GIG DETAIL (CENTERED, SOLID GREEN BUTTON)
     // =========================================================================
 
     renderDetail(gigId) {
@@ -485,20 +841,28 @@ class CampusGigApp {
 
         const gig = mockDb.getGigById(gigId);
         if (!gig) {
-            this.detailContentArea.innerHTML = `<p class="empty-state">Gig not found.</p>`;
+            this.detailContentArea.innerHTML = `<div class="card"><p class="empty-state">Gig not found.</p></div>`;
             return;
         }
 
         const isOwner = this.activeUserId && gig.user_id === this.activeUserId;
         const isOffering = gig.type === "Offering";
+        const isSkillSwap = gig.payment_type === "SkillSwap";
+
         const paymentStr = gig.payment_type === "Paid"
             ? `Paid $${gig.budget}`
             : (gig.payment_type === "SkillSwap" ? "Skill swap" : "Free");
 
+        const paymentClass = gig.payment_type === "Paid"
+            ? "payment-paid"
+            : (gig.payment_type === "SkillSwap" ? "payment-swap" : "payment-free");
+
         const owner = gig.owner || { name: "Student", major: "General", semester: "1st", average_rating: 0, reviews_count: 0 };
+        const ownerAvatar = getBlobAvatarSvg(owner.id, 40);
+
         const ratingLine = owner.average_rating > 0
-            ? `★ ${owner.average_rating} (${owner.reviews_count} ${owner.reviews_count === 1 ? 'review' : 'reviews'})`
-            : `★ No reviews yet`;
+            ? `${renderStarRatingSvg(owner.average_rating, 5, 14)} <span style="font-weight: 600; margin-left: 4px;">${owner.average_rating}</span> (${owner.reviews_count} ${owner.reviews_count === 1 ? 'review' : 'reviews'})`
+            : `${renderSingleStarSvg(14)} <span style="margin-left: 4px;">No reviews yet</span>`;
 
         const statusClass = "status-" + gig.status.toLowerCase().replace(/\s+/g, "-");
         const deadlineLine = this.formatDeadline(gig.deadline, gig.status);
@@ -506,65 +870,70 @@ class CampusGigApp {
         let actionSection = "";
 
         if (isOwner) {
-            // Owner View: Applicant list & status controls
             const apps = gig.applications || [];
             const isInProgress = gig.status === "In Progress";
             const isCompleted = gig.status === "Completed";
 
             let appsHtml = "";
             if (apps.length === 0) {
-                appsHtml = `<p style="font-size: 13px; color: var(--text-muted); margin-top: 0.5rem;">No applicants yet.</p>`;
+                appsHtml = `<p style="font-size: 14px; color: var(--text-muted); margin-top: 8px;">No applicants yet.</p>`;
             } else {
                 appsHtml = `
-          <div style="margin-top: 0.85rem;">
-            ${apps.map(app => {
-                    const applicant = app.applicant || { name: "Student", major: "General", average_rating: 0, reviews_count: 0 };
-                    const appRating = applicant.average_rating > 0 ? `★ ${applicant.average_rating}` : `★ New`;
+                    <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        ${apps.map(app => {
+                            const applicant = app.applicant || { name: "Student", major: "General", average_rating: 0, reviews_count: 0 };
+                            const appAvatar = getBlobAvatarSvg(app.applicant_id, 32);
+                            const appRating = applicant.average_rating > 0
+                                ? `${renderSingleStarSvg(12)} ${applicant.average_rating}`
+                                : `${renderSingleStarSvg(12)} New`;
 
-                    let actionButtons = "";
-                    if (app.status === "Pending" && gig.status === "Open") {
-                        actionButtons = `
-                  <div class="applicant-actions">
-                    <button class="btn-primary btn-accept-app" data-id="${app.id}" style="font-size: 13px; padding: 0.3rem 0.65rem;">Accept</button>
-                    <button class="btn-secondary btn-reject-app" data-id="${app.id}" style="font-size: 13px; padding: 0.3rem 0.65rem;">Reject</button>
-                  </div>
-                `;
-                    } else if (app.status === "Accepted") {
-                        actionButtons = `<span style="font-weight: 600; color: var(--accent); font-size: 13px;">Accepted candidate</span>`;
-                    } else {
-                        actionButtons = `<span style="color: var(--text-subtle); font-size: 13px;">Rejected</span>`;
-                    }
+                            let actionButtons = "";
+                            if (app.status === "Pending" && gig.status === "Open") {
+                                actionButtons = `
+                                    <div style="display: flex; gap: 6px;">
+                                        <button class="btn-primary btn-accept-app" data-id="${app.id}" style="font-size: 12px; padding: 5px 14px; min-height: 32px;">Accept</button>
+                                        <button class="btn-secondary btn-reject-app" data-id="${app.id}" style="font-size: 12px; padding: 5px 14px; min-height: 32px;">Reject</button>
+                                    </div>
+                                `;
+                            } else if (app.status === "Accepted") {
+                                actionButtons = `<span class="status-chip status-open">Accepted</span>`;
+                            } else {
+                                actionButtons = `<span class="status-chip status-expired">Rejected</span>`;
+                            }
 
-                    return `
-                <div class="applicant-row">
-                  <div class="applicant-row-top">
-                    <div>
-                      <button class="btn-link student-profile-btn" data-user-id="${app.applicant_id}" style="font-weight: 600; font-size: 13px;">
-                        ${this.escapeHtml(applicant.name)}
-                      </button>
-                      <span style="color: var(--text-muted); font-size: 12px; margin-left: 4px;">
-                        · ${applicant.major} · ${appRating}
-                      </span>
+                            return `
+                                <div class="applicant-card">
+                                    <div class="applicant-card-header">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            ${appAvatar}
+                                            <div>
+                                                <button class="btn-link student-profile-btn" data-user-id="${app.applicant_id}" style="font-weight: 600; font-size: 13px;">
+                                                    ${this.escapeHtml(applicant.name)}
+                                                </button>
+                                                <div style="color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                                                    ${applicant.major} · ${appRating}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>${actionButtons}</div>
+                                    </div>
+                                    <div class="applicant-msg-text">"${this.escapeHtml(app.message)}"</div>
+                                    <div style="font-size: 11px; color: var(--text-subtle);">Applied ${app.created_at}</div>
+                                </div>
+                            `;
+                        }).join("")}
                     </div>
-                    <div>${actionButtons}</div>
-                  </div>
-                  <div class="applicant-msg">"${this.escapeHtml(app.message)}"</div>
-                  <div style="font-size: 11px; color: var(--text-subtle);">Applied ${app.created_at}</div>
-                </div>
-              `;
-                }).join("")}
-          </div>
-        `;
+                `;
             }
 
             let completeBtnHtml = "";
             if (isInProgress) {
                 completeBtnHtml = `
-          <div style="margin-top: 1rem; padding: 0.85rem; background: #F5F2EB; border-radius: var(--radius);">
-            <p style="font-size: 13px; margin-bottom: 0.5rem;">Work is in progress. Once the gig is done, mark it completed to exchange reviews.</p>
-            <button class="btn-primary" id="btn-mark-completed">Mark completed</button>
-          </div>
-        `;
+                    <div style="margin-top: 14px; padding: 14px; background: #F8FAFC; border-radius: var(--radius-input); border: 1.5px solid var(--border-input);">
+                        <p style="font-size: 14px; margin-bottom: 10px;">Work is in progress. Once the gig is done, mark it completed to exchange reviews.</p>
+                        <button class="btn-primary" id="btn-mark-completed">Mark completed</button>
+                    </div>
+                `;
             }
 
             let reviewBtnHtml = "";
@@ -572,25 +941,24 @@ class CampusGigApp {
                 const hasReviewed = mockDb.reviews.some(r => r.gig_id === gig.id && r.reviewer_id === this.activeUserId);
                 if (!hasReviewed) {
                     reviewBtnHtml = `
-            <div style="margin-top: 1rem;">
-              <button class="btn-primary" id="btn-owner-rate-applicant">Rate accepted applicant</button>
-            </div>
-          `;
+                        <div style="margin-top: 12px;">
+                            <button class="btn-primary" id="btn-owner-rate-applicant">Rate accepted applicant</button>
+                        </div>
+                    `;
                 } else {
-                    reviewBtnHtml = `<p style="font-size: 13px; color: var(--text-muted); margin-top: 0.75rem;">✓ You submitted your review for this gig.</p>`;
+                    reviewBtnHtml = `<p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Review submitted for this gig.</p>`;
                 }
             }
 
             actionSection = `
-        <div class="action-section">
-          <h4>Applicants (${apps.length})</h4>
-          ${appsHtml}
-          ${completeBtnHtml}
-          ${reviewBtnHtml}
-        </div>
-      `;
+                <div class="detail-main-card">
+                    <h3>Applicants (${apps.length})</h3>
+                    ${appsHtml}
+                    ${completeBtnHtml}
+                    ${reviewBtnHtml}
+                </div>
+            `;
         } else {
-            // Non-owner View: Apply form or status
             const existingApp = this.activeUserId
                 ? (gig.applications || []).find(a => a.applicant_id === this.activeUserId)
                 : null;
@@ -605,79 +973,109 @@ class CampusGigApp {
                     const hasReviewed = mockDb.reviews.some(r => r.gig_id === gig.id && r.reviewer_id === this.activeUserId);
                     if (!hasReviewed) {
                         reviewBtnHtml = `
-              <div style="margin-top: 0.75rem;">
-                <button class="btn-primary" id="btn-applicant-rate-owner">Rate gig owner</button>
-              </div>
-            `;
+                            <div style="margin-top: 12px;">
+                                <button class="btn-primary" id="btn-applicant-rate-owner">Rate gig owner</button>
+                            </div>
+                        `;
                     } else {
-                        reviewBtnHtml = `<p style="font-size: 13px; color: var(--text-muted); margin-top: 0.5rem;">✓ You submitted your review for this gig.</p>`;
+                        reviewBtnHtml = `<p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">Review submitted for this gig.</p>`;
                     }
                 }
 
                 actionSection = `
-          <div class="action-section">
-            <p style="font-size: 14px; font-weight: 600;">
-              You applied to this gig — status: <span class="status-${existingApp.status.toLowerCase()}">${existingApp.status}</span>
-            </p>
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-              Your message: "${this.escapeHtml(existingApp.message)}"
-            </p>
-            ${reviewBtnHtml}
-          </div>
-        `;
+                    <div class="detail-main-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-size: 14px; font-weight: 600;">Your application</span>
+                            <span class="status-chip ${existingApp.status === 'Accepted' ? 'status-open' : (existingApp.status === 'Rejected' ? 'status-expired' : 'status-in-progress')}">
+                                ${existingApp.status}
+                            </span>
+                        </div>
+                        <p class="applicant-msg-text" style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">
+                            ${this.escapeHtml(existingApp.message)}
+                        </p>
+                        ${reviewBtnHtml}
+                    </div>
+                `;
             } else if (isExpired) {
                 actionSection = `
-          <div class="action-section">
-            <p style="color: var(--text-muted); font-size: 13px;">This gig is expired and closed to applications.</p>
-          </div>
-        `;
+                    <div class="detail-main-card">
+                        <p style="color: var(--text-muted); font-size: 14px;">This gig is expired and closed to applications.</p>
+                    </div>
+                `;
             } else if (gig.status === "Open") {
+                const skillSwapReturnField = isSkillSwap ? `
+                    <div class="form-field">
+                        <label for="apply-swap-service">What skill or service can you offer in return?</label>
+                        <input type="text" id="apply-swap-service" placeholder="e.g. Python debugging, Figma UI mockup, pitch deck polish" ${!this.activeUserId ? 'disabled' : ''}>
+                        <div class="field-error" id="err-apply-swap">Please specify the skill or service you offer in return.</div>
+                    </div>
+                ` : '';
+
                 actionSection = `
-          <div class="action-section">
-            <h4 style="margin-bottom: 0.5rem;">Apply for this gig</h4>
-            ${!this.activeUserId ? '<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0.5rem;"><a id="link-apply-login">Sign in to submit your application</a></p>' : ''}
-            <form id="form-apply">
-              <div class="form-field">
-                <label for="apply-msg">Short message</label>
-                <textarea id="apply-msg" rows="3" placeholder="Explain how you can help or why you're a good fit..." ${!this.activeUserId ? 'disabled' : ''}></textarea>
-                <div class="field-error" id="err-apply-msg">A short message is required.</div>
-              </div>
-              <button type="submit" class="btn-primary" id="btn-submit-apply">Apply</button>
-            </form>
-          </div>
-        `;
+                    <div class="detail-main-card">
+                        <h3 style="margin-bottom: 8px;">Apply for this gig</h3>
+                        ${!this.activeUserId ? '<p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;"><a id="link-apply-login">Sign in to submit your application</a></p>' : ''}
+                        <form id="form-apply">
+                            ${skillSwapReturnField}
+                            <div class="form-field">
+                                <label for="apply-msg">Short message</label>
+                                <textarea id="apply-msg" rows="3" placeholder="Explain your experience or why you are a good fit..." ${!this.activeUserId ? 'disabled' : ''}></textarea>
+                                <div class="field-error" id="err-apply-msg">A short message is required.</div>
+                            </div>
+                            <button type="submit" class="btn-apply" id="btn-submit-apply">Apply</button>
+                        </form>
+                    </div>
+                `;
             } else {
                 actionSection = `
-          <div class="action-section">
-            <p style="color: var(--text-muted); font-size: 13px;">This gig is ${gig.status.toLowerCase()} and not accepting applications.</p>
-          </div>
-        `;
+                    <div class="detail-main-card">
+                        <p style="color: var(--text-muted); font-size: 14px;">This gig is ${gig.status.toLowerCase()} and not accepting applications.</p>
+                    </div>
+                `;
             }
         }
 
         this.detailContentArea.innerHTML = `
-      <div class="detail-header">
-        <h2>${this.escapeHtml(gig.title)}</h2>
-        <div class="detail-meta-line">
-          ${gig.category} · ${isOffering ? 'Offering service' : 'Requesting help'} · <strong>${paymentStr}</strong> · <span class="${statusClass}">${gig.status}</span> (${deadlineLine})
-        </div>
-      </div>
+            <div class="detail-main-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px;">
+                    <h2>${this.escapeHtml(gig.title)}</h2>
+                    <span class="status-chip ${statusClass}">${gig.status}</span>
+                </div>
 
-      <div class="detail-poster-line">
-        <div>
-          Posted by <button class="btn-link student-profile-btn" data-user-id="${owner.id}" style="font-weight: 600; font-size: 13px;">${this.escapeHtml(owner.name)}</button> · ${owner.major}, ${owner.semester} sem
-        </div>
-        <div>
-          ${ratingLine}
-        </div>
-      </div>
+                <div class="gig-card-chips" style="margin-bottom: 14px;">
+                    <span class="category-chip">${gig.category}</span>
+                    <span class="type-chip">${isOffering ? 'Offering service' : 'Requesting help'}</span>
+                    <span class="payment-chip ${paymentClass}">${paymentStr}</span>
+                    <span class="deadline-info">${deadlineLine}</span>
+                </div>
 
-      <div class="detail-body">${this.escapeHtml(gig.description)}</div>
+                <div class="detail-poster-row">
+                    ${ownerAvatar}
+                    <div style="flex: 1;">
+                        <div>
+                            <button class="btn-link student-profile-btn" data-user-id="${owner.id}" style="font-weight: 700; font-size: 14px; color: var(--ink-black);">
+                                ${this.escapeHtml(owner.name)}
+                            </button>
+                            <span style="font-size: 13px; color: var(--text-muted);">· ${owner.major}, ${owner.semester} sem</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-top: 3px; display: flex; align-items: center;">
+                            ${ratingLine}
+                        </div>
+                    </div>
+                    <button class="btn-secondary student-profile-btn" data-user-id="${owner.id}" style="font-size: 12px; padding: 5px 14px; min-height: 32px;">
+                        View profile
+                    </button>
+                </div>
 
-      ${actionSection}
-    `;
+                <div class="detail-desc-text">${this.escapeHtml(gig.description)}</div>
+                <div style="font-size: 13px; color: var(--text-muted);">
+                    Deadline: ${gig.deadline}
+                </div>
+            </div>
 
-        // Attach student profile links
+            ${actionSection}
+        `;
+
         this.detailContentArea.querySelectorAll(".student-profile-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -686,35 +1084,52 @@ class CampusGigApp {
             });
         });
 
-        // Sign in link if logged out
         const linkApplyLogin = document.getElementById("link-apply-login");
         if (linkApplyLogin) {
             linkApplyLogin.addEventListener("click", () => this.openLoginModal());
         }
 
-        // Apply form submission
         const formApply = document.getElementById("form-apply");
         if (formApply) {
             formApply.addEventListener("submit", (e) => {
                 e.preventDefault();
                 if (!this.activeUserId) {
-                    this.openLoginModal("Please sign in as a student to apply.");
+                    this.openLoginModal("Sign in as a student to apply.");
                     return;
                 }
 
                 const msgInput = document.getElementById("apply-msg");
                 const errMsg = document.getElementById("err-apply-msg");
-                if (!msgInput.value.trim()) {
-                    errMsg.classList.add("visible");
-                    return;
+                const swapInput = document.getElementById("apply-swap-service");
+                const errSwap = document.getElementById("err-apply-swap");
+
+                let hasApplyError = false;
+                errMsg?.classList.remove("visible");
+                errSwap?.classList.remove("visible");
+
+                if (isSkillSwap) {
+                    if (!swapInput || !swapInput.value.trim()) {
+                        errSwap?.classList.add("visible");
+                        hasApplyError = true;
+                    }
                 }
-                errMsg.classList.remove("visible");
+
+                if (!msgInput.value.trim()) {
+                    errMsg?.classList.add("visible");
+                    hasApplyError = true;
+                }
+
+                if (hasApplyError) return;
+
+                const combinedMessage = isSkillSwap
+                    ? `${msgInput.value.trim()}\n\nService offered in return: ${swapInput.value.trim()}`
+                    : msgInput.value.trim();
 
                 try {
                     mockDb.createApplication({
                         gig_id: gig.id,
                         applicant_id: this.activeUserId,
-                        message: msgInput.value.trim()
+                        message: combinedMessage
                     });
                     this.showToast("Application sent.");
                     this.render();
@@ -724,7 +1139,6 @@ class CampusGigApp {
             });
         }
 
-        // Accept / Reject buttons
         this.detailContentArea.querySelectorAll(".btn-accept-app").forEach(b => {
             b.addEventListener("click", () => {
                 try {
@@ -749,7 +1163,6 @@ class CampusGigApp {
             });
         });
 
-        // Mark completed button
         const btnMarkComp = document.getElementById("btn-mark-completed");
         if (btnMarkComp) {
             btnMarkComp.addEventListener("click", () => {
@@ -763,7 +1176,6 @@ class CampusGigApp {
             });
         }
 
-        // Rate buttons
         const btnOwnerRate = document.getElementById("btn-owner-rate-applicant");
         if (btnOwnerRate) {
             btnOwnerRate.addEventListener("click", () => {
@@ -785,27 +1197,33 @@ class CampusGigApp {
 
     renderPostForm() {
         if (!this.activeUserId) {
-            this.openLoginModal("Please sign in as a student to post a gig.");
+            this.openLoginModal("Sign in as a student to post a gig.");
             this.switchView("view-browse");
             return;
         }
 
         const d = new Date();
         d.setDate(d.getDate() + 7);
-        this.postDeadline.value = d.toISOString().split("T")[0];
+        if (this.postDeadline) {
+            this.postDeadline.value = d.toISOString().split("T")[0];
+        }
 
-        const isPaid = this.postPayment.value === "Paid";
-        this.wrapPostBudget.style.display = isPaid ? "block" : "none";
+        const isPaid = this.postPayment?.value === "Paid";
+        if (this.wrapPostBudget) {
+            this.wrapPostBudget.style.display = isPaid ? "block" : "none";
+        }
     }
 
     handlePostSubmit() {
         if (!this.activeUserId) {
-            this.openLoginModal("Please sign in to post a gig.");
+            this.openLoginModal("Sign in to post a gig.");
             return;
         }
 
         let hasError = false;
-        [this.errTitle, this.errDesc, this.errBudget, this.errDeadline].forEach(el => el.classList.remove("visible"));
+        [this.errTitle, this.errCategory, this.errDesc, this.errBudget, this.errDeadline].forEach(el => {
+            el?.classList.remove("visible");
+        });
 
         const title = this.postTitle.value.trim();
         const desc = this.postDesc.value.trim();
@@ -816,24 +1234,24 @@ class CampusGigApp {
         const deadline = this.postDeadline.value;
 
         if (!title) {
-            this.errTitle.classList.add("visible");
+            this.errTitle?.classList.add("visible");
             hasError = true;
         }
 
         if (!desc) {
-            this.errDesc.classList.add("visible");
+            this.errDesc?.classList.add("visible");
             hasError = true;
         }
 
         if (payment === "Paid") {
             if (!budgetVal || Number(budgetVal) <= 0) {
-                this.errBudget.classList.add("visible");
+                this.errBudget?.classList.add("visible");
                 hasError = true;
             }
         }
 
         if (!deadline) {
-            this.errDeadline.classList.add("visible");
+            this.errDeadline?.classList.add("visible");
             hasError = true;
         }
 
@@ -866,13 +1284,16 @@ class CampusGigApp {
     renderActivity() {
         if (!this.activeUserId) {
             this.activityContentArea.innerHTML = `
-        <div class="empty-state">
-          <h4>You are not signed in.</h4>
-          <p style="font-size: 13px; margin-top: 4px;">
-            <button class="btn-primary" id="btn-activity-login" style="margin-top: 8px;">Sign in as student</button>
-          </p>
-        </div>
-      `;
+                <div class="empty-state">
+                    ${getBlobAvatarSvg('sleepy', 52, true)}
+                    <div>
+                        <h4>You are not signed in.</h4>
+                        <p style="margin-top: 8px;">
+                            <button class="btn-primary" id="btn-activity-login">Sign in as student</button>
+                        </p>
+                    </div>
+                </div>
+            `;
             document.getElementById("btn-activity-login")?.addEventListener("click", () => this.openLoginModal());
             return;
         }
@@ -882,326 +1303,305 @@ class CampusGigApp {
 
             if (gigs.length === 0) {
                 this.activityContentArea.innerHTML = `
-          <div class="empty-state">
-            <h4>You haven't posted any gigs yet.</h4>
-            <p style="font-size: 13px; margin-top: 4px;">Click "Post a gig" in the header to post one.</p>
-          </div>
-        `;
+                    <div class="empty-state">
+                        ${getBlobAvatarSvg('sleepy', 52, true)}
+                        <div>
+                            <h4>You have not posted any gigs yet.</h4>
+                            <p style="margin-top: 4px;">Click "Post a gig" in the navigation to post one.</p>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
-            this.activityContentArea.innerHTML = `
-        <div class="activity-table-wrap">
-          <table class="gigs-table">
-            <thead>
-              <tr>
-                <th style="width: 44%;">Title</th>
-                <th style="width: 14%;">Category</th>
-                <th style="width: 12%;">Applicants</th>
-                <th style="width: 15%;">Deadline</th>
-                <th style="width: 15%;">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${gigs.map(g => {
+            this.activityContentArea.innerHTML = gigs.map(g => {
                 const apps = mockDb.applications.filter(a => a.gig_id === g.id);
                 const statusClass = "status-" + g.status.toLowerCase().replace(/\s+/g, "-");
+                const deadlineInfo = this.formatDeadline(g.deadline, g.status);
+
                 return `
-                  <tr data-gig-id="${g.id}">
-                    <td>
-                      <div class="gig-row-title">${this.escapeHtml(g.title)}</div>
-                    </td>
-                    <td>${g.category}</td>
-                    <td>${apps.length} applicant${apps.length === 1 ? '' : 's'}</td>
-                    <td>${this.formatDeadline(g.deadline, g.status)}</td>
-                    <td><span class="status-text ${statusClass}">${g.status}</span></td>
-                  </tr>
+                    <div class="activity-item-card" data-gig-id="${g.id}">
+                        <div class="activity-item-top">
+                            <span class="activity-item-title">${this.escapeHtml(g.title)}</span>
+                            <span class="status-chip ${statusClass}">${g.status}</span>
+                        </div>
+                        <div class="activity-item-meta">
+                            <span class="category-chip">${g.category}</span>
+                            <span>${apps.length} applicant${apps.length === 1 ? '' : 's'}</span>
+                            <span>·</span>
+                            <span>${deadlineInfo}</span>
+                        </div>
+                    </div>
                 `;
-            }).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
+            }).join("");
         } else {
-            // My applications
             const apps = mockDb.getApplicationsForUser(this.activeUserId);
 
             if (apps.length === 0) {
                 this.activityContentArea.innerHTML = `
-          <div class="empty-state">
-            <h4>No applications yet.</h4>
-            <p style="font-size: 13px; margin-top: 4px;">Browse open gigs and apply with a short message.</p>
-          </div>
-        `;
+                    <div class="empty-state">
+                        ${getBlobAvatarSvg('sleepy', 52, true)}
+                        <div>
+                            <h4>No applications yet.</h4>
+                            <p style="margin-top: 4px;">Browse open gigs and apply with a short message.</p>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
-            this.activityContentArea.innerHTML = `
-        <div class="activity-table-wrap">
-          <table class="gigs-table">
-            <thead>
-              <tr>
-                <th style="width: 40%;">Gig Title</th>
-                <th style="width: 15%;">Poster</th>
-                <th style="width: 15%;">Applied</th>
-                <th style="width: 15%;">Gig Status</th>
-                <th style="width: 15%;">Your Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${apps.map(a => {
+            this.activityContentArea.innerHTML = apps.map(a => {
                 const gig = a.gig || { title: "Gig", status: "Open", owner: { name: "Poster" } };
+                const posterAvatar = getBlobAvatarSvg(gig.user_id, 26);
                 const appStatusClass = a.status === "Accepted"
                     ? "status-open"
                     : (a.status === "Rejected" ? "status-expired" : "status-in-progress");
 
                 return `
-                  <tr data-gig-id="${a.gig_id}">
-                    <td>
-                      <div class="gig-row-title">${this.escapeHtml(gig.title)}</div>
-                    </td>
-                    <td>
-                      <button class="btn-link student-profile-btn" data-user-id="${gig.user_id}" style="font-size: 13px;">
-                        ${this.escapeHtml(gig.owner ? gig.owner.name : 'Student')}
-                      </button>
-                    </td>
-                    <td>${a.created_at}</td>
-                    <td>${gig.status}</td>
-                    <td><span class="status-text ${appStatusClass}">${a.status}</span></td>
-                  </tr>
+                    <div class="activity-item-card" data-gig-id="${a.gig_id}">
+                        <div class="activity-item-top">
+                            <span class="activity-item-title">${this.escapeHtml(gig.title)}</span>
+                            <span class="status-chip ${appStatusClass}">${a.status}</span>
+                        </div>
+                        <div class="activity-item-meta">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                ${posterAvatar}
+                                <span>${this.escapeHtml(gig.owner ? gig.owner.name : 'Student')}</span>
+                            </div>
+                            <span>·</span>
+                            <span>Applied ${a.created_at}</span>
+                            <span>·</span>
+                            <span>Gig: ${gig.status}</span>
+                        </div>
+                    </div>
                 `;
-            }).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
+            }).join("");
         }
 
-        this.activityContentArea.querySelectorAll(".student-profile-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.openUserProfile(btn.dataset.userId);
-            });
-        });
-
-        this.activityContentArea.querySelectorAll("tr[data-gig-id]").forEach(row => {
-            row.addEventListener("click", () => {
-                this.currentGigDetailId = row.dataset.gigId;
+        this.activityContentArea.querySelectorAll(".activity-item-card").forEach(card => {
+            card.addEventListener("click", () => {
+                this.currentGigDetailId = card.dataset.gigId;
                 this.switchView("view-detail");
             });
         });
     }
 
     // =========================================================================
-    // VIEW 5: PROFILE (EDIT BIO & VISIT OTHER STUDENTS)
+    // VIEW 5: PROFILE
     // =========================================================================
 
     renderProfile() {
-        // If no target profile chosen, default to currently logged-in student
         if (!this.currentProfileUserId) {
             this.currentProfileUserId = this.activeUserId;
         }
 
         if (!this.currentProfileUserId) {
             this.profileContainer.innerHTML = `
-        <div class="empty-state">
-          <h4>You are not signed in.</h4>
-          <p style="font-size: 13px; margin-top: 4px;">
-            <button class="btn-primary" id="btn-profile-login" style="margin-top: 8px;">Sign in as student</button>
-          </p>
-        </div>
-      `;
+                <div class="empty-state">
+                    ${getBlobAvatarSvg('sleepy', 52, true)}
+                    <div>
+                        <h4>You are not signed in.</h4>
+                        <p style="margin-top: 8px;">
+                            <button class="btn-primary" id="btn-profile-login">Sign in as student</button>
+                        </p>
+                    </div>
+                </div>
+            `;
             document.getElementById("btn-profile-login")?.addEventListener("click", () => this.openLoginModal());
             return;
         }
 
         const user = mockDb.getUserProfile(this.currentProfileUserId);
         if (!user) {
-            this.profileContainer.innerHTML = `<p class="empty-state">Profile not found.</p>`;
+            this.profileContainer.innerHTML = `<div class="card"><p class="empty-state">Profile not found.</p></div>`;
             return;
         }
 
         const isOwnProfile = this.activeUserId === this.currentProfileUserId;
+        const profileAvatarSvg = getBlobAvatarSvg(user.id, 64);
 
-        // One line: "12 posted · 9 completed · 4.6 rating"
         const ratingStr = user.average_rating > 0
-            ? `${user.average_rating} rating (${user.reviews_count} reviews)`
+            ? `${renderSingleStarSvg(14)} <span style="font-weight: 600;">${user.average_rating}</span> rating (${user.reviews_count} reviews)`
             : `no ratings yet`;
         const statLine = `${user.gigs_posted_count} posted · ${user.gigs_completed_count} completed · ${ratingStr}`;
 
         const reviews = user.received_reviews || [];
         let reviewsHtml = "";
         if (reviews.length === 0) {
-            reviewsHtml = `<p style="font-size: 13px; color: var(--text-muted);">No reviews received yet.</p>`;
+            reviewsHtml = `<div class="card"><p style="font-size: 14px; color: var(--text-muted);">No reviews received yet.</p></div>`;
         } else {
-            reviewsHtml = reviews.map(r => `
-        <div class="review-row">
-          <div class="review-stars-line">
-            ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)} (${r.rating}/5)
-          </div>
-          <div class="review-comment-body">"${this.escapeHtml(r.comment)}"</div>
-          <div class="review-attribution">
-            — <button class="btn-link student-profile-btn" data-user-id="${r.reviewer.id || r.reviewer_id}" style="font-size: 12px;">${this.escapeHtml(r.reviewer.name)}</button> on "${this.escapeHtml(r.gig.title)}"
-          </div>
-        </div>
-      `).join("");
-        }
-
-        // Gigs posted by this user
-        const gigsPosted = mockDb.getGigs({ user_id: this.currentProfileUserId, status: "All" });
-        let gigsPostedHtml = "";
-        if (gigsPosted.length === 0) {
-            gigsPostedHtml = `<p style="font-size: 13px; color: var(--text-muted);">No gigs posted yet.</p>`;
-        } else {
-            gigsPostedHtml = gigsPosted.map(g => {
-                const statusClass = "status-" + g.status.toLowerCase().replace(/\s+/g, "-");
-                const paymentStr = g.payment_type === "Paid" ? `$${g.budget}` : (g.payment_type === "SkillSwap" ? "Skill swap" : "Free");
+            reviewsHtml = reviews.map(r => {
+                const reviewerAvatar = getBlobAvatarSvg(r.reviewer.id || r.reviewer_id, 30);
                 return `
-          <div class="profile-gig-row" data-gig-id="${g.id}">
-            <div class="profile-gig-title">${this.escapeHtml(g.title)}</div>
-            <div class="profile-gig-meta">
-              ${g.category} · ${paymentStr} · <span class="status-text ${statusClass}">${g.status}</span>
-            </div>
-          </div>
-        `;
+                    <div class="review-card">
+                        <div class="review-stars">
+                            ${renderStarRatingSvg(r.rating, 5, 15)}
+                            <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-left: 6px;">(${r.rating}/5)</span>
+                        </div>
+                        <div class="review-comment">"${this.escapeHtml(r.comment)}"</div>
+                        <div class="review-author-line">
+                            ${reviewerAvatar}
+                            <span>
+                                <button class="btn-link student-profile-btn" data-user-id="${r.reviewer.id || r.reviewer_id}" style="font-size: 13px;">
+                                    ${this.escapeHtml(r.reviewer.name)}
+                                </button>
+                                on "${this.escapeHtml(r.gig.title)}"
+                            </span>
+                        </div>
+                    </div>
+                `;
             }).join("");
         }
 
-        // Gigs completed — either as poster (their completed gig) or as accepted worker
         const allGigs = mockDb.getGigs({ status: "All" });
         const gigsCompleted = allGigs.filter(g =>
             g.status === "Completed" &&
             (g.user_id === this.currentProfileUserId || g.accepted_applicant_id === this.currentProfileUserId)
         );
-        let gigsCompletedHtml = "";
+
+        let completedGigsHtml = "";
         if (gigsCompleted.length === 0) {
-            gigsCompletedHtml = `<p style="font-size: 13px; color: var(--text-muted);">No completed gigs yet.</p>`;
+            completedGigsHtml = `<div class="card"><p style="font-size: 14px; color: var(--text-muted);">No completed gigs yet.</p></div>`;
         } else {
-            gigsCompletedHtml = gigsCompleted.map(g => {
-                const wasWorker = g.accepted_applicant_id === this.currentProfileUserId;
-                const roleLabel = wasWorker ? "worked on" : "posted";
+            completedGigsHtml = gigsCompleted.map(g => {
                 const paymentStr = g.payment_type === "Paid" ? `$${g.budget}` : (g.payment_type === "SkillSwap" ? "Skill swap" : "Free");
+
+                let reviewPill = "";
+                if (this.activeUserId && (this.activeUserId === g.user_id || this.activeUserId === g.accepted_applicant_id)) {
+                    const alreadyReviewed = mockDb.reviews.some(r => r.gig_id === g.id && r.reviewer_id === this.activeUserId);
+                    if (!alreadyReviewed) {
+                        reviewPill = `<button class="btn-primary btn-profile-leave-review" data-gig-id="${g.id}" style="font-size: 12px; padding: 5px 14px; min-height: 32px;">Leave a review</button>`;
+                    }
+                }
+
                 return `
-          <div class="profile-gig-row" data-gig-id="${g.id}">
-            <div class="profile-gig-title">${this.escapeHtml(g.title)}</div>
-            <div class="profile-gig-meta">
-              ${g.category} · ${paymentStr} · <span style="font-size: 11px; color: var(--text-subtle);">${roleLabel}</span>
-            </div>
-          </div>
-        `;
+                    <div class="activity-item-card" data-gig-id="${g.id}">
+                        <div class="activity-item-top">
+                            <span class="activity-item-title">${this.escapeHtml(g.title)}</span>
+                            <span class="status-chip status-completed">Completed</span>
+                        </div>
+                        <div class="activity-item-meta" style="justify-content: space-between;">
+                            <div>
+                                <span class="category-chip">${g.category}</span>
+                                <span style="margin-left: 8px;">${paymentStr}</span>
+                            </div>
+                            ${reviewPill}
+                        </div>
+                    </div>
+                `;
             }).join("");
         }
 
-        // Back link when viewing someone else's profile
         const backBtnHtml = !isOwnProfile
-            ? `<a class="back-link" id="btn-back-from-profile" style="margin-bottom: 1rem; display: inline-block;">← Back</a>`
+            ? `<button class="btn-secondary" id="btn-back-from-profile" style="margin-bottom: 14px; padding: 5px 14px; font-size: 13px;">← Back</button>`
             : "";
 
-        // Bio Block: Editable if own profile
         let bioBlockHtml = "";
         if (isOwnProfile && this.isEditingBio) {
             bioBlockHtml = `
-        <div style="margin-top: 1rem; margin-bottom: 1rem;">
-          <form id="form-edit-bio">
-            <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 0.35rem;">Edit bio</label>
-            <textarea id="input-edit-bio" rows="4" style="width: 100%; font-size: 13px; margin-bottom: 0.5rem;">${this.escapeHtml(user.bio)}</textarea>
-            <div style="display: flex; gap: 0.5rem;">
-              <button type="submit" class="btn-primary" style="font-size: 13px; padding: 0.3rem 0.75rem;">Save bio</button>
-              <button type="button" class="btn-secondary" id="btn-cancel-bio-edit" style="font-size: 13px; padding: 0.3rem 0.75rem;">Cancel</button>
-            </div>
-          </form>
-        </div>
-      `;
+                <div style="margin-top: 12px; margin-bottom: 12px;">
+                    <form id="form-edit-bio">
+                        <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Edit bio</label>
+                        <textarea id="input-edit-bio" rows="4" style="width: 100%; font-size: 14px; margin-bottom: 8px;">${this.escapeHtml(user.bio)}</textarea>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" class="btn-primary" style="font-size: 13px; padding: 5px 14px; min-height: 34px;">Save bio</button>
+                            <button type="button" class="btn-secondary" id="btn-cancel-bio-edit" style="font-size: 13px; padding: 5px 14px; min-height: 34px;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
         } else if (isOwnProfile) {
             bioBlockHtml = `
-        <div style="margin-top: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
-            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle);">Bio</span>
-            <button class="btn-link" id="btn-start-bio-edit" style="font-size: 12px;">Edit bio</button>
-          </div>
-          <div class="profile-bio-text">${this.escapeHtml(user.bio)}</div>
-        </div>
-      `;
+                <div style="margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle);">Bio</span>
+                        <button class="btn-icon-edit" id="btn-start-bio-edit" title="Edit bio" aria-label="Edit bio">
+                            ${getPencilIconSvg(13)}
+                        </button>
+                    </div>
+                    <div style="font-size: 14px; color: var(--ink-black);">${this.escapeHtml(user.bio)}</div>
+                </div>
+            `;
         } else {
             bioBlockHtml = `
-        <div style="margin-top: 1rem;">
-          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle); margin-bottom: 0.3rem;">Bio</div>
-          <div class="profile-bio-text">${this.escapeHtml(user.bio)}</div>
-        </div>
-      `;
+                <div style="margin-top: 12px;">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle); margin-bottom: 4px;">Bio</div>
+                    <div style="font-size: 14px; color: var(--ink-black);">${this.escapeHtml(user.bio)}</div>
+                </div>
+            `;
         }
 
-        // Skills Block: Editable if own profile
         let skillsBlockHtml = "";
         if (isOwnProfile && this.isEditingSkills) {
             skillsBlockHtml = `
-        <div style="margin-top: 1rem; margin-bottom: 1rem;">
-          <form id="form-edit-skills">
-            <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 0.35rem;">Edit skills (comma-separated)</label>
-            <input type="text" id="input-edit-skills" value="${this.escapeHtml(user.skills.join(", "))}" style="width: 100%; font-size: 13px; margin-bottom: 0.5rem;">
-            <div style="display: flex; gap: 0.5rem;">
-              <button type="submit" class="btn-primary" style="font-size: 13px; padding: 0.3rem 0.75rem;">Save skills</button>
-              <button type="button" class="btn-secondary" id="btn-cancel-skills-edit" style="font-size: 13px; padding: 0.3rem 0.75rem;">Cancel</button>
-            </div>
-          </form>
-        </div>
-      `;
+                <div style="margin-top: 14px; margin-bottom: 12px;">
+                    <form id="form-edit-skills">
+                        <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Edit skills (comma-separated)</label>
+                        <input type="text" id="input-edit-skills" value="${this.escapeHtml(user.skills.join(", "))}" style="width: 100%; font-size: 14px; margin-bottom: 8px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" class="btn-primary" style="font-size: 13px; padding: 5px 14px; min-height: 34px;">Save skills</button>
+                            <button type="button" class="btn-secondary" id="btn-cancel-skills-edit" style="font-size: 13px; padding: 5px 14px; min-height: 34px;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
         } else if (isOwnProfile) {
             skillsBlockHtml = `
-        <div style="margin-top: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem;">
-            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle);">Skills</span>
-            <button class="btn-link" id="btn-start-skills-edit" style="font-size: 12px;">Edit skills</button>
-          </div>
-          <div class="profile-skills-text">${user.skills.join(", ")}</div>
-        </div>
-      `;
+                <div style="margin-top: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle);">Skills</span>
+                        <button class="btn-icon-edit" id="btn-start-skills-edit" title="Edit skills" aria-label="Edit skills">
+                            ${getPencilIconSvg(13)}
+                        </button>
+                    </div>
+                    <div class="skills-chips-row">
+                        ${user.skills.map(s => `<span class="skill-chip">${this.escapeHtml(s)}</span>`).join("")}
+                    </div>
+                </div>
+            `;
         } else {
             skillsBlockHtml = `
-        <div style="margin-top: 1rem;">
-          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle); margin-bottom: 0.3rem;">Skills</div>
-          <div class="profile-skills-text">${user.skills.join(", ")}</div>
-        </div>
-      `;
+                <div style="margin-top: 14px;">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-subtle); margin-bottom: 4px;">Skills</div>
+                    <div class="skills-chips-row">
+                        ${user.skills.map(s => `<span class="skill-chip">${this.escapeHtml(s)}</span>`).join("")}
+                    </div>
+                </div>
+            `;
         }
 
         this.profileContainer.innerHTML = `
-      ${backBtnHtml}
-      <div class="profile-top">
-        <h2>${this.escapeHtml(user.name)} ${isOwnProfile ? '<span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">(You)</span>' : ''}</h2>
-        <div class="profile-academic">${user.major} · ${user.semester} semester</div>
-        <div class="profile-stat-line">${statLine}</div>
-        ${bioBlockHtml}
-        ${skillsBlockHtml}
-      </div>
+            ${backBtnHtml}
+            <div class="profile-card">
+                <div class="profile-header-row">
+                    ${profileAvatarSvg}
+                    <div>
+                        <h2>${this.escapeHtml(user.name)} ${isOwnProfile ? '<span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">(You)</span>' : ''}</h2>
+                        <div style="color: var(--text-muted); font-size: 13px;">${user.major} · ${user.semester} semester</div>
+                    </div>
+                </div>
+                <div class="profile-stat-line" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    ${statLine}
+                </div>
+                ${bioBlockHtml}
+                ${skillsBlockHtml}
+            </div>
 
-      <div class="reviews-section">
-        <h3 class="reviews-title">Gigs posted (${gigsPosted.length})</h3>
-        <div class="profile-gigs-list" id="profile-posted-gigs">
-          ${gigsPostedHtml}
-        </div>
-      </div>
+            <h3 style="margin: 20px 0 10px 0;">Completed gigs (${gigsCompleted.length})</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                ${completedGigsHtml}
+            </div>
 
-      <div class="reviews-section">
-        <h3 class="reviews-title">Gigs completed (${gigsCompleted.length})</h3>
-        <div class="profile-gigs-list" id="profile-completed-gigs">
-          ${gigsCompletedHtml}
-        </div>
-      </div>
+            <h3 style="margin: 20px 0 10px 0;">Reviews (${reviews.length})</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${reviewsHtml}
+            </div>
+        `;
 
-      <div class="reviews-section">
-        <h3 class="reviews-title">Reviews received (${reviews.length})</h3>
-        ${reviewsHtml}
-      </div>
-    `;
-
-        // Back button
         document.getElementById("btn-back-from-profile")?.addEventListener("click", () => {
             this.switchView(this.previousViewForProfile || "view-browse");
         });
 
-        // Edit Bio trigger & form
         document.getElementById("btn-start-bio-edit")?.addEventListener("click", () => {
             this.isEditingBio = true;
             this.renderProfile();
@@ -1224,7 +1624,6 @@ class CampusGigApp {
             });
         }
 
-        // Edit Skills trigger & form
         document.getElementById("btn-start-skills-edit")?.addEventListener("click", () => {
             this.isEditingSkills = true;
             this.renderProfile();
@@ -1247,7 +1646,6 @@ class CampusGigApp {
             });
         }
 
-        // Reviewer profile links
         this.profileContainer.querySelectorAll(".student-profile-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -1256,9 +1654,9 @@ class CampusGigApp {
             });
         });
 
-        // Gig row click on profile → open gig detail
-        this.profileContainer.querySelectorAll(".profile-gig-row").forEach(row => {
-            row.addEventListener("click", () => {
+        this.profileContainer.querySelectorAll(".activity-item-card").forEach(row => {
+            row.addEventListener("click", (e) => {
+                if (e.target.closest(".btn-profile-leave-review")) return;
                 const gigId = row.dataset.gigId;
                 if (gigId) {
                     this.previousViewForProfile = "view-profile";
@@ -1267,22 +1665,49 @@ class CampusGigApp {
                 }
             });
         });
+
+        this.profileContainer.querySelectorAll(".btn-profile-leave-review").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const gigId = btn.dataset.gigId;
+                const gig = mockDb.getGigById(gigId);
+                const targetName = gig && gig.user_id === this.activeUserId
+                    ? (gig.accepted_applicant ? gig.accepted_applicant.name : "applicant")
+                    : (gig && gig.owner ? gig.owner.name : "owner");
+                this.openReviewModal(gigId, targetName);
+            });
+        });
     }
 
     // =========================================================================
-    // REVIEW MODAL
+    // REVIEW MODAL (RESET VISUAL STARS ON OPEN)
     // =========================================================================
 
     openReviewModal(gigId, targetName) {
         if (!this.activeUserId) {
-            this.openLoginModal("Please sign in to rate this gig.");
+            this.openLoginModal("Sign in to leave a review.");
             return;
         }
 
         this.reviewGigId.value = gigId;
-        this.reviewTargetLabel.textContent = `Rating for ${targetName} (1 to 5)`;
+        this.reviewTargetLabel.textContent = `Rating for ${targetName}`;
         this.reviewCommentInput.value = "";
-        this.errReviewComment.classList.remove("visible");
+        this.errReviewComment?.classList.remove("visible");
+
+        // Reset visual stars to 5 stars
+        if (this.interactiveStars) {
+            const starBtns = this.interactiveStars.querySelectorAll(".star-btn");
+            starBtns.forEach(btn => {
+                const polygon = btn.querySelector("polygon");
+                if (polygon) {
+                    polygon.setAttribute("fill", "#FFE94A");
+                    polygon.setAttribute("stroke", "#B45309");
+                }
+            });
+        }
+        if (this.reviewRatingSelect) this.reviewRatingSelect.value = "5";
+        if (this.ratingTextHint) this.ratingTextHint.textContent = "5 stars";
+
         this.modalReview.classList.add("open");
     }
 
@@ -1292,10 +1717,10 @@ class CampusGigApp {
         const comment = this.reviewCommentInput.value.trim();
 
         if (!comment) {
-            this.errReviewComment.classList.add("visible");
+            this.errReviewComment?.classList.add("visible");
             return;
         }
-        this.errReviewComment.classList.remove("visible");
+        this.errReviewComment?.classList.remove("visible");
 
         try {
             mockDb.createReview({
@@ -1314,15 +1739,16 @@ class CampusGigApp {
     }
 
     // =========================================================================
-    // MINIMAL TOAST & UTILITIES
+    // TOAST & UTILITIES
     // =========================================================================
 
     showToast(text) {
+        if (!this.toastMsg) return;
         this.toastMsg.textContent = text;
         this.toastMsg.classList.add("show");
         setTimeout(() => {
             this.toastMsg.classList.remove("show");
-        }, 2500);
+        }, 2200);
     }
 
     escapeHtml(str) {
