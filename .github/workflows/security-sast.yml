@@ -1,0 +1,64 @@
+name: Security - SAST
+
+on:
+  workflow_call:
+    inputs:
+      demo_failure:
+        description: Also scan the intentionally vulnerable demo file
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/webies/automated-security-vulnerability-02
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Run Semgrep
+        env:
+          DEMO_FAILURE: ${{ inputs.demo_failure }}
+        run: |
+          mkdir -p reports
+          targets=(app/src)
+          if [ "$DEMO_FAILURE" = "true" ]; then
+            targets+=(demo/vulnerable/app.js)
+          fi
+
+          docker run --rm \
+            --volume "$PWD:/src" \
+            --workdir /src \
+            semgrep/semgrep:1.182.0 \
+            semgrep scan \
+              --config .semgrep \
+              --config p/javascript \
+              --metrics=off \
+              --sarif \
+              --output reports/semgrep.sarif \
+              "${targets[@]}"
+
+      - name: Upload SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-sarif-sast
+          path: submission/webies/automated-security-vulnerability-02/reports/semgrep.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: submission/webies/automated-security-vulnerability-02/reports/semgrep.sarif
+          category: semgrep

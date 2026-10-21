@@ -1,0 +1,68 @@
+name: Security - Dependencies
+
+on:
+  workflow_call:
+    inputs:
+      demo_failure:
+        description: Also scan the intentionally vulnerable demo lockfile
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-fs:
+    name: Trivy filesystem
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Scan application dependencies
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: submission/webies/automated-security-vulnerability-02/app
+          format: sarif
+          output: submission/webies/automated-security-vulnerability-02/reports/trivy-fs.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          version: 'v0.76.0'
+          cache: true
+
+      - name: Scan vulnerable demo dependencies
+        if: inputs.demo_failure
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: submission/webies/automated-security-vulnerability-02/demo/vulnerable
+          format: sarif
+          output: submission/webies/automated-security-vulnerability-02/reports/trivy-fs-demo.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          version: 'v0.76.0'
+          cache: true
+
+      - name: Upload SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-sarif-dependencies
+          path: submission/webies/automated-security-vulnerability-02/reports/trivy-fs*.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: submission/webies/automated-security-vulnerability-02/reports/trivy-fs.sarif
+          category: trivy-fs
