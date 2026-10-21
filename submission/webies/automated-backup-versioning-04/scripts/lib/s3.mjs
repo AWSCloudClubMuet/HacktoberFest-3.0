@@ -1,9 +1,8 @@
 /**
  * Shared S3 client, checksum, manifest and formatting helpers.
  *
- * The SDK reads the standard AWS credential chain. The only environment
- * switch needed for LocalStack is AWS_ENDPOINT_URL; when it is unset the same
- * code talks to real AWS and uses virtual-hosted-style requests.
+ * The SDK reads the standard AWS credential chain and talks to the regional
+ * AWS endpoints.
  */
 
 import { createHash, randomUUID } from "node:crypto";
@@ -25,43 +24,15 @@ export function getAwsRegion() {
   return process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1";
 }
 
-export function getEndpoint() {
-  const raw = (process.env.AWS_ENDPOINT_URL || "").trim();
-  if (!raw) {
-    return null;
-  }
-
-  let parsed;
-  try {
-    parsed = new URL(raw);
-  } catch {
-    throw new Error(
-      `AWS_ENDPOINT_URL is not a valid URL: ${raw}. Example: http://localhost:4566`,
-    );
-  }
-
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    throw new Error("AWS_ENDPOINT_URL must start with http:// or https://.");
-  }
-
-  return raw.replace(/\/+$/, "");
-}
-
 export function baseClientConfig() {
-  const endpoint = getEndpoint();
   return {
     region: getAwsRegion(),
-    ...(endpoint ? { endpoint } : {}),
     maxAttempts: Number.parseInt(process.env.AWS_MAX_ATTEMPTS || "3", 10),
   };
 }
 
 export function createS3Client() {
-  const endpoint = getEndpoint();
-  return new S3Client({
-    ...baseClientConfig(),
-    forcePathStyle: Boolean(endpoint),
-  });
+  return new S3Client(baseClientConfig());
 }
 
 export function sha256Buffer(buffer) {
@@ -282,11 +253,11 @@ export function friendlyAwsError(error) {
     /Could not load credentials/i.test(message)
   ) {
     hints.push(
-      "No AWS credentials were found. For LocalStack export AWS_ACCESS_KEY_ID=test and AWS_SECRET_ACCESS_KEY=test; for real AWS configure a profile or role.",
+      "No AWS credentials were found. Configure the standard AWS credential chain with a profile, SSO session or role.",
     );
   }
   if (name === "ECONNREFUSED" || /ECONNREFUSED/.test(message)) {
-    hints.push("Cannot reach the S3 endpoint. Check AWS_ENDPOINT_URL and that LocalStack is running.");
+    hints.push("Cannot reach the AWS endpoint. Check the region and network connectivity.");
   }
   if (status === 403) {
     hints.push("Access denied. Check the IAM policy, bucket policy and the active credentials.");

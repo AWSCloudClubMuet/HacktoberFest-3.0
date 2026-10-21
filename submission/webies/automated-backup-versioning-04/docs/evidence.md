@@ -6,11 +6,12 @@ prove the requirement, not just show that a command ran. Save files under
 the final submission document.
 
 The 2026-10-21 real-AWS run is recorded in
-`manifests/real-aws-manifest.json` and `reports/real-aws-backup-status.md`.
-It covers the 15-resource apply, bucket readback, two-version restore,
-verification, SNS -> SQS failure/verification/missed alerts, confirmed email
-subscription, TLS-only enforcement, IAM policy simulation and destroy. See the
-"Real AWS validation" table in the README for the results and remaining gaps.
+`manifests/real-aws-manifest.json` and
+`reports/real-aws-backup-status.md`. It covers the 15-resource apply, bucket
+readback, two-version restore, verification, SNS to SQS failure, verification
+and missed alerts, confirmed email subscription, TLS-only enforcement, IAM
+policy simulation and destroy. See the "Validation performed" table in the
+README for the results and remaining gaps.
 
 Suggested naming:
 
@@ -38,11 +39,15 @@ terraform -chdir=infra validate
 ```
 
 Capture the Node major version, Terraform version and the successful checks.
-Do not capture the LocalStack license token or any AWS secret.
+Do not capture an AWS access key, secret key or session token.
 
 ## 1. Provisioning
 
 ```bash
+export AWS_PROFILE='<your-profile>'
+export AWS_REGION=us-east-1
+aws sts get-caller-identity
+
 terraform -chdir=infra apply -auto-approve
 terraform -chdir=infra output
 terraform -chdir=infra state list
@@ -63,40 +68,17 @@ Set the shell variables used below:
 export BUCKET_NAME="$(terraform -chdir=infra output -raw bucket_name)"
 export BACKUP_ALERTS_TOPIC_ARN="$(terraform -chdir=infra output -raw sns_topic_arn)"
 export ALERT_QUEUE_URL="$(terraform -chdir=infra output -raw sqs_queue_url)"
-
-# LocalStack only:
-export AWS_ENDPOINT_URL=http://localhost:4566
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
-export AWS_REGION=us-east-1
 ```
-
-For real AWS, do not export the two test credentials and do not set
-`AWS_ENDPOINT_URL`.
 
 ## 2. Bucket security settings
 
-LocalStack commands use `--endpoint-url "$AWS_ENDPOINT_URL"`. On real AWS,
-remove that flag.
-
 ```bash
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-bucket-versioning \
-  --bucket "$BUCKET_NAME"
-
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-bucket-encryption \
-  --bucket "$BUCKET_NAME"
-
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-public-access-block \
-  --bucket "$BUCKET_NAME"
-
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-bucket-ownership-controls \
-  --bucket "$BUCKET_NAME"
-
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-bucket-lifecycle-configuration \
-  --bucket "$BUCKET_NAME"
-
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api get-bucket-policy \
-  --bucket "$BUCKET_NAME"
+aws s3api get-bucket-versioning --bucket "$BUCKET_NAME"
+aws s3api get-bucket-encryption --bucket "$BUCKET_NAME"
+aws s3api get-public-access-block --bucket "$BUCKET_NAME"
+aws s3api get-bucket-ownership-controls --bucket "$BUCKET_NAME"
+aws s3api get-bucket-lifecycle-configuration --bucket "$BUCKET_NAME"
+aws s3api get-bucket-policy --bucket "$BUCKET_NAME"
 ```
 
 Expected evidence:
@@ -127,10 +109,10 @@ Capture the table with two rows for the same key: one current version and one
 noncurrent version, with two different version IDs and sizes. This is the
 proof that overwriting created a new version instead of replacing the old one.
 
-If using AWS CLI instead, the equivalent is:
+If using the AWS CLI instead, the equivalent is:
 
 ```bash
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api list-object-versions \
+aws s3api list-object-versions \
   --bucket "$BUCKET_NAME" --prefix latest/ \
   --query 'Versions[].{Key:Key,VersionId:VersionId,IsLatest:IsLatest,Size:Size}'
 ```
@@ -228,14 +210,15 @@ contain:
 Run `verify.mjs` on the failed run to show a second event,
 `backup.verification_failed`, and poll the queue again if desired.
 
-LocalStack does not deliver real email. On real AWS, add
-`-var="alert_email=you@example.com"`, confirm the subscription email, and
-capture the received message plus the SNS subscription confirmation.
+To capture email evidence, apply with
+`-var="alert_email=you@example.com"`, confirm the subscription email, publish
+a test notification, and capture the SNS publish acceptance plus the received
+message. Inbox receipt is external to the automation.
 
 ### Missed or stale backup check
 
-The freshness check reads the local manifest, so it does not need a successful
-S3 call. Run the normal check after a recent backup:
+The freshness check reads the local manifest. Run the normal check after a
+recent backup:
 
 ```bash
 node scripts/check-freshness.mjs --max-age-hours 26
@@ -290,21 +273,20 @@ node scripts/report.mjs --manifest manifests/sample-manifest.json \
 terraform -chdir=infra destroy -auto-approve
 ```
 
+Use the same `-var` values used for apply, for example:
+
+```bash
+terraform -chdir=infra destroy -auto-approve \
+  -var="alert_email=you@example.com"
+```
+
 Capture the `Destroy complete` line and confirm the bucket is gone:
 
 ```bash
-aws --endpoint-url "$AWS_ENDPOINT_URL" s3api head-bucket \
-  --bucket "$BUCKET_NAME" || echo "bucket removed as expected"
+aws s3api head-bucket --bucket "$BUCKET_NAME" || echo "bucket removed as expected"
 ```
 
-Then remove the LocalStack container if it was started for the demo:
-
-```bash
-sudo docker rm -f webies-localstack
-```
-
-For real AWS, repeat `terraform destroy` with the same `-var` values used for
-apply. Capture the destroy output before closing the account session.
+Capture the destroy output before closing the account session.
 
 ## 10. Repository hygiene
 
@@ -314,7 +296,7 @@ git ls-files submission/webies/automated-backup-versioning-04 | \
   grep -E '(^|/)(node_modules|\.terraform)(/|$)|\.tfstate|terraform\.tfvars$' \
   && echo "UNEXPECTED TRACKED FILE" || echo "no generated/secret files tracked"
 
-grep -RInE 'AKIA[0-9A-Z]{16}|ls-[A-Za-z0-9-]{20,}' \
+grep -RInE 'AKIA[0-9A-Z]{16}' \
   submission/webies/automated-backup-versioning-04 \
   --exclude-dir=node_modules --exclude-dir=.terraform \
   && echo "POSSIBLE SECRET FOUND" || echo "no token-like strings found"
@@ -326,5 +308,5 @@ Capture the results. Expected:
   are present.
 - No `node_modules/`, `.terraform/`, `*.tfstate*`, `terraform.tfvars` or
   `crash.log` is tracked.
-- No AWS access key ID (`AKIA...`) or LocalStack license token is present.
+- No AWS access key ID (`AKIA...`) is present.
 - `git status` does not show accidental changes outside the team folder.

@@ -4,23 +4,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "use_localstack" {
-  description = "Send provider traffic to LocalStack instead of real AWS."
-  type        = bool
-  default     = true
-}
-
-variable "localstack_endpoint" {
-  description = "LocalStack edge endpoint for S3, SNS, SQS, IAM and STS."
-  type        = string
-  default     = "http://localhost:4566"
-
-  validation {
-    condition     = can(regex("^https?://[^/]+", var.localstack_endpoint))
-    error_message = "localstack_endpoint must start with http:// or https://."
-  }
-}
-
 variable "project_name" {
   description = "Prefix used for named AWS resources."
   type        = string

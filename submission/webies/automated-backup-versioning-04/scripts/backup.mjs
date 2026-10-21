@@ -23,7 +23,6 @@ import {
   formatBytes,
   friendlyAwsError,
   getBucketName,
-  getEndpoint,
   getTopicArn,
   guessContentType,
   latestKeyFor,
@@ -52,7 +51,7 @@ Options:
   --help                 Show this help
 
 Environment:
-  AWS_REGION, AWS_ENDPOINT_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+  AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
   BUCKET_NAME, BACKUP_ALERTS_TOPIC_ARN
 
 Exit codes:
@@ -100,7 +99,6 @@ async function main() {
   const manifest = await readManifest(manifestPath);
   const startedAt = new Date();
   const runId = newRunId(startedAt);
-  const endpoint = getEndpoint();
 
   const run = {
     runId,
@@ -108,7 +106,7 @@ async function main() {
     finishedAt: null,
     durationMs: 0,
     status: "running",
-    environment: endpoint ? `localstack:${endpoint}` : "aws",
+    environment: "aws",
     region: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1",
     bucket,
     sourceRoot: toDisplayPath(sourceDir),
@@ -121,7 +119,6 @@ async function main() {
 
   console.log(`[backup] Run ${runId}`);
   console.log(`[backup] ${files.length} file(s) from ${toDisplayPath(sourceDir)} to s3://${bucket}/backups/${runId}/`);
-  console.log(`[backup] Endpoint: ${endpoint || "real AWS"}`);
 
   const s3 = createS3Client();
 

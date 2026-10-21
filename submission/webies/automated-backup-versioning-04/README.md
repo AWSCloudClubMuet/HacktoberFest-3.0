@@ -3,8 +3,8 @@
 A small, working reference implementation for HacktoberFest 3.0 issue #4. It
 backs up a sample dataset to a private, versioned S3 bucket, verifies every
 upload with SHA-256, restores an exact object version, reports backup status,
-and sends failure alerts through SNS to an SQS subscriber (or email on real
-AWS).
+and sends failure alerts through SNS to an SQS subscriber (and optionally to
+email).
 
 ## Team
 
@@ -32,11 +32,11 @@ member names.
   size and SHA-256 with the manifest.
 - Restores one exact version and proves the restored bytes match the recorded
   checksum.
-- Publishes failure alerts to SNS; SQS receives them locally, and an optional
-  email subscription can receive them on real AWS.
+- Publishes failure alerts to SNS; an SQS queue is a durable subscriber and an
+  optional email subscription can receive the same alerts.
 - Detects a missed or stale backup by checking the age of the latest
   successful run in the manifest, with an optional `backup.missed` SNS alert.
-- Generates `reports/backup-status.md` with job counts, last success,
+- Generates a Markdown status report with job counts, last success,
   verification status, recovery status, storage and retention.
 - Defines a least-privilege IAM role for a future AWS-hosted runner. The local
   CLI uses the operator's standard AWS credential chain; no credentials are
@@ -61,8 +61,8 @@ member names.
         manifest.json   |  failure event
                         v
  +----------------+   +----------------+   +----------------------+
- | verify.mjs     |   | SNS topic      |-->| SQS queue (local)    |
- | restore.mjs    |   |                |-->| email (real AWS)     |
+ | verify.mjs     |   | SNS topic      |-->| SQS queue            |
+ | restore.mjs    |   |                |-->| email (optional)     |
  | report.mjs     |   |                |   +----------------------+
  +----------------+   +----------------+
 ```
@@ -76,7 +76,6 @@ data flow and key layout.
 - AWS S3, SNS, SQS and IAM.
 - Node.js 20+ with AWS SDK v3 (`@aws-sdk/client-s3`, `client-sns`,
   `client-sqs`).
-- LocalStack Pro 2026.10 (validated) at `http://localhost:4566`.
 - `node:fs/promises`, `node:crypto` and `node:path`; no other runtime
   libraries.
 
@@ -89,7 +88,7 @@ automated-backup-versioning-04/
   .gitignore
   infra/
     versions.tf               Terraform and provider pins
-    providers.tf              LocalStack / real-AWS switch
+    providers.tf              AWS provider and credential chain
     variables.tf              Inputs and validation
     main.tf                   S3, lifecycle, IAM, SNS, SQS
     outputs.tf                Bucket, topic, role, region, queue
@@ -99,7 +98,7 @@ automated-backup-versioning-04/
     backup.mjs                Upload, checksum, manifest, failure alert
     verify.mjs                Download and compare size / SHA-256
     restore.mjs               List versions, restore one version, verify
-    report.mjs                Render reports/backup-status.md
+    report.mjs                Render a Markdown status report
     poll-alerts.mjs           Receive SNS alerts from the SQS queue
     check-freshness.mjs       Detect a missed or stale backup from the manifest
     lib/
@@ -109,9 +108,9 @@ automated-backup-versioning-04/
   sample-data/                Five synthetic files, including a subdirectory
   manifests/
     sample-manifest.json      Synthetic data for offline report rendering
-    manifest.json             Created by backup.mjs (evidence from a real run)
+    real-aws-manifest.json    Evidence from the 2026-10-21 real-AWS run
   reports/
-    backup-status.md          Latest generated status report
+    real-aws-backup-status.md Evidence report from the real-AWS run
     backup-status.sample.md   Offline sample render
   docs/
     architecture.md
@@ -121,80 +120,50 @@ automated-backup-versioning-04/
     limitations.md
 ```
 
+The default generated manifest is `manifests/manifest.json` and the default
+report is `reports/backup-status.md`. Both are ignored by Git. Pass
+`--manifest` and `--out` to keep a different copy.
+
 ## Prerequisites
 
 - Node.js 20 or newer (`node --version`).
 - Terraform 1.6 or newer (`terraform version`).
-- Docker and a LocalStack Pro license for the local path.
-- AWS credentials with permission to create S3, IAM, SNS and SQS resources
-  for the real-AWS path.
+- AWS credentials with permission to create S3, IAM, SNS and SQS resources.
+  Use a profile, SSO session or role; do not put access keys in this folder.
+- The AWS CLI is optional and is used only for read-only inspection commands
+  in `docs/evidence.md`.
 
-The AWS CLI is optional. It is used only for read-only inspection commands in
-`docs/evidence.md`; all backup, verification, restore and reporting operations
-are implemented with Node.js and AWS SDK v3.
-
-## LocalStack Pro: full local run
+## Deploy to AWS
 
 Run these commands from the team folder:
 
 ```bash
 cd submission/webies/automated-backup-versioning-04
-```
-
-### 1. Start LocalStack Pro
-
-The license token must come from the environment. Do not write it into a file,
-shell history, Terraform variable or README.
-
-```bash
-export LOCALSTACK_AUTH_TOKEN='<your-license-token>'
-sudo docker run -d --name webies-localstack \
-  -p 4566:4566 \
-  -e LOCALSTACK_AUTH_TOKEN \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  localstack/localstack-pro:latest
-```
-
-If your user can run Docker without `sudo`, omit `sudo`. If you use the
-LocalStack CLI instead, `localstack start -d` is equivalent. Wait for health:
-
-```bash
-curl -s http://localhost:4566/_localstack/health | head -c 200
-```
-
-### 2. Install Node dependencies and configure the shell
-
-```bash
 npm install
 
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
+export AWS_PROFILE='<your-profile>'
 export AWS_REGION=us-east-1
-export AWS_ENDPOINT_URL=http://localhost:4566
-```
+aws sts get-caller-identity
 
-`test`/`test` are the conventional LocalStack credentials, not real secrets.
-The Node S3 client reads `AWS_ENDPOINT_URL` and switches to
-`forcePathStyle: true`; unset it for real AWS.
-
-### 3. Provision and export resource names
-
-```bash
 terraform -chdir=infra init
 terraform -chdir=infra fmt -check
 terraform -chdir=infra validate
-terraform -chdir=infra apply -auto-approve
+terraform -chdir=infra apply \
+  -var="alert_email=you@example.com"
 
 export BUCKET_NAME="$(terraform -chdir=infra output -raw bucket_name)"
 export BACKUP_ALERTS_TOPIC_ARN="$(terraform -chdir=infra output -raw sns_topic_arn)"
 export ALERT_QUEUE_URL="$(terraform -chdir=infra output -raw sqs_queue_url)"
 ```
 
-The default `use_localstack = true` sends all provider traffic to
-`http://localhost:4566`. Local state is used. `.terraform/`, all `.tfstate`
-files, `terraform.tfvars` and `crash.log` are ignored by Git.
+`alert_email` is optional. If it is set, confirm the SNS subscription from the
+email before relying on email delivery. The SQS subscriber receives alerts
+without confirmation.
 
-### 4. Run the core workflow
+Terraform uses local state by default. `.terraform/`, all `.tfstate` files,
+`terraform.tfvars` and `crash.log` are ignored by Git.
+
+## Run the core workflow
 
 ```bash
 node scripts/backup.mjs
@@ -202,11 +171,19 @@ node scripts/verify.mjs
 node scripts/report.mjs --live
 ```
 
-`report.mjs --live` queries S3 for real current/noncurrent version counts and
+`report.mjs --live` queries S3 for current/noncurrent version counts and
 bytes. Without `--live`, it renders from the manifest only and is fully
 offline.
 
-### 5. Prove version history and restore an earlier version
+Check that the latest successful run is fresh. In production this command
+would run from cron, CI, EventBridge or another scheduler after the expected
+backup window:
+
+```bash
+node scripts/check-freshness.mjs --max-age-hours 26
+```
+
+## Prove version history and restore an earlier version
 
 The backup writes an immutable `backups/<run-id>/...` copy and a stable
 `latest/<file>` mirror. Running the backup again with changed input creates a
@@ -239,7 +216,7 @@ node scripts/restore.mjs --key latest/service-config.yaml \
   --version-id '<version-id>' --out restored/service-config-explicit.yaml
 ```
 
-### 6. Simulate a failure and verify the alert path
+## Simulate a failure and verify the alert path
 
 ```bash
 node scripts/backup.mjs --simulate-failure || echo "expected exit code 1"
@@ -261,14 +238,6 @@ node scripts/verify.mjs
 node scripts/report.mjs --live
 ```
 
-Check that the latest successful run is fresh. In production this command
-would run from cron, CI, EventBridge or another scheduler after the expected
-backup window:
-
-```bash
-node scripts/check-freshness.mjs --max-age-hours 26
-```
-
 To prove the stale path without waiting, force a future clock and suppress the
 alert. This exits 1, as an alerting job should:
 
@@ -277,69 +246,20 @@ node scripts/check-freshness.mjs --max-age-hours 1 \
   --now 2030-01-01T00:00:00Z --no-alert || echo "expected exit code 1"
 ```
 
-### 7. Clean up LocalStack
-
-```bash
-terraform -chdir=infra destroy -auto-approve
-sudo docker rm -f webies-localstack
-```
-
-Confirm the bucket is gone with the `head-bucket` command in
-`docs/evidence.md`. The local report and manifest remain as historical
-evidence.
-
-## Real AWS: final evidence run
-
-Use a dedicated demo account or a sandbox account. The bucket is created with
-a unique suffix and `force_destroy = true` for demo cleanup.
-
-```bash
-cd submission/webies/automated-backup-versioning-04
-
-# Do not reuse the LocalStack test credentials.
-unset AWS_ENDPOINT_URL
-unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
-export AWS_PROFILE='<your-profile>'
-export AWS_REGION=us-east-1
-
-aws sts get-caller-identity
-terraform -chdir=infra init
-terraform -chdir=infra apply -auto-approve \
-  -var="use_localstack=false" \
-  -var="alert_email=you@example.com"
-
-export BUCKET_NAME="$(terraform -chdir=infra output -raw bucket_name)"
-export BACKUP_ALERTS_TOPIC_ARN="$(terraform -chdir=infra output -raw sns_topic_arn)"
-export ALERT_QUEUE_URL="$(terraform -chdir=infra output -raw sqs_queue_url)"
-```
-
-Confirm the SNS email subscription before relying on email delivery. The SQS
-queue receives the same alert without confirmation.
-
-```bash
-node scripts/backup.mjs
-node scripts/verify.mjs
-node scripts/report.mjs --live
-node scripts/poll-alerts.mjs --queue-url "$ALERT_QUEUE_URL" --wait 20 --delete
-```
-
-To test the failure path, run `node scripts/backup.mjs --simulate-failure`,
-poll the queue, then run a clean backup. Real email delivery is the item that
-cannot be proven locally.
-
-### Real AWS cleanup
+## Destroy the stack
 
 ```bash
 terraform -chdir=infra destroy -auto-approve \
-  -var="use_localstack=false" \
   -var="alert_email=you@example.com"
 ```
 
-Use the same `-var` values you applied with.
+Use the same `-var` values you applied with. `force_destroy = true` lets
+Terraform delete every object version. That is convenient for the demo and
+dangerous for real backups; set it to `false` for retained data and delete
+objects through an approved retention process.
 
-`force_destroy = true` lets Terraform delete every object version. That is
-convenient for the demo and dangerous for real backups; set it to `false` for
-retained data and delete objects through an approved retention process.
+Confirm the bucket is gone with the `head-bucket` command in
+`docs/evidence.md`.
 
 ## Exact command reference
 
@@ -358,11 +278,11 @@ retained data and delete objects through an approved retention process.
 | Syntax check | `npm run check` |
 | Format check | `terraform -chdir=infra fmt -check` |
 | Validate | `terraform -chdir=infra validate` |
-| Destroy LocalStack stack | `terraform -chdir=infra destroy -auto-approve` |
+| Destroy stack | `terraform -chdir=infra destroy -auto-approve` |
 
 All scripts accept `--help`, use `--bucket` or `BUCKET_NAME`, and read
 credentials from the standard AWS credential chain. No script contains an
-access key, secret key or license token.
+access key or secret key.
 
 ## Milestone-to-file mapping
 
@@ -376,61 +296,32 @@ access key, secret key or license token.
 | 6. Recovery simulation | `scripts/restore.mjs` | Restore PASS with matching SHA-256 |
 | 7. Monitoring and alerts | SNS topic, SQS subscriber, failure events, `scripts/check-freshness.mjs`, `scripts/poll-alerts.mjs` | SQS alert JSON plus freshness PASS/stale check |
 | 8. Disaster recovery planning | `docs/disaster-recovery.md` | RTO/RPO and residual risks |
-| 9. Visualization and reporting | `scripts/report.mjs`, `reports/backup-status.md` | Report summary screenshot |
+| 9. Visualization and reporting | `scripts/report.mjs`, `reports/real-aws-backup-status.md` | Report summary screenshot |
 | 10. AWS integration bonus | Documented only in `docs/architecture.md` and `docs/limitations.md` | Written design, no implementation claim |
 
 ## Cost and safety
 
 - SSE-S3 only; no KMS customer-managed key.
 - No NAT Gateway, cross-region replication or AWS Backup in the core solution.
-- Sample data is measured in kilobytes. The whole LocalStack demo costs
-  nothing beyond the existing LocalStack Pro license.
-- On real AWS, expect pennies for S3 requests and free-tier SNS/SQS usage.
-  The demo stays comfortably under USD 1 if destroyed at the end.
+- Sample data is measured in kilobytes. Expect pennies for S3 requests and
+  free-tier SNS/SQS usage. The demo stays comfortably under USD 1 if
+  destroyed at the end.
 - `force_destroy = true` is demo-only.
-- The TLS-only bucket policy is enforced on real AWS. LocalStack serves HTTP
-  on localhost and may not evaluate `aws:SecureTransport`; see
-  `docs/limitations.md`.
+- The TLS-only bucket policy is enforced on real AWS.
 - `.gitignore` excludes Node dependencies, Terraform provider caches,
   `*.tfstate*`, `*.tfplan`, local `*.tfvars` overrides, override files,
-  `restored/` and logs. `infra/.terraform.lock.hcl` and the example variable
-  file stay tracked on purpose.
+  `restored/`, the default generated manifest/report and logs.
+  `infra/.terraform.lock.hcl` and the example variable file stay tracked on
+  purpose.
 
 ## Validation performed
 
 This implementation was exercised end to end on 2026-10-21 with Node.js
-24.11.0, Terraform 1.9.8, AWS provider 5.100.0 and LocalStack Pro 2026.10.0.
-The checks below passed in this workspace:
+24.11.0, Terraform 1.9.8 and AWS provider 5.100.0.
 
-| Check | Result |
-| --- | --- |
-| `terraform -chdir=infra fmt -check` | Pass |
-| `terraform -chdir=infra init` / `validate` | Pass |
-| `terraform -chdir=infra apply` | Pass; 14 resources with no email subscription |
-| Bucket settings read back from S3 | Versioning `Enabled`; SSE `AES256`; all four public-access flags `true`; `BucketOwnerEnforced`; lifecycle noncurrent 7 days; TLS-only policy present |
-| Backup run 1 | 5/5 files uploaded, SHA-256 recorded |
-| Backup run 2 with changed `service-config.yaml` | 5/5 uploaded; the `latest/` key gained a second version |
-| Restore run 1 `service-config.yaml` | `RESTORE PASS`; returned version matched; expected and actual SHA-256 matched; restored output was 345 bytes |
-| Verification of run 2 | `VERIFICATION PASS`, 5/5 files and 10/10 objects |
-| Simulated upload failure | Backup exited 1, recorded the failed file on S3 error, and published `backup.failed` to SNS; SQS received the JSON alert |
-| Verification of the failed run | Exited 1 with 4/5 files and 8/10 objects; published `backup.verification_failed`; SQS received the second alert |
-| Missed-backup freshness check | Fresh manifest passed; a forced future clock with a 1-hour limit exited 1 and sent one `backup.missed` SNS publish with the expected payload in a local protocol mock. The SQS delivery path is shared with the proven failure alerts |
-| Corrupt-manifest test | A temporary manifest with a zeroed expected hash was rejected with `sha256 mismatch`; the real manifest was not changed |
-| Report generation | `reports/backup-status.md` rendered 4 jobs (3 success, 1 failed), last verification PASS, last recovery PASS and live S3 version counts; the sample manifest also renders offline |
-| `npm run check` | All `.mjs` files passed `node --check` |
-| ASCII scan | No non-ASCII characters in source or documentation |
-| `terraform destroy` | Passed for the 14-resource stack |
-
-The LocalStack stack and container and the real-AWS stack are destroyed after
-capture, so the bucket names and version IDs in `manifests/manifest.json` and
-`manifests/real-aws-manifest.json` are historical evidence rather than live
-endpoints. Re-run the commands in this README to reproduce them.
-
-### Real AWS validation (2026-10-21)
-
-The stack was also applied to a real AWS account in `us-east-1` with the email
-subscription enabled. Evidence is in
-`manifests/real-aws-manifest.json` and `reports/real-aws-backup-status.md`.
+The first real-AWS run used the optional email subscription. Evidence is in
+`manifests/real-aws-manifest.json` and
+`reports/real-aws-backup-status.md`.
 
 | Check | Result |
 | --- | --- |
@@ -450,6 +341,23 @@ subscription enabled. Evidence is in
 | Report | 4 runs (3 success, 1 failed), 3 verifications, 1 recovery; live S3 24 current / 14 noncurrent versions |
 | `terraform destroy` | 15 resources destroyed; bucket, topic, queue and IAM resources confirmed gone; state empty |
 
+After simplifying to a single real-AWS path, the stack was applied and
+exercised again without email:
+
+| Post-cleanup check | Result |
+| --- | --- |
+| `terraform plan` / `apply` | 14 resources created with no email subscription; optional email plan showed exactly 1 additional subscription |
+| Backup | 5/5 files uploaded |
+| Verification | PASS 5/5 files and 10/10 objects |
+| Restore | `RESTORE PASS` with matching SHA-256 |
+| Freshness | PASS |
+| Live report | Rendered from the new manifest and S3 version counts |
+| Failure alert | Backup exited 1 and `backup.failed` was received in SQS |
+| `terraform destroy` | 14 resources destroyed; state empty |
+
+Static checks also passed: `npm run check`, `terraform fmt -check`,
+`terraform validate` and `git diff --check`.
+
 Remaining gaps: actual inbox receipt of the test email is external to the
 automation; lifecycle expiry after 7 days was not waited for (the rule was
 captured); and the IAM role is simulated rather than assumed because it is not
@@ -459,13 +367,12 @@ attached to compute.
 
 | Symptom | Fix |
 | --- | --- |
-| `ECONNREFUSED` / endpoint error | Start LocalStack and check `AWS_ENDPOINT_URL=http://localhost:4566`. |
-| `CredentialsProviderError` | Export the LocalStack test credentials, or configure a real AWS profile/role. |
+| `CredentialsProviderError` | Configure a real AWS profile, SSO session or role, then confirm with `aws sts get-caller-identity`. |
 | `NoSuchBucket` | The demo bucket was destroyed. Apply Terraform again and re-export `BUCKET_NAME`. |
-| `AccessDenied` | Check the active credentials, bucket policy and IAM policy. The TLS policy only allows HTTPS on real AWS. |
+| `AccessDenied` | Check the active credentials, bucket policy and IAM policy. The TLS policy only allows HTTPS. |
 | SNS message not in SQS | Confirm the SNS subscription exists; SQS messages may be invisible during the visibility timeout. |
-| Lifecycle not expired after 7 days | Real S3 evaluates lifecycle daily; LocalStack does not wait 7 days. Validate the rule, not the elapsed time. |
-| Email not received | Confirm the SNS email subscription in the inbox; LocalStack does not deliver email. |
+| Lifecycle not expired after 7 days | S3 evaluates lifecycle rules asynchronously. Validate the rule, not the elapsed time immediately. |
+| Email not received | Confirm the SNS email subscription in the inbox, then publish a test notification. |
 | `terraform destroy` fails on non-empty bucket | Keep `force_destroy = true` for the demo, or empty all versions first. |
 
 ## Documentation
@@ -474,4 +381,4 @@ attached to compute.
 - [Backup policy](docs/backup-policy.md)
 - [Disaster recovery plan](docs/disaster-recovery.md)
 - [Evidence checklist](docs/evidence.md)
-- [Limitations and LocalStack fidelity](docs/limitations.md)
+- [Limitations](docs/limitations.md)

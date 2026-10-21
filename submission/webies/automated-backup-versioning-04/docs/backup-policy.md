@@ -15,7 +15,7 @@ personal data, credentials or production secrets.
 | Backup owner | Webies team |
 | Operational owner | The team member on backup duty for the week |
 | Review owner | A second team member who checks the evidence and report |
-| Environment | LocalStack Pro for development; a dedicated AWS sandbox for evidence |
+| Environment | A dedicated AWS sandbox account |
 | Backup tool | `scripts/backup.mjs` (Node.js 20+, AWS SDK v3) |
 | Verification tool | `scripts/verify.mjs` |
 | Restore tool | `scripts/restore.mjs` |
@@ -31,15 +31,15 @@ which is out of scope for this hackathon.
 - Do not add real customer data, API keys, private keys, passwords or `.env`
   files to `sample-data/`.
 - The bucket is private, encrypted with SSE-S3 and has public access blocked.
-- TLS-only access is enforced by bucket policy on real AWS.
+- TLS-only access is enforced by bucket policy.
 - Access is limited to the backup role and the operator's AWS identity.
 
 ## Backup frequency and schedule
 
 | Environment | Frequency | Trigger |
 | --- | --- | --- |
-| Demo / LocalStack | On demand, at least once per evidence run | Manual `node scripts/backup.mjs` |
-| Real AWS target | Daily at 02:00 UTC | Manual run for the hackathon; a scheduled job is an optional extension |
+| Demo / evidence run | On demand, at least once per evidence run | Manual `node scripts/backup.mjs` |
+| Production target | Daily at 02:00 UTC | Manual run for the hackathon; a scheduled job is an optional extension |
 
 The target recovery point objective (RPO) for a daily schedule is 24 hours.
 If the team needs a tighter RPO, run more frequently and record the new
@@ -60,8 +60,8 @@ scenario details and assumptions.
 | Timestamped run copies in `backups/` | Current objects retained until explicitly deleted | S3 versioning + no current-version expiry rule |
 | `latest/` mirror versions | Noncurrent versions expire after 7 days | Lifecycle rule `expire-noncurrent-versions` |
 | Incomplete multipart uploads | Aborted after 1 day | Lifecycle rule |
-| Local manifest | Kept with the repository/evidence for the project | `manifests/manifest.json` |
-| Local report | Regenerated on demand; latest copy kept | `reports/backup-status.md` |
+| Local manifest | Generated per run; ignored by Git unless copied for evidence | `manifests/manifest.json` |
+| Local report | Regenerated on demand; ignored by Git unless copied for evidence | `reports/backup-status.md` |
 
 The Terraform variable `noncurrent_version_retention_days` accepts 7-30 days
 and defaults to 7 for the demo. A production policy should choose a window
