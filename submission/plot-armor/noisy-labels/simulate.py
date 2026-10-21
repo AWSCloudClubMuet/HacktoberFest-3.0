@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+"""empirical simulation for issue #9 - "Noisy Labels: HelpDeskNet-50K".
+
+replicates the dataset described in the issue with synthetic tickets so the
+lead's ceiling math (analysis.py) can be checked against an actual learning
+experiment instead of just on paper:
+
+  * 50,000 tickets, 6 classes (Billing 30%, Refund 15%, Technical 25%,
+    Account Access 15%, Shipping 10%, Other 5%)
+  * 10% expert labels (0% error) + 90% crowd labels
+      - tier A: 20,000 tickets, ~6.7% error   (audit: 12/180)
+      - tier B: 25,000 tickets, ~21.8% error  (audit: 48/220)
+  * crowd errors are systematic, not uniform: Billing<->Refund heaviest,
+    then Technical<->Account Access, then Shipping<->Other
+  * test set labeled by the same crowd process + a gold (expert) test set
+
+everything here is stdlib + numpy, models written by hand (no sklearn).
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+
+import numpy as np
+
+# ----------------------------------------------------------------------------
+# issue numbers, these drive everything
+# ----------------------------------------------------------------------------
+SEED = 42
+
+CLASSES = ["Billing", "Refund", "Technical", "Account Access", "Shipping", "Other"]
+K = len(CLASSES)
+PRIORS = np.array([0.30, 0.15, 0.25, 0.15, 0.10, 0.05])
+
+N_TRAIN = 50_000
+N_TEST = 5_000
+N_EXPERT = 5_000          # 10% of train, clean gold labels
+N_TIER_A = 20_000
+N_TIER_B = 25_000
+
+ERR_A = 12 / 180          # 6.67% from the expert audit
+ERR_B = 48 / 220          # 21.82% from the expert audit
+
+TARGET_NOISY_ACC = 0.82   # the plateau the issue reports on the noisy test set
+
+# ----------------------------------------------------------------------------
+# vocabulary: per-class keyword pools so classes are learnable but confusable.
+# each class has its own distinctive pool, and each confusable pair shares a
+# pool (Billing/Refund share "charge", "refund"-adjacent money words etc).
+# ----------------------------------------------------------------------------
+DISTINCT_WORDS = {
+    "Billing": [
+        "invoice", "billed", "overcharged", "subscription", "plan", "pricing",
+        "statement", "billing", "autopay", "renew", "renewal", "promo",
+        "coupon", "vat", "tax", "upgrade", "downgrade", "prorate", "surcharge",
+        "installment", "tariff", "quotation", "billing_cycle", "receipt",
+    ],
+    "Refund": [
+        "refund", "refunds", "reimbursed", "reimbursement", "dispute",
+        "chargeback", "reversal", "owed", "repay", "payout", "cashback",
+        "compensate", "cancellation", "cancelled", "return", "returned",
+        "unredeemed", "refund_status", "refund_request", "money_back",
+        "reimbursement_claim", "refund_policy", "repayment", "partial_refund",
+    ],
+    "Technical": [
+        "crash", "crashed", "bug", "glitch", "error_code", "traceback",
+        "timeout", "fails", "failing", "broken", "freeze", "freezes", "slow",
+        "lag", "laggy", "spinner", "api", "endpoint", "stacktrace",
+        "exception", "malformed", "patch", "regression", "white_screen",
+    ],
+    "Account Access": [
+        "locked", "unlock", "blocked", "ban", "banned", "suspend", "suspended",
+        "verification", "otp", "2fa", "authenticator", "passphrase", "signin",
+        "logged_out", "session_expired", "hijacked", "recovery", "regain",
+        "inaccessible", "permission", "role", "deactivate", "reactivate",
+        "account_recovery",
+    ],
+    "Shipping": [
+        "tracking", "courier", "shipment", "dispatch", "dispatched", "transit",
+        "delivered", "undelivered", "parcel", "consignment", "waybill",
+        "shipping", "pickup", "dropoff", "logistics", "freight", "postoffice",
+        "ship", "shipping_label", "reship", "courier_service",
+    ],
+    "Other": [
+        "inquiry", "question", "general", "feedback", "complaint",
+        "suggestion", "compliment", "unrelated", "miscellaneous", "info",
+        "information", "unsure", "clarify", "documentation", "policy",
+        "guidelines", "howto", "off_topic",
+    ],
+}
+
+# shared pools for the confusable pairs (the systematic part of the noise)
+PAIR_POOLS = {
+    "billing-refund": [
+        "charge", "charged", "card", "payment", "paid", "pay", "amount",
+        "dollars", "transaction", "bank", "deducted", "money", "wallet",
+        "processing",
+    ],
+    "tech-account": [
+        "login", "log_in", "password", "username", "email", "error", "access",
+        "reset", "account", "mfa", "token", "profile", "retry", "locked_out",
+    ],
+    "shipping-other": [
+        "delivery", "arrive", "arrived", "late", "delay", "delayed",
+        "waiting", "address", "box", "order", "missing", "receive",
+    ],
+}
+
+BACKGROUND_WORDS = [
+    "hello", "hi", "please", "help", "issue", "problem", "thanks", "team",
+    "support", "urgent", "today", "still", "need", "want", "kindly",
+    "resolve", "ticket", "app", "site", "when", "can", "not", "working",
+    "update", "response", "again", "since", "last", "week", "month",
+    "request", "unable", "try", "tried", "someone", "anything", "know",
+    "back", "soon", "asap",
+]
+
+# which pair pool a class draws its "confusable" words from
+PAIR_OF_CLASS = {
+    "Billing": "billing-refund",
+    "Refund": "billing-refund",
+    "Technical": "tech-account",
+    "Account Access": "tech-account",
+    "Shipping": "shipping-other",
+    "Other": "shipping-other",
+}
+
+# generation knobs: how much signal vs pair-overlap vs background per word.
+# tuned so a naive bayes trained on the noisy labels lands near the 82%
+# plateau the issue reports (see tune_noise_scale).
+P_SIGNAL = 0.40
+P_PAIR = 0.30
+MIN_LEN = 12
+MAX_LEN = 28
+
+# ----------------------------------------------------------------------------
+# systematic confusion the crowd makes, rows = true class, entries = where the
+# label goes *given that it flips*. Billing<->Refund heaviest, then
+# Technical<->Account Access, then Shipping<->Other.
+# ----------------------------------------------------------------------------
+FLIP_ROWS = np.array([
+    # Billing:      Refund .60  Tech .10  Acct .10  Ship .10  Other .10
+    [0.00, 0.60, 0.10, 0.10, 0.10, 0.10],
+    # Refund:       Billing .60
+    [0.60, 0.00, 0.10, 0.10, 0.10, 0.10],
+    # Technical:    Acct .50, rest spread
+    [0.125, 0.125, 0.00, 0.50, 0.125, 0.125],
+    # Account Access: Technical .50
+    [0.125, 0.125, 0.50, 0.00, 0.125, 0.125],
+    # Shipping:     Other .45
+    [0.1375, 0.1375, 0.1375, 0.1375, 0.00, 0.45],
+    # Other:        Shipping .45
+    [0.1375, 0.1375, 0.1375, 0.1375, 0.45, 0.00],
+])
+FLIP_CDF = np.cumsum(FLIP_ROWS, axis=1)
+
+
+def build_vocab():
+    """assign every word an id, remember which ids belong to which pool."""
+    word2id = {}
+    next_id = 0
+
+    def ids_for(words):
+        nonlocal next_id
+        ids = []
+        for w in words:
+            if w not in word2id:
+                word2id[w] = next_id
+                next_id += 1
+            ids.append(word2id[w])
+        return np.array(ids, dtype=np.int64)
+
+    distinct_ids = {c: ids_for(ws) for c, ws in DISTINCT_WORDS.items()}
+    pair_ids = {p: ids_for(ws) for p, ws in PAIR_POOLS.items()}
+    bg_ids = ids_for(BACKGROUND_WORDS)
+    return word2id, distinct_ids, pair_ids, bg_ids, next_id
+
+
+def make_ticket(rng, cls, distinct_ids, pair_ids, bg_ids):
+    """one multinomial bag-of-words ticket for a given true class."""
+    dist_pool = distinct_ids[CLASSES[cls]]
+    pair_pool = pair_ids[PAIR_OF_CLASS[CLASSES[cls]]]
+    n_words = int(rng.integers(MIN_LEN, MAX_LEN + 1))
+    words = np.empty(n_words, dtype=np.int64)
+    for j in range(n_words):
+        r = rng.random()
+        if r < P_SIGNAL:
+            words[j] = dist_pool[rng.integers(len(dist_pool))]
+        elif r < P_SIGNAL + P_PAIR:
+            words[j] = pair_pool[rng.integers(len(pair_pool))]
+        else:
+            words[j] = bg_ids[rng.integers(len(bg_ids))]
+    return words
+
+
+def docs_to_counts(docs, vocab_size):
+    """dense (n_docs x vocab) count matrix - small vocab so this is fine."""
+    counts = np.zeros((len(docs), vocab_size), dtype=np.float32)
+    for i, words in enumerate(docs):
+        counts[i] = np.bincount(words, minlength=vocab_size)
+    return counts
+
+
+def apply_crowd_noise(rng, true_labels, base_err, u=None, v=None):
+    """flip labels with per-annotator error rates and the systematic matrix.
+
+    u/v are fresh uniform draws when None. using pre-drawn u/v lets the
+    tuning loop scale the error rate while keeping the *same* tickets and the
+    same flip decisions nested (a flip at scale s stays a flip at s' > s).
+    """
+    n = len(true_labels)
+    if u is None:
+        u = rng.random(n)
+    if v is None:
+        v = rng.random(n)
+    err = np.clip(base_err, 0.0, 0.98)
+    flipped = u < err
+    noisy = true_labels.copy()
+    for i in np.where(flipped)[0]:
+        # inverse-cdf sample from the flip row so it is deterministic in v
+        noisy[i] = int(np.searchsorted(FLIP_CDF[true_labels[i]], v[i]))
+    return noisy, flipped
+
+
+def generate(n=N_TRAIN, seed=SEED, n_test=N_TEST, noise_scale=1.0):
+    """synthesize HelpDeskNet-50K: tickets, crowd labels, gold labels, tests."""
+    rng = np.random.default_rng(seed)
+    word2id, distinct_ids, pair_ids, bg_ids, vocab_size = build_vocab()
+
+    # ---- true labels follow the class distribution ------------------------
+    train_true = rng.choice(K, size=n, p=PRIORS)
+    test_true = rng.choice(K, size=n_test, p=PRIORS)
+
+    # ---- tickets -----------------------------------------------------------
+    train_docs = [make_ticket(rng, c, distinct_ids, pair_ids, bg_ids)
+                  for c in train_true]
+    test_docs = [make_ticket(rng, c, distinct_ids, pair_ids, bg_ids)
+                 for c in test_true]
+
+    # ---- annotator assignment ----------------------------------------------
+    # train: 10% expert, 20k tier A, 25k tier B (exact counts from the issue)
+    n_expert = round(0.10 * n)
+    n_a = round(N_TIER_A / (N_TIER_A + N_TIER_B) * (n - n_expert))
+    perm = rng.permutation(n)
+    tier = np.full(n, 2, dtype=np.int8)      # 0=expert 1=tier A 2=tier B
+    tier[perm[:n_expert]] = 0
+    tier[perm[n_expert:n_expert + n_a]] = 1
+    base_err_train = np.where(tier == 1, ERR_A, ERR_B)
+    base_err_train[tier == 0] = 0.0
+
+    # test set: labeled by the same crowd process (no experts), tier mix
+    # matches the crowd population 20k/45k vs 25k/45k
+    n_a_test = round(n_test * N_TIER_A / (N_TIER_A + N_TIER_B))
+    test_tier = np.full(n_test, 2, dtype=np.int8)
+    test_tier[:n_a_test] = 1
+    rng.shuffle(test_tier)
+    base_err_test = np.where(test_tier == 1, ERR_A, ERR_B)
+
+    # ---- labels: experts are perfect, crowd flips systematically ------------
+    noise_rng = np.random.default_rng(seed + 7)
+    u_tr, v_tr = noise_rng.random(n), noise_rng.random(n)
+    u_te, v_te = noise_rng.random(n_test), noise_rng.random(n_test)
+    train_noisy, train_flipped = apply_crowd_noise(
+        noise_rng, train_true, base_err_train * noise_scale, u_tr, v_tr)
+    test_noisy, test_flipped = apply_crowd_noise(
+        noise_rng, test_true, base_err_test * noise_scale, u_te, v_te)
+
+    return {
+        "vocab_size": vocab_size,
+        "n_words_per_pool": {c: len(w) for c, w in DISTINCT_WORDS.items()},
+        "train_true": train_true,
+        "train_noisy": train_noisy,
+        "train_flipped": train_flipped,
+        "train_tier": tier,
+        "train_counts": docs_to_counts(train_docs, vocab_size),
+        "test_true": test_true,
+        "test_noisy": test_noisy,
+        "test_flipped": test_flipped,
+        "test_tier": test_tier,
+        "test_counts": docs_to_counts(test_docs, vocab_size),
+    }
+
+
+def expert_audit(data, seed=47):
+    """re-run the issue's audit: 180 tier A + 220 tier B tickets re-checked
+    by an expert, count the disagreements with the crowd."""
+    rng = np.random.default_rng(seed)
+    crowd_idx = np.where(data["train_tier"] > 0)[0]
+    a_idx = rng.choice(crowd_idx[data["train_tier"][crowd_idx] == 1],
+                       size=180, replace=False)
+    b_idx = rng.choice(crowd_idx[data["train_tier"][crowd_idx] == 2],
+                       size=220, replace=False)
+    a_dis = int((data["train_noisy"][a_idx] != data["train_true"][a_idx]).sum())
+    b_dis = int((data["train_noisy"][b_idx] != data["train_true"][b_idx]).sum())
+    return a_dis, b_dis
+
+
+def pct(x):
+    return f"{100.0 * x:.2f}%"
+
+
+def section(title):
+    print("\n" + "=" * 74)
+    print(f" {title}")
+    print("=" * 74)
+
+
+def dataset_report(data):
+    section("1. DATASET - synthetic HelpDeskNet-50K")
+    print(f"tickets: {len(data['train_true']):,} train + {len(data['test_true']):,} test, "
+          f"vocab {data['vocab_size']} words")
+    print(f"train annotators: {int((data['train_tier'] == 0).sum()):,} expert / "
+          f"{int((data['train_tier'] == 1).sum()):,} tier A / "
+          f"{int((data['train_tier'] == 2).sum()):,} tier B")
+
+    print("\nclass distribution (target vs generated):")
+    for c in range(K):
+        gen = (data["train_true"] == c).mean()
+        print(f"  {CLASSES[c]:<16} target {pct(PRIORS[c]):>6}   generated {pct(gen):>6}")
+
+    # realized error rates per tier vs the audit
+    tier_mask = data["train_tier"]
+    err_a = (data["train_noisy"][tier_mask == 1] != data["train_true"][tier_mask == 1]).mean()
+    err_b = (data["train_noisy"][tier_mask == 2] != data["train_true"][tier_mask == 2]).mean()
+    crowd = tier_mask > 0
+    err_crowd = (data["train_noisy"][crowd] != data["train_true"][crowd]).mean()
+    err_all = (data["train_noisy"] != data["train_true"]).mean()
+    test_err = (data["test_noisy"] != data["test_true"]).mean()
+    print(f"\nrealized label error rates (vs the issue's audit):")
+    print(f"  tier A crowd      {pct(err_a)}   audit 12/180  = {pct(ERR_A)}")
+    print(f"  tier B crowd      {pct(err_b)}   audit 48/220  = {pct(ERR_B)}")
+    print(f"  crowd overall     {pct(err_crowd)}   audit 60/400  = {pct(60 / 400)}")
+    print(f"  whole train set   {pct(err_all)}   (90% crowd x 15.1% + 10% expert x 0%)")
+    print(f"  noisy test set    {pct(test_err)}   (same crowd process as train)")
+
+    a_dis, b_dis = expert_audit(data)
+    section("2. EXPERT AUDIT REPRODUCTION")
+    print("re-checked 180 tier A + 220 tier B tickets against gold labels:")
+    print(f"  tier A: {a_dis}/180 disagreements   (issue: 12/180)")
+    print(f"  tier B: {b_dis}/220 disagreements   (issue: 48/220)")
+    print(f"  total : {a_dis + b_dis}/400            (issue: 60/400)")
+
+
+def main():
+    data = generate()
+    dataset_report(data)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
