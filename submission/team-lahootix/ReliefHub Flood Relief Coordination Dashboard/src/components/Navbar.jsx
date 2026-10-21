@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useRole } from '../context/RoleContext';
 import { useTheme } from '../context/ThemeContext';
+import {
+  Boxes,
+  Building2,
+  LayoutDashboard,
+  Monitor,
+  Moon,
+  PackageCheck,
+  Sun,
+  Truck,
+  UserRound,
+  UsersRound,
+  Waves,
+} from 'lucide-react';
 
 const ROLE_COLOR = {
   'Relief Coordinator (Admin)': '#c5f135',
@@ -11,12 +24,12 @@ const ROLE_COLOR = {
 };
 
 const NAV_ITEMS = [
-  { to: '/',           label: 'Dashboard',  end: true },
-  { to: '/camps',      label: 'Camps' },
-  { to: '/inventory',  label: 'Inventory' },
-  { to: '/dispatches', label: 'Dispatches' },
-  { to: '/donations',  label: 'Donations' },
-  { to: '/volunteers', label: 'Volunteers' },
+  { to: '/',           label: 'Dashboard',  end: true, icon: LayoutDashboard },
+  { to: '/camps',      label: 'Camps', icon: Building2 },
+  { to: '/inventory',  label: 'Inventory', icon: Boxes },
+  { to: '/dispatches', label: 'Dispatches', icon: Truck },
+  { to: '/donations',  label: 'Donations', icon: PackageCheck },
+  { to: '/volunteers', label: 'Volunteers', icon: UsersRound },
 ];
 
 export function Navbar() {
@@ -37,7 +50,7 @@ export function Navbar() {
       <div className="navbar-inner">
         {/* Brand */}
         <NavLink to="/" className="brand" onClick={() => setMobileOpen(false)}>
-          <div className="brand-icon">🌊</div>
+          <div className="brand-icon"><Waves size={19} strokeWidth={2.5} /></div>
           <div className="brand-title">
             ReliefHub
             <span className="brand-badge">Sindh Response</span>
@@ -46,14 +59,14 @@ export function Navbar() {
 
         {/* Navigation Links (Desktop) */}
         <ul className="nav-links">
-          {NAV_ITEMS.map(({ to, label, end }) => (
+          {NAV_ITEMS.map(({ to, label, end, icon: Icon }) => (
             <li key={to}>
               <NavLink
                 to={to}
                 end={end}
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
               >
-                {label}
+                <Icon size={14} /> {label}
               </NavLink>
             </li>
           ))}
@@ -70,7 +83,7 @@ export function Navbar() {
               title="Light theme"
               aria-label="Light mode"
             >
-              ☀️
+              <Sun size={14} />
             </button>
             <button
               type="button"
@@ -79,7 +92,7 @@ export function Navbar() {
               title="Dark theme"
               aria-label="Dark mode"
             >
-              🌙
+              <Moon size={14} />
             </button>
             <button
               type="button"
@@ -88,13 +101,13 @@ export function Navbar() {
               title="System theme"
               aria-label="System mode"
             >
-              💻
+              <Monitor size={14} />
             </button>
           </div>
 
           {/* User chip */}
           <div className="navbar-user-chip">
-            <span className="navbar-avatar">{session?.avatar || '👤'}</span>
+            <span className="navbar-avatar"><UserRound size={15} /></span>
             <div className="navbar-user-info">
               <span className="navbar-user-name">{session?.name || 'User'}</span>
               <span
@@ -138,7 +151,7 @@ export function Navbar() {
 
       {/* Mobile nav drawer */}
       <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`} role="navigation" aria-label="Mobile Navigation">
-        {NAV_ITEMS.map(({ to, label, end }) => (
+        {NAV_ITEMS.map(({ to, label, end, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -146,7 +159,7 @@ export function Navbar() {
             className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            {label}
+            <Icon size={16} /> {label}
           </NavLink>
         ))}
       </div>

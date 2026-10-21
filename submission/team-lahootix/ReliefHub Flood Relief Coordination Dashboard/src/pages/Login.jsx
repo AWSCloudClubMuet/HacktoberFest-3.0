@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
 import { useRole, USERS } from '../context/RoleContext';
 import { useTheme } from '../context/ThemeContext';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  Eye,
+  EyeOff,
+  HeartHandshake,
+  Monitor,
+  Moon,
+  Stethoscope,
+  Sun,
+  UserRound,
+  UsersRound,
+  Waves,
+} from 'lucide-react';
 
 /* Map roles → accent color token */
 const ROLE_META = {
-  'Relief Coordinator (Admin)': { color: '#c5f135', bg: 'rgba(197,241,53,0.12)', border: 'rgba(197,241,53,0.4)',  label: 'Full Access' },
-  'Field Volunteer':            { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)',  border: 'rgba(56,189,248,0.4)', label: 'Camp Ops' },
-  'Medical Lead':               { color: '#f87171', bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.4)',label: 'Medical' },
-  'District Observer':          { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)',  border: 'rgba(251,191,36,0.4)', label: 'Read-only' },
+  'Relief Coordinator (Admin)': { color: '#c5f135', bg: 'rgba(197,241,53,0.12)', border: 'rgba(197,241,53,0.4)',  label: 'Full Access', Icon: HeartHandshake },
+  'Field Volunteer':            { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)',  border: 'rgba(56,189,248,0.4)', label: 'Camp Ops', Icon: UsersRound },
+  'Medical Lead':               { color: '#f87171', bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.4)',label: 'Medical', Icon: Stethoscope },
+  'District Observer':          { color: '#fbbf24', bg: 'rgba(251,191,36,0.12)',  border: 'rgba(251,191,36,0.4)', label: 'Read-only', Icon: UserRound },
 };
 
 export function Login() {
@@ -44,7 +59,7 @@ export function Login() {
       {/* ── Left panel ── */}
       <div className="login-left">
         <div className="login-brand">
-          <div className="login-brand-icon">🌊</div>
+          <div className="login-brand-icon"><Waves size={24} strokeWidth={2.5} /></div>
           <div>
             <div className="login-brand-name">ReliefHub</div>
             <div className="login-brand-sub">Sindh Flood Relief OS</div>
@@ -98,7 +113,7 @@ export function Login() {
               onClick={() => setMode('light')}
               title="Light mode"
             >
-              ☀️ Light
+              <Sun size={14} /> Light
             </button>
             <button
               type="button"
@@ -106,7 +121,7 @@ export function Login() {
               onClick={() => setMode('dark')}
               title="Dark mode"
             >
-              🌙 Dark
+              <Moon size={14} /> Dark
             </button>
             <button
               type="button"
@@ -114,7 +129,7 @@ export function Login() {
               onClick={() => setMode('system')}
               title="System default"
             >
-              💻 System
+              <Monitor size={14} /> System
             </button>
           </div>
 
@@ -122,6 +137,7 @@ export function Login() {
           <div className="login-role-grid">
             {USERS.map(user => {
               const meta = ROLE_META[user.role] || ROLE_META['District Observer'];
+              const RoleIcon = meta.Icon;
               const isSelected = email === user.email;
               return (
                 <button
@@ -135,7 +151,7 @@ export function Login() {
                   onClick={() => quickFill(user)}
                   title={`Sign in as ${user.name}`}
                 >
-                  <span className="login-role-avatar">{user.avatar}</span>
+                  <span className="login-role-avatar"><RoleIcon size={18} /></span>
                   <div className="login-role-info">
                     <span className="login-role-name">{user.name}</span>
                     <span
@@ -146,7 +162,7 @@ export function Login() {
                     </span>
                   </div>
                   {isSelected && (
-                    <span className="login-role-check" style={{ color: meta.color }}>✓</span>
+                    <span className="login-role-check" style={{ color: meta.color }}><Check size={16} /></span>
                   )}
                 </button>
               );
@@ -161,7 +177,7 @@ export function Login() {
           <form className="login-form" onSubmit={handleSubmit} noValidate>
             {error && (
               <div className="login-error-banner" role="alert">
-                ⚠ {error}
+                <AlertTriangle size={15} /> {error}
               </div>
             )}
 
@@ -204,7 +220,7 @@ export function Login() {
                   }}
                   aria-label={showPwd ? 'Hide password' : 'Show password'}
                 >
-                  {showPwd ? '🙈' : '👁️'}
+                  {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -219,7 +235,7 @@ export function Login() {
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
                   <span className="login-spinner" /> Signing in…
                 </span>
-              ) : 'Sign in →'}
+              ) : <span className="button-label">Sign in <ArrowRight size={16} /></span>}
             </button>
           </form>
 

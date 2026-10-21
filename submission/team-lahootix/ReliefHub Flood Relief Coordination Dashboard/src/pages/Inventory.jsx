@@ -5,6 +5,7 @@ import { LowStockBadge, PriorityBadge } from '../components/Badge';
 import { ProgressBar } from '../components/ProgressBar';
 import { Modal } from '../components/Modal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { AlertTriangle, Boxes, ClipboardList, Info, MapPin } from 'lucide-react';
 
 const INVENTORY_CATEGORIES = ['Food', 'Water', 'Medicine', 'Shelter', 'Hygiene'];
 const COMMON_UNITS = ['Bags', 'Bottles', 'Strips', 'Boxes', 'Kits', 'Units', 'Sheets', 'Pieces', 'Cans'];
@@ -319,13 +320,13 @@ export function Inventory() {
 
       {!isAdmin && (
         <div className="banner-alert info">
-          <span>ℹ️ <strong>Field Volunteer View:</strong> Read-only access. Relief Coordinator permissions required to add or modify warehouse inventory and camp needs.</span>
+          <Info size={17} /><span><strong>Field Volunteer View:</strong> Read-only access. Relief Coordinator permissions required to add or modify warehouse inventory and camp needs.</span>
         </div>
       )}
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} /><span>{error}</span>
         </div>
       )}
 
@@ -335,13 +336,13 @@ export function Inventory() {
           className={`btn ${activeTab === 'inventory' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('inventory')}
         >
-          📦 Warehouse Inventory ({items.length}) {lowStockCount > 0 && <span style={{ background: '#dc2626', color: '#fff', padding: '0.1rem 0.4rem', borderRadius: '10px', fontSize: '0.75rem', marginLeft: '0.35rem' }}>{lowStockCount} Low</span>}
+          <span className="icon-text"><Boxes size={16} /> Warehouse Inventory ({items.length})</span> {lowStockCount > 0 && <span style={{ background: '#dc2626', color: '#fff', padding: '0.1rem 0.4rem', borderRadius: '10px', fontSize: '0.75rem', marginLeft: '0.35rem' }}>{lowStockCount} Low</span>}
         </button>
         <button
           className={`btn ${activeTab === 'needs' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('needs')}
         >
-          📋 Camp Needs Tracker ({needs.length})
+          <span className="icon-text"><ClipboardList size={16} /> Camp Needs Tracker ({needs.length})</span>
         </button>
       </div>
 
@@ -353,7 +354,7 @@ export function Inventory() {
             <input
               type="text"
               className="search-input"
-              placeholder="🔍 Search items by name..."
+              placeholder="Search items by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -377,7 +378,7 @@ export function Inventory() {
               aria-label="Filter by Stock Status"
             >
               <option value="ALL">All Stock Levels</option>
-              <option value="LOW">⚠️ Low Stock Only ({lowStockCount})</option>
+              <option value="LOW">Low Stock Only ({lowStockCount})</option>
               <option value="HEALTHY">✓ Healthy Stock Only</option>
             </select>
 
@@ -403,7 +404,7 @@ export function Inventory() {
               </span>
               {lowStockCount > 0 && (
                 <span style={{ fontSize: '0.8rem', color: '#dc2626', fontWeight: 700 }}>
-                  ⚠️ {lowStockCount} item{lowStockCount > 1 ? 's' : ''} at or below reorder level
+                  <AlertTriangle size={15} /> {lowStockCount} item{lowStockCount > 1 ? 's' : ''} at or below reorder level
                 </span>
               )}
             </div>
@@ -572,7 +573,7 @@ export function Inventory() {
                           <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>#{need.id}</td>
                           <td>
                             <strong>{camp.name}</strong>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>📍 {camp.district}</div>
+                            <div className="icon-text" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}><MapPin size={12} /> {camp.district}</div>
                           </td>
                           <td>
                             <strong>{item.name}</strong>

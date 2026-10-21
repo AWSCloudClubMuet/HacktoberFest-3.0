@@ -5,6 +5,7 @@ import { StatusBadge, PriorityBadge } from '../components/Badge';
 import { ProgressBar } from '../components/ProgressBar';
 import { Modal } from '../components/Modal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { AlertTriangle, ClipboardList, Info, MapPin, Plus, UserRound, UsersRound, X } from 'lucide-react';
 
 const SINDH_DISTRICTS = [
   'Sukkur',
@@ -271,7 +272,7 @@ export function Camps() {
         {isAdmin && (
           <div className="header-actions">
             <button className="btn btn-primary" onClick={() => openForm(null)}>
-              + Register New Camp
+              <Plus size={15} /> Register new camp
             </button>
           </div>
         )}
@@ -279,13 +280,13 @@ export function Camps() {
 
       {!isAdmin && (
         <div className="banner-alert info">
-          <span>ℹ️ <strong>Field Volunteer View:</strong> You have read-only access to camps. Coordinator role required to add, modify, or remove camps.</span>
+          <Info size={17} /><span><strong>Field Volunteer View:</strong> You have read-only access to camps. Coordinator role required to add, modify, or remove camps.</span>
         </div>
       )}
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} /><span>{error}</span>
         </div>
       )}
 
@@ -294,7 +295,7 @@ export function Camps() {
         <input
           type="text"
           className="search-input"
-          placeholder="🔍 Search camp by name or district..."
+          placeholder="Search camp by name or district..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -306,9 +307,9 @@ export function Camps() {
           aria-label="Filter by Status"
         >
           <option value="ALL">All Statuses</option>
-          <option value="Open">🟢 Open</option>
-          <option value="Full">🔴 Full</option>
-          <option value="Closed">⚪ Closed</option>
+          <option value="Open">Open</option>
+          <option value="Full">Full</option>
+          <option value="Closed">Closed</option>
         </select>
 
         <select
@@ -389,7 +390,7 @@ export function Camps() {
                         </button>
                       </td>
                       <td>
-                        <span style={{ color: 'var(--text-muted)' }}>📍 {camp.district}</span>
+                        <span className="icon-text" style={{ color: 'var(--text-muted)' }}><MapPin size={13} /> {camp.district}</span>
                       </td>
                       <td>
                         <StatusBadge status={camp.status} />
@@ -566,7 +567,7 @@ export function Camps() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
               <div style={{ padding: '0.75rem', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>District</span>
-                <p style={{ fontWeight: 700, fontSize: '1rem', marginTop: '0.2rem' }}>📍 {selectedCampDetail.district}</p>
+                <p className="icon-text" style={{ fontWeight: 700, fontSize: '1rem', marginTop: '0.2rem' }}><MapPin size={15} /> {selectedCampDetail.district}</p>
               </div>
               <div style={{ padding: '0.75rem', background: 'var(--bg-surface)', borderRadius: '8px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</span>
@@ -588,7 +589,7 @@ export function Camps() {
 
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginBottom: '1rem' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-                📋 Camp Needs ({campDetailNeeds.length})
+                <span className="icon-text"><ClipboardList size={16} /> Camp Needs ({campDetailNeeds.length})</span>
               </h4>
               {detailLoading ? (
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading camp needs...</p>
@@ -621,7 +622,7 @@ export function Camps() {
                               onClick={() => handleDeleteNeedFromCamp(n.id)}
                               title="Delete this need"
                             >
-                              ✕
+                              <X size={13} />
                             </button>
                           )}
                         </div>
@@ -634,7 +635,7 @@ export function Camps() {
 
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem' }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-                👥 Assigned Volunteers ({campDetailVolunteers.length})
+                <span className="icon-text"><UsersRound size={16} /> Assigned Volunteers ({campDetailVolunteers.length})</span>
               </h4>
               {detailLoading ? (
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading volunteers...</p>
@@ -644,7 +645,7 @@ export function Camps() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {campDetailVolunteers.map(v => (
                     <span key={v.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', padding: '0.35rem 0.65rem', borderRadius: '4px', fontSize: '0.825rem' }}>
-                      👤 {v.name} <strong style={{ color: 'var(--accent-dark)' }}>({v.skill})</strong>
+                      <span className="icon-text"><UserRound size={13} /> {v.name} <strong style={{ color: 'var(--accent-dark)' }}>({v.skill})</strong></span>
                     </span>
                   ))}
                 </div>

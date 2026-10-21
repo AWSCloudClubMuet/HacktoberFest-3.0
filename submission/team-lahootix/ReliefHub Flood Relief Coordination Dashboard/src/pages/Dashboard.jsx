@@ -14,6 +14,22 @@ import { campsApi, inventoryApi, needsApi, volunteersApi } from '../api/client';
 import { PriorityBadge } from '../components/Badge';
 import { ProgressBar } from '../components/ProgressBar';
 import { useTheme } from '../context/ThemeContext';
+import { SindhCultureSlideshow } from '../components/SindhCultureSlideshow';
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle2,
+  Gauge,
+  MapPin,
+  PackageSearch,
+  RefreshCw,
+  ShieldAlert,
+  Tent,
+  Truck,
+  UserRoundCheck,
+  UsersRound,
+} from 'lucide-react';
 
 const CATEGORIES = ['Food', 'Water', 'Medicine', 'Shelter', 'Hygiene'];
 
@@ -206,13 +222,14 @@ export function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="dashboard-page">
       {/* Page Header */}
-      <div className="page-header">
+      <div className="page-header dashboard-header">
         <div>
+          <div className="page-eyebrow"><Activity size={14} /> Live response overview</div>
           <h1 className="page-title">Sindh Flood Relief Command Dashboard</h1>
           <p className="page-subtitle">
-            Real-time emergency operational metrics, critical aid gaps, and category fulfilment analysis.
+            A clear operational picture of camps, supplies, people, and urgent relief gaps.
           </p>
         </div>
         <div className="header-actions">
@@ -221,21 +238,52 @@ export function Dashboard() {
             onClick={loadDashboardData}
             disabled={loading}
           >
-            🔄 Refresh Metrics
+            <RefreshCw size={15} className={loading ? 'spin-icon' : ''} />
+            Refresh metrics
           </button>
         </div>
       </div>
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} aria-hidden="true" />
+          <span>{error}</span>
         </div>
       )}
 
+      <section className="dashboard-hero-grid" aria-label="Sindh response highlights">
+        <SindhCultureSlideshow />
+        <aside className="response-brief-card">
+          <div className="response-brief-topline">
+            <span className="live-status"><span className="live-status-dot" /> Operations live</span>
+            <span>Province-wide</span>
+          </div>
+          <div>
+            <p className="response-brief-kicker">Today’s response brief</p>
+            <h2>Move critical aid where it matters most.</h2>
+            <p>Monitor shortages, coordinate field teams, and keep relief moving across Sindh from one command view.</p>
+          </div>
+          <div className="response-brief-stats">
+            <div><strong>{loading ? '—' : criticalGaps.length}</strong><span>Critical gaps</span></div>
+            <div><strong>{loading ? '—' : `${kpis.overallFulfilment}%`}</strong><span>Aid fulfilled</span></div>
+          </div>
+          <Link to="/dispatches" className="brief-action">
+            Open dispatch centre <Truck size={16} />
+          </Link>
+        </aside>
+      </section>
+
       {/* Top KPI Summary Cards (FR-5.1) */}
+      <div className="section-heading-row">
+        <div>
+          <p className="section-kicker">At a glance</p>
+          <h2>Response health</h2>
+        </div>
+        <span className="section-note">Updated from current field records</span>
+      </div>
       <div className="kpi-grid">
         <div className="kpi-card blue">
-          <span className="kpi-title">Active Camps</span>
+          <div className="kpi-card-top"><span className="kpi-title">Active Camps</span><span className="kpi-icon blue"><Tent size={18} /></span></div>
           <span className="kpi-value">{loading ? '...' : kpis.activeCamps}</span>
           <span className="kpi-sub">
             {camps.length - kpis.activeCamps} closed / {camps.length} total
@@ -243,7 +291,7 @@ export function Dashboard() {
         </div>
 
         <div className="kpi-card green">
-          <span className="kpi-title">Sheltered Families</span>
+          <div className="kpi-card-top"><span className="kpi-title">Sheltered Families</span><span className="kpi-icon green"><UsersRound size={18} /></span></div>
           <span className="kpi-value">
             {loading ? '...' : kpis.shelteredFamilies.toLocaleString()}
           </span>
@@ -251,7 +299,7 @@ export function Dashboard() {
         </div>
 
         <div className="kpi-card amber">
-          <span className="kpi-title">Overall Fulfilment</span>
+          <div className="kpi-card-top"><span className="kpi-title">Overall Fulfilment</span><span className="kpi-icon amber"><Gauge size={18} /></span></div>
           <span className="kpi-value">
             {loading ? '...' : `${kpis.overallFulfilment}%`}
           </span>
@@ -259,7 +307,7 @@ export function Dashboard() {
         </div>
 
         <div className="kpi-card red">
-          <span className="kpi-title">Low Stock Items</span>
+          <div className="kpi-card-top"><span className="kpi-title">Low Stock Items</span><span className="kpi-icon red"><PackageSearch size={18} /></span></div>
           <span className="kpi-value">
             {loading ? '...' : kpis.lowStockCount}
           </span>
@@ -267,7 +315,7 @@ export function Dashboard() {
         </div>
 
         <div className="kpi-card purple">
-          <span className="kpi-title">Volunteers Deployed</span>
+          <div className="kpi-card-top"><span className="kpi-title">Volunteers Deployed</span><span className="kpi-icon purple"><UserRoundCheck size={18} /></span></div>
           <span className="kpi-value">
             {loading ? '...' : kpis.deployedVolunteers}
           </span>
@@ -282,7 +330,7 @@ export function Dashboard() {
         <div className="card-header">
           <div>
             <span className="card-title">
-              📊 Aid Fulfilment Rate by Item Category
+              <BarChart3 size={18} /> Aid fulfilment by category
             </span>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.2rem' }}>
               Percentage of required emergency supplies delivered to camps by category (Food, Water, Medicine, Shelter, Hygiene)
@@ -360,7 +408,7 @@ export function Dashboard() {
         >
           <div>
             <span className="card-title" style={{ color: isDark ? '#f87171' : '#be123c' }}>
-              🚨 Critical Relief Gaps (High Priority &lt; 40% Fulfilled)
+              <ShieldAlert size={18} /> Critical relief gaps
             </span>
             <span style={{ fontSize: '0.8rem', color: isDark ? '#fca5a5' : '#9f1239', display: 'block', marginTop: '0.2rem' }}>
               Urgent unmet camp shortages sorted ascending by fulfilment rate (worst deficit first)
@@ -389,7 +437,8 @@ export function Dashboard() {
         ) : criticalGaps.length === 0 ? (
           <div className="state-box">
             <p style={{ color: '#16a34a', fontWeight: 600 }}>
-              ✅ Outstanding! No High-Priority critical gaps below 40% detected.
+              <CheckCircle2 size={18} style={{ verticalAlign: 'middle', marginRight: '0.4rem' }} />
+              Outstanding! No high-priority critical gaps below 40% detected.
             </p>
           </div>
         ) : (
@@ -433,7 +482,8 @@ export function Dashboard() {
                           {camp.name}
                         </Link>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          📍 District: <strong>{camp.district}</strong>
+                          <MapPin size={12} style={{ verticalAlign: 'middle', marginRight: '0.2rem' }} />
+                          District: <strong>{camp.district}</strong>
                         </div>
                       </td>
                       <td>
@@ -461,7 +511,7 @@ export function Dashboard() {
                           style={{ textDecoration: 'none' }}
                           title={`Initiate dispatch for ${item.name} to ${camp.name}`}
                         >
-                          🚚 Dispatch Aid
+                          <Truck size={14} /> Dispatch aid
                         </Link>
                       </td>
                     </tr>

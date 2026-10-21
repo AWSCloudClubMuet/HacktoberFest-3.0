@@ -4,6 +4,7 @@ import { useRole } from '../context/RoleContext';
 import { StatusBadge, PriorityBadge } from '../components/Badge';
 import { Modal } from '../components/Modal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { AlertTriangle, Check, Info, MapPin, Truck } from 'lucide-react';
 
 export function Dispatches() {
   const { isAdmin, isVolunteer } = useRole();
@@ -376,13 +377,13 @@ export function Dispatches() {
 
       {!isAdmin && (
         <div className="banner-alert info">
-          <span>ℹ️ <strong>Field Volunteer Role:</strong> You can update dispatch delivery progress (Mark In Transit / Delivered). Creating dispatches or cancellations requires Relief Coordinator privileges.</span>
+          <Info size={17} /><span><strong>Field Volunteer Role:</strong> You can update dispatch delivery progress (Mark In Transit / Delivered). Creating dispatches or cancellations requires Relief Coordinator privileges.</span>
         </div>
       )}
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} /><span>{error}</span>
         </div>
       )}
 
@@ -391,7 +392,7 @@ export function Dispatches() {
         <input
           type="text"
           className="search-input"
-          placeholder="🔍 Search by Dispatch #, Camp, or Need ID..."
+          placeholder="Search by Dispatch #, Camp, or Need ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -403,9 +404,9 @@ export function Dispatches() {
           aria-label="Filter by Status"
         >
           <option value="ALL">All Statuses</option>
-          <option value="Pending">⏳ Pending</option>
-          <option value="In Transit">🚚 In Transit</option>
-          <option value="Delivered">✅ Delivered</option>
+          <option value="Pending">Pending</option>
+          <option value="In Transit">In Transit</option>
+          <option value="Delivered">Delivered</option>
           <option value="Cancelled">❌ Cancelled</option>
         </select>
 
@@ -478,7 +479,7 @@ export function Dispatches() {
                       </td>
                       <td>
                         <strong>{camp.name}</strong>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>📍 {camp.district}</div>
+                        <div className="icon-text" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}><MapPin size={12} /> {camp.district}</div>
                       </td>
                       <td>
                         {item ? (
@@ -508,7 +509,7 @@ export function Dispatches() {
                               disabled={actionLoading}
                               title="Advance convoy to In Transit"
                             >
-                              🚚 Start Transit
+                              <Truck size={13} /> Start transit
                             </button>
                           )}
 
@@ -520,7 +521,7 @@ export function Dispatches() {
                               disabled={actionLoading}
                               title="Confirm delivery at camp (updates need fulfilment)"
                             >
-                              ✅ Mark Delivered
+                              <Check size={13} /> Mark delivered
                             </button>
                           )}
 
@@ -593,7 +594,7 @@ export function Dispatches() {
             <label className="form-label">2. Select Unfulfilled Need *</label>
             {campEligibleNeeds.length === 0 ? (
               <div className="banner-alert warning" style={{ fontSize: '0.825rem' }}>
-                <span>⚠️ All needs for this camp are currently fulfilled or fully covered by active dispatches.</span>
+                <AlertTriangle size={16} /><span>All needs for this camp are currently fulfilled or fully covered by active dispatches.</span>
               </div>
             ) : (
               <select

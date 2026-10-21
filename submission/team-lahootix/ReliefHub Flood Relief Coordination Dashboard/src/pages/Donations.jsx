@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { donationsApi, inventoryApi } from '../api/client';
 import { useRole } from '../context/RoleContext';
 import { Modal } from '../components/Modal';
+import { AlertTriangle, Banknote, Package } from 'lucide-react';
 
 const CASH_PURPOSES = [
   'General Flood Support',
@@ -209,7 +210,7 @@ export function Donations() {
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} /><span>{error}</span>
         </div>
       )}
 
@@ -249,7 +250,7 @@ export function Donations() {
         <input
           type="text"
           className="search-input"
-          placeholder="🔍 Search by category, item name, or ID..."
+          placeholder="Search by category, item name, or ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -261,8 +262,8 @@ export function Donations() {
           aria-label="Filter by Type"
         >
           <option value="ALL">All Donation Types</option>
-          <option value="Cash">💵 Cash Only</option>
-          <option value="In-Kind">📦 In-Kind Goods Only</option>
+          <option value="Cash">Cash Only</option>
+          <option value="In-Kind">In-Kind Goods Only</option>
         </select>
 
         {(searchQuery || typeFilter !== 'ALL') && (
@@ -314,7 +315,7 @@ export function Donations() {
                       <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>#{d.id}</td>
                       <td>
                         <span className={`badge ${d.type === 'Cash' ? 'badge-delivered' : 'badge-transit'}`}>
-                          {d.type === 'Cash' ? '💵 Cash' : '📦 In-Kind'}
+                          <span className="icon-text">{d.type === 'Cash' ? <Banknote size={13} /> : <Package size={13} />}{d.type === 'Cash' ? 'Cash' : 'In-Kind'}</span>
                         </span>
                       </td>
                       <td>
@@ -378,7 +379,7 @@ export function Donations() {
                   checked={donationType === 'Cash'}
                   onChange={() => setDonationType('Cash')}
                 />
-                💵 Cash Donation
+                <span className="icon-text"><Banknote size={15} /> Cash Donation</span>
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontWeight: 600 }}>
                 <input
@@ -388,7 +389,7 @@ export function Donations() {
                   checked={donationType === 'In-Kind'}
                   onChange={() => setDonationType('In-Kind')}
                 />
-                📦 In-Kind Goods (Raises Stock)
+                <span className="icon-text"><Package size={15} /> In-Kind Goods (Raises Stock)</span>
               </label>
             </div>
           </div>

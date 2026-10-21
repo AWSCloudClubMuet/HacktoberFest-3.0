@@ -3,6 +3,7 @@ import { volunteersApi, campsApi } from '../api/client';
 import { useRole } from '../context/RoleContext';
 import { Modal } from '../components/Modal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { AlertTriangle, Check, Clock3, Info, MapPin, UserRound } from 'lucide-react';
 
 const VOLUNTEER_SKILLS = ['Medical', 'Logistics', 'Cooking', 'Driving', 'Counselling'];
 
@@ -228,13 +229,13 @@ export function Volunteers() {
 
       {!isAdmin && (
         <div className="banner-alert info">
-          <span>ℹ️ <strong>Field Volunteer View:</strong> Read-only access to personnel rosters. Relief Coordinator permissions required to register volunteers or assign camps.</span>
+          <Info size={17} /><span><strong>Field Volunteer View:</strong> Read-only access to personnel rosters. Relief Coordinator permissions required to register volunteers or assign camps.</span>
         </div>
       )}
 
       {error && (
         <div className="banner-alert warning">
-          <span>⚠️ {error}</span>
+          <AlertTriangle size={17} /><span>{error}</span>
         </div>
       )}
 
@@ -264,7 +265,7 @@ export function Volunteers() {
         <input
           type="text"
           className="search-input"
-          placeholder="🔍 Search volunteer by name..."
+          placeholder="Search volunteer by name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -288,8 +289,8 @@ export function Volunteers() {
           aria-label="Filter by Assignment"
         >
           <option value="ALL">All Deployment Statuses</option>
-          <option value="ASSIGNED">✅ Deployed ({assignedCount})</option>
-          <option value="UNASSIGNED">⏳ Unassigned ({unassignedCount})</option>
+          <option value="ASSIGNED">Deployed ({assignedCount})</option>
+          <option value="UNASSIGNED">Unassigned ({unassignedCount})</option>
         </select>
 
         {(searchQuery || skillFilter !== 'ALL' || assignmentFilter !== 'ALL') && (
@@ -338,15 +339,15 @@ export function Volunteers() {
                   const camp = v.camp_id ? campsMap[v.camp_id] : null;
                   return (
                     <tr key={v.id}>
-                      <td style={{ fontWeight: 600 }}>👤 {v.name}</td>
+                      <td style={{ fontWeight: 600 }}><span className="icon-text"><UserRound size={14} /> {v.name}</span></td>
                       <td>
                         <span className="badge badge-transit">{v.skill}</span>
                       </td>
                       <td>
                         {v.camp_id ? (
-                          <span className="badge badge-delivered">✅ Deployed</span>
+                          <span className="badge badge-delivered"><Check size={12} /> Deployed</span>
                         ) : (
-                          <span className="badge badge-pending">⏳ Available</span>
+                          <span className="badge badge-pending"><Clock3 size={12} /> Available</span>
                         )}
                       </td>
                       <td>
@@ -354,7 +355,7 @@ export function Volunteers() {
                           <div>
                             <strong>{camp.name}</strong>
                             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                              📍 {camp.district} (Status: {camp.status})
+                              <span className="icon-text"><MapPin size={12} /> {camp.district} (Status: {camp.status})</span>
                             </div>
                           </div>
                         ) : (

@@ -15,7 +15,7 @@ export const USERS = [
     email:    'admin@reliefhub.pk',
     password: 'admin123',
     role:     ROLES.COORDINATOR,
-    avatar:   '👩‍💼',
+    avatar:   'ZK',
     district: 'All Districts',
   },
   {
@@ -24,7 +24,7 @@ export const USERS = [
     email:    'volunteer@reliefhub.pk',
     password: 'volunteer123',
     role:     ROLES.VOLUNTEER,
-    avatar:   '🧑‍🤝‍🧑',
+    avatar:   'AR',
     district: 'Sukkur',
   },
   {
@@ -33,7 +33,7 @@ export const USERS = [
     email:    'medic@reliefhub.pk',
     password: 'medic123',
     role:     ROLES.MEDIC,
-    avatar:   '👩‍⚕️',
+    avatar:   'SM',
     district: 'Larkana',
   },
   {
@@ -42,7 +42,7 @@ export const USERS = [
     email:    'observer@reliefhub.pk',
     password: 'observer123',
     role:     ROLES.OBSERVER,
-    avatar:   '🧑‍💻',
+    avatar:   'UB',
     district: 'Dadu',
   },
 ];
