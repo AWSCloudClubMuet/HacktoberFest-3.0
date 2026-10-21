@@ -277,6 +277,42 @@ app.post('/api/reviews', requireAuth, async (req, res) => {
   res.status(201).json(review)
 })
 
+app.post('/api/assistant', requireAuth, async (req, res) => {
+  const db = await readDb()
+  const message = String(req.body.message || '').trim().toLowerCase()
+  if (!message) return res.status(400).json({ error: 'Ask the assistant a question first.' })
+  const openGigs = db.gigs.filter((gig) => gig.status === 'Open' && !expired(gig) && gig.user_id !== req.user.id)
+  const matches = (terms) => openGigs.filter((gig) => terms.some((term) => `${gig.title} ${gig.description} ${gig.category}`.toLowerCase().includes(term))).slice(0, 3)
+  let reply = ''
+  let suggested = []
+
+  const category = ['programming', 'design', 'writing', 'tutoring'].find((item) => message.includes(item))
+  if (category || /find|recommend|match|opportunit|gig/.test(message)) {
+    const terms = category ? [category] : [...req.user.skills.map((skill) => skill.toLowerCase()), ...message.split(/\s+/).filter((word) => word.length > 4)]
+    suggested = matches(terms)
+    if (!suggested.length) suggested = openGigs.slice(0, 3)
+    reply = suggested.length
+      ? `I found ${suggested.length} open ${category ? `${category} ` : ''}opportunit${suggested.length === 1 ? 'y' : 'ies'} that ${suggested.length === 1 ? 'looks' : 'look'} promising. I prioritized your skills in ${req.user.skills.slice(0, 2).join(' and ') || 'collaboration'}.`
+      : 'There are no matching open gigs right now. Try posting an offering so students can find you.'
+  } else if (/apply|application|proposal|message|pitch/.test(message)) {
+    const skills = req.user.skills.slice(0, 3).join(', ') || 'relevant campus projects'
+    reply = `Here’s a strong starting point:\n\nHi! I’m ${req.user.name}, a ${req.user.major} student with experience in ${skills}. Your gig stood out to me, and I’d be glad to help. I can communicate progress clearly and work around the listed deadline. Happy to discuss the details!\n\nTip: add one specific example of similar work before sending it.`
+  } else if (/reputation|rating|review|trust/.test(message)) {
+    reply = 'Your reputation is calculated only from reviews left after completed gigs. The owner and accepted applicant can each leave one 1–5 star review. Complete work reliably, communicate early, and leave thoughtful reviews to build trust.'
+  } else if (/post|create|offer|request/.test(message)) {
+    reply = 'For a strong gig, use an outcome-focused title, describe exactly what “done” looks like, choose Offering or Requesting, set the payment type, and leave enough time before the deadline. I can help refine your description after you draft it.'
+  } else if (/payment|paid|swap|free|budget/.test(message)) {
+    reply = 'CampusLoop supports Paid, Skill Swap, and Free gigs. Paid gigs require a budget. Skill Swap works best when you clearly name the skill you can exchange, while Free gigs are ideal for peer support and community projects.'
+  } else if (/hello|hi|hey/.test(message)) {
+    reply = `Hi ${req.user.name.split(' ')[0]}! I’m Loop AI. I can find gigs that match your skills, draft an application, explain reputation, or help you plan a new gig.`
+  } else {
+    suggested = openGigs.slice(0, 3)
+    reply = 'I can help with gig discovery, application writing, payment choices, deadlines, and reputation. Try asking “Find design gigs” or “Draft an application message.”'
+  }
+
+  res.json({ reply, suggested_gigs: suggested.map((gig) => enrich(db, gig)) })
+})
+
 await initializeAuth()
 const port = Number(process.env.PORT || 3001)
 app.listen(port, () => console.log(`CampusLoop API running at http://localhost:${port}`))

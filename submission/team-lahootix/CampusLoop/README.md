@@ -15,6 +15,8 @@ CampusLoop is a trusted campus marketplace where students can request help, offe
 - Forgot-password flow with expiring, single-use reset codes
 - Salted password hashing and session-derived API authorization
 - Saved-gig shortlist and editable student profiles
+- Persistent light and dark appearance modes
+- Loop AI assistant for personalized gig matching, application drafting, and workflow guidance
 - Validated paid, skill-swap, and free gig creation
 - Personal gig management and application tracking
 - Protected application flow that prevents self-applications and duplicates
@@ -77,6 +79,7 @@ The optimized front-end output is written to `dist/`.
 | `POST` | `/api/auth/forgot-password` | Request an expiring reset code |
 | `POST` | `/api/auth/reset-password` | Set a new password |
 | `GET` | `/api/auth/me` | Restore the authenticated session |
+| `POST` | `/api/assistant` | Get personalized CampusLoop guidance and gig recommendations |
 | `POST` | `/api/gigs` | Create a validated gig |
 | `GET` | `/api/applications?applicant_id=...` | View personal applications |
 | `POST` | `/api/applications` | Apply to an open gig |

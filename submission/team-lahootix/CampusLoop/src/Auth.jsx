@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, GraduationCap, Handshake, KeyRound, Lock, Mail, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, GraduationCap, Handshake, KeyRound, Lock, Mail, Moon, ShieldCheck, Sparkles, Sun, UserRound } from 'lucide-react'
 
 const request = async (path, body) => {
   const response = await fetch(`/api/auth/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
@@ -13,7 +13,7 @@ function PasswordInput({ value, onChange, placeholder = 'Enter your password', l
   return <label>{label}<span className="auth-input"><Lock size={17} /><input required minLength="8" type={visible ? 'text' : 'password'} value={value} onChange={onChange} placeholder={placeholder} /><button type="button" onClick={() => setVisible(!visible)} aria-label={visible ? 'Hide password' : 'Show password'}>{visible ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label>
 }
 
-export default function Auth({ onAuth }) {
+export default function Auth({ onAuth, theme, toggleTheme }) {
   const [mode, setMode] = useState('login')
   const [form, setForm] = useState({ name: '', email: 'ayesha.khan@campus.edu', password: 'campus123', major: '', semester: '1', token: '' })
   const [busy, setBusy] = useState(false)
@@ -40,7 +40,7 @@ export default function Auth({ onAuth }) {
     } catch (err) { setError(err.message) } finally { setBusy(false) }
   }
 
-  return <main className="auth-page">
+  return <main className="auth-page"><button className="theme-toggle auth-theme" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>{theme === 'dark' ? <Sun /> : <Moon />}</button>
     <section className="auth-story">
       <div className="auth-brand"><span><Handshake /></span>Campus<em>Loop</em></div>
       <div className="auth-story-copy"><span className="auth-kicker"><Sparkles size={14} /> YOUR CAMPUS, CONNECTED</span><h1>Turn what you know<br />into what’s <em>next.</em></h1><p>Find trusted collaborators, share your skills, and build a reputation that travels across campus.</p>

@@ -3,9 +3,10 @@ import {
   ArrowLeft, ArrowRight, Bell, BookOpen, BriefcaseBusiness, Check, ChevronDown,
   CircleDollarSign, Clock3, Code2, GraduationCap, Handshake, LayoutGrid, Menu,
   LogOut, MessageSquareText, Palette, Plus, Search, Settings, SlidersHorizontal,
-  Sparkles, Star, Bookmark, UserRound, UsersRound, X, Zap,
+  Sparkles, Star, Bookmark, Moon, Sun, UserRound, UsersRound, X, Zap,
 } from 'lucide-react'
 import Auth from './Auth.jsx'
+import Assistant from './Assistant.jsx'
 
 const categories = ['All', 'Programming', 'Design', 'Writing', 'Tutoring']
 const types = ['All', 'Offering', 'Requesting']
@@ -13,6 +14,16 @@ const payments = ['All', 'Paid', 'SkillSwap', 'Free']
 const statusClass = (value) => `status status-${value.toLowerCase().replaceAll(' ', '-')}`
 const initials = (name = '') => name.split(' ').map((part) => part[0]).join('').slice(0, 2)
 const money = (value) => new Intl.NumberFormat('en-PK').format(value)
+const smartMatch = (gig, user) => {
+  if (!gig || !user?.skills?.length) return 0
+  const content = `${gig.title} ${gig.description} ${gig.category}`.toLowerCase()
+  const skillHits = user.skills.filter((skill) => {
+    const words = skill.toLowerCase().split(/\s+/).filter((word) => word.length > 2)
+    return content.includes(skill.toLowerCase()) || words.some((word) => content.includes(word))
+  }).length
+  const majorBoost = /computer|software|data|engineering/i.test(user.major || '') && gig.category === 'Programming' ? 1 : 0
+  return skillHits || majorBoost ? Math.min(98, 76 + (skillHits * 7) + (majorBoost * 6)) : 0
+}
 const api = async (url, options) => {
   const token = localStorage.getItem('campusloop_token')
   const response = await fetch(`/api${url}`, { ...options, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(options?.headers || {}) } })
@@ -36,7 +47,7 @@ function Toast({ toast, close }) {
   return <div className={`toast ${toast.type || ''}`}><span className="toast-icon">{toast.type === 'error' ? <X size={16} /> : <Check size={16} />}</span><span>{toast.message}</span><button onClick={close}><X size={15} /></button></div>
 }
 
-function Navbar({ currentUser, page, setPage, openCreate, logout, savedCount }) {
+function Navbar({ currentUser, page, setPage, openCreate, logout, savedCount, theme, toggleTheme }) {
   const [mobile, setMobile] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   return <header className="navbar">
@@ -50,6 +61,7 @@ function Navbar({ currentUser, page, setPage, openCreate, logout, savedCount }) 
     </nav>
     <div className="nav-actions">
       <button className="create-nav" onClick={openCreate}><Plus size={17} /> Post a gig</button>
+      <button className="theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>{theme === 'dark' ? <Sun /> : <Moon />}</button>
       <button className="icon-button" aria-label="Notifications"><Bell size={19} /><i /></button>
       <button className="user-switch" onClick={() => setAccountOpen(!accountOpen)} aria-expanded={accountOpen}>
         <Avatar user={currentUser} size="sm" />
@@ -94,11 +106,12 @@ function FilterBar({ filters, setFilters }) {
   </div>
 }
 
-function GigCard({ gig, open, saved = false, toggleSaved }) {
+function GigCard({ gig, open, saved = false, toggleSaved, currentUser }) {
   const Icon = categoryIcons[gig.category]
   const days = Math.max(0, Math.ceil((new Date(gig.deadline) - new Date()) / 86400000))
-  return <article className="gig-card" onClick={() => open(gig)} tabIndex="0" onKeyDown={(e) => e.key === 'Enter' && open(gig)}>
-    <div className="gig-top"><span className={`category-icon cat-${gig.category.toLowerCase()}`}><Icon size={19} /></span><span className={statusClass(gig.type)}>{gig.type}</span>{toggleSaved && <button className={`save-gig ${saved ? 'saved' : ''}`} aria-label={saved ? 'Remove from saved gigs' : 'Save gig'} onClick={(event) => { event.stopPropagation(); toggleSaved(gig.id) }}><Bookmark size={17} fill={saved ? 'currentColor' : 'none'} /></button>}<button aria-label="Open gig"><ArrowRight size={18} /></button></div>
+  const match = smartMatch(gig, currentUser)
+  return <article className={`gig-card ${match > 0 ? 'has-match' : ''}`} onClick={() => open(gig)} tabIndex="0" onKeyDown={(e) => e.key === 'Enter' && open(gig)}>
+    <div className="gig-top"><span className={`category-icon cat-${gig.category.toLowerCase()}`}><Icon size={19} /></span><span className={statusClass(gig.type)}>{gig.type}</span>{match > 0 && <span className="match-badge" title={`Matched to ${currentUser.skills.join(', ')}`}><Sparkles size={11} /> {match}%</span>}{toggleSaved && <button className={`save-gig ${saved ? 'saved' : ''}`} aria-label={saved ? 'Remove from saved gigs' : 'Save gig'} onClick={(event) => { event.stopPropagation(); toggleSaved(gig.id) }}><Bookmark size={17} fill={saved ? 'currentColor' : 'none'} /></button>}<button aria-label="Open gig"><ArrowRight size={18} /></button></div>
     <h3>{gig.title}</h3><p>{gig.description}</p>
     <div className="gig-tags"><span>{gig.category}</span><span className={`pay-${gig.payment_type.toLowerCase()}`}>{gig.payment_type === 'SkillSwap' ? 'Skill swap' : gig.payment_type}</span></div>
     <div className="gig-footer">
@@ -117,15 +130,17 @@ function EmptyState({ title, copy, action }) {
   return <div className="empty"><span><Search /></span><h3>{title}</h3><p>{copy}</p>{action}</div>
 }
 
-function Discover({ gigs, filters, setFilters, loading, openGig, openCreate, savedIds, toggleSaved }) {
+function Discover({ gigs, filters, setFilters, loading, openGig, openCreate, savedIds, toggleSaved, currentUser }) {
+  const [smartSort, setSmartSort] = useState(true)
   const open = gigs.filter((g) => g.status === 'Open')
+  const ranked = smartSort ? [...open].sort((a, b) => smartMatch(b, currentUser) - smartMatch(a, currentUser)) : open
   return <>
     <Hero count={open.length} setSearch={(q) => setFilters((f) => ({ ...f, q }))} openCreate={openCreate} />
     <main className="page browse-section">
       <div className="section-head"><div><span className="eyebrow">EXPLORE OPPORTUNITIES</span><h2>Find your next campus gig</h2><p>Fresh opportunities from students across campus.</p></div><div className="inline-search"><Search size={17} /><input value={filters.q} onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))} placeholder="Search gigs" />{filters.q && <button onClick={() => setFilters((f) => ({ ...f, q: '' }))}><X size={15} /></button>}</div></div>
       <FilterBar filters={filters} setFilters={setFilters} />
-      <div className="results-line"><strong>{open.length} opportunities</strong><span>Sorted by newest</span></div>
-      {loading ? <div className="skeleton-grid">{[1,2,3,4,5,6].map((x) => <div key={x} />)}</div> : open.length ? <div className="gig-grid">{open.map((gig) => <GigCard key={gig.id} gig={gig} open={openGig} saved={savedIds.includes(gig.id)} toggleSaved={toggleSaved} />)}</div> : <EmptyState title="No gigs found" copy="Try a different search or clear your filters." action={<button className="primary" onClick={() => setFilters({ category: 'All', type: 'All', payment_type: 'All', q: '' })}>Clear filters</button>} />}
+      <div className="results-line"><strong>{open.length} opportunities</strong><button className={`smart-sort ${smartSort ? 'active' : ''}`} onClick={() => setSmartSort((value) => !value)} aria-pressed={smartSort}><Sparkles size={14} /> {smartSort ? 'Smart matches first' : 'Sort by smart match'}</button></div>
+      {loading ? <div className="skeleton-grid">{[1,2,3,4,5,6].map((x) => <div key={x} />)}</div> : open.length ? <div className="gig-grid">{ranked.map((gig) => <GigCard key={gig.id} gig={gig} open={openGig} saved={savedIds.includes(gig.id)} toggleSaved={toggleSaved} currentUser={currentUser} />)}</div> : <EmptyState title="No gigs found" copy="Try a different search or clear your filters." action={<button className="primary" onClick={() => setFilters({ category: 'All', type: 'All', payment_type: 'All', q: '' })}>Clear filters</button>} />}
       <section className="cta-band"><div><span className="cta-icon"><Zap /></span><div><h3>Have a skill someone needs?</h3><p>Post an offering and start building your campus reputation.</p></div></div><button onClick={openCreate}>Share your skill <ArrowRight size={17} /></button></section>
     </main>
   </>
@@ -231,13 +246,15 @@ function GigDetail({ gig, currentUser, users, close, refresh, notify }) {
 
 export default function App() {
   const [users, setUsers] = useState([]); const [currentUser, setCurrentUser] = useState(null); const [gigs, setGigs] = useState([]); const [allGigs, setAllGigs] = useState([]); const [applications, setApplications] = useState([]); const [reviews, setReviews] = useState([])
-  const [page, setPage] = useState('discover'); const [filters, setFilters] = useState({ category: 'All', type: 'All', payment_type: 'All', q: '' }); const [loading, setLoading] = useState(true); const [authReady, setAuthReady] = useState(false); const [createOpen, setCreateOpen] = useState(false); const [editOpen, setEditOpen] = useState(false); const [selected, setSelected] = useState(null); const [toast, setToast] = useState(null); const [savedIds, setSavedIds] = useState([])
+  const [page, setPage] = useState('discover'); const [filters, setFilters] = useState({ category: 'All', type: 'All', payment_type: 'All', q: '' }); const [loading, setLoading] = useState(true); const [authReady, setAuthReady] = useState(false); const [createOpen, setCreateOpen] = useState(false); const [editOpen, setEditOpen] = useState(false); const [selected, setSelected] = useState(null); const [toast, setToast] = useState(null); const [savedIds, setSavedIds] = useState([]); const [theme, setTheme] = useState(() => localStorage.getItem('campusloop_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
   const notify = (message, type = 'success') => { setToast({ message, type }); setTimeout(() => setToast(null), 4200) }
+  const toggleTheme = () => setTheme((old) => old === 'dark' ? 'light' : 'dark')
   const loadUsers = async () => { const rows = await api('/users'); setUsers(rows); return rows }
   const loadGigs = async () => { setLoading(true); try { const params = new URLSearchParams(Object.entries(filters).filter(([, v]) => v && v !== 'All')); const rows = await api(`/gigs?${params}`); setGigs(rows) } catch (err) { notify(err.message, 'error') } finally { setLoading(false) } }
   const loadAllGigs = async () => setAllGigs(await api('/gigs'))
   const loadPersonal = async (userId) => { if (!userId) return; const [apps, revs] = await Promise.all([api(`/applications?applicant_id=${userId}`), api('/reviews')]); setApplications(apps); setReviews(revs.filter((r) => r.reviewee_id === userId)) }
   useEffect(() => { const token = localStorage.getItem('campusloop_token'); if (!token) { setAuthReady(true); return } api('/auth/me').then(setCurrentUser).catch(() => localStorage.removeItem('campusloop_token')).finally(() => setAuthReady(true)) }, [])
+  useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem('campusloop_theme', theme) }, [theme])
   useEffect(() => { if (!currentUser) return; loadUsers(); loadAllGigs(); loadPersonal(currentUser.id); const saved = JSON.parse(localStorage.getItem(`campusloop_saved_${currentUser.id}`) || '[]'); setSavedIds(saved) }, [currentUser?.id])
   useEffect(() => { if (!currentUser) return; const timer = setTimeout(loadGigs, 180); return () => clearTimeout(timer) }, [filters, currentUser?.id])
   const refresh = async () => { const [, , , profile] = await Promise.all([loadUsers(), loadGigs(), loadAllGigs(), api('/auth/me')]); setCurrentUser(profile); await loadPersonal(profile.id); if (selected) { const fresh = await api(`/gigs/${selected.id}`); setSelected(fresh) } }
@@ -246,9 +263,9 @@ export default function App() {
   const toggleSaved = (id) => setSavedIds((old) => { const next = old.includes(id) ? old.filter((item) => item !== id) : [...old, id]; localStorage.setItem(`campusloop_saved_${currentUser.id}`, JSON.stringify(next)); return next })
   const currentProfile = useMemo(() => ({ ...currentUser, ...(users.find((u) => u.id === currentUser?.id) || {}) }), [users, currentUser])
   if (!authReady) return <div className="app-loader"><span className="brand-mark"><Handshake /></span><strong>CampusLoop</strong></div>
-  if (!currentUser) return <Auth onAuth={handleAuth} />
-  return <div><Navbar currentUser={currentProfile} page={page} setPage={setPage} openCreate={() => setCreateOpen(true)} logout={logout} savedCount={savedIds.length} />
-    {page === 'discover' && <Discover gigs={gigs} filters={filters} setFilters={setFilters} loading={loading} openGig={setSelected} openCreate={() => setCreateOpen(true)} savedIds={savedIds} toggleSaved={toggleSaved} />}
+  if (!currentUser) return <Auth onAuth={handleAuth} theme={theme} toggleTheme={toggleTheme} />
+  return <div><Navbar currentUser={currentProfile} page={page} setPage={setPage} openCreate={() => setCreateOpen(true)} logout={logout} savedCount={savedIds.length} theme={theme} toggleTheme={toggleTheme} />
+    {page === 'discover' && <Discover gigs={gigs} filters={filters} setFilters={setFilters} loading={loading} openGig={setSelected} openCreate={() => setCreateOpen(true)} savedIds={savedIds} toggleSaved={toggleSaved} currentUser={currentProfile} />}
     {page === 'my-gigs' && <MyGigs gigs={allGigs} currentUser={currentProfile} openGig={setSelected} openCreate={() => setCreateOpen(true)} />}
     {page === 'applications' && <Applications applications={applications} openGig={async (gig) => setSelected(await api(`/gigs/${gig.id}`))} />}
     {page === 'saved' && <SavedGigs gigs={allGigs} savedIds={savedIds} toggleSaved={toggleSaved} openGig={setSelected} setPage={setPage} />}
@@ -257,6 +274,7 @@ export default function App() {
     {createOpen && <CreateGig currentUser={currentProfile} close={() => setCreateOpen(false)} onCreated={(gig) => { setGigs((old) => [gig, ...old]); setAllGigs((old) => [gig, ...old]) }} notify={notify} />}
     {editOpen && <EditProfile user={currentProfile} close={() => setEditOpen(false)} saved={(updated) => { setCurrentUser((old) => ({ ...old, ...updated })); setUsers((old) => old.map((user) => user.id === updated.id ? { ...user, ...updated } : user)) }} notify={notify} />}
     {selected && <GigDetail gig={selected} currentUser={currentProfile} users={users} close={() => setSelected(null)} refresh={refresh} notify={notify} />}
+    <Assistant user={currentProfile} openGig={setSelected} />
     <Toast toast={toast} close={() => setToast(null)} />
   </div>
 }
