@@ -477,6 +477,82 @@ def dataset_report(data):
     print(f"  total : {a_dis + b_dis}/400            (issue: 60/400)")
 
 
+def plateau_report(data, train_noisy, test_noisy):
+    """the issue says the classifier 'plateaus at 82% on the noisy test set'.
+    train on growing slices of the noisy train data and watch noisy-test
+    accuracy rise, flatten and stall - more data cannot fix bad labels."""
+    section("5. LEARNING CURVE - WHY IT PLATEAUS AT 82%")
+    rng = np.random.default_rng(SEED + 5)
+    order = rng.permutation(len(train_noisy))
+    counts = data["train_counts"]
+    fracs = [0.005, 0.01, 0.02, 0.05, 0.10, 0.25, 0.50, 1.00]
+    curve = []
+    for frac in fracs:
+        idx = order[: int(frac * len(order))]
+        nb = NaiveBayes(data["vocab_size"]).fit_labels(counts[idx], train_noisy[idx])
+        pred = nb.predict(data["test_counts"])
+        acc = (pred == test_noisy).mean()
+        curve.append((frac, len(idx), acc))
+        bar = "#" * int(round(acc * 50))
+        print(f"  {len(idx):>6,} noisy tickets ({frac*100:>4.1f}%): noisy test acc "
+              f"{pct(acc)}  {bar}")
+    accs = [c[2] for c in curve]
+    print(f"\n  climbs fast, then flat: last three points "
+          f"{pct(accs[-3])} -> {pct(accs[-2])} -> {pct(accs[-1])}")
+    print("  the plateau is set by the 15% crowd error in the labels the model is")
+    print("  graded against, not by model capacity or data volume")
+    return curve
+
+
+def ceiling_report(baseline, data):
+    """compare the measured gold accuracy against the lead's uniform-flip
+    ceiling: obs = a(1-eps) + (1-a)eps/(K-1) solved for a at eps = 15%."""
+    section("6. CEILING MATH - UNIFORM-FLIP ESTIMATE vs MEASURED GOLD")
+    obs = baseline["noisy_acc"]
+    gold = baseline["gold_acc"]
+    eps = 60 / 400                      # audit: overall crowd error 15%
+    chance = eps / (K - 1)              # a wrong pred matches a uniform flip 1-in-5
+    a_uniform = (obs - chance) / (1 - eps - chance)
+    print(f"  observed accuracy on noisy test set   : {pct(obs)}")
+    print(f"  uniform-flip ceiling (eps=15%, k=6)   : {pct(a_uniform)}")
+    print(f"  MEASURED accuracy on gold test set    : {pct(gold)}")
+
+    # decompose the observed agreement: clean-label vs flipped-label test docs
+    flipped = baseline["test_noisy"] != data["test_true"]
+    pred, test_noisy = baseline["pred"], baseline["test_noisy"]
+    agree_flipped = (pred[flipped] == test_noisy[flipped]).mean()
+    agree_clean = (pred[~flipped] == test_noisy[~flipped]).mean()
+    err_rate = flipped.mean()
+    print(f"\n  accounting identity (sanity): "
+          f"{pct(agree_clean)} x {pct(1 - err_rate)} + {pct(agree_flipped)} x "
+          f"{pct(err_rate)} = {pct(agree_clean * (1 - err_rate) + agree_flipped * err_rate)}"
+          f"  (observed {pct(obs)})")
+    print(f"  agreement on clean-labelled test docs : {pct(agree_clean)} (basically the gold accuracy)")
+    uniform_agree_wrong = (1 - gold) / (K - 1)
+    print(f"  agreement on flipped  test docs      : {pct(agree_flipped)} "
+          f"(uniform-noise guess would be ~{pct(uniform_agree_wrong)})")
+    print("\n  reading: with systematic noise the estimate shifts for two reasons")
+    print("  that cancel here -")
+    gap, clean_acc = gold_clean_gap(baseline, data)
+    print("  (1) train labels are noisy too (the formula assumes clean training),")
+    print(f"      gold-trained NB reaches {pct(clean_acc)}, so noisy train labels alone")
+    print(f"      cost about {pct(gap)}")
+    print("  (2) crowd flips target the confusion pairs and the model repeats the")
+    print(f"      same confusions {int(round(agree_flipped / max(uniform_agree_wrong, 1e-9)))}x more often than")
+    print("      uniform chance, inflating observed accuracy")
+    print(f"  net effect here: measured {pct(gold)} vs uniform estimate {pct(a_uniform)} -")
+    print("  both far above the observed 82%, which is the point of M3")
+
+
+def gold_clean_gap(baseline, data):
+    """accuracy we would get if the 90% crowd portion of train were expert
+    labelled - i.e. how much noisy TRAIN labels alone cost us."""
+    nb_clean = NaiveBayes(data["vocab_size"]).fit_labels(
+        data["train_counts"], data["train_true"])
+    acc = (nb_clean.predict(data["test_counts"]) == data["test_true"]).mean()
+    return max(acc - baseline["gold_acc"], 0.0), acc
+
+
 def main():
     data = generate()
     dataset_report(data)
@@ -487,6 +563,9 @@ def main():
     print(f"  accuracy on the NOISY test set (crowd labels): {pct(baseline['noisy_acc'])}")
     print(f"  accuracy on the GOLD  test set (expert labels): {pct(baseline['gold_acc'])}")
     print(f"  same model, same tickets - the gap is the crowd noise, not the model")
+
+    plateau_report(data, baseline["train_noisy"], baseline["test_noisy"])
+    ceiling_report(baseline, data)
     return 0
 
 
