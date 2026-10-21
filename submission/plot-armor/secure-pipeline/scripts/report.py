@@ -78,6 +78,21 @@ def find_report(reports_dir, *names):
     return None
 
 
+def find_gitleaks_report(reports_dir):
+    """gitleaks-report.json if present; otherwise the SARIF artifact that
+    gitleaks-action@v2 actually uploads (gitleaks-results.sarif)."""
+    path = find_report(reports_dir, "gitleaks-report.json")
+    if path:
+        return path
+    try:
+        for entry in os.listdir(reports_dir):
+            if entry.lower().endswith(".sarif") and "gitleaks" in entry.lower():
+                return os.path.join(reports_dir, entry)
+    except OSError:
+        pass
+    return None
+
+
 def load_json(path):
     """Return parsed JSON or None when missing/empty/malformed.
 
@@ -185,6 +200,31 @@ def parse_gitleaks(data):
     findings = []
     if data is None:
         return findings, "report missing"
+    if isinstance(data, dict) and "runs" in data:
+        # SARIF shape (gitleaks-results.sarif from gitleaks-action@v2)
+        results = []
+        for run in data.get("runs") or []:
+            results.extend(run.get("results") or [])
+        if not results:
+            return findings, "no findings"
+        for res in results:
+            rule = res.get("ruleId") or "secret"
+            location = "?"
+            try:
+                phys = res["locations"][0]["physicalLocation"]
+                uri = phys["artifactLocation"]["uri"]
+                line = phys.get("region", {}).get("startLine", "?")
+                location = "{}:{}".format(short_path(uri), line)
+            except (KeyError, IndexError, TypeError):
+                pass
+            level = str(res.get("level", "error")).lower()
+            findings.append({
+                "source": "gitleaks",
+                "severity": "MEDIUM" if level == "note" else "HIGH",
+                "title": "secret detected: {}".format(rule),
+                "location": location,
+            })
+        return findings, "ok"
     if not isinstance(data, list):
         # newer gitleaks emits a bare list; some wrappers emit {"findings": []}
         data = data.get("findings") or [] if isinstance(data, dict) else []
@@ -216,7 +256,7 @@ def collect_reports(reports_dir):
          lambda d: parse_trivy(d, "trivy-image")),
         ("trivy-fs", find_report(reports_dir, "trivy-fs.json", "trivy-fs-report.json"),
          lambda d: parse_trivy(d, "trivy-fs")),
-        ("gitleaks", find_report(reports_dir, "gitleaks-report.json"), parse_gitleaks),
+        ("gitleaks", find_gitleaks_report(reports_dir), parse_gitleaks),
     ]
 
     findings = []
@@ -261,6 +301,15 @@ def run_gate(findings, statuses, counts):
         print("    {:<10} {}".format(sev, counts[sev]))
     print("    {:<10} {}".format("total", len(findings)))
     print()
+
+    # fail closed: a scanner that produced no report must block the pipeline,
+    # otherwise a crashed or misconfigured scan would silently go green
+    missing = [name for name, st in statuses.items() if st == "report missing"]
+    if missing:
+        print("  gate fails closed: no report from: {}".format(", ".join(missing)))
+        print("  policy: every scanner must produce a report before the gate can pass")
+        print("=" * 62)
+        return 1
 
     if blocked > 0:
         print("  blocking findings (critical/high):")
