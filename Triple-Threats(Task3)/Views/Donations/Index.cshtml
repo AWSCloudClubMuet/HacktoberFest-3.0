@@ -1,0 +1,138 @@
+@model IEnumerable<ReliefHub.Models.Donation>
+@{
+    ViewData["Title"] = "Donation Tracking";
+    var inventory = (List<ReliefHub.Models.InventoryItem>)ViewBag.Inventory;
+    var totalCash = (decimal)ViewBag.TotalCash;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Donations & Relief Contributions</h1>
+            <p class="text-sm text-slate-500">Record cash and in-kind supplies. In-kind donations increase warehouse stock automatically.</p>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-2xl flex items-center gap-3">
+            <span class="text-xs font-bold uppercase text-emerald-700">Total Cash Funds:</span>
+            <span class="text-xl font-black text-emerald-800">PKR @totalCash.ToString("N0")</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Record Donation Form -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-1">Record Contribution</h2>
+            <p class="text-xs text-slate-500 mb-4">Choose Cash or In-Kind inventory delivery.</p>
+
+            <form asp-action="Create" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Donation Type</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="Type" value="Cash" checked class="peer sr-only" onchange="toggleDonationType(false)" />
+                            <div class="p-2.5 text-center text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 rounded-xl">
+                                💵 Cash Fund
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="Type" value="In-Kind" class="peer sr-only" onchange="toggleDonationType(true)" />
+                            <div class="p-2.5 text-center text-xs font-bold border-2 border-slate-200 peer-checked:border-cyan-600 peer-checked:bg-cyan-50 rounded-xl">
+                                📦 In-Kind Goods
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="itemSelectWrapper" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Warehouse Item</label>
+                    <select name="ItemId" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="">-- Select Item to Restock --</option>
+                        @foreach (var item in inventory)
+                        {
+                            <option value="@item.Id">@item.Name (@item.Category) - Current Stock: @item.Stock @item.Unit</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1" id="amountLabel">Amount (PKR)</label>
+                    <input type="number" step="0.01" name="AmountOrQuantity" placeholder="e.g. 50000" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Category / Purpose</label>
+                    <select name="Category" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="General Relief">General Relief Fund</option>
+                        <option value="Food">Food Ration Packs</option>
+                        <option value="Water & Sanitation">Clean Drinking Water</option>
+                        <option value="Medicine">Emergency Medical Supplies</option>
+                        <option value="Shelter">Shelter & Tents</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all">
+                    Save Donation Record
+                </button>
+            </form>
+        </div>
+
+        <!-- Donations Table -->
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Donation Log</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                            <th class="p-3">Type</th>
+                            <th class="p-3">Category</th>
+                            <th class="p-3">Amount / Quantity</th>
+                            <th class="p-3">Restocked Item</th>
+                            <th class="p-3 text-right">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach (var d in Model)
+                        {
+                            <tr>
+                                <td class="p-3 font-bold">
+                                    <span class="px-2 py-0.5 rounded text-[10px] @(d.Type == "Cash" ? "bg-emerald-100 text-emerald-800" : "bg-cyan-100 text-cyan-800")">
+                                        @d.Type
+                                    </span>
+                                </td>
+                                <td class="p-3 text-slate-700">@d.Category</td>
+                                <td class="p-3 font-bold text-slate-900">
+                                    @(d.Type == "Cash" ? $"PKR {d.AmountOrQuantity:N0}" : $"{d.AmountOrQuantity:N0} units")
+                                </td>
+                                <td class="p-3 text-slate-500">
+                                    @(d.Item != null ? $"{d.Item.Name} (+{d.AmountOrQuantity:N0} {d.Item.Unit})" : "—")
+                                </td>
+                                <td class="p-3 text-right text-slate-400">@d.DonatedAt.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function toggleDonationType(isInKind) {
+            const wrapper = document.getElementById('itemSelectWrapper');
+            const label = document.getElementById('amountLabel');
+            if (isInKind) {
+                wrapper.classList.remove('hidden');
+                label.innerText = "Item Quantity (Units)";
+            } else {
+                wrapper.classList.add('hidden');
+                label.innerText = "Amount (PKR)";
+            }
+        }
+    </script>
+}

@@ -1,0 +1,129 @@
+@model IEnumerable<ReliefHub.Models.InventoryItem>
+@{
+    ViewData["Title"] = "Warehouse Inventory";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Warehouse Inventory Management</h1>
+            <p class="text-sm text-slate-500">Track supplies, categories, units, available stock, and low stock reorder thresholds.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                @Model.Count(i => i.IsLowStock) Low Stock Items
+            </span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Add Inventory Item Form -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-1">Add Inventory Item</h2>
+            <p class="text-xs text-slate-500 mb-4">Register new relief supply items into the warehouse.</p>
+
+            <form asp-action="Create" method="post" class="space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Item Name</label>
+                    <input type="text" name="Name" placeholder="e.g. Rice Bags (20kg)" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Category</label>
+                    <select name="Category" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="Food">Food Rations</option>
+                        <option value="Water & Sanitation">Water & Sanitation</option>
+                        <option value="Medicine">Emergency Medicine</option>
+                        <option value="Shelter">Shelter & Bedding</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Unit of Measure</label>
+                    <input type="text" name="Unit" placeholder="e.g. Bags, Kits, Bottles, Boxes" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Initial Stock</label>
+                        <input type="number" name="Stock" min="0" placeholder="500" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Reorder Level</label>
+                        <input type="number" name="ReorderLevel" min="0" placeholder="100" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl" required />
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all">
+                    Add to Warehouse
+                </button>
+            </form>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Stock Registry (@Model.Count() Items)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 uppercase font-bold border-b border-slate-100">
+                            <th class="p-3">Item Name</th>
+                            <th class="p-3">Category</th>
+                            <th class="p-3">Current Stock</th>
+                            <th class="p-3">Reorder Alert</th>
+                            <th class="p-3 text-right">Quick Restock</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(item.IsLowStock ? "bg-rose-50/50" : "")">
+                                <td class="p-3 font-bold text-slate-900">
+                                    @item.Name
+                                    @if (item.IsLowStock)
+                                    {
+                                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200 animate-pulse">
+                                            ⚠️ Low Stock
+                                        </span>
+                                    }
+                                </td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                                        @item.Category
+                                    </span>
+                                </td>
+                                <td class="p-3 font-bold @(item.IsLowStock ? "text-rose-600" : "text-slate-800")">
+                                    @item.Stock @item.Unit
+                                </td>
+                                <td class="p-3 text-slate-500">
+                                    &lt;= @item.ReorderLevel @item.Unit
+                                </td>
+                                <td class="p-3 text-right">
+                                    <form asp-action="Edit" method="post" class="inline-flex items-center gap-1.5">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="Id" value="@item.Id" />
+                                        <input type="hidden" name="Name" value="@item.Name" />
+                                        <input type="hidden" name="Category" value="@item.Category" />
+                                        <input type="hidden" name="Unit" value="@item.Unit" />
+                                        <input type="hidden" name="ReorderLevel" value="@item.ReorderLevel" />
+                                        <input type="number" name="Stock" value="@item.Stock" min="0" class="w-16 p-1 text-[11px] bg-slate-50 border border-slate-200 rounded text-center font-bold" />
+                                        <button type="submit" class="px-2.5 py-1 bg-slate-800 text-white rounded text-[10px] font-bold">
+                                            Update
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

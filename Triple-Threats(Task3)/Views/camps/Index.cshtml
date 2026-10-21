@@ -1,0 +1,62 @@
+@model ReliefHub.Models.ViewModels.CampIndexViewModel
+@{
+    ViewData["Title"] = "Camp Registry";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Camp Registry</h1>
+            <p class="text-sm text-slate-500">Manage flood relief camps across Sindh districts</p>
+        </div>
+        <a asp-action="Create" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold rounded-xl shadow-xs self-start sm:self-auto">
+            + Register New Camp
+        </a>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 mb-6 flex flex-col sm:flex-row gap-3">
+        <form method="get" class="flex flex-1 gap-2">
+            <input type="text" name="q" value="@Model.SearchTerm" placeholder="Search camp name or district (e.g. Dadu, Sukkur)..." class="flex-1 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2" />
+            <select name="status" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Full">Full</option>
+                <option value="Closed">Closed</option>
+            </select>
+            <button type="submit" class="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl">Search</button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @foreach (var c in Model.Camps)
+        {
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-500">@c.District</span>
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded @(c.EffectiveStatus == "Active" ? "bg-emerald-100 text-emerald-800" : c.EffectiveStatus == "Full" ? "bg-amber-100 text-amber-800" : "bg-slate-200 text-slate-600")">
+                            @c.EffectiveStatus
+                        </span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm">
+                        <a asp-action="Details" asp-route-id="@c.Id" class="hover:text-cyan-600">@c.Name</a>
+                    </h3>
+                    <div class="mt-3 text-xs text-slate-600">
+                        <div>Families: <strong>@c.CurrentFamilies / @c.Capacity</strong></div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-1.5">
+                            <div class="bg-cyan-600 h-1.5 rounded-full" style="width: @Math.Min(100, (double)c.CurrentFamilies / c.Capacity * 100)%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span class="text-slate-400">@c.Volunteers.Count volunteer(s)</span>
+                    <a asp-action="Details" asp-route-id="@c.Id" class="text-cyan-600 font-bold hover:underline">Manage &rarr;</a>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
