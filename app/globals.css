@@ -109,6 +109,8 @@ button, input, select, textarea { font: inherit; } button { cursor: pointer; }
 .profile-stats span { color: #9b958c; font-size: 10px; }
 .profile-section { margin-top: 32px; }
 .gig-dialog { background: #fff; border-radius: 14px; padding: 30px 32px; width: min(92vw, 540px); max-width: 540px; max-height: 88vh; overflow-y: auto; box-shadow: 0 20px 70px rgba(31,28,24,.2); }
+.gig-dialog { scrollbar-width: none; -ms-overflow-style: none; }
+.gig-dialog::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .dialog-title { font-size: 24px; letter-spacing: -.8px; margin-top: 10px; }
 .dialog-subtitle { font-size: 12px; margin: 0 0 4px; }
 .dialog-sep { margin: 18px 0 12px; }
