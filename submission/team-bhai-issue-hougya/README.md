@@ -37,6 +37,11 @@ An automated DevSecOps pipeline running in GitHub Actions (`ubuntu-24.04`) that 
 - **Registry:** `bhaiissuehougyasecscan.azurecr.io/vuln-scan-app`
 - **Immutable Tag:** Images are tagged with the specific commit SHA, not just `latest`.
 
+### Design Decision: Why We Skipped SARIF Uploads
+A common question in GitHub security setups is whether to export results as SARIF files via `upload-sarif`. We looked into it and intentionally decided against it: GitHub's `upload-sarif` action requires GitHub Advanced Security (GHAS) or a public repository. On private repositories without an enterprise license, that upload fails.
+
+Instead, we built our reporting around GitHub Actions Step Summaries (`$GITHUB_STEP_SUMMARY`) and archived JSON/Markdown artifacts. It gives everyone an immediate visual breakdown of every finding on the run summary page, works across all repository types (public, private, student accounts), and doesn't rely on paid add-ons.
+
 For complete technical logs, scan commands, rules, and local reproduction instructions, see the **[Issue #2 Technical README](./issue2_Automated_Security_Vulnerability_Scanning/README.md)**.
 
 ---
