@@ -18,19 +18,21 @@ A student is a Poster on gigs they create and an Applicant on gigs they apply to
 ## Tech stack and run commands
 
 - API: Node.js 18+ and Express. In-memory store loaded from `data/db.json`. No database.
-- UI (later): Vite + React. One student switcher; no real auth.
-- Acting user: mutating requests send header `x-user-id`.
+- UI: Vite, React, and Tailwind in `client/`. One student switcher; no real auth.
+- Acting user: `client/src/api.js` sends `x-user-id` on every request. `VITE_API_URL` defaults to `http://localhost:3001`.
 
 From `submission/PhantomX/problem-2/`:
 
 ```bash
 npm install
 npm run seed       # rewrite data/db.json
-npm start          # http://localhost:3001
+npm run dev        # API http://localhost:3001 and client http://localhost:5173
+npm start          # API only
+npm run client     # client only
 npm run test:api   # rule checks against a temporary database
 ```
 
-`npm run seed` resets the file. A running server reloads it on the next request. The client will use `VITE_API_URL=http://localhost:3001`.
+`npm run seed` resets the file. A running server reloads it on the next request.
 
 ## Data model
 
@@ -130,20 +132,20 @@ Errors use `{ "error": "..." }`. `400` validation or a missing `x-user-id`. `403
 ## Coding conventions
 
 - Small, focused changes. Edit existing files instead of rewriting them.
-- Do not add dependencies beyond Express, Vite, React, and the Vite React plugin unless asked.
+- Do not add dependencies beyond Express, Vite, React, the Vite React plugin, and Tailwind unless asked.
 - Keep business rules in the API. The UI may hide invalid actions; it is not the source of truth.
 - IDs are strings. Dates are ISO-8601.
 
 ## Progress
 
 - [x] Stage 1 — Express API, seed file, business rules, and `npm run test:api`
-- [ ] Stage 2 — Frontend
-- [ ] Stage 3 — not started
+- [x] Stage 2 — Browse, profiles, create gig, apply, and my applications
+- [ ] Stage 3 — Applicant management and reviews UI
 
 ## Milestones
 
-- [ ] M1 Profiles and validated gig creation. API done; UI not started.
-- [ ] M2 Search, filters, and applications. API done; UI not started.
+- [x] M1 Profiles and validated gig creation.
+- [x] M2 Search, filters, applications, and expired gigs.
 - [ ] M3 Applicant selection and status changes. API done; UI not started.
 - [ ] M4 Two-way reviews and computed reputation. API done; UI not started.
 - [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.
