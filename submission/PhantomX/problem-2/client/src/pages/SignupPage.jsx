@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
-import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
+import { Alert, Field, Link, PasswordField, buttonClass, inputClass, textLinkClass } from '../components.jsx';
 import { readSection } from '../section.js';
+import { AuthBanner } from '../ui.jsx';
 
 const empty = {
   name: '',
@@ -70,50 +71,48 @@ export function SignupPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <form className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2" noValidate onSubmit={onSubmit}>
-        <div className="hero-request px-5 py-5 lg:px-8 lg:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-on-night-muted">Campus Gig</p>
-          <p className="mt-2 font-display text-2xl font-semibold text-on-night">Join the campus marketplace.</p>
-          <p className="mt-2 max-w-sm text-sm text-on-night-muted">No email verification. Post a gig or apply as soon as you sign up.</p>
-        </div>
-        <div className="space-y-3 p-4 sm:p-5">
-        <div>
-          <h1 className="page-title text-ink">Create an account</h1>
-          <p className="mt-1 text-sm text-muted">You can post and apply right away.</p>
-        </div>
-        <Alert>{formError}</Alert>
-        <Field label="Name" error={errors.name}>
-          <input className={inputClass} value={form.name} onChange={(event) => update('name', event.target.value)} />
-        </Field>
-        <Field label="Email" error={errors.email}>
-          <input className={inputClass} type="email" autoComplete="username" value={form.email} onChange={(event) => update('email', event.target.value)} />
-        </Field>
-        <Field label="Password" error={errors.password}>
-          <input className={inputClass} type="password" autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} />
-        </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Major" error={errors.major}>
-            <input className={inputClass} value={form.major} onChange={(event) => update('major', event.target.value)} />
+    <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2">
+      <AuthBanner
+        tone="request"
+        headline="Join your campus marketplace"
+        subtitle="Offer a skill, request help, swap talents and build your reputation."
+      />
+      <div className="flex items-start p-4 sm:p-6 lg:items-center lg:py-8">
+        <form className="mx-auto w-full max-w-md space-y-3" noValidate onSubmit={onSubmit}>
+          <div>
+            <h1 className="page-title text-ink">Create your account</h1>
+            <p className="mt-1 text-sm text-muted">You can post and apply right away.</p>
+          </div>
+          <Alert>{formError}</Alert>
+          <Field label="Name" error={errors.name}>
+            <input className={inputClass} value={form.name} onChange={(event) => update('name', event.target.value)} />
           </Field>
-          <Field label="Semester" error={errors.semester}>
-            <input className={inputClass} type="number" min="1" max="12" value={form.semester} onChange={(event) => update('semester', event.target.value)} />
+          <Field label="Email" error={errors.email}>
+            <input className={inputClass} type="email" autoComplete="username" value={form.email} onChange={(event) => update('email', event.target.value)} />
           </Field>
-        </div>
-        <Field label="Bio" error={errors.bio}>
-          <textarea className={inputClass} rows="3" value={form.bio} onChange={(event) => update('bio', event.target.value)} placeholder="Optional" />
-        </Field>
-        <Field label="Skills">
-          <input className={inputClass} value={form.skills} onChange={(event) => update('skills', event.target.value)} placeholder="Optional, separated by commas" />
-        </Field>
-        <button className={`${buttonClass} w-full fill-request`} type="submit" disabled={saving}>
-          {saving ? 'Creating account…' : 'Sign up'}
-        </button>
-        <p className="text-base text-muted">
-          Already have an account? <Link to="/login" className={textLinkClass}>Log in</Link>
-        </p>
-        </div>
-      </form>
+          <PasswordField label="Password" error={errors.password} autoComplete="new-password" value={form.password} onChange={(event) => update('password', event.target.value)} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Major" error={errors.major}>
+              <input className={inputClass} value={form.major} onChange={(event) => update('major', event.target.value)} />
+            </Field>
+            <Field label="Semester" error={errors.semester}>
+              <input className={inputClass} type="number" min="1" max="12" value={form.semester} onChange={(event) => update('semester', event.target.value)} />
+            </Field>
+          </div>
+          <Field label="Bio" error={errors.bio}>
+            <textarea className={inputClass} rows="2" value={form.bio} onChange={(event) => update('bio', event.target.value)} placeholder="Optional" />
+          </Field>
+          <Field label="Skills">
+            <input className={inputClass} value={form.skills} onChange={(event) => update('skills', event.target.value)} placeholder="Optional, separated by commas" />
+          </Field>
+          <button className={`${buttonClass} w-full fill-request`} type="submit" disabled={saving}>
+            {saving ? 'Creating account…' : 'Sign up'}
+          </button>
+          <p className="text-base text-muted">
+            Already have an account? <Link to="/login" className={textLinkClass}>Log in</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

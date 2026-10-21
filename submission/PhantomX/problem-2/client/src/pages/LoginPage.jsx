@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useApp, useAuth } from '../context.js';
-import { Alert, Field, Link, buttonClass, inputClass, textLinkClass } from '../components.jsx';
+import { Alert, Field, Link, PasswordField, buttonClass, inputClass, textLinkClass } from '../components.jsx';
 import { readSection } from '../section.js';
+import { AuthBanner } from '../ui.jsx';
 
 const DEMOS = [
   { name: 'Aisha Khan', email: 'aisha.khan@campus.edu', note: 'Poster with applicants' },
@@ -55,53 +56,51 @@ export function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
-      <div className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2">
-        <div className="hero-offer px-5 py-5 lg:px-8 lg:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-on-night-muted">Campus Gig</p>
-          <p className="mt-2 font-display text-2xl font-semibold text-on-night">Offer a skill, or ask for one.</p>
-          <p className="mt-2 max-w-sm text-sm text-on-night-muted">Classmates post short gigs. Apply, get selected, and leave a review.</p>
-        </div>
-        <form className="space-y-3 p-4 sm:p-5" noValidate onSubmit={onSubmit}>
+    <div className="mx-auto grid w-full max-w-6xl overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2">
+      <AuthBanner
+        tone="offer"
+        headline="Your campus. Your skills. Your gigs."
+        subtitle="Offer a skill, request help, swap talents and build your reputation."
+      />
+      <div className="flex items-center p-4 sm:p-6 lg:py-8">
+        <form className="mx-auto w-full max-w-md space-y-3" noValidate onSubmit={onSubmit}>
           <div>
-            <h1 className="page-title text-ink">Log in</h1>
-            <p className="mt-1 text-sm text-muted">Use a demo account or one you created.</p>
+            <h1 className="page-title text-ink">Welcome back</h1>
+            <p className="mt-1 text-sm text-muted">Log in to post, apply, and review.</p>
           </div>
           <Alert>{formError}</Alert>
           <Field label="Email" error={errors.email}>
             <input className={inputClass} type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} />
           </Field>
-          <Field label="Password" error={errors.password}>
-            <input className={inputClass} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} />
-          </Field>
+          <PasswordField label="Password" error={errors.password} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} />
           <button className={`${buttonClass} w-full`} type="submit" disabled={saving}>
             {saving ? 'Logging in…' : 'Log in'}
           </button>
           <p className="text-base text-muted">
             New here? <Link to="/signup" className={textLinkClass}>Create an account</Link>
           </p>
+          <div className="border-t border-line pt-3">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-muted">Try a demo account</p>
+            <ul className="mt-2 flex flex-wrap justify-center gap-2">
+              {DEMOS.map((demo) => (
+                <li key={demo.email}>
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition duration-150 hover:border-offer focus-visible:ring-2 focus-visible:ring-offer"
+                    title={`${demo.email}. ${demo.note}`}
+                    onClick={() => fillDemo(demo)}
+                  >
+                    {demo.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-center text-xs text-muted">
+              Password <span className="font-semibold text-ink">{DEMO_PASSWORD}</span>
+            </p>
+          </div>
         </form>
       </div>
-      <section className="space-y-3 rounded-2xl border border-line bg-surface p-4 shadow-card">
-        <h2 className="font-display text-lg font-semibold text-ink">Demo accounts</h2>
-        <p className="text-base text-muted">
-          Password for every account: <span className="font-semibold text-ink">{DEMO_PASSWORD}</span>
-        </p>
-        <ul className="space-y-2">
-          {DEMOS.map((demo) => (
-            <li key={demo.email}>
-              <button
-                type="button"
-                className="flex min-h-11 w-full flex-col items-start justify-center gap-0.5 rounded-xl border border-line bg-canvas px-4 py-3 text-left transition duration-150 hover:border-primary"
-                onClick={() => fillDemo(demo)}
-              >
-                <span className="text-base font-semibold text-ink">{demo.name}</span>
-                <span className="break-all text-sm font-normal text-muted">{demo.email} · {demo.note}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }

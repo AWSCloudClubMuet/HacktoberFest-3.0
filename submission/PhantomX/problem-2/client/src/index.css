@@ -237,11 +237,33 @@
   animation: page-in 200ms ease;
 }
 
+.auth-banner-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-on-night) 14%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-on-night) 14%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 78%, transparent);
+}
+
+@keyframes float-card {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+.float-card {
+  animation: float-card 3.4s ease-in-out infinite alternate;
+}
+
+.float-card-late {
+  animation-delay: -1.6s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card-lift,
   .toast-in,
   .page-in,
-  .menu-panel {
+  .menu-panel,
+  .float-card {
     animation: none;
     transition: none;
   }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from './context.js';
 
 const tones = {
@@ -70,6 +70,32 @@ export function Stars({ value }) {
       {'★'.repeat(filled)}
       <span className="text-line-strong">{'★'.repeat(5 - filled)}</span>
     </span>
+  );
+}
+
+export function PasswordField({ label, error, value, onChange, autoComplete }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <Field label={label} error={error}>
+      <span className="relative block">
+        <input
+          className={`${inputClass} pr-20`}
+          type={visible ? 'text' : 'password'}
+          autoComplete={autoComplete}
+          value={value}
+          onChange={onChange}
+        />
+        <button
+          type="button"
+          className="absolute right-1 top-1/2 inline-flex min-h-11 -translate-y-1/2 items-center rounded-full px-3 text-sm font-semibold text-primary focus-visible:ring-2 focus-visible:ring-offer"
+          aria-pressed={visible}
+          aria-label={visible ? 'Hide password' : 'Show password'}
+          onClick={() => setVisible((current) => !current)}
+        >
+          {visible ? 'Hide' : 'Show'}
+        </button>
+      </span>
+    </Field>
   );
 }
 

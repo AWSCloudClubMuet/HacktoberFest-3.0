@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Code2, GraduationCap, HandHelping, Megaphone, Palette, PenLine, Search, X } from 'lucide-react';
+import { Code2, GraduationCap, HandHelping, Megaphone, MessageCircle, Palette, PenLine, Search, Star, Wallet, X } from 'lucide-react';
+import logoUrl from './assets/logo.svg';
 import { CATEGORIES, PAYMENTS, paymentLabel } from './constants.js';
 import { closesIn, formatMoney, formatWhen, initials } from './format.js';
 import { SECTIONS, SORTS, STATUSES, emptyFilters } from './section.js';
@@ -354,5 +355,74 @@ export function SearchPanel({ id, panelRef, inputRef, section, initial, onApply,
         </button>
       </div>
     </form>
+  );
+}
+
+const BANNER_POINTS = [
+  { icon: Wallet, text: 'Paid, SkillSwap or Free gigs' },
+  { icon: MessageCircle, text: 'Chat and video calls with your partner' },
+  { icon: Star, text: 'Reviews that build trust' },
+];
+
+export function AuthBanner({ tone = 'offer', headline, subtitle }) {
+  const hero = tone === 'request' ? 'hero-request' : 'hero-offer';
+  return (
+    <section className={`relative overflow-hidden ${hero}`} aria-label="Campus Gig">
+      <div className="auth-banner-grid pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="pointer-events-none absolute -left-10 -top-12 h-36 w-36 rounded-full bg-on-night/15 blur-2xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-16 right-4 h-44 w-44 rounded-full bg-coral-bright/25 blur-2xl" aria-hidden="true" />
+      <div className="relative flex min-h-44 flex-col justify-center px-5 py-4 sm:min-h-48 lg:min-h-[34rem] lg:justify-between lg:px-8 lg:py-8">
+        <div className="max-w-md">
+          <div className="flex items-center gap-3">
+            <img src={logoUrl} alt="" width="48" height="48" className="h-9 w-9 lg:h-12 lg:w-12" />
+            <p className="font-display text-lg font-bold leading-tight text-on-night lg:text-xl">
+              Campus Gig
+              <span className="font-medium text-offer-soft"> & SkillSwap</span>
+            </p>
+          </div>
+          <h2 className="mt-3 font-display text-xl font-bold leading-tight sm:text-2xl lg:mt-8 lg:text-4xl">{headline}</h2>
+          <p className="mt-1 line-clamp-2 text-sm text-on-night-muted lg:line-clamp-none lg:text-base">{subtitle}</p>
+          <ul className="mt-6 hidden space-y-3 lg:block">
+            {BANNER_POINTS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.text} className="flex items-center gap-3 text-sm font-semibold text-on-night">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-on-night/15">
+                    <Icon size={18} aria-hidden="true" />
+                  </span>
+                  {item.text}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <dl className="mt-8 hidden gap-6 lg:flex">
+          <div>
+            <dt className="font-display text-2xl font-bold text-on-night">12</dt>
+            <dd className="text-sm text-on-night-muted">students</dd>
+          </div>
+          <div>
+            <dt className="font-display text-2xl font-bold text-on-night">25+</dt>
+            <dd className="text-sm text-on-night-muted">gigs</dd>
+          </div>
+          <div>
+            <dt className="font-display text-2xl font-bold text-on-night">4.8</dt>
+            <dd className="text-sm text-on-night-muted">average rating</dd>
+          </div>
+        </dl>
+        <div className="pointer-events-none absolute bottom-24 right-6 hidden w-48 flex-col gap-3 lg:flex" aria-hidden="true">
+          <div className="float-card rounded-2xl border border-line bg-surface p-3 text-ink shadow-pop">
+            <p className="text-xs font-semibold uppercase tracking-wide text-offer">Tutoring</p>
+            <p className="mt-1 text-sm font-bold">Calculus walkthrough</p>
+            <p className="text-xs text-muted">Paid · Open</p>
+          </div>
+          <div className="float-card float-card-late ml-8 rounded-2xl border border-line bg-surface p-3 text-ink shadow-pop">
+            <p className="text-xs font-semibold uppercase tracking-wide text-request">Design</p>
+            <p className="mt-1 text-sm font-bold">Fest poster</p>
+            <p className="text-xs text-muted">SkillSwap</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
