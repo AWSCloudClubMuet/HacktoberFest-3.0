@@ -65,14 +65,29 @@ export function GigsPage() {
       {copy.post}
     </Link>
   );
+  const openCount = catalogue.filter((gig) => gig.status === 'Open').length;
+  const swapCount = catalogue.filter((gig) => gig.payment_type === 'SkillSwap').length;
+  const closingCount = catalogue.filter((gig) => (
+    gig.status === 'Open' && new Date(gig.deadline).getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000
+  )).length;
 
   return (
-    <div id={section === 'request' ? 'panel-request' : 'panel-offer'} role="tabpanel" aria-labelledby={section === 'request' ? 'tab-request' : 'tab-offer'} className="space-y-6">
-      <section className={`rounded-3xl border border-line/80 p-5 shadow-card sm:p-7 ${section === 'request' ? 'hero-request' : 'hero-offer'}`}>
+    <div id={section === 'request' ? 'panel-request' : 'panel-offer'} role="tabpanel" aria-labelledby={section === 'request' ? 'tab-request' : 'tab-offer'} className="space-y-4">
+      <section className={`rounded-2xl px-4 py-4 shadow-card sm:px-5 sm:py-5 ${section === 'request' ? 'hero-request' : 'hero-offer'}`}>
         <PageHeader eyebrow={copy.label} title={copy.headline} subtitle={copy.subtitle} actions={post} />
       </section>
 
-      <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Categories">
+      {!results && catalogue.length > 0 ? (
+        <dl className="grid grid-cols-3 gap-2">
+          <Stat value={openCount} label="Open gigs" />
+          <Stat value={swapCount} label="SkillSwaps" />
+          <Stat value={closingCount} label="Closing soon" />
+        </dl>
+      ) : null}
+
+      <div>
+        <p className="mb-2 text-sm font-semibold text-ink">Popular categories</p>
+        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Categories">
         {CATEGORIES.map((category) => (
           <button
             key={category}
@@ -83,6 +98,7 @@ export function GigsPage() {
             {category}
           </button>
         ))}
+        </div>
       </div>
 
       <Alert>{error}</Alert>
@@ -109,7 +125,7 @@ export function GigsPage() {
               <button type="button" className="font-semibold text-offer underline-offset-2 hover:underline" onClick={() => navigate(`/${section}`)}>Back to the catalogue</button>
             </Empty>
           ) : (
-            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {rows.map((gig) => (
                 <li key={gig.id} className="min-w-0">
                   <GigCard gig={gig} section={section} posterName={users.find((user) => user.id === gig.user_id)?.name} />
@@ -128,13 +144,22 @@ export function GigsPage() {
       ) : null}
 
       {!results && catalogue.length > 0 ? (
-        <div className="space-y-8">
+        <div className="space-y-4">
           <GigRow title={`Newest ${copy.noun}`} gigs={newest} users={users} section={section} seeAllTo={`/${section}?sort=newest`} />
           <GigRow title={`Paid ${copy.noun}`} gigs={paid} users={users} section={section} seeAllTo={`/${section}?payment_type=Paid`} />
           <GigRow title="SkillSwap & Free" gigs={swapFree} users={users} section={section} seeAllTo={`/${section}?group=unpaid`} />
           <GigRow title="Closing soon" gigs={closing} users={users} section={section} seeAllTo={`/${section}?group=closing&sort=deadline`} />
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function Stat({ value, label }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface px-3 py-2 shadow-card">
+      <dt className="text-xs font-semibold text-muted">{label}</dt>
+      <dd className="font-display text-xl font-semibold text-ink">{value}</dd>
     </div>
   );
 }

@@ -58,7 +58,7 @@ export function ApplicationsPage() {
   const visible = rows ? rows.filter((row) => filter === 'all' || row.status === filter) : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <PageHeader title="My applications" subtitle="Every proposal you sent, and where it stands." />
       <Tabs
         label="Application status"

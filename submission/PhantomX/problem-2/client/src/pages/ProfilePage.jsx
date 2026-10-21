@@ -40,18 +40,20 @@ export function ProfilePage({ profileId }) {
   if (!profile) return <Alert>User not found</Alert>;
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-5">
-      <div className={`${cardClass} flex flex-col gap-4 p-5 sm:flex-row sm:items-center`}>
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary font-display text-xl font-semibold text-white" aria-hidden="true">
-          {initials(profile.name)}
-        </div>
-        <div className="min-w-0">
-          {profile.id === userId ? <p className="text-sm font-semibold text-primary">Your profile</p> : null}
-          <h1 className="page-title break-words text-ink">{profile.name}</h1>
-          <p className="mt-1 text-base text-muted">{profile.major} · Semester {profile.semester}</p>
+    <div className="space-y-4">
+      <div className={`${cardClass} overflow-hidden`}>
+        <div className="hero-offer flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/15 font-display text-xl font-semibold text-on-night" aria-hidden="true">
+            {initials(profile.name)}
+          </div>
+          <div className="min-w-0">
+            {profile.id === userId ? <p className="text-sm font-semibold text-on-night-muted">Your profile</p> : null}
+            <h1 className="page-title break-words">{profile.name}</h1>
+            <p className="mt-1 text-sm text-on-night-muted">{profile.major} · Semester {profile.semester}</p>
+          </div>
         </div>
       </div>
-      <section className={`${cardClass} p-5`}>
+      <section className={`${cardClass} p-4`}>
         <p className="break-words text-base leading-7 text-secondary">{profile.bio}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {profile.skills.length > 0
@@ -95,7 +97,7 @@ function Stat({ label, value, hint, stars }) {
   return (
     <div className={`${cardClass} p-4`}>
       <dt className="text-sm font-medium text-muted">{label}</dt>
-      <dd className="mt-1 font-display text-3xl font-semibold text-ink">{value}</dd>
+      <dd className="mt-1 font-display text-2xl font-semibold text-ink">{value}</dd>
       {stars != null ? <div className="mt-1"><Stars value={stars} /></div> : null}
       {hint ? <p className="mt-1 text-sm text-muted">{hint}</p> : null}
     </div>

@@ -55,14 +55,17 @@ export function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-4">
-      <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
-        <div className="h-1.5 fill-offer" aria-hidden="true" />
-        <form className="space-y-4 p-5 sm:p-6" noValidate onSubmit={onSubmit}>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
+      <div className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2">
+        <div className="hero-offer px-5 py-5 lg:px-8 lg:py-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-on-night-muted">Campus Gig</p>
+          <p className="mt-2 font-display text-2xl font-semibold text-on-night">Offer a skill, or ask for one.</p>
+          <p className="mt-2 max-w-sm text-sm text-on-night-muted">Classmates post short gigs. Apply, get selected, and leave a review.</p>
+        </div>
+        <form className="space-y-3 p-4 sm:p-5" noValidate onSubmit={onSubmit}>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>
-            <h1 className="page-title mt-1 text-ink">Log in</h1>
-            <p className="mt-2 text-base text-muted">Use a demo account or one you created.</p>
+            <h1 className="page-title text-ink">Log in</h1>
+            <p className="mt-1 text-sm text-muted">Use a demo account or one you created.</p>
           </div>
           <Alert>{formError}</Alert>
           <Field label="Email" error={errors.email}>
@@ -79,7 +82,7 @@ export function LoginPage() {
           </p>
         </form>
       </div>
-      <section className="space-y-3 rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6">
+      <section className="space-y-3 rounded-2xl border border-line bg-surface p-4 shadow-card">
         <h2 className="font-display text-lg font-semibold text-ink">Demo accounts</h2>
         <p className="text-base text-muted">
           Password for every account: <span className="font-semibold text-ink">{DEMO_PASSWORD}</span>

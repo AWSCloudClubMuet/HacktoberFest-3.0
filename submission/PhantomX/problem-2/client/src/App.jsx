@@ -198,7 +198,7 @@ export function App() {
     <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
       <div className="min-h-screen">
         <header className="site-header sticky top-0 z-40 border-b border-white/10">
-          <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6">
+          <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 sm:px-6">
             <Link to={user ? `/${section}` : '/login'} className="flex min-h-11 min-w-0 items-center gap-2 font-display text-lg font-semibold tracking-tight text-on-night">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl fill-offer text-sm text-white" aria-hidden="true">CG</span>
               <span className="truncate">Campus Gig</span>
@@ -287,12 +287,18 @@ export function App() {
             </div>
           </div>
           {user && !isPublic ? (
-            <div className="mx-auto w-full max-w-6xl px-4 pb-3 sm:px-6">
+            <div className="mx-auto w-full max-w-7xl px-4 pb-2 sm:px-6">
               <SectionTabs value={section} onChange={(next) => chooseSection(next, true)} />
             </div>
           ) : null}
         </header>
-        <main className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:px-6 sm:py-8">{page}</main>
+        <main className="mx-auto w-full min-w-0 max-w-7xl px-4 py-4 sm:px-6 sm:py-6">{page}</main>
+        <footer className="bg-night text-on-night-muted">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm sm:px-6">
+            <p className="font-semibold text-on-night">Campus Gig</p>
+            <p>Short gigs, skill swaps, and classmate reviews.</p>
+          </div>
+        </footer>
         <div className="toast-stack pointer-events-none fixed inset-x-4 z-50 flex flex-col gap-2 sm:left-auto sm:right-4 sm:w-full sm:max-w-sm">
           {toasts.map((toast) => (
             <p

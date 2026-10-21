@@ -83,7 +83,7 @@ export function CreateGigPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    <div className="mx-auto max-w-3xl space-y-4">
       <PageHeader
         eyebrow={form.type === 'Requesting' ? SECTIONS.request.label : SECTIONS.offer.label}
         title={form.type === 'Requesting' ? 'Post a request' : 'Post an offer'}
@@ -93,36 +93,36 @@ export function CreateGigPage() {
         <button type="button" className={`min-h-11 rounded-full text-sm font-semibold ${form.type === 'Offering' ? 'fill-offer text-white' : 'text-muted'}`} onClick={() => update('type', 'Offering')}>Offering</button>
         <button type="button" className={`min-h-11 rounded-full text-sm font-semibold ${form.type === 'Requesting' ? 'fill-request text-white' : 'text-muted'}`} onClick={() => update('type', 'Requesting')}>Requesting</button>
       </div>
-      <form className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-card" noValidate onSubmit={onSubmit}>
+      <form className="space-y-3 rounded-2xl border border-line bg-band p-4 shadow-card" noValidate onSubmit={onSubmit}>
         <Alert>{apiError}</Alert>
         <Field label="Title" error={errors.title}>
           <input className={inputClass} value={form.title} maxLength={140} onChange={(event) => update('title', event.target.value)} />
         </Field>
         <Field label="Description" error={errors.description}>
-          <textarea className={inputClass} rows="5" maxLength={2000} value={form.description} onChange={(event) => update('description', event.target.value)} />
+          <textarea className={inputClass} rows="4" maxLength={2000} value={form.description} onChange={(event) => update('description', event.target.value)} />
         </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Category" error={errors.category}>
             <select className={inputClass} value={form.category} onChange={(event) => update('category', event.target.value)}>
               {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
             </select>
           </Field>
-        </div>
-        <Field label="Payment" error={errors.payment_type}>
-          <select className={inputClass} value={form.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
-            {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
-          </select>
-        </Field>
-        {form.payment_type === 'Paid' ? (
-          <Field label="Budget" error={errors.budget}>
-            <input className={inputClass} type="number" min="0" step="any" value={form.budget} onChange={(event) => update('budget', event.target.value)} />
+          <Field label="Payment" error={errors.payment_type}>
+            <select className={inputClass} value={form.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
+              {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
+            </select>
           </Field>
-        ) : (
-          <p className="text-base text-muted">Skill Swap and Free gigs do not take a budget.</p>
-        )}
-        <Field label="Deadline" error={errors.deadline}>
-          <input className={inputClass} type="datetime-local" value={form.deadline} onChange={(event) => update('deadline', event.target.value)} />
-        </Field>
+          {form.payment_type === 'Paid' ? (
+            <Field label="Budget" error={errors.budget}>
+              <input className={inputClass} type="number" min="0" step="any" value={form.budget} onChange={(event) => update('budget', event.target.value)} />
+            </Field>
+          ) : (
+            <p className="self-end pb-3 text-sm text-muted">Skill Swap and Free gigs do not take a budget.</p>
+          )}
+          <Field label="Deadline" error={errors.deadline}>
+            <input className={inputClass} type="datetime-local" value={form.deadline} onChange={(event) => update('deadline', event.target.value)} />
+          </Field>
+        </div>
         <button className={`${buttonClass} w-full sm:w-auto`} type="submit" disabled={saving}>
           {saving ? 'Posting…' : 'Post gig'}
         </button>

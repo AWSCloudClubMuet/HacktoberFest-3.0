@@ -70,13 +70,17 @@ export function SignupPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md">
-      <form className="space-y-4 overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6" noValidate onSubmit={onSubmit}>
-        <div className="-mx-5 -mt-5 h-1.5 fill-request sm:-mx-6 sm:-mt-6" aria-hidden="true" />
+    <div className="mx-auto w-full max-w-5xl">
+      <form className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:grid-cols-2" noValidate onSubmit={onSubmit}>
+        <div className="hero-request px-5 py-5 lg:px-8 lg:py-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-on-night-muted">Campus Gig</p>
+          <p className="mt-2 font-display text-2xl font-semibold text-on-night">Join the campus marketplace.</p>
+          <p className="mt-2 max-w-sm text-sm text-on-night-muted">No email verification. Post a gig or apply as soon as you sign up.</p>
+        </div>
+        <div className="space-y-3 p-4 sm:p-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Campus Gig</p>
-          <h1 className="page-title mt-1 text-ink">Create an account</h1>
-          <p className="mt-2 text-base text-muted">No email verification. You can post and apply right away.</p>
+          <h1 className="page-title text-ink">Create an account</h1>
+          <p className="mt-1 text-sm text-muted">You can post and apply right away.</p>
         </div>
         <Alert>{formError}</Alert>
         <Field label="Name" error={errors.name}>
@@ -102,12 +106,13 @@ export function SignupPage() {
         <Field label="Skills">
           <input className={inputClass} value={form.skills} onChange={(event) => update('skills', event.target.value)} placeholder="Optional, separated by commas" />
         </Field>
-        <button className={`${buttonClass} w-full`} type="submit" disabled={saving}>
+        <button className={`${buttonClass} w-full fill-request`} type="submit" disabled={saving}>
           {saving ? 'Creating account…' : 'Sign up'}
         </button>
         <p className="text-base text-muted">
           Already have an account? <Link to="/login" className={textLinkClass}>Log in</Link>
         </p>
+        </div>
       </form>
     </div>
   );

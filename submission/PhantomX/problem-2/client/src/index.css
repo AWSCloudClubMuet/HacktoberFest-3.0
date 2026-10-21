@@ -53,8 +53,8 @@
   --color-progress-line: #c5d4f8;
   --color-star: #9a5b08;
 
-  --shadow-card: 0 1px 2px rgb(18 22 58 / 0.06), 0 10px 24px rgb(18 22 58 / 0.08);
-  --shadow-pop: 0 16px 40px rgb(18 22 58 / 0.18);
+  --shadow-card: 0 1px 2px color-mix(in srgb, var(--color-night) 6%, transparent), 0 10px 24px color-mix(in srgb, var(--color-night) 8%, transparent);
+  --shadow-pop: 0 16px 40px color-mix(in srgb, var(--color-night) 18%, transparent);
 }
 
 @layer base {
@@ -65,8 +65,8 @@
   body {
     min-height: 100vh;
     background:
-      radial-gradient(900px 280px at 0% -10%, rgb(91 33 182 / 0.16), transparent 55%),
-      radial-gradient(800px 260px at 100% 0%, rgb(18 149 127 / 0.14), transparent 50%),
+      radial-gradient(900px 280px at 0% -10%, color-mix(in srgb, var(--color-request) 16%, transparent), transparent 55%),
+      radial-gradient(800px 260px at 100% 0%, color-mix(in srgb, var(--color-offer-bright) 18%, transparent), transparent 50%),
       var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
@@ -98,7 +98,7 @@
 
 @utility page-title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.25rem + 1.6vw, 2.5rem);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.035em;

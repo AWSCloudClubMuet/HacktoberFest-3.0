@@ -186,12 +186,12 @@ export function GigDetailPage({ gigId }) {
   const revieweeId = isOwner ? gig.accepted_applicant_id : gig.user_id;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <Link to={gig.type === 'Requesting' ? '/offer' : '/request'} className={`inline-flex min-h-11 items-center text-sm ${textLinkClass}`}>Back to {gig.type === 'Requesting' ? 'requests' : 'offers'}</Link>
       <GigStepper status={gig.status} />
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="min-w-0 space-y-5">
-          <article className={`${cardClass} space-y-4 p-5`}>
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0 space-y-4">
+          <article className={`${cardClass} space-y-3 p-4`}>
             <div className="flex flex-wrap gap-2">
               <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
               <Badge tone={gig.type === 'Offering' ? 'offering' : 'requesting'}>{gig.type}</Badge>
@@ -234,7 +234,7 @@ export function GigDetailPage({ gigId }) {
           ) : null}
 
           {gig.status === 'Completed' ? (
-            <section className={`${cardClass} space-y-4 p-5`}>
+            <section className={`${cardClass} space-y-3 p-4`}>
               <h2 className="font-display text-lg font-semibold text-ink">Reviews</h2>
               {reviews.length === 0 ? <p className="text-base text-muted">No reviews yet.</p> : null}
               <ul className="space-y-3">

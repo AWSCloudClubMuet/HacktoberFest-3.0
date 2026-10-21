@@ -48,7 +48,7 @@ export function MyGigsPage() {
   const visible = rows ? rows.filter((gig) => gig.type === current.type) : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <PageHeader title="My gigs" subtitle="Everything you posted, whether you offered a skill or asked for help." />
       <div className="grid grid-cols-2 gap-1 rounded-full bg-surface p-1 shadow-card" role="tablist" aria-label="Your gigs">
         {GIG_TABS.map((item) => (

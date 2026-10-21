@@ -557,7 +557,7 @@ export function GigChat({ gig, userId, users }) {
   }
 
   return (
-    <section id="chat" className="min-w-0 space-y-3 rounded-3xl border border-line bg-surface p-4 shadow-card sm:p-5">
+    <section id="chat" className="min-w-0 space-y-3 rounded-2xl border border-line bg-surface p-4 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="font-display text-lg font-semibold text-ink">Chat</h2>

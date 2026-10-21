@@ -55,7 +55,7 @@ export const secondaryButtonClass = 'inline-flex min-h-11 items-center justify-c
 
 export const dangerButtonClass = 'inline-flex min-h-11 items-center justify-center rounded-full border border-danger-line bg-danger-soft px-4 py-2.5 text-base font-semibold text-danger transition duration-150 hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-60';
 
-export const cardClass = 'min-w-0 rounded-3xl border border-line/80 bg-surface shadow-card';
+export const cardClass = 'min-w-0 rounded-2xl border border-line/80 bg-surface shadow-card';
 
 export const textLinkClass = 'font-semibold text-primary underline-offset-2 hover:underline';
 
@@ -114,7 +114,8 @@ export function Loading({ children = 'Loading…' }) {
 
 export function Empty({ children }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line-strong bg-surface px-4 py-10 text-center text-base leading-6 text-muted">
+    <div className="rounded-2xl border border-dashed border-line-strong bg-band px-4 py-5 text-center text-sm leading-6 text-muted">
+      <p className="mb-1 text-lg leading-none text-primary" aria-hidden="true">✦</p>
       {children}
     </div>
   );
