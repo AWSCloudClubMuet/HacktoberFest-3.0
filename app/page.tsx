@@ -587,7 +587,6 @@ export default function Page() {
             <>
               <div className="section-heading view-heading">
                 <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Ratings come from completed-gig reviews.</p></div>
-                <button className="text-button" onClick={() => setView('Discover')}><ArrowRight /> Back to Discover</button>
               </div>
               {!profile ? (
                 <div className="empty-state"><Users /><h3>Loading profile…</h3></div>
