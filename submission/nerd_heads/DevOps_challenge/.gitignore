@@ -1,0 +1,7 @@
+semgrep.json
+gitleaks.json
+trivy-deps.json
+trivy-image.json
+report.md
+__pycache__/
+gitleaks.exe
