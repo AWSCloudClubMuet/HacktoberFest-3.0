@@ -9,7 +9,8 @@
  *   pressure    — camp current_families ÷ capacity
  *   stock cover — min(1, warehouse stock ÷ remaining need); zero stock is
  *                 flagged "uncoverable" instead of silently ranking top
- * Read-only by design: this module never mutates anything, so it behaves
+ * Read-only by design: this module never mutates anything (the only
+ * convenience is a coordinator clipboard copy of the top 5), so it behaves
  * identically against the live Render API and the bundled demo data
  * (api.js demo-mode fallback). Self-registering via App.registerModule —
  * safe to load last.
@@ -187,6 +188,26 @@ App.registerModule({
         }, k.toUpperCase() + ' ×' + w[k])),
     ]));
 
+    /* Coordinator-only convenience: copy the top 5 dispatch list to the
+     * clipboard. Read-only module otherwise — this never touches the API,
+     * so it behaves the same in live and demo mode. */
+    const canEdit = App.canEdit();
+    const copyTop5 = canEdit ? UI.h('button', {
+      class: 'btn btn-sm btn-ghost',
+      onclick: () => {
+        const lines = rankedRows().slice(0, 5).map(r =>
+          '#' + r.rank + ' · ' + r.score + '/100 · ' + ((r.camp || {}).name || '')
+          + ' · ' + ((r.item || {}).name || '') + ' · ' + this.whyFor(r));
+        try {
+          navigator.clipboard.writeText(lines.join('\n')).then(
+            () => UI.toast('Top 5 dispatches copied to clipboard', 'success'),
+            () => UI.toast('Could not copy to clipboard', 'error'));
+        } catch (err) {
+          UI.toast('Could not copy to clipboard', 'error');
+        }
+      },
+    }, 'Copy top 5') : null;
+
     root.append(UI.h('div', { class: 'toolbar' }, [
       UI.h('select', { onchange: e => { campFilter = e.target.value; refresh(); } },
         [UI.h('option', { value: 'All' }, 'All camps'),
@@ -195,10 +216,52 @@ App.registerModule({
         [UI.h('option', { value: 'All' }, 'All priorities'),
           ...['High', 'Medium', 'Low'].map(p => UI.h('option', { value: p }, p))]),
       countNote,
+      copyTop5,
     ]));
 
     root.append(tableBox);
     refresh();
+
+    /* Score distribution by camp — average dispatch score across each camp's
+     * open needs (unfiltered overview). Horizontal bars, worst camp at the
+     * top. Rendered only when Chart.js is actually available, exactly like
+     * the dashboard does. */
+    if (openNeeds.length) {
+      const acc = {};
+      for (const r of rankedRows()) {
+        const name = (r.camp || {}).name || 'Camp #' + r.need.camp_id;
+        (acc[name] = acc[name] || []).push(r.score);
+      }
+      const byCamp = Object.entries(acc)
+        .map(([name, scores]) => ({ name, avg: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) }))
+        .sort((a, b) => b.avg - a.avg);
+
+      const chartBox = UI.h('div', { class: 'chart-box' }, [
+        UI.h('h3', {}, 'Average Dispatch Score by Camp'),
+        UI.h('canvas', { height: '220' }),
+      ]);
+      root.append(chartBox);
+      setTimeout(() => {
+        if (typeof Chart === 'undefined') return;
+        new Chart(chartBox.querySelector('canvas'), {
+          type: 'bar',
+          data: {
+            labels: byCamp.map(c => c.name),
+            datasets: [{
+              label: 'Avg dispatch score',
+              data: byCamp.map(c => c.avg),
+              backgroundColor: '#0d5c46',
+              borderRadius: 6,
+            }],
+          },
+          options: {
+            indexAxis: 'y',
+            scales: { x: { beginAtZero: true, max: 100 } },
+            plugins: { legend: { display: false } },
+          },
+        });
+      }, 0);
+    }
 
     return root;
   },
