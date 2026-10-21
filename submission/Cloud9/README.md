@@ -1,144 +1,136 @@
 # Team Cloud9 — HacktoberFest 3.0 Hackathon Submission
-## Track: Machine Learning Debugging, Attention Gradients & Evaluation (Issue #8)
+## Multi-Track Machine Learning Engineering & Data-Centric AI
 
 ---
 
-## 🏆 Team Overview
+## 👥 Team Overview
 - **Team Name:** Cloud9
 - **Repository Branch:** `Cloud9`
 - **Submission Directory:** `submission/Cloud9`
-- **Project Title:** End-to-End ML Diagnostics, Analytical Attention Gradients & Robust Production Evaluation
+- **Team Lead:** Saad
+- **Members:** Anus, Workspace Collaborator
+- **Team Repository:** [https://github.com/Saad-AI14/Cloud9](https://github.com/Saad-AI14/Cloud9)
 
 ---
 
-## 📌 Project Architecture & Milestone Structure
+## 📂 Project Architecture
 
-Our submission comprehensively solves all 4 milestones defined in **Issue #8**:
+Our team submission encompasses two full, end-to-end production machine learning projects:
 
 ```
 submission/Cloud9/
-├── README.md                                   # Master Submission Overview
-├── task1_debugging/
-│   ├── ANALYSIS.md                             # Comprehensive Bug Identification & Diagnostics Report
-│   └── solution.py                             # Buggy Reproduction, Fixed Pipeline & Black-Box Tests
-├── task2_attention_gradients/
-│   ├── DERIVATIONS_AND_ANALYSIS.md             # Complete Analytical Derivations & Memory Analysis
-│   └── attention.py                            # NumPy Forward/Backward Implementation & Gradient Check
-├── task3_evaluation_fraud/
-│   ├── FRAUD_EVALUATION_STRATEGY.md            # Realistic Evaluation Strategy under Label Latency
-│   └── fraud_evaluation.py                     # Cost-Optimal Threshold, Calibration & PSI Drift Code
-└── task4_learning_curves/
-    └── LEARNING_CURVE_DIAGNOSTICS.md           # Diagnostics for Cases A, B, C and Hypothesis Test for D
+├── README.md                                                        # Master Submission Overview
+│
+├── project1_Debugging, Attention Gradients & Evaluation/            # Project 1 (ML Debugging & Attention Gradients)
+│   ├── README.md                                                    # Project 1 Guide & Architecture
+│   ├── task1_debugging/
+│   │   ├── ANALYSIS.md                                              # Comprehensive Bug Diagnostics Report
+│   │   └── solution.py                                              # Buggy Reproduction, Fixed Pipeline & Tests
+│   ├── task2_attention_gradients/
+│   │   ├── DERIVATIONS_AND_ANALYSIS.md                              # Matrix Calculus Derivations & Memory Analysis
+│   │   └── attention.py                                             # NumPy Attention Forward/Backward & Checks
+│   ├── task3_evaluation_fraud/
+│   │   ├── FRAUD_EVALUATION_STRATEGY.md                             # Realistic Evaluation Strategy under Latency
+│   │   └── fraud_evaluation.py                                      # Cost-Optimal Threshold & Drift Tracking
+│   └── task4_learning_curves/
+│       └── LEARNING_CURVE_DIAGNOSTICS.md                            # Learning Curve Diagnostics (Cases A-D)
+│
+└── project2_label_noise/                                            # Project 2 (HelpDeskNet-50K Label Noise)
+    ├── README.md                                                    # Project 2 Master Summary
+    ├── milestone1_analysis.py                                       # Milestone 1 Code (Noise CI & Z-Test)
+    ├── MILESTONE1_QUANTIFY_LABEL_NOISE.md                           # Milestone 1 Report
+    ├── milestone2_characterize_noise.py                             # Milestone 2 Code (Error Taxonomy & Goodness-of-Fit)
+    ├── MILESTONE2_CHARACTERIZE_NOISE.md                             # Milestone 2 Report
+    ├── milestone3_accuracy_ceiling.py                               # Milestone 3 Code (Accuracy Ceiling & Inversion)
+    ├── MILESTONE3_ACCURACY_CEILING.md                               # Milestone 3 Report
+    ├── milestone4_bad_labels.py                                     # Milestone 4 Code (Active Relabeling Simulation)
+    ├── MILESTONE4_FIND_BAD_LABELS.md                                # Milestone 4 Report
+    ├── milestone5_mitigation_eval.py                                # Milestone 5 Code (Symmetric CE & Co-Teaching)
+    └── MILESTONE5_MITIGATE_AND_EVALUATE.md                          # Milestone 5 Report
 ```
 
 ---
 
-## 🚀 Summary of Solutions Across All 4 Milestones
+## 🌟 Project 1: ML Debugging, Attention Gradients & Evaluation
+
+Detailed documentation is available in [`project1_Debugging, Attention Gradients & Evaluation/README.md`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/README.md).
 
 ### 1. Milestone 1: Tabular Binary Classifier Debugging
-- **Core Problem:** Training loss steadily decreases, but validation accuracy remains stuck at ~55% and oscillates wildly between epochs.
-- **Root Causes Discovered:**
-  1. `np.random.shuffle(X_tr)` shuffles features in-place without shuffling `y_tr`, completely scrambling the correspondence between features and labels. The high-capacity network memorizes random noise (loss drops), but learns zero generalizable patterns (validation accuracy ~55%).
-  2. Missing `model.eval()` and `torch.no_grad()` allows `Dropout(0.5)` to inject severe stochastic noise during validation and allows `BatchNorm1d` to mutate its running statistics on the validation slice.
-  3. `scheduler.step()` executed inside the mini-batch loop causes exponential decay ($0.9^{125} \approx 10^{-6}$ per epoch), freezing learning prematurely.
-  4. Feature scaling leakage (`StandardScaler().fit_transform(X)`) computed before the train/validation split.
-  5. Inverted layer ordering (`Dropout` placed before `BatchNorm`).
+- **Core Diagnosis:** Uncovered five critical pipeline bugs: in-place feature shuffling without labels, missing `model.eval()`, misplaced exponential learning rate scheduler, data leakage in `StandardScaler`, and inverted Dropout/BatchNorm ordering.
 - **Deliverables:**
-  - Full diagnostic report in [`task1_debugging/ANALYSIS.md`](./task1_debugging/ANALYSIS.md).
-  - Production-ready implementation with 4 black-box diagnostic tests in [`task1_debugging/solution.py`](./task1_debugging/solution.py).
-
----
+  - Diagnostic Report: [`ANALYSIS.md`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task1_debugging/ANALYSIS.md)
+  - Code & Verification: [`solution.py`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task1_debugging/solution.py)
 
 ### 2. Milestone 2: Single-Head Attention Gradients & Implementation
-- **Mathematical Derivations:**
-  - $\mathrm{d}V = P^\top \mathrm{d}O$
-  - $\mathrm{d}P = \mathrm{d}O V^\top$
-  - $\mathrm{d}S = P \odot \left( \mathrm{d}P - \left( (P \odot \mathrm{d}P) \mathbf{1} \right) \mathbf{1}^\top \right)$
-  - $\mathrm{d}Q = \frac{1}{\sqrt{d}} \mathrm{d}S K$
-  - $\mathrm{d}K = \frac{1}{\sqrt{d}} (\mathrm{d}S)^\top Q$
-- **Numerical Verification:**
-  - Implemented in NumPy using IEEE 754 `float64` double precision and two-sided central difference checking ($\epsilon = 1.0 \times 10^{-6}$).
-  - Relative error threshold $< 1.0 \times 10^{-7}$ successfully verified for both standard and causal attention.
-- **Analysis:**
-  - Detailed the safe softmax shift trick to eliminate exponential overflow/underflow.
-  - Derived why dot products scale with variance $d$, proving that $\frac{1}{\sqrt{d}}$ prevents softmax gradient saturation.
-  - Formulated causal mask gradient zeroing $\mathrm{d}S = \mathrm{d}S \odot (1 - M)$.
-  - Analyzed the $\mathcal{O}(n^2)$ memory bottleneck and explained how **FlashAttention** leverages SRAM tiling, online softmax, and gradient recomputation to achieve $\mathcal{O}(n)$ memory complexity.
+- **Mathematical Derivations:** Exact matrix calculus for $\mathrm{d}Q, \mathrm{d}K, \mathrm{d}V, \mathrm{d}S, \mathrm{d}P$ with safe softmax shift and causal masking.
+- **Numerical Verification:** NumPy implementation verified with two-sided numerical gradient checking ($\text{error} < 10^{-7}$).
 - **Deliverables:**
-  - Complete derivation and analysis in [`task2_attention_gradients/DERIVATIONS_AND_ANALYSIS.md`](./task2_attention_gradients/DERIVATIONS_AND_ANALYSIS.md).
-  - Verified NumPy implementation in [`task2_attention_gradients/attention.py`](./task2_attention_gradients/attention.py).
-
----
+  - Complete Derivations: [`DERIVATIONS_AND_ANALYSIS.md`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task2_attention_gradients/DERIVATIONS_AND_ANALYSIS.md)
+  - NumPy Implementation: [`attention.py`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task2_attention_gradients/attention.py)
 
 ### 3. Milestone 3: Realistic Fraud Detection Evaluation Strategy
-- **Evaluation Dynamics:** 0.1% fraud prevalence, 30–60 day chargeback label latency, and non-stationary concept drift.
-- **Metric Selection:**
-  - **Avoid:** Accuracy (trivially 99.9% by predicting all zeros), ROC-AUC (distorted by enormous true-negative counts), and default 0.5 threshold F1.
-  - **Use:** PR-AUC (Average Precision), Recall @ fixed operational investigation capacity, and business cost utility.
-- **Split Design:** Out-of-Time (OOT) walk-forward temporal split with a mandatory 60-day embargo buffer.
-- **Optimal Decision Threshold:**
-  - Derived mathematically from cost asymmetry ($C_{\text{FN}} = \$200, C_{\text{FP}} = \$5$):
-    $$p^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}} = \frac{5}{5 + 200} = \mathbf{2.44\%}$$
-- **Drift Monitoring:** Population Stability Index (PSI) and Jensen-Shannon Divergence on predicted score distributions to trigger automated retraining when $\text{PSI} > 0.25$ without waiting for delayed labels.
+- **Evaluation Strategy:** Out-of-Time (OOT) temporal split with 60-day embargo buffer for delayed labels.
+- **Cost-Optimal Threshold:** Derived $p^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}} = \frac{5}{5 + 200} = \mathbf{2.44\%}$.
 - **Deliverables:**
-  - Strategic report in [`task3_evaluation_fraud/FRAUD_EVALUATION_STRATEGY.md`](./task3_evaluation_fraud/FRAUD_EVALUATION_STRATEGY.md).
-  - Simulation and monitoring implementation in [`task3_evaluation_fraud/fraud_evaluation.py`](./task3_evaluation_fraud/fraud_evaluation.py).
-
----
+  - Strategy Report: [`FRAUD_EVALUATION_STRATEGY.md`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task3_evaluation_fraud/FRAUD_EVALUATION_STRATEGY.md)
+  - Simulation & PSI Code: [`fraud_evaluation.py`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task3_evaluation_fraud/fraud_evaluation.py)
 
 ### 4. Milestone 4: Learning Curve Diagnostics
-- **Case A (Underfitting / High Bias):** Low model capacity or over-regularization. Intervention: Increase depth/width, reduce regularization, enrich features.
-- **Case B (Overfitting / High Variance):** Generalization gap diverges. Intervention: Early stopping, increase dropout/weight decay, data augmentation.
-- **Case C (Optimization Instability):** Erratic oscillations or divergence. Intervention: Lower learning rate, apply gradient clipping, introduce LayerNorm/BatchNorm.
-- **Case D ($\mathcal{L}_{\text{val}} < \mathcal{L}_{\text{train}}$):**
-  - Two plausible explanations: Regularization asymmetry (Dropout active during training, inactive during eval) vs. Validation sampling bias (easier validation split).
-  - Decisive experiment: **Symmetric Evaluation Protocol** evaluating both train and validation sets in offline `model.eval()` mode with zero dropout and un-augmented data.
+- **Diagnostics:** Comprehensive analysis of Underfitting (Case A), Overfitting (Case B), Optimization Instability (Case C), and Validation Loss < Training Loss (Case D) with a Symmetric Evaluation Protocol.
 - **Deliverables:**
-  - Diagnostic analysis in [`task4_learning_curves/LEARNING_CURVE_DIAGNOSTICS.md`](./task4_learning_curves/LEARNING_CURVE_DIAGNOSTICS.md).
+  - Report: [`LEARNING_CURVE_DIAGNOSTICS.md`](./project1_Debugging,%20Attention%20Gradients%20&%20Evaluation/task4_learning_curves/LEARNING_CURVE_DIAGNOSTICS.md)
 
 ---
 
-## 💻 Setup & Execution
+## 🌟 Project 2: HelpDeskNet-50K — Label Noise & Robust Strategy
 
-### Prerequisites
-- Python 3.10+
-- NumPy (`pip install numpy`)
+Detailed documentation is available in [`project2_label_noise/README.md`](./project2_label_noise/README.md).
 
-### Running the Implementations
+### 1. Milestone 1: Quantify Label Noise
+- **Analysis:** Estimated empirical crowd noise rate $\hat{p} = \mathbf{15.00\%}$ with 95% Wald CI $[11.50\%, 18.50\%]$ and Wilson CI $[11.83\%, 18.83\%]$.
+- **Significance Test:** Proved Tier B (21.82% error) is significantly noisier than Tier A (6.67% error) at $z = 4.2220$, $p = 2.42 \times 10^{-5}$ ($\chi^2 = 17.83$).
+- **Deliverables:**
+  - Report: [`MILESTONE1_QUANTIFY_LABEL_NOISE.md`](./project2_label_noise/MILESTONE1_QUANTIFY_LABEL_NOISE.md)
+  - Code: [`milestone1_analysis.py`](./project2_label_noise/milestone1_analysis.py)
 
-1. **Verify Attention Gradients & Numerical Checks (Task 2):**
-   ```bash
-   python task2_attention_gradients/attention.py
-   ```
+### 2. Milestone 2: Characterize the Noise
+- **Analysis:** Proved noise is non-random ($\chi^2 = 222.00, p < 10^{-15}$). Top error clusters: `Billing` $\leftrightarrow$ `Refund` (43.33%) and `Technical` $\leftrightarrow$ `Account Access` (25.00%). Formulated annotation guidelines and decision trees.
+- **Deliverables:**
+  - Report: [`MILESTONE2_CHARACTERIZE_NOISE.md`](./project2_label_noise/MILESTONE2_CHARACTERIZE_NOISE.md)
+  - Code: [`milestone2_characterize_noise.py`](./project2_label_noise/milestone2_characterize_noise.py)
 
-2. **Verify Fraud Cost Thresholding & Drift Monitoring (Task 3):**
-   ```bash
-   python task3_evaluation_fraud/fraud_evaluation.py
-   ```
+### 3. Milestone 3: Reason About the Accuracy Ceiling
+- **Analysis:** Inverted uniform noise equation to derive latent true accuracy $A_{\text{true}} = \frac{79}{82} \approx \mathbf{96.34\%}$. Detailed 5 failure modes of naive inversion (correlated model-human errors, asymmetric noise, biased boundaries).
+- **Deliverables:**
+  - Report: [`MILESTONE3_ACCURACY_CEILING.md`](./project2_label_noise/MILESTONE3_ACCURACY_CEILING.md)
+  - Code: [`milestone3_accuracy_ceiling.py`](./project2_label_noise/milestone3_accuracy_ceiling.py)
 
-3. **Verify Pipeline Debugging & Diagnostics (Task 1):**
-   ```bash
-   python task1_debugging/solution.py
-   ```
+### 4. Milestone 4: Find the Bad Labels (2,000 Review Budget)
+- **Strategy:** Allocated 1,000 tickets to pure gold test/validation and 1,000 tickets to active Confident Learning relabeling. Achieved 4.80× lift (~1,440 errors found vs. 300 under random selection).
+- **Deliverables:**
+  - Report: [`MILESTONE4_FIND_BAD_LABELS.md`](./project2_label_noise/MILESTONE4_FIND_BAD_LABELS.md)
+  - Code: [`milestone4_bad_labels.py`](./project2_label_noise/milestone4_bad_labels.py)
 
+### 5. Milestone 5: Mitigate Noise & Evaluate Reliably
+- **Strategy:** Implemented Symmetric Cross-Entropy ($\mathcal{L}_{\text{SCE}}$), Forward Loss Correction via transition matrix $T$, and Co-Teaching sample retention schedules. Designed a 100% expert gold evaluation protocol and explained test set ranking inversion.
+- **Deliverables:**
+  - Report: [`MILESTONE5_MITIGATE_AND_EVALUATE.md`](./project2_label_noise/MILESTONE5_MITIGATE_AND_EVALUATE.md)
+  - Code: [`milestone5_mitigation_eval.py`](./project2_label_noise/milestone5_mitigation_eval.py)
 
 ---
 
-## 🌟 Project 2: HelpDeskNet-50K — Label Noise, Systematic Diagnostics & Robust Strategy
+## 💻 Setup & Verification
 
-Our repository also includes the complete end-to-end engineering solution for **HelpDeskNet-50K**:
-- Master Project 2 Overview: [`project2_label_noise/README.md`](./project2_label_noise/README.md)
-- **Milestone 1:** Noise Quantification & 95% Confidence Intervals: [`MILESTONE1_QUANTIFY_LABEL_NOISE.md`](./project2_label_noise/MILESTONE1_QUANTIFY_LABEL_NOISE.md) | [`milestone1_analysis.py`](./project2_label_noise/milestone1_analysis.py)
-- **Milestone 2:** Noise Characterization & Annotation Reforms: [`MILESTONE2_CHARACTERIZE_NOISE.md`](./project2_label_noise/MILESTONE2_CHARACTERIZE_NOISE.md) | [`milestone2_characterize_noise.py`](./project2_label_noise/milestone2_characterize_noise.py)
-- **Milestone 3:** Accuracy Ceiling & True Performance Derivations: [`MILESTONE3_ACCURACY_CEILING.md`](./project2_label_noise/MILESTONE3_ACCURACY_CEILING.md) | [`milestone3_accuracy_ceiling.py`](./project2_label_noise/milestone3_accuracy_ceiling.py)
-- **Milestone 4:** Active Relabeling Optimization (2,000 Budget): [`MILESTONE4_FIND_BAD_LABELS.md`](./project2_label_noise/MILESTONE4_FIND_BAD_LABELS.md) | [`milestone4_bad_labels.py`](./project2_label_noise/milestone4_bad_labels.py)
-- **Milestone 5:** Noise-Tolerant Training & Gold Evaluation: [`MILESTONE5_MITIGATE_AND_EVALUATE.md`](./project2_label_noise/MILESTONE5_MITIGATE_AND_EVALUATE.md) | [`milestone5_mitigation_eval.py`](./project2_label_noise/milestone5_mitigation_eval.py)
-
-### Running Project 2 (HelpDeskNet-50K):
 ```bash
-python project2_label_noise/milestone1_analysis.py
-python project2_label_noise/milestone2_characterize_noise.py
-python project2_label_noise/milestone3_accuracy_ceiling.py
-python project2_label_noise/milestone4_bad_labels.py
-python project2_label_noise/milestone5_mitigation_eval.py
+# Verify Project 1:
+python "submission/Cloud9/project1_Debugging, Attention Gradients & Evaluation/task1_debugging/solution.py"
+python "submission/Cloud9/project1_Debugging, Attention Gradients & Evaluation/task2_attention_gradients/attention.py"
+python "submission/Cloud9/project1_Debugging, Attention Gradients & Evaluation/task3_evaluation_fraud/fraud_evaluation.py"
+
+# Verify Project 2:
+python "submission/Cloud9/project2_label_noise/milestone1_analysis.py"
+python "submission/Cloud9/project2_label_noise/milestone2_characterize_noise.py"
+python "submission/Cloud9/project2_label_noise/milestone3_accuracy_ceiling.py"
+python "submission/Cloud9/project2_label_noise/milestone4_bad_labels.py"
+python "submission/Cloud9/project2_label_noise/milestone5_mitigation_eval.py"
 ```
