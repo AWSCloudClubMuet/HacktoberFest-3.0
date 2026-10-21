@@ -120,3 +120,25 @@ submission/Cloud9/
    ```bash
    python task1_debugging/solution.py
    ```
+
+
+---
+
+## 🌟 Project 2: HelpDeskNet-50K — Label Noise, Systematic Diagnostics & Robust Strategy
+
+Our repository also includes the complete end-to-end engineering solution for **HelpDeskNet-50K**:
+- Master Project 2 Overview: [`project2_label_noise/README.md`](./project2_label_noise/README.md)
+- **Milestone 1:** Noise Quantification & 95% Confidence Intervals: [`MILESTONE1_QUANTIFY_LABEL_NOISE.md`](./project2_label_noise/MILESTONE1_QUANTIFY_LABEL_NOISE.md) | [`milestone1_analysis.py`](./project2_label_noise/milestone1_analysis.py)
+- **Milestone 2:** Noise Characterization & Annotation Reforms: [`MILESTONE2_CHARACTERIZE_NOISE.md`](./project2_label_noise/MILESTONE2_CHARACTERIZE_NOISE.md) | [`milestone2_characterize_noise.py`](./project2_label_noise/milestone2_characterize_noise.py)
+- **Milestone 3:** Accuracy Ceiling & True Performance Derivations: [`MILESTONE3_ACCURACY_CEILING.md`](./project2_label_noise/MILESTONE3_ACCURACY_CEILING.md) | [`milestone3_accuracy_ceiling.py`](./project2_label_noise/milestone3_accuracy_ceiling.py)
+- **Milestone 4:** Active Relabeling Optimization (2,000 Budget): [`MILESTONE4_FIND_BAD_LABELS.md`](./project2_label_noise/MILESTONE4_FIND_BAD_LABELS.md) | [`milestone4_bad_labels.py`](./project2_label_noise/milestone4_bad_labels.py)
+- **Milestone 5:** Noise-Tolerant Training & Gold Evaluation: [`MILESTONE5_MITIGATE_AND_EVALUATE.md`](./project2_label_noise/MILESTONE5_MITIGATE_AND_EVALUATE.md) | [`milestone5_mitigation_eval.py`](./project2_label_noise/milestone5_mitigation_eval.py)
+
+### Running Project 2 (HelpDeskNet-50K):
+```bash
+python project2_label_noise/milestone1_analysis.py
+python project2_label_noise/milestone2_characterize_noise.py
+python project2_label_noise/milestone3_accuracy_ceiling.py
+python project2_label_noise/milestone4_bad_labels.py
+python project2_label_noise/milestone5_mitigation_eval.py
+```
