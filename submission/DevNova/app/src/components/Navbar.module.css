@@ -1,0 +1,218 @@
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 82px;
+  padding: 15px 32px;
+  background: #ffffffeb;
+  border-bottom: 1px solid #eeedf8;
+  backdrop-filter: blur(14px);
+}
+
+.searchForm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 520px);
+  min-height: 45px;
+  padding: 0 7px 0 15px;
+  background: #f7f7fc;
+  border: 1px solid #eeedf7;
+  border-radius: 12px;
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  color: #9a98b4;
+}
+
+.searchForm input {
+  width: 100%;
+  min-width: 0;
+  color: #272442;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+
+.searchForm input::placeholder {
+  color: #a4a2b9;
+}
+
+.searchButton {
+  min-height: 33px;
+  padding: 0 14px;
+  color: #ffffff;
+  background: #6655e8;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.searchButton:hover {
+  background: #5140d0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.notificationButton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: #77758f;
+  background: #ffffff;
+  border: 1px solid #eeedf7;
+  border-radius: 12px;
+}
+
+.notificationButton:hover {
+  color: #6655e8;
+  background: #f7f5ff;
+}
+
+.notificationDot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  background: #f07891;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+}
+
+.divider {
+  width: 1px;
+  height: 37px;
+  background: #eeedf5;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  color: #252241;
+  text-align: left;
+  background: transparent;
+  border: none;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #a49aff, #6553e7);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.userInfo strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.userInfo small {
+  color: #9997ad;
+  font-size: 10px;
+}
+
+.chevron {
+  color: #9997ad;
+}
+
+@media screen and (max-width: 900px) {
+  .navbar {
+    gap: 15px;
+    padding: 14px 20px;
+  }
+
+  .actions {
+    gap: 12px;
+  }
+
+  .userInfo,
+  .chevron {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .navbar {
+    position: relative;
+    min-height: auto;
+    padding: 13px 14px;
+  }
+
+  .searchForm {
+    gap: 8px;
+    min-height: 42px;
+    padding-left: 10px;
+  }
+
+  .searchForm input {
+    font-size: 11px;
+  }
+
+  .searchButton {
+    padding: 0 9px;
+    font-size: 10px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .notificationButton {
+    width: 37px;
+    height: 37px;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .searchForm {
+    flex: 1;
+  }
+
+  .actions {
+    flex-shrink: 0;
+  }
+}

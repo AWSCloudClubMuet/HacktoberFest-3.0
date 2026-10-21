@@ -1,0 +1,114 @@
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 21px 17px;
+  background: #ffffff;
+  border: 1px solid #ececf5;
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(31, 41, 77, 0.035);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(49, 38, 105, 0.08);
+}
+
+.iconBox {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.purple {
+  color: #7657df;
+  background: #f0ecff;
+}
+
+.green {
+  color: #15916a;
+  background: #e5f8ef;
+}
+
+.blue {
+  color: #3984db;
+  background: #e8f2ff;
+}
+
+.orange {
+  color: #d88735;
+  background: #fff1e2;
+}
+
+.cardInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.label {
+  color: #838ba1;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.value {
+  color: #202947;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.cardArrow {
+  align-self: flex-start;
+  color: #a7acc0;
+}
+
+@media screen and (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .grid {
+    gap: 10px;
+  }
+
+  .card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px 12px;
+  }
+
+  .iconBox {
+    width: 39px;
+    height: 39px;
+  }
+
+  .label {
+    font-size: 10px;
+  }
+
+  .value {
+    font-size: 21px;
+  }
+
+  .cardArrow {
+    display: none;
+  }
+}

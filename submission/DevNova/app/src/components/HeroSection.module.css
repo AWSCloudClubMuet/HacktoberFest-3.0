@@ -1,0 +1,413 @@
+
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 24px;
+  min-height: 390px;
+  padding: 38px 42px;
+  overflow: hidden;
+  background: linear-gradient(120deg, #ffffff 0%, #f4f1ff 58%, #e9e7ff 100%);
+  border: 1px solid #e9e5ff;
+  border-radius: 28px;
+  box-shadow: 0 14px 40px rgba(71, 56, 143, 0.06);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 570px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  margin-bottom: 18px;
+  color: #6650d9;
+  background: #eeebff;
+  border: 1px solid #e2dcff;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.heroContent h1 {
+  margin: 0;
+  color: #192342;
+  font-size: clamp(32px, 3.2vw, 46px);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -1.8px;
+}
+
+.heroContent h1 span {
+  color: #7658e8;
+}
+
+.description {
+  max-width: 460px;
+  margin: 18px 0 22px;
+  color: #6f7891;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.searchForm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 440px;
+  min-height: 56px;
+  padding: 6px 7px 6px 16px;
+  background: #ffffff;
+  border: 1px solid #e8e6f3;
+  border-radius: 15px;
+  box-shadow: 0 7px 20px rgba(48, 38, 100, 0.06);
+}
+
+.searchForm > svg {
+  flex-shrink: 0;
+  color: #9299b0;
+}
+
+.searchForm input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  color: #202947;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+
+.searchForm input::placeholder {
+  color: #9ba2b6;
+}
+
+.searchForm button {
+  display: grid;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #8065ef, #6245d3);
+  border: none;
+  border-radius: 11px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchForm button:hover {
+  transform: translateX(2px);
+  box-shadow: 0 5px 14px rgba(105, 77, 219, 0.3);
+}
+
+.exploreButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 45px;
+  padding: 0 18px;
+  margin-top: 17px;
+  color: #ffffff;
+  background: #1e2949;
+  border: none;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.exploreButton:hover {
+  background: #4938a9;
+  transform: translateY(-2px);
+}
+
+.heroVisual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 310px;
+  isolation: isolate;
+}
+
+.visualGlow {
+  position: absolute;
+  z-index: -1;
+  width: 270px;
+  height: 270px;
+  background: radial-gradient(circle, #d7ceff 0%, #e9e4ff 50%, transparent 72%);
+  border-radius: 50%;
+}
+
+.heroImage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  max-height: 310px;
+  object-fit: contain;
+}
+
+.floatingBadge,
+.floatingNote {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(230, 225, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(57, 44, 111, 0.12);
+}
+
+.floatingBadge {
+  top: 26px;
+  left: 0;
+}
+
+.badgeIcon {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  place-items: center;
+  color: #7255e7;
+  background: #efebff;
+  border-radius: 11px;
+}
+
+.floatingBadge strong,
+.floatingNote strong {
+  display: block;
+  color: #202947;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.floatingBadge small,
+.floatingNote small {
+  display: block;
+  margin-top: 4px;
+  color: #858da3;
+  font-size: 10px;
+}
+
+.floatingNote {
+  right: 0;
+  bottom: 22px;
+}
+
+.noteCheck {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #168b69;
+  background: #e2f8ef;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Fallback illustration appears only if the SVG image fails to load. */
+.visualFallback {
+  display: none;
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  min-height: 245px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 15px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid #e4deff;
+  border-radius: 26px;
+}
+
+.fallbackCircle {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  place-items: center;
+  background: #eeebff;
+  border-radius: 24px;
+  font-size: 34px;
+}
+
+.fallbackPeople {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.person {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  margin-left: -7px;
+  place-items: center;
+  color: #ffffff;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.personOne {
+  background: #8065ef;
+}
+
+.personTwo {
+  background: #ef9b65;
+}
+
+.personThree {
+  background: #42a995;
+}
+
+.visualFallback > strong {
+  color: #252d4c;
+  font-size: 15px;
+}
+
+.visualFallback > p {
+  margin: 7px 0 0;
+  color: #7e879e;
+  font-size: 12px;
+}
+
+/* Tablets */
+@media screen and (max-width: 1100px) {
+  .hero {
+    grid-template-columns: 1fr 0.8fr;
+    gap: 12px;
+    padding: 30px 26px;
+  }
+
+  .heroContent h1 {
+    font-size: 34px;
+  }
+
+  .heroVisual {
+    min-height: 280px;
+  }
+
+  .floatingBadge {
+    left: -5px;
+  }
+
+  .floatingNote {
+    right: -5px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 27px 22px 20px;
+    border-radius: 22px;
+  }
+
+  .heroContent {
+    max-width: none;
+  }
+
+  .heroContent h1 {
+    font-size: clamp(31px, 7vw, 42px);
+    letter-spacing: -1.2px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  .heroVisual {
+    min-height: 270px;
+    margin-top: 4px;
+  }
+
+  .heroImage {
+    max-width: 340px;
+    max-height: 260px;
+  }
+
+  .visualGlow {
+    width: 220px;
+    height: 220px;
+  }
+
+  .floatingBadge {
+    top: 10px;
+    left: 0;
+  }
+
+  .floatingNote {
+    right: 0;
+    bottom: 8px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .hero {
+    padding: 22px 15px 16px;
+  }
+
+  .eyebrow {
+    gap: 6px;
+    padding: 8px 10px;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  .heroContent h1 {
+    font-size: 30px;
+  }
+
+  .searchForm {
+    gap: 8px;
+    padding-left: 11px;
+  }
+
+  .searchForm input {
+    font-size: 11px;
+  }
+
+  .floatingBadge,
+  .floatingNote {
+    gap: 7px;
+    padding: 9px;
+  }
+
+  .floatingBadge strong,
+  .floatingNote strong {
+    font-size: 10px;
+  }
+
+  .floatingBadge small,
+  .floatingNote small {
+    font-size: 9px;
+  }
+
+  .badgeIcon,
+  .noteCheck {
+    width: 30px;
+    height: 30px;
+  }
+}
