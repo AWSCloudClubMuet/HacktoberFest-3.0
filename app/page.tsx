@@ -321,7 +321,6 @@ export default function Page() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
-        <div className="campus-switcher"><div className="campus-icon">NU</div><div><strong>Northwestern</strong><span>Student community</span></div></div>
         <nav className="main-nav" aria-label="Main navigation">
           <span className="nav-label">Workspace</span>
           <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
