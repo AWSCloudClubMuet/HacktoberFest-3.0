@@ -11,13 +11,26 @@ const dummyRows = [
 ];
 
 // supports parameterized calls: query(sql, params)
+// and (for the unsafe demo routes in server.js) raw interpolated sql
 async function query(sql, params = []) {
   console.log('[mock-db] executing:', sql, JSON.stringify(params));
 
-  const idMatch = /WHERE id = \?/i.exec(sql);
-  if (idMatch && params.length > 0) {
+  const idParam = /WHERE id = \?/i.exec(sql);
+  if (idParam && params.length > 0) {
     const id = Number(params[0]);
     return dummyRows.filter((r) => r.id === id);
+  }
+
+  const idRaw = /WHERE id = (\d+)/i.exec(sql);
+  if (idRaw) {
+    const id = Number(idRaw[1]);
+    return dummyRows.filter((r) => r.id === id);
+  }
+
+  const nameLike = /LIKE '%(.*)%'/i.exec(sql);
+  if (nameLike) {
+    const name = nameLike[1].toLowerCase();
+    return dummyRows.filter((r) => r.name.toLowerCase().includes(name));
   }
 
   // no recognizable clause -> return everything (it is a demo)
