@@ -16,6 +16,8 @@ Simulation layout (all synthetic, ground truth known so we can score):
   - a small hand-rolled multinomial Naive Bayes trained on the gold set
     predicts on the whole crowd pool; disagreements between the model
     and the crowd label drive the smarter selection strategies
+  - selection strategies compared on "review yield": the fraction of the
+    2,000 picked tickets that are actually mislabeled
 
 Stdlib only; numpy is used when present (rng backend + small stats
 helpers) and everything degrades gracefully without it. No sklearn.
@@ -24,6 +26,7 @@ helpers) and everything degrades gracefully without it. No sklearn.
 from __future__ import annotations
 
 import bisect
+import math
 import os
 import random
 import sys
@@ -68,42 +71,49 @@ FLIP_TARGETS = {
                   ("account", 0.20), ("technical", 0.15)],
 }
 
-# keyword vocabularies: simple class-conditional bag of words
+# keyword vocabularies: simple class-conditional bag of words.
+# billing and refund share a big "money core" on purpose - those tickets
+# genuinely read alike, which is why crowd labelers confuse them so much.
+_MONEY_CORE = ["charge", "charged", "card", "payment", "receipt", "amount",
+               "transaction", "order", "money", "cancel"]
+_ACCESS_CORE = ["login", "access", "email", "verify", "code", "app"]
 CLASS_VOCAB = {
-    "billing":   ["charge", "charged", "invoice", "card", "billed", "subscription",
-                  "fee", "price", "receipt", "amount", "payment", "due", "renewal",
-                  "auto", "renew", "statement", "cycle", "monthly", "plan",
-                  "upgrade", "prorate", "tax", "total", "pay"],
-    "refund":    ["refund", "money", "back", "return", "reimburse", "cancelled",
-                  "cancel", "chargeback", "dispute", "wrongly", "credited",
-                  "credit", "pending", "processing", "days", "wait", "reversal",
-                  "transaction", "reimbursement", "partial", "full", "denied",
-                  "request", "status"],
-    "account":   ["login", "password", "signin", "locked", "reset", "verification",
-                  "email", "2fa", "otp", "username", "profile", "deactivated",
-                  "recover", "access", "link", "code", "verify", "credentials",
-                  "suspended", "unlock"],
-    "technical": ["error", "bug", "crash", "loading", "slow", "update", "fails",
-                  "screen", "blank", "timeout", "freeze", "broken", "spinning",
-                  "logs", "console", "version", "stuck", "white", "retry",
-                  "glitch", "hangs"],
+    "billing":   _MONEY_CORE + ["invoice", "billed", "subscription", "fee", "price",
+                                "due", "renewal", "auto", "renew", "statement",
+                                "cycle", "monthly", "plan", "upgrade", "prorate",
+                                "tax", "total", "pay"],
+    "refund":    _MONEY_CORE + ["refund", "back", "return", "reimburse",
+                                "reimbursement", "chargeback", "dispute",
+                                "wrongly", "credited", "credit", "pending",
+                                "processing", "days", "wait", "reversal",
+                                "partial", "denied", "request", "status"],
+    "account":   _ACCESS_CORE + ["password", "signin", "locked", "reset",
+                                 "verification", "2fa", "otp", "username",
+                                 "profile", "deactivated", "recover", "link",
+                                 "credentials", "suspended", "unlock"],
+    "technical": _ACCESS_CORE + ["error", "bug", "crash", "loading", "slow",
+                                 "update", "fails", "screen", "blank", "timeout",
+                                 "freeze", "broken", "spinning", "logs", "console",
+                                 "version", "stuck", "white", "retry", "glitch",
+                                 "hangs"],
     "shipping":  ["delivery", "tracking", "package", "shipped", "courier",
                   "address", "late", "missing", "parcel", "dispatch", "waybill",
                   "arrived", "delay", "lost", "transit", "customs", "warehouse",
-                  "undelivered", "reship", "label"],
+                  "undelivered", "reship", "label", "order", "status"],
     "general":   ["question", "info", "details", "feedback", "complaint",
                   "suggestion", "inquiry", "policy", "hours", "contact", "sales",
                   "partner", "bulk", "enterprise", "demo", "pricing", "trial",
-                  "wondering", "possible", "instead"],
+                  "wondering", "possible", "instead", "order", "delay"],
 }
 
-# cross-class bridge words: tickets from one class sometimes contain words of
-# its confusion partner, so billing/refund tickets genuinely read alike
+# cross-class bridge words: tickets from one class sometimes contain the
+# confusion partner's *discriminative* words, so a billing ticket can really
+# look like a refund ticket and vice versa
 BRIDGE_VOCAB = {
-    "billing":   ["money", "transaction", "dispute", "cancel", "credited", "pending"],
-    "refund":    ["charge", "card", "payment", "receipt", "order", "subscription"],
-    "account":   ["error", "fails", "crash", "loading", "stuck", "retry"],
-    "technical": ["login", "password", "access", "email", "locked", "reset"],
+    "billing":   ["refund", "dispute", "chargeback", "wrongly", "credited", "pending"],
+    "refund":    ["invoice", "subscription", "renewal", "billed", "monthly", "upgrade"],
+    "account":   ["error", "crash", "fails", "loading", "stuck", "retry"],
+    "technical": ["password", "locked", "reset", "verification", "otp", "signin"],
     "shipping":  ["missing", "late", "question", "status", "info", "policy"],
     "general":   ["delivery", "tracking", "order", "account", "login", "payment"],
 }
@@ -112,27 +122,59 @@ COMMON_WORDS = ["please", "help", "hi", "team", "thanks", "issue", "need",
                 "after", "every", "getting", "keeps", "cannot", "with",
                 "this", "again", "checked"]
 
-P_OWN, P_BRIDGE, P_COMMON = 0.62, 0.16, 0.22
-WORDS_MIN, WORDS_MAX = 6, 10
+P_OWN, P_BRIDGE, P_COMMON = 0.50, 0.28, 0.22
+WORDS_MIN, WORDS_MAX = 4, 8
+
+# domain prior used by the disagreement strategy: how "heavy" a confusion pair
+# (crowd label, model prediction) is known to be from past audit cycles.
+# billing <-> refund is the pair the issue calls out as heaviest.
+CONFUSION_PAIR_WEIGHTS = {
+    ("billing", "refund"): 1.0, ("refund", "billing"): 1.0,
+    ("account", "technical"): 0.6, ("technical", "account"): 0.6,
+    ("shipping", "general"): 0.35, ("general", "shipping"): 0.35,
+    ("billing", "account"): 0.25, ("account", "billing"): 0.25,
+    ("refund", "account"): 0.25, ("account", "refund"): 0.25,
+}
+DEFAULT_PAIR_WEIGHT = 0.1
+
+
+def pair_weight(crowd_label, pred):
+    if crowd_label == pred:
+        return 0.0
+    return CONFUSION_PAIR_WEIGHTS.get((crowd_label, pred), DEFAULT_PAIR_WEIGHT)
 
 
 # ----------------------------------------------------------------------------
-# seeded rng wrapper: numpy backend when present, stdlib fallback
+# seeded rng wrapper: numpy backend when present, stdlib fallback.
+# uniforms are drawn in blocks so the numpy path is actually fast.
 # ----------------------------------------------------------------------------
 class RNG:
+    _BLOCK = 65_536
+
     def __init__(self, seed):
         self._rng = _np.random.default_rng(seed) if _np is not None else random.Random(seed)
+        self._buf = []
+        self._pos = 0
+
+    def _refill(self):
+        if _np is not None:
+            self._buf = self._rng.random(self._BLOCK)
+        else:
+            self._buf = [self._rng.random() for _ in range(self._BLOCK)]
+        self._pos = 0
 
     def random(self):
-        return float(self._rng.random())
+        if self._pos >= len(self._buf):
+            self._refill()
+        u = self._buf[self._pos]
+        self._pos += 1
+        return float(u)
 
     def randint(self, lo, hi):  # lo inclusive, hi exclusive
-        if _np is not None:
-            return int(self._rng.integers(lo, hi))
-        return self._rng.randrange(lo, hi)
+        return lo + int(self.random() * (hi - lo))
 
     def shuffle(self, lst):
-        for i in range(len(lst) - 1, 0, -1):  # fish-yates, works on any backend
+        for i in range(len(lst) - 1, 0, -1):  # fisher-yates, any backend
             j = self.randint(0, i + 1)
             lst[i], lst[j] = lst[j], lst[i]
 
@@ -207,6 +249,98 @@ def build_crowd_pool(rng):
 
 
 # ----------------------------------------------------------------------------
+# hand-rolled multinomial naive bayes (no sklearn)
+# ----------------------------------------------------------------------------
+def train_naive_bayes(docs, alpha=1.0):
+    word_counts = {c: Counter() for c in CLASSES}
+    doc_counts = Counter()
+    for d in docs:
+        c = d["label"]
+        doc_counts[c] += 1
+        word_counts[c].update(d["words"])
+
+    vocab = set()
+    for c in CLASSES:
+        vocab.update(word_counts[c])
+    v = len(vocab)
+    total_docs = sum(doc_counts.values())
+
+    model = {"vocab": vocab, "log_prior": {}, "log_cp": {}, "log_unseen": {}}
+    for c in CLASSES:
+        model["log_prior"][c] = math.log((doc_counts[c] + 1.0) / (total_docs + len(CLASSES)))
+        denom = sum(word_counts[c].values()) + alpha * v
+        model["log_cp"][c] = {w: math.log((n + alpha) / denom)
+                              for w, n in word_counts[c].items()}
+        model["log_unseen"][c] = math.log(alpha / denom)
+    return model
+
+
+def nb_predict(model, words):
+    """returns (predicted class, posterior confidence in the prediction)"""
+    scores = {}
+    for c in CLASSES:
+        s = model["log_prior"][c]
+        cp = model["log_cp"][c]
+        unseen = model["log_unseen"][c]
+        for w in words:
+            p = cp.get(w)
+            if p is not None:
+                s += p
+            elif w in model["vocab"]:
+                s += unseen
+            # words outside the training vocab carry no signal, skip them
+        scores[c] = s
+    pred = max(CLASSES, key=lambda c: scores[c])
+    # posterior of the winner via a stable softmax (max-shift logsumexp)
+    m = scores[pred]
+    denom = sum(math.exp(scores[c] - m) for c in CLASSES)
+    return pred, 1.0 / denom
+
+
+def predict_pool(model, pool):
+    return [nb_predict(model, t["words"]) for t in pool]
+
+
+# ----------------------------------------------------------------------------
+# selection strategies: which BUDGET tickets go to the experts?
+# ----------------------------------------------------------------------------
+def select_random(pool, rng):
+    """a) random baseline - what you get without thinking"""
+    ids = list(range(len(pool)))
+    rng.shuffle(ids)
+    return ids[:BUDGET]
+
+
+def select_tier_first(pool, rng):
+    """b) all Tier B first (open crowd, noisier), random order inside tiers"""
+    tier_b = [i for i, t in enumerate(pool) if t["tier"] == "B"]
+    tier_a = [i for i, t in enumerate(pool) if t["tier"] == "A"]
+    rng.shuffle(tier_b)
+    rng.shuffle(tier_a)
+    return (tier_b + tier_a)[:BUDGET]
+
+
+def select_model_disagreement(pool, preds, rng):
+    """c) model != crowd label, sub-ranked by heavy confusion pairs"""
+    cand = [i for i, t in enumerate(pool) if preds[i][0] != t["label"]]
+    cand.sort(key=lambda i: (-pair_weight(pool[i]["label"], preds[i][0]),
+                             -preds[i][1], i))
+    picked = cand[:BUDGET]
+    if len(picked) < BUDGET:  # pad with randoms if disagreements ever run dry
+        chosen = set(picked)
+        rest = [i for i in range(len(pool)) if i not in chosen]
+        rng.shuffle(rest)
+        picked += rest[:BUDGET - len(picked)]
+    return picked
+
+
+def review_yield(pool, selected):
+    """fraction of the selected tickets that are actually mislabeled"""
+    hits = sum(1 for i in selected if pool[i]["label"] != pool[i]["true"])
+    return hits, hits / len(selected)
+
+
+# ----------------------------------------------------------------------------
 # reporting helpers
 # ----------------------------------------------------------------------------
 def line(char="-", n=78):
@@ -244,15 +378,47 @@ def pool_report(pool):
 def main():
     rng_pool = RNG(SEED)
     rng_gold = RNG(SEED + 1)
+    rng_sel = RNG(SEED + 2)
 
     gold = build_gold_set(rng_gold)
     pool = build_crowd_pool(rng_pool)
 
     base_err = pool_report(pool)
 
+    # ---- model: naive bayes on the expert-labeled portion -----------------
     print()
-    print(f"baseline: {base_err:,} mislabeled tickets sit in the pool")
-    print("(selection strategies land in the next milestone step)")
+    print(line())
+    print("model: multinomial naive bayes trained on the 5,000 expert labels")
+    val_model = train_naive_bayes(gold[:4_000])
+    correct = sum(1 for t in gold[4_000:] if nb_predict(val_model, t["words"])[0] == t["true"])
+    print(f"held-out accuracy on 1,000 gold tickets: {100.0 * correct / 1_000:.1f}%")
+
+    model = train_naive_bayes(gold)
+    preds = predict_pool(model, pool)
+
+    dis = [i for i, t in enumerate(pool) if preds[i][0] != t["label"]]
+    dis_true_err = sum(1 for i in dis if pool[i]["label"] != pool[i]["true"])
+    print(f"model vs crowd disagreements: {len(dis):,}/{N_POOL:,} = {100.0 * len(dis) / N_POOL:.1f}%")
+    print(f"  of those, {dis_true_err:,} are real mislabels -> disagreement precision "
+          f"{100.0 * dis_true_err / len(dis):.1f}%")
+
+    # ---- strategies --------------------------------------------------------
+    print()
+    print(line())
+    print(f"selection strategies (pick {BUDGET:,} of {N_POOL:,}) - review yield = share of picked tickets that are truly mislabeled")
+    print(line())
+    strategies = [
+        ("random", select_random(pool, rng_sel)),
+        ("tier-first", select_tier_first(pool, rng_sel)),
+        ("model-disagreement", select_model_disagreement(pool, preds, rng_sel)),
+    ]
+    print(f"{'strategy':<20} {'found/2000':>11} {'yield':>8}")
+    for name, selected in strategies:
+        hits, yld = review_yield(pool, selected)
+        print(f"{name:<20} {hits:>11,} {100.0 * yld:>7.1f}%")
+
+    print()
+    print(f"baseline pool noise stays at {100.0 * base_err / N_POOL:.2f}% until we apply corrections (next step)")
     return 0
 
 
