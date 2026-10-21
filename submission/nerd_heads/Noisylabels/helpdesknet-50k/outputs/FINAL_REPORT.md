@@ -174,3 +174,180 @@ Noisy evaluation labels can substantially distort reported classifier performanc
 Although the uniform-noise model produces an estimated true accuracy of 96.34%, trustworthy evaluation requires a separate, representative expert-labeled test set.
 
 This motivates the improved evaluation procedure proposed in Milestone 5.
+
+## Milestone 4: Finding Potentially Incorrect Labels
+
+### Objective
+
+The objective of this milestone is to design and demonstrate a strategy for prioritizing 2,000 customer-support tickets for expert review from a population of 45,000 crowd-labeled tickets.
+
+Since expert review is expensive and time-consuming, the strategy aims to prioritize suspected labeling errors while maintaining a random comparison group.
+
+### Dataset and Implementation
+
+The HelpDeskNet-50K problem provides aggregate statistics rather than individual customer-support records.
+
+To demonstrate the proposed selection methodology, we generated 45,000 synthetic ticket records using Python.
+
+The synthetic dataset contains ticket identifiers, annotator tiers, simulated true labels, crowdworker labels, simulated predictions, and confidence scores.
+
+The simulation uses the six ticket categories and approximate tier-specific disagreement rates from the problem scenario.
+
+**The synthetic records and model predictions are illustrative. No real customer tickets were reviewed, and no classifier was trained for this demonstration.**
+
+The implementation is provided in `src/review_strategy.py`.
+
+### Proposed Expert-Review Allocation
+
+| Selection Method | Tickets | Percentage |
+|---|---:|---:|
+| High-confidence model-label disagreements | 1,000 | 50% |
+| Known confusion-pair candidates | 500 | 25% |
+| Uncertain or rare-category cases | 300 | 15% |
+| Random control sample | 200 | 10% |
+| **Total** | **2,000** | **100%** |
+
+The allocation is a proposed design rather than a requirement specified by the hackathon problem.
+
+### Selection Methodology
+
+The algorithm first reserves 200 randomly selected tickets as a control group.
+
+It then prioritizes 1,000 high-confidence disagreements between the recorded labels and simulated model predictions.
+
+Next, it selects 500 cases involving known confusion pairs, particularly Billing–Refund, Technical–Account Access, and Shipping–Other.
+
+Another 300 tickets are selected from uncertain predictions or relatively rare categories.
+
+Duplicate ticket identifiers are excluded. If any category cannot fill its allocated quota, the algorithm includes a fallback procedure to maintain the total review budget.
+
+The selection algorithm does not use the synthetic `true_label` field. The exported review queue excludes this field to prevent ground-truth leakage.
+
+### Implementation Results
+
+The program successfully generated a synthetic dataset containing 45,000 records and selected exactly 2,000 unique tickets for the proposed expert-review queue.
+
+The exported file `outputs/review_queue.csv` includes the selected ticket identifiers, annotator tiers, recorded labels, simulated predictions, confidence scores, and review-selection reasons.
+
+The selection process produced the intended allocation:
+
+- 1,000 high-confidence disagreements
+- 500 known confusion-pair candidates
+- 300 uncertain or rare-category cases
+- 200 random control examples
+
+Automated testing confirmed that the selection function respects the review budget, avoids duplicate ticket IDs, excludes true labels from the review queue, produces reproducible results with a fixed random seed, and rejects invalid review budgets.
+
+All 10 project tests passed.
+
+### Evaluation Strategy
+
+In a real implementation, the selected tickets would be independently reviewed by qualified experts.
+
+We would calculate error-discovery precision as:
+
+Precision@K = Confirmed labeling errors / Reviewed tickets
+
+We would also compare targeted-review error-discovery rates against the random control group.
+
+After expert corrections, a classifier could be retrained and evaluated using a separate clean test set. Changes in accuracy, macro F1-score, and class-specific performance would help determine whether targeted correction improves model performance.
+
+### Limitations
+
+The demonstration uses synthetic records and simulated prediction confidences. These confidences are not outputs from an actual trained classifier and have not been calibrated.
+
+Consequently, the experiment demonstrates the functionality and reproducibility of the selection algorithm but does not establish its real-world error-detection effectiveness.
+
+The synthetic `true_label` field is available for simulation purposes only and must not be used during review-candidate selection.
+
+Actual ticket records, out-of-fold model probabilities, and expert-verified corrections would be required to evaluate the approach empirically.
+
+### Conclusion
+
+The proposed strategy provides a reproducible way to prioritize a limited expert-review budget.
+
+The implemented Python demonstration successfully selects 2,000 unique review candidates from 45,000 synthetic tickets while maintaining a random comparison group.
+
+The approach illustrates how targeted label auditing could be organized in a real customer-support classification system, subject to future validation using authentic data. 
+
+## Milestone 5: Noise-Robust Training and Reliable Evaluation
+
+### Objective
+
+The objective of this milestone is to recommend machine learning methods that reduce the influence of incorrectly labeled training data and develop a trustworthy procedure for evaluating classifier performance.
+
+### Method 1: Label Smoothing
+
+Label smoothing modifies one-hot training targets by distributing a small amount of probability across all classes.
+
+For six classes and a smoothing factor of 0.1, the labeled class receives approximately 91.67% target probability, while each other class receives approximately 1.67%.
+
+This discourages excessive confidence in individual annotations and can improve generalization under some conditions.
+
+We implemented a reproducible NumPy demonstration in `src/robust_training.py`. The demonstration compares ordinary and smoothed target distributions and calculates their cross-entropy losses for illustrative class probabilities.
+
+No real HelpDeskNet model was trained or evaluated.
+
+### Method 2: Co-teaching
+
+Co-teaching uses two neural networks to reduce the influence of potentially mislabeled examples.
+
+Each network selects a subset of relatively low-loss training examples and provides those examples to the other network for updating its parameters.
+
+The method aims to limit the influence of noisy labels during training.
+
+However, it may also exclude difficult but correctly labeled examples, and its effectiveness depends on the noise process, model architecture and training configuration.
+
+Co-teaching is proposed as a future experiment, not implemented or empirically tested in this submission.
+
+### Reliable Evaluation Strategy
+
+We recommend constructing a separate, representative expert-labeled test set.
+
+Tickets should be independently labeled by qualified experts, with disagreements resolved through documented adjudication.
+
+The resulting test set must remain isolated from model training, hyperparameter tuning and label-selection procedures.
+
+The ordinary cross-entropy baseline, label smoothing and Co-teaching approaches should be evaluated on the same held-out test set.
+
+Recommended metrics include:
+
+- Overall accuracy
+- Macro F1-score
+- Per-class precision
+- Per-class recall
+- Confusion matrix
+
+### Why the Existing Test Set Is Unreliable
+
+The original evaluation process uses crowd-labeled records that may contain annotation errors.
+
+A correct model prediction could be marked incorrect because the recorded label is wrong.
+
+Conversely, an incorrect prediction could accidentally match an incorrect recorded label and be counted as correct.
+
+Consequently, the reported 82% accuracy may not reliably represent performance against the true labels.
+
+The theoretical correction performed in Milestone 3 depends on assumptions that may not match the real annotation process.
+
+An independently verified evaluation set is required to establish trustworthy performance.
+
+### Limitations
+
+The HelpDeskNet-50K scenario provides aggregate statistics but no real ticket-level training or evaluation dataset.
+
+The label-smoothing implementation demonstrates the mathematical technique using illustrative probabilities.
+
+No accuracy improvement, macro F1 improvement or reduced label-error rate has been experimentally established.
+
+Training the proposed methods and measuring their effectiveness remain future work.
+
+### Conclusion
+
+Label smoothing and Co-teaching are two candidate approaches for reducing the impact of noisy training labels.
+
+Label smoothing is relatively simple to implement, whereas Co-teaching provides a more specialized noise-handling strategy.
+
+Neither technique guarantees improved performance.
+
+A clean, expert-labeled and properly isolated evaluation set is essential for determining whether any proposed training method actually improves HelpDeskNet-50K classification.

@@ -1,0 +1,2001 @@
+ticket_id,tier,given_label,predicted_label,confidence,review_reason
+T41906,B,Billing,Shipping,0.945,random_control
+T07297,A,Account Access,Account Access,0.728,random_control
+T01640,A,Billing,Billing,0.845,random_control
+T18025,A,Billing,Billing,0.559,random_control
+T16050,A,Technical,Technical,0.658,random_control
+T14629,A,Technical,Technical,0.58,random_control
+T09145,A,Refund,Refund,0.793,random_control
+T06718,A,Billing,Billing,0.82,random_control
+T44349,B,Technical,Technical,0.655,random_control
+T35742,B,Technical,Technical,0.749,random_control
+T05698,A,Technical,Account Access,0.831,random_control
+T38699,B,Refund,Refund,0.92,random_control
+T27652,B,Technical,Technical,0.66,random_control
+T02083,A,Account Access,Account Access,0.886,random_control
+T01953,A,Refund,Refund,0.932,random_control
+T06141,A,Shipping,Other,0.719,random_control
+T14329,A,Account Access,Account Access,0.733,random_control
+T15248,A,Shipping,Shipping,0.967,random_control
+T33119,B,Technical,Technical,0.781,random_control
+T39454,B,Technical,Technical,0.681,random_control
+T01740,A,Account Access,Technical,0.63,random_control
+T36782,B,Billing,Billing,0.851,random_control
+T13032,A,Shipping,Shipping,0.711,random_control
+T42591,B,Other,Other,0.707,random_control
+T35714,B,Billing,Billing,0.789,random_control
+T27494,B,Billing,Billing,0.607,random_control
+T14447,A,Billing,Technical,0.804,random_control
+T29440,B,Account Access,Account Access,0.769,random_control
+T38619,B,Shipping,Other,0.807,random_control
+T18232,A,Refund,Refund,0.731,random_control
+T00426,A,Refund,Refund,0.819,random_control
+T10464,A,Refund,Refund,0.935,random_control
+T27697,B,Billing,Billing,0.868,random_control
+T22299,B,Technical,Technical,0.655,random_control
+T18211,A,Refund,Shipping,0.867,random_control
+T10190,A,Other,Other,0.9,random_control
+T14111,A,Shipping,Shipping,0.642,random_control
+T22060,B,Account Access,Technical,0.951,random_control
+T06699,A,Billing,Billing,0.822,random_control
+T06079,A,Billing,Billing,0.736,random_control
+T24899,B,Technical,Account Access,0.946,random_control
+T06339,A,Technical,Technical,0.739,random_control
+T23527,B,Technical,Technical,0.698,random_control
+T22542,B,Technical,Technical,0.819,random_control
+T39566,B,Refund,Refund,0.696,random_control
+T17336,A,Billing,Other,0.757,random_control
+T02848,A,Refund,Refund,0.743,random_control
+T30109,B,Refund,Refund,0.971,random_control
+T35143,B,Billing,Other,0.927,random_control
+T08181,A,Billing,Billing,0.79,random_control
+T24808,B,Account Access,Account Access,0.806,random_control
+T05165,A,Billing,Billing,0.865,random_control
+T36179,B,Billing,Other,0.926,random_control
+T19214,A,Technical,Technical,0.612,random_control
+T41199,B,Technical,Technical,0.962,random_control
+T40536,B,Technical,Technical,0.868,random_control
+T23701,B,Billing,Billing,0.873,random_control
+T37838,B,Shipping,Other,0.669,random_control
+T12602,A,Billing,Billing,0.858,random_control
+T04559,A,Technical,Technical,0.58,random_control
+T03004,A,Shipping,Shipping,0.586,random_control
+T43337,B,Technical,Technical,0.96,random_control
+T14936,A,Technical,Technical,0.839,random_control
+T18966,A,Refund,Refund,0.671,random_control
+T05230,A,Shipping,Shipping,0.811,random_control
+T15257,A,Billing,Billing,0.837,random_control
+T06620,A,Account Access,Account Access,0.777,random_control
+T24912,B,Account Access,Account Access,0.914,random_control
+T18218,A,Billing,Billing,0.698,random_control
+T29715,B,Account Access,Technical,0.749,random_control
+T41661,B,Account Access,Technical,0.953,random_control
+T23910,B,Account Access,Technical,0.977,random_control
+T10660,A,Technical,Technical,0.596,random_control
+T24261,B,Technical,Account Access,0.806,random_control
+T23284,B,Billing,Billing,0.619,random_control
+T13731,A,Refund,Refund,0.938,random_control
+T43921,B,Account Access,Account Access,0.961,random_control
+T17497,A,Technical,Technical,0.768,random_control
+T44797,B,Refund,Billing,0.773,random_control
+T42470,B,Account Access,Account Access,0.973,random_control
+T04680,A,Billing,Billing,0.565,random_control
+T39921,B,Shipping,Shipping,0.555,random_control
+T41614,B,Shipping,Shipping,0.598,random_control
+T11216,A,Other,Other,0.775,random_control
+T35006,B,Account Access,Billing,0.595,random_control
+T16044,A,Shipping,Shipping,0.914,random_control
+T10709,A,Billing,Billing,0.821,random_control
+T30295,B,Technical,Technical,0.685,random_control
+T24868,B,Refund,Refund,0.948,random_control
+T17692,A,Billing,Billing,0.638,random_control
+T41944,B,Billing,Billing,0.599,random_control
+T36501,B,Billing,Billing,0.785,random_control
+T14393,A,Shipping,Shipping,0.897,random_control
+T44867,B,Billing,Billing,0.738,random_control
+T21253,B,Refund,Billing,0.875,random_control
+T03666,A,Technical,Refund,0.729,random_control
+T15011,A,Billing,Billing,0.945,random_control
+T02104,A,Billing,Refund,0.607,random_control
+T20674,B,Refund,Billing,0.922,random_control
+T26291,B,Technical,Technical,0.709,random_control
+T17547,A,Refund,Other,0.913,random_control
+T04338,A,Refund,Other,0.846,random_control
+T13827,A,Other,Other,0.977,random_control
+T37171,B,Refund,Billing,0.966,random_control
+T20623,B,Account Access,Technical,0.988,random_control
+T13935,A,Technical,Technical,0.893,random_control
+T42955,B,Other,Other,0.962,random_control
+T32718,B,Billing,Refund,0.988,random_control
+T25929,B,Account Access,Technical,0.716,random_control
+T42130,B,Billing,Refund,0.641,random_control
+T30072,B,Billing,Billing,0.563,random_control
+T09364,A,Technical,Technical,0.751,random_control
+T17360,A,Technical,Technical,0.858,random_control
+T09151,A,Account Access,Account Access,0.9,random_control
+T16163,A,Account Access,Account Access,0.94,random_control
+T36790,B,Technical,Technical,0.629,random_control
+T35323,B,Account Access,Technical,0.837,random_control
+T17220,A,Billing,Billing,0.602,random_control
+T38312,B,Refund,Account Access,0.76,random_control
+T28078,B,Shipping,Shipping,0.876,random_control
+T38243,B,Account Access,Account Access,0.726,random_control
+T26176,B,Other,Other,0.847,random_control
+T23724,B,Billing,Billing,0.856,random_control
+T14374,A,Billing,Refund,0.964,random_control
+T09066,A,Account Access,Billing,0.871,random_control
+T33393,B,Account Access,Account Access,0.736,random_control
+T32344,B,Technical,Technical,0.624,random_control
+T05958,A,Technical,Technical,0.779,random_control
+T03088,A,Billing,Billing,0.67,random_control
+T07186,A,Refund,Refund,0.944,random_control
+T10017,A,Billing,Billing,0.778,random_control
+T41121,B,Billing,Billing,0.849,random_control
+T10485,A,Technical,Account Access,0.919,random_control
+T44597,B,Shipping,Shipping,0.587,random_control
+T27667,B,Refund,Billing,0.589,random_control
+T39087,B,Account Access,Account Access,0.734,random_control
+T04164,A,Technical,Technical,0.559,random_control
+T25217,B,Refund,Refund,0.666,random_control
+T25010,B,Technical,Technical,0.658,random_control
+T39053,B,Account Access,Account Access,0.933,random_control
+T30675,B,Billing,Billing,0.922,random_control
+T34677,B,Billing,Billing,0.977,random_control
+T16477,A,Billing,Billing,0.98,random_control
+T36257,B,Refund,Billing,0.962,random_control
+T00753,A,Account Access,Account Access,0.985,random_control
+T44584,B,Shipping,Shipping,0.748,random_control
+T07508,A,Technical,Technical,0.813,random_control
+T44677,B,Refund,Refund,0.97,random_control
+T35191,B,Account Access,Account Access,0.946,random_control
+T17487,A,Technical,Refund,0.846,random_control
+T42007,B,Account Access,Account Access,0.74,random_control
+T22294,B,Account Access,Technical,0.923,random_control
+T07311,A,Other,Other,0.822,random_control
+T19235,A,Other,Shipping,0.609,random_control
+T28493,B,Billing,Billing,0.84,random_control
+T10366,A,Billing,Billing,0.856,random_control
+T29736,B,Account Access,Shipping,0.553,random_control
+T00213,A,Technical,Technical,0.585,random_control
+T17262,A,Billing,Billing,0.666,random_control
+T32807,B,Other,Other,0.833,random_control
+T11709,A,Technical,Technical,0.91,random_control
+T33272,B,Billing,Technical,0.756,random_control
+T06974,A,Billing,Billing,0.625,random_control
+T40980,B,Billing,Billing,0.887,random_control
+T19559,A,Shipping,Shipping,0.596,random_control
+T41875,B,Refund,Refund,0.562,random_control
+T33271,B,Refund,Billing,0.929,random_control
+T39910,B,Refund,Refund,0.923,random_control
+T13036,A,Refund,Billing,0.772,random_control
+T24505,B,Account Access,Technical,0.757,random_control
+T10588,A,Shipping,Shipping,0.857,random_control
+T35349,B,Account Access,Account Access,0.648,random_control
+T34758,B,Account Access,Account Access,0.853,random_control
+T00038,A,Refund,Refund,0.946,random_control
+T39253,B,Billing,Refund,0.864,random_control
+T21244,B,Billing,Refund,0.864,random_control
+T32022,B,Billing,Billing,0.677,random_control
+T01277,A,Billing,Billing,0.9,random_control
+T07332,A,Shipping,Other,0.554,random_control
+T23789,B,Technical,Technical,0.653,random_control
+T20154,B,Technical,Billing,0.764,random_control
+T15693,A,Other,Other,0.607,random_control
+T03797,A,Billing,Technical,0.904,random_control
+T15786,A,Account Access,Account Access,0.629,random_control
+T37183,B,Billing,Refund,0.705,random_control
+T05162,A,Billing,Billing,0.924,random_control
+T05614,A,Refund,Refund,0.917,random_control
+T31850,B,Billing,Billing,0.897,random_control
+T04536,A,Account Access,Account Access,0.811,random_control
+T34912,B,Billing,Billing,0.585,random_control
+T08242,A,Billing,Billing,0.615,random_control
+T08415,A,Technical,Technical,0.75,random_control
+T43238,B,Technical,Technical,0.692,random_control
+T31149,B,Billing,Billing,0.746,random_control
+T36032,B,Refund,Refund,0.84,random_control
+T10822,A,Technical,Technical,0.928,random_control
+T17371,A,Refund,Billing,0.593,random_control
+T34582,B,Refund,Refund,0.757,random_control
+T39754,B,Account Access,Account Access,0.605,random_control
+T27731,B,Account Access,Technical,0.877,random_control
+T00127,A,Refund,Billing,0.99,high_confidence_disagreement
+T05519,A,Refund,Other,0.99,high_confidence_disagreement
+T10567,A,Account Access,Technical,0.99,high_confidence_disagreement
+T10688,A,Other,Billing,0.99,high_confidence_disagreement
+T22421,B,Refund,Billing,0.99,high_confidence_disagreement
+T22509,B,Shipping,Other,0.99,high_confidence_disagreement
+T26714,B,Shipping,Billing,0.99,high_confidence_disagreement
+T28621,B,Refund,Billing,0.99,high_confidence_disagreement
+T31285,B,Technical,Account Access,0.99,high_confidence_disagreement
+T34367,B,Refund,Billing,0.99,high_confidence_disagreement
+T34658,B,Shipping,Other,0.99,high_confidence_disagreement
+T35735,B,Account Access,Shipping,0.99,high_confidence_disagreement
+T36672,B,Refund,Technical,0.99,high_confidence_disagreement
+T39365,B,Billing,Refund,0.99,high_confidence_disagreement
+T40792,B,Technical,Account Access,0.99,high_confidence_disagreement
+T41066,B,Technical,Account Access,0.99,high_confidence_disagreement
+T41264,B,Technical,Account Access,0.99,high_confidence_disagreement
+T42572,B,Technical,Refund,0.99,high_confidence_disagreement
+T44944,B,Billing,Refund,0.99,high_confidence_disagreement
+T00791,A,Refund,Shipping,0.989,high_confidence_disagreement
+T06559,A,Account Access,Billing,0.989,high_confidence_disagreement
+T08276,A,Refund,Billing,0.989,high_confidence_disagreement
+T15588,A,Other,Shipping,0.989,high_confidence_disagreement
+T21633,B,Refund,Billing,0.989,high_confidence_disagreement
+T22571,B,Refund,Other,0.989,high_confidence_disagreement
+T28785,B,Billing,Refund,0.989,high_confidence_disagreement
+T29019,B,Billing,Refund,0.989,high_confidence_disagreement
+T29165,B,Refund,Technical,0.989,high_confidence_disagreement
+T29186,B,Technical,Other,0.989,high_confidence_disagreement
+T30927,B,Shipping,Other,0.989,high_confidence_disagreement
+T32768,B,Billing,Other,0.989,high_confidence_disagreement
+T35235,B,Refund,Billing,0.989,high_confidence_disagreement
+T37096,B,Billing,Other,0.989,high_confidence_disagreement
+T37983,B,Technical,Account Access,0.989,high_confidence_disagreement
+T38266,B,Refund,Shipping,0.989,high_confidence_disagreement
+T40269,B,Refund,Account Access,0.989,high_confidence_disagreement
+T40902,B,Refund,Billing,0.989,high_confidence_disagreement
+T42348,B,Shipping,Other,0.989,high_confidence_disagreement
+T42496,B,Refund,Billing,0.989,high_confidence_disagreement
+T43404,B,Refund,Account Access,0.989,high_confidence_disagreement
+T44859,B,Account Access,Technical,0.989,high_confidence_disagreement
+T06724,A,Account Access,Technical,0.988,high_confidence_disagreement
+T10742,A,Technical,Account Access,0.988,high_confidence_disagreement
+T11503,A,Account Access,Technical,0.988,high_confidence_disagreement
+T12062,A,Refund,Account Access,0.988,high_confidence_disagreement
+T13275,A,Refund,Billing,0.988,high_confidence_disagreement
+T15960,A,Billing,Account Access,0.988,high_confidence_disagreement
+T18212,A,Refund,Billing,0.988,high_confidence_disagreement
+T18933,A,Refund,Billing,0.988,high_confidence_disagreement
+T21256,B,Billing,Refund,0.988,high_confidence_disagreement
+T22355,B,Billing,Refund,0.988,high_confidence_disagreement
+T23792,B,Technical,Account Access,0.988,high_confidence_disagreement
+T25317,B,Technical,Account Access,0.988,high_confidence_disagreement
+T25680,B,Other,Shipping,0.988,high_confidence_disagreement
+T31971,B,Account Access,Billing,0.988,high_confidence_disagreement
+T32380,B,Other,Shipping,0.988,high_confidence_disagreement
+T33237,B,Refund,Billing,0.988,high_confidence_disagreement
+T33834,B,Refund,Billing,0.988,high_confidence_disagreement
+T34399,B,Account Access,Technical,0.988,high_confidence_disagreement
+T38448,B,Other,Shipping,0.988,high_confidence_disagreement
+T41952,B,Account Access,Technical,0.988,high_confidence_disagreement
+T42225,B,Account Access,Refund,0.988,high_confidence_disagreement
+T00538,A,Technical,Account Access,0.987,high_confidence_disagreement
+T01119,A,Billing,Technical,0.987,high_confidence_disagreement
+T02276,A,Technical,Account Access,0.987,high_confidence_disagreement
+T03645,A,Technical,Account Access,0.987,high_confidence_disagreement
+T04912,A,Technical,Shipping,0.987,high_confidence_disagreement
+T06140,A,Technical,Billing,0.987,high_confidence_disagreement
+T06346,A,Shipping,Account Access,0.987,high_confidence_disagreement
+T08823,A,Technical,Account Access,0.987,high_confidence_disagreement
+T12245,A,Billing,Technical,0.987,high_confidence_disagreement
+T12446,A,Other,Billing,0.987,high_confidence_disagreement
+T12980,A,Technical,Shipping,0.987,high_confidence_disagreement
+T18580,A,Technical,Account Access,0.987,high_confidence_disagreement
+T19055,A,Account Access,Technical,0.987,high_confidence_disagreement
+T20354,B,Billing,Refund,0.987,high_confidence_disagreement
+T22482,B,Other,Shipping,0.987,high_confidence_disagreement
+T23108,B,Technical,Account Access,0.987,high_confidence_disagreement
+T23539,B,Billing,Shipping,0.987,high_confidence_disagreement
+T26857,B,Billing,Refund,0.987,high_confidence_disagreement
+T27161,B,Refund,Billing,0.987,high_confidence_disagreement
+T27960,B,Billing,Refund,0.987,high_confidence_disagreement
+T30563,B,Billing,Shipping,0.987,high_confidence_disagreement
+T31424,B,Refund,Billing,0.987,high_confidence_disagreement
+T33349,B,Shipping,Other,0.987,high_confidence_disagreement
+T34150,B,Other,Shipping,0.987,high_confidence_disagreement
+T34717,B,Refund,Billing,0.987,high_confidence_disagreement
+T35543,B,Technical,Account Access,0.987,high_confidence_disagreement
+T38565,B,Billing,Technical,0.987,high_confidence_disagreement
+T41146,B,Refund,Billing,0.987,high_confidence_disagreement
+T43254,B,Refund,Account Access,0.987,high_confidence_disagreement
+T44561,B,Refund,Billing,0.987,high_confidence_disagreement
+T01511,A,Account Access,Billing,0.986,high_confidence_disagreement
+T02514,A,Shipping,Refund,0.986,high_confidence_disagreement
+T06379,A,Account Access,Billing,0.986,high_confidence_disagreement
+T10815,A,Technical,Refund,0.986,high_confidence_disagreement
+T13016,A,Billing,Refund,0.986,high_confidence_disagreement
+T14145,A,Technical,Shipping,0.986,high_confidence_disagreement
+T14860,A,Shipping,Billing,0.986,high_confidence_disagreement
+T15300,A,Shipping,Refund,0.986,high_confidence_disagreement
+T15658,A,Account Access,Refund,0.986,high_confidence_disagreement
+T22148,B,Account Access,Technical,0.986,high_confidence_disagreement
+T25996,B,Other,Shipping,0.986,high_confidence_disagreement
+T26715,B,Technical,Other,0.986,high_confidence_disagreement
+T27728,B,Technical,Refund,0.986,high_confidence_disagreement
+T27930,B,Refund,Other,0.986,high_confidence_disagreement
+T28559,B,Refund,Account Access,0.986,high_confidence_disagreement
+T30310,B,Refund,Billing,0.986,high_confidence_disagreement
+T31760,B,Refund,Billing,0.986,high_confidence_disagreement
+T33986,B,Refund,Billing,0.986,high_confidence_disagreement
+T35431,B,Account Access,Technical,0.986,high_confidence_disagreement
+T41076,B,Account Access,Technical,0.986,high_confidence_disagreement
+T41269,B,Technical,Refund,0.986,high_confidence_disagreement
+T42245,B,Billing,Other,0.986,high_confidence_disagreement
+T43157,B,Refund,Billing,0.986,high_confidence_disagreement
+T00248,A,Shipping,Other,0.985,high_confidence_disagreement
+T03459,A,Account Access,Technical,0.985,high_confidence_disagreement
+T06704,A,Billing,Technical,0.985,high_confidence_disagreement
+T08562,A,Refund,Technical,0.985,high_confidence_disagreement
+T09309,A,Billing,Refund,0.985,high_confidence_disagreement
+T14240,A,Billing,Refund,0.985,high_confidence_disagreement
+T17193,A,Account Access,Technical,0.985,high_confidence_disagreement
+T18563,A,Account Access,Refund,0.985,high_confidence_disagreement
+T18887,A,Account Access,Technical,0.985,high_confidence_disagreement
+T20902,B,Billing,Other,0.985,high_confidence_disagreement
+T25422,B,Account Access,Shipping,0.985,high_confidence_disagreement
+T26162,B,Refund,Billing,0.985,high_confidence_disagreement
+T27747,B,Billing,Refund,0.985,high_confidence_disagreement
+T28568,B,Other,Shipping,0.985,high_confidence_disagreement
+T28988,B,Shipping,Technical,0.985,high_confidence_disagreement
+T30643,B,Technical,Billing,0.985,high_confidence_disagreement
+T30936,B,Refund,Account Access,0.985,high_confidence_disagreement
+T30949,B,Account Access,Technical,0.985,high_confidence_disagreement
+T31537,B,Refund,Other,0.985,high_confidence_disagreement
+T31643,B,Refund,Billing,0.985,high_confidence_disagreement
+T36556,B,Refund,Technical,0.985,high_confidence_disagreement
+T37167,B,Billing,Other,0.985,high_confidence_disagreement
+T37642,B,Refund,Billing,0.985,high_confidence_disagreement
+T39134,B,Shipping,Other,0.985,high_confidence_disagreement
+T41340,B,Account Access,Technical,0.985,high_confidence_disagreement
+T41500,B,Account Access,Technical,0.985,high_confidence_disagreement
+T42823,B,Account Access,Refund,0.985,high_confidence_disagreement
+T43397,B,Refund,Billing,0.985,high_confidence_disagreement
+T43787,B,Refund,Billing,0.985,high_confidence_disagreement
+T00051,A,Billing,Refund,0.984,high_confidence_disagreement
+T05278,A,Billing,Refund,0.984,high_confidence_disagreement
+T05788,A,Technical,Other,0.984,high_confidence_disagreement
+T08392,A,Technical,Account Access,0.984,high_confidence_disagreement
+T08656,A,Billing,Technical,0.984,high_confidence_disagreement
+T12743,A,Technical,Account Access,0.984,high_confidence_disagreement
+T18722,A,Technical,Billing,0.984,high_confidence_disagreement
+T19003,A,Billing,Refund,0.984,high_confidence_disagreement
+T21492,B,Refund,Technical,0.984,high_confidence_disagreement
+T22480,B,Refund,Billing,0.984,high_confidence_disagreement
+T22997,B,Billing,Other,0.984,high_confidence_disagreement
+T23124,B,Account Access,Technical,0.984,high_confidence_disagreement
+T28652,B,Account Access,Technical,0.984,high_confidence_disagreement
+T32080,B,Billing,Refund,0.984,high_confidence_disagreement
+T33065,B,Technical,Account Access,0.984,high_confidence_disagreement
+T34140,B,Account Access,Shipping,0.984,high_confidence_disagreement
+T34723,B,Billing,Refund,0.984,high_confidence_disagreement
+T35128,B,Account Access,Shipping,0.984,high_confidence_disagreement
+T35539,B,Shipping,Other,0.984,high_confidence_disagreement
+T40228,B,Billing,Refund,0.984,high_confidence_disagreement
+T40618,B,Technical,Account Access,0.984,high_confidence_disagreement
+T44125,B,Technical,Account Access,0.984,high_confidence_disagreement
+T44794,B,Technical,Account Access,0.984,high_confidence_disagreement
+T00285,A,Technical,Shipping,0.983,high_confidence_disagreement
+T00993,A,Refund,Billing,0.983,high_confidence_disagreement
+T10832,A,Billing,Refund,0.983,high_confidence_disagreement
+T12553,A,Technical,Shipping,0.983,high_confidence_disagreement
+T13755,A,Other,Shipping,0.983,high_confidence_disagreement
+T15343,A,Shipping,Technical,0.983,high_confidence_disagreement
+T15553,A,Refund,Billing,0.983,high_confidence_disagreement
+T16371,A,Other,Shipping,0.983,high_confidence_disagreement
+T24032,B,Billing,Account Access,0.983,high_confidence_disagreement
+T24195,B,Account Access,Billing,0.983,high_confidence_disagreement
+T24841,B,Billing,Refund,0.983,high_confidence_disagreement
+T31301,B,Refund,Billing,0.983,high_confidence_disagreement
+T31457,B,Shipping,Billing,0.983,high_confidence_disagreement
+T32383,B,Shipping,Other,0.983,high_confidence_disagreement
+T34802,B,Other,Shipping,0.983,high_confidence_disagreement
+T37011,B,Billing,Other,0.983,high_confidence_disagreement
+T38373,B,Billing,Technical,0.983,high_confidence_disagreement
+T38463,B,Other,Refund,0.983,high_confidence_disagreement
+T39499,B,Billing,Refund,0.983,high_confidence_disagreement
+T39635,B,Technical,Account Access,0.983,high_confidence_disagreement
+T39789,B,Billing,Technical,0.983,high_confidence_disagreement
+T41442,B,Refund,Billing,0.983,high_confidence_disagreement
+T41577,B,Billing,Refund,0.983,high_confidence_disagreement
+T00725,A,Technical,Account Access,0.982,high_confidence_disagreement
+T01489,A,Billing,Account Access,0.982,high_confidence_disagreement
+T03373,A,Account Access,Technical,0.982,high_confidence_disagreement
+T05259,A,Technical,Refund,0.982,high_confidence_disagreement
+T07614,A,Refund,Billing,0.982,high_confidence_disagreement
+T09535,A,Technical,Billing,0.982,high_confidence_disagreement
+T19474,A,Other,Technical,0.982,high_confidence_disagreement
+T19693,A,Shipping,Billing,0.982,high_confidence_disagreement
+T19825,A,Technical,Account Access,0.982,high_confidence_disagreement
+T22558,B,Refund,Billing,0.982,high_confidence_disagreement
+T23098,B,Refund,Billing,0.982,high_confidence_disagreement
+T23591,B,Billing,Account Access,0.982,high_confidence_disagreement
+T23728,B,Refund,Billing,0.982,high_confidence_disagreement
+T24225,B,Technical,Account Access,0.982,high_confidence_disagreement
+T26791,B,Billing,Refund,0.982,high_confidence_disagreement
+T28334,B,Shipping,Account Access,0.982,high_confidence_disagreement
+T28471,B,Refund,Billing,0.982,high_confidence_disagreement
+T29504,B,Billing,Shipping,0.982,high_confidence_disagreement
+T29746,B,Refund,Billing,0.982,high_confidence_disagreement
+T30403,B,Refund,Billing,0.982,high_confidence_disagreement
+T30415,B,Other,Shipping,0.982,high_confidence_disagreement
+T32772,B,Refund,Billing,0.982,high_confidence_disagreement
+T33193,B,Shipping,Other,0.982,high_confidence_disagreement
+T34799,B,Refund,Billing,0.982,high_confidence_disagreement
+T36480,B,Billing,Refund,0.982,high_confidence_disagreement
+T37039,B,Technical,Shipping,0.982,high_confidence_disagreement
+T37381,B,Technical,Account Access,0.982,high_confidence_disagreement
+T39693,B,Refund,Billing,0.982,high_confidence_disagreement
+T40811,B,Technical,Account Access,0.982,high_confidence_disagreement
+T42266,B,Refund,Billing,0.982,high_confidence_disagreement
+T43105,B,Billing,Shipping,0.982,high_confidence_disagreement
+T01654,A,Refund,Shipping,0.981,high_confidence_disagreement
+T02883,A,Shipping,Refund,0.981,high_confidence_disagreement
+T04643,A,Billing,Shipping,0.981,high_confidence_disagreement
+T05003,A,Refund,Billing,0.981,high_confidence_disagreement
+T09774,A,Technical,Other,0.981,high_confidence_disagreement
+T12011,A,Billing,Refund,0.981,high_confidence_disagreement
+T14003,A,Technical,Other,0.981,high_confidence_disagreement
+T15712,A,Billing,Shipping,0.981,high_confidence_disagreement
+T17565,A,Other,Shipping,0.981,high_confidence_disagreement
+T18040,A,Other,Shipping,0.981,high_confidence_disagreement
+T20692,B,Refund,Billing,0.981,high_confidence_disagreement
+T21754,B,Billing,Refund,0.981,high_confidence_disagreement
+T22524,B,Account Access,Technical,0.981,high_confidence_disagreement
+T23425,B,Other,Shipping,0.981,high_confidence_disagreement
+T24164,B,Other,Shipping,0.981,high_confidence_disagreement
+T24748,B,Refund,Billing,0.981,high_confidence_disagreement
+T25714,B,Refund,Billing,0.981,high_confidence_disagreement
+T29833,B,Shipping,Other,0.981,high_confidence_disagreement
+T30375,B,Refund,Billing,0.981,high_confidence_disagreement
+T34874,B,Billing,Refund,0.981,high_confidence_disagreement
+T35783,B,Account Access,Technical,0.981,high_confidence_disagreement
+T37023,B,Refund,Billing,0.981,high_confidence_disagreement
+T37518,B,Technical,Account Access,0.981,high_confidence_disagreement
+T37524,B,Refund,Billing,0.981,high_confidence_disagreement
+T39644,B,Technical,Account Access,0.981,high_confidence_disagreement
+T43850,B,Other,Shipping,0.981,high_confidence_disagreement
+T01371,A,Billing,Other,0.98,high_confidence_disagreement
+T03234,A,Technical,Shipping,0.98,high_confidence_disagreement
+T03303,A,Shipping,Technical,0.98,high_confidence_disagreement
+T05971,A,Technical,Other,0.98,high_confidence_disagreement
+T07684,A,Technical,Refund,0.98,high_confidence_disagreement
+T07829,A,Refund,Technical,0.98,high_confidence_disagreement
+T19616,A,Account Access,Technical,0.98,high_confidence_disagreement
+T20499,B,Refund,Billing,0.98,high_confidence_disagreement
+T22854,B,Refund,Shipping,0.98,high_confidence_disagreement
+T23643,B,Technical,Account Access,0.98,high_confidence_disagreement
+T31667,B,Technical,Account Access,0.98,high_confidence_disagreement
+T35624,B,Billing,Refund,0.98,high_confidence_disagreement
+T35706,B,Billing,Refund,0.98,high_confidence_disagreement
+T36566,B,Account Access,Technical,0.98,high_confidence_disagreement
+T37125,B,Refund,Technical,0.98,high_confidence_disagreement
+T37965,B,Other,Shipping,0.98,high_confidence_disagreement
+T40746,B,Shipping,Account Access,0.98,high_confidence_disagreement
+T40865,B,Account Access,Technical,0.98,high_confidence_disagreement
+T42838,B,Other,Billing,0.98,high_confidence_disagreement
+T42976,B,Other,Shipping,0.98,high_confidence_disagreement
+T00648,A,Billing,Technical,0.979,high_confidence_disagreement
+T05515,A,Billing,Refund,0.979,high_confidence_disagreement
+T06812,A,Refund,Shipping,0.979,high_confidence_disagreement
+T07514,A,Other,Shipping,0.979,high_confidence_disagreement
+T10364,A,Billing,Refund,0.979,high_confidence_disagreement
+T15364,A,Refund,Billing,0.979,high_confidence_disagreement
+T22168,B,Billing,Refund,0.979,high_confidence_disagreement
+T25226,B,Shipping,Account Access,0.979,high_confidence_disagreement
+T25364,B,Technical,Account Access,0.979,high_confidence_disagreement
+T26035,B,Shipping,Other,0.979,high_confidence_disagreement
+T27300,B,Account Access,Technical,0.979,high_confidence_disagreement
+T28218,B,Refund,Billing,0.979,high_confidence_disagreement
+T29780,B,Technical,Account Access,0.979,high_confidence_disagreement
+T31041,B,Refund,Billing,0.979,high_confidence_disagreement
+T31688,B,Technical,Account Access,0.979,high_confidence_disagreement
+T32203,B,Other,Shipping,0.979,high_confidence_disagreement
+T34544,B,Account Access,Technical,0.979,high_confidence_disagreement
+T38979,B,Account Access,Other,0.979,high_confidence_disagreement
+T39221,B,Billing,Other,0.979,high_confidence_disagreement
+T40363,B,Account Access,Shipping,0.979,high_confidence_disagreement
+T41474,B,Refund,Billing,0.979,high_confidence_disagreement
+T44866,B,Refund,Billing,0.979,high_confidence_disagreement
+T01082,A,Billing,Technical,0.978,high_confidence_disagreement
+T03659,A,Technical,Shipping,0.978,high_confidence_disagreement
+T03828,A,Refund,Billing,0.978,high_confidence_disagreement
+T04010,A,Technical,Account Access,0.978,high_confidence_disagreement
+T07504,A,Other,Refund,0.978,high_confidence_disagreement
+T07851,A,Refund,Billing,0.978,high_confidence_disagreement
+T08058,A,Billing,Refund,0.978,high_confidence_disagreement
+T08355,A,Refund,Billing,0.978,high_confidence_disagreement
+T14628,A,Refund,Account Access,0.978,high_confidence_disagreement
+T14835,A,Refund,Account Access,0.978,high_confidence_disagreement
+T16329,A,Refund,Billing,0.978,high_confidence_disagreement
+T17210,A,Refund,Account Access,0.978,high_confidence_disagreement
+T18973,A,Other,Shipping,0.978,high_confidence_disagreement
+T19174,A,Technical,Shipping,0.978,high_confidence_disagreement
+T20251,B,Billing,Refund,0.978,high_confidence_disagreement
+T23047,B,Account Access,Technical,0.978,high_confidence_disagreement
+T23132,B,Refund,Billing,0.978,high_confidence_disagreement
+T24960,B,Technical,Account Access,0.978,high_confidence_disagreement
+T26652,B,Refund,Billing,0.978,high_confidence_disagreement
+T29584,B,Account Access,Technical,0.978,high_confidence_disagreement
+T30130,B,Shipping,Billing,0.978,high_confidence_disagreement
+T30408,B,Refund,Billing,0.978,high_confidence_disagreement
+T30606,B,Technical,Account Access,0.978,high_confidence_disagreement
+T31435,B,Technical,Other,0.978,high_confidence_disagreement
+T31725,B,Technical,Account Access,0.978,high_confidence_disagreement
+T32605,B,Technical,Other,0.978,high_confidence_disagreement
+T33547,B,Billing,Refund,0.978,high_confidence_disagreement
+T34208,B,Refund,Billing,0.978,high_confidence_disagreement
+T35179,B,Account Access,Technical,0.978,high_confidence_disagreement
+T35988,B,Refund,Other,0.978,high_confidence_disagreement
+T36082,B,Technical,Account Access,0.978,high_confidence_disagreement
+T40411,B,Refund,Billing,0.978,high_confidence_disagreement
+T42336,B,Billing,Refund,0.978,high_confidence_disagreement
+T44405,B,Refund,Billing,0.978,high_confidence_disagreement
+T06230,A,Account Access,Other,0.977,high_confidence_disagreement
+T14834,A,Technical,Account Access,0.977,high_confidence_disagreement
+T15296,A,Refund,Billing,0.977,high_confidence_disagreement
+T15408,A,Account Access,Other,0.977,high_confidence_disagreement
+T17185,A,Billing,Refund,0.977,high_confidence_disagreement
+T19089,A,Account Access,Other,0.977,high_confidence_disagreement
+T20132,B,Billing,Technical,0.977,high_confidence_disagreement
+T21072,B,Billing,Refund,0.977,high_confidence_disagreement
+T21120,B,Technical,Billing,0.977,high_confidence_disagreement
+T22915,B,Billing,Refund,0.977,high_confidence_disagreement
+T22972,B,Refund,Billing,0.977,high_confidence_disagreement
+T25358,B,Refund,Billing,0.977,high_confidence_disagreement
+T27347,B,Account Access,Technical,0.977,high_confidence_disagreement
+T27458,B,Refund,Billing,0.977,high_confidence_disagreement
+T28452,B,Account Access,Technical,0.977,high_confidence_disagreement
+T31747,B,Account Access,Technical,0.977,high_confidence_disagreement
+T32168,B,Other,Shipping,0.977,high_confidence_disagreement
+T32358,B,Refund,Billing,0.977,high_confidence_disagreement
+T34278,B,Refund,Billing,0.977,high_confidence_disagreement
+T35729,B,Account Access,Technical,0.977,high_confidence_disagreement
+T39467,B,Billing,Refund,0.977,high_confidence_disagreement
+T41814,B,Refund,Billing,0.977,high_confidence_disagreement
+T00421,A,Account Access,Technical,0.976,high_confidence_disagreement
+T02725,A,Technical,Other,0.976,high_confidence_disagreement
+T05213,A,Refund,Shipping,0.976,high_confidence_disagreement
+T07671,A,Refund,Technical,0.976,high_confidence_disagreement
+T07917,A,Account Access,Technical,0.976,high_confidence_disagreement
+T17314,A,Billing,Other,0.976,high_confidence_disagreement
+T17814,A,Billing,Other,0.976,high_confidence_disagreement
+T21209,B,Account Access,Technical,0.976,high_confidence_disagreement
+T22610,B,Account Access,Refund,0.976,high_confidence_disagreement
+T23515,B,Account Access,Technical,0.976,high_confidence_disagreement
+T24620,B,Shipping,Billing,0.976,high_confidence_disagreement
+T26031,B,Other,Shipping,0.976,high_confidence_disagreement
+T30402,B,Other,Shipping,0.976,high_confidence_disagreement
+T30943,B,Account Access,Technical,0.976,high_confidence_disagreement
+T32248,B,Account Access,Technical,0.976,high_confidence_disagreement
+T32472,B,Shipping,Billing,0.976,high_confidence_disagreement
+T33477,B,Shipping,Other,0.976,high_confidence_disagreement
+T35817,B,Billing,Refund,0.976,high_confidence_disagreement
+T44727,B,Billing,Refund,0.976,high_confidence_disagreement
+T44870,B,Account Access,Technical,0.976,high_confidence_disagreement
+T00202,A,Other,Shipping,0.975,high_confidence_disagreement
+T00568,A,Refund,Shipping,0.975,high_confidence_disagreement
+T00785,A,Account Access,Technical,0.975,high_confidence_disagreement
+T07113,A,Refund,Shipping,0.975,high_confidence_disagreement
+T08705,A,Account Access,Shipping,0.975,high_confidence_disagreement
+T10460,A,Account Access,Technical,0.975,high_confidence_disagreement
+T13852,A,Other,Technical,0.975,high_confidence_disagreement
+T19916,A,Shipping,Other,0.975,high_confidence_disagreement
+T20766,B,Refund,Billing,0.975,high_confidence_disagreement
+T21990,B,Account Access,Other,0.975,high_confidence_disagreement
+T24149,B,Billing,Refund,0.975,high_confidence_disagreement
+T24321,B,Technical,Account Access,0.975,high_confidence_disagreement
+T25733,B,Refund,Billing,0.975,high_confidence_disagreement
+T27310,B,Refund,Billing,0.975,high_confidence_disagreement
+T27502,B,Billing,Technical,0.975,high_confidence_disagreement
+T29336,B,Technical,Account Access,0.975,high_confidence_disagreement
+T29474,B,Account Access,Technical,0.975,high_confidence_disagreement
+T33932,B,Other,Shipping,0.975,high_confidence_disagreement
+T37269,B,Account Access,Billing,0.975,high_confidence_disagreement
+T38324,B,Account Access,Technical,0.975,high_confidence_disagreement
+T39393,B,Billing,Refund,0.975,high_confidence_disagreement
+T40068,B,Billing,Refund,0.975,high_confidence_disagreement
+T41437,B,Account Access,Technical,0.975,high_confidence_disagreement
+T42395,B,Technical,Account Access,0.975,high_confidence_disagreement
+T42835,B,Account Access,Technical,0.975,high_confidence_disagreement
+T44570,B,Account Access,Technical,0.975,high_confidence_disagreement
+T00132,A,Technical,Refund,0.974,high_confidence_disagreement
+T02985,A,Technical,Billing,0.974,high_confidence_disagreement
+T03205,A,Technical,Account Access,0.974,high_confidence_disagreement
+T03869,A,Account Access,Technical,0.974,high_confidence_disagreement
+T06366,A,Shipping,Billing,0.974,high_confidence_disagreement
+T07570,A,Account Access,Technical,0.974,high_confidence_disagreement
+T10586,A,Refund,Shipping,0.974,high_confidence_disagreement
+T11398,A,Technical,Shipping,0.974,high_confidence_disagreement
+T12384,A,Billing,Refund,0.974,high_confidence_disagreement
+T13045,A,Billing,Account Access,0.974,high_confidence_disagreement
+T15813,A,Billing,Shipping,0.974,high_confidence_disagreement
+T18033,A,Refund,Billing,0.974,high_confidence_disagreement
+T21514,B,Shipping,Other,0.974,high_confidence_disagreement
+T21958,B,Other,Shipping,0.974,high_confidence_disagreement
+T23377,B,Refund,Other,0.974,high_confidence_disagreement
+T25483,B,Billing,Account Access,0.974,high_confidence_disagreement
+T26984,B,Technical,Account Access,0.974,high_confidence_disagreement
+T31683,B,Refund,Other,0.974,high_confidence_disagreement
+T33707,B,Billing,Refund,0.974,high_confidence_disagreement
+T34191,B,Account Access,Technical,0.974,high_confidence_disagreement
+T35766,B,Billing,Refund,0.974,high_confidence_disagreement
+T38401,B,Technical,Billing,0.974,high_confidence_disagreement
+T40467,B,Technical,Account Access,0.974,high_confidence_disagreement
+T42619,B,Billing,Account Access,0.974,high_confidence_disagreement
+T43753,B,Billing,Refund,0.974,high_confidence_disagreement
+T43966,B,Refund,Billing,0.974,high_confidence_disagreement
+T44413,B,Technical,Billing,0.974,high_confidence_disagreement
+T04616,A,Account Access,Technical,0.973,high_confidence_disagreement
+T05143,A,Shipping,Refund,0.973,high_confidence_disagreement
+T09553,A,Refund,Billing,0.973,high_confidence_disagreement
+T13509,A,Account Access,Refund,0.973,high_confidence_disagreement
+T17564,A,Account Access,Technical,0.973,high_confidence_disagreement
+T18020,A,Account Access,Other,0.973,high_confidence_disagreement
+T18747,A,Technical,Billing,0.973,high_confidence_disagreement
+T18879,A,Billing,Refund,0.973,high_confidence_disagreement
+T22555,B,Refund,Billing,0.973,high_confidence_disagreement
+T23035,B,Technical,Account Access,0.973,high_confidence_disagreement
+T25117,B,Other,Shipping,0.973,high_confidence_disagreement
+T27459,B,Billing,Shipping,0.973,high_confidence_disagreement
+T27623,B,Billing,Other,0.973,high_confidence_disagreement
+T27735,B,Account Access,Shipping,0.973,high_confidence_disagreement
+T28283,B,Other,Shipping,0.973,high_confidence_disagreement
+T32294,B,Refund,Billing,0.973,high_confidence_disagreement
+T33395,B,Other,Shipping,0.973,high_confidence_disagreement
+T35520,B,Technical,Account Access,0.973,high_confidence_disagreement
+T37430,B,Refund,Billing,0.973,high_confidence_disagreement
+T39917,B,Technical,Account Access,0.973,high_confidence_disagreement
+T40276,B,Account Access,Technical,0.973,high_confidence_disagreement
+T41725,B,Other,Shipping,0.973,high_confidence_disagreement
+T43499,B,Technical,Account Access,0.973,high_confidence_disagreement
+T06476,A,Billing,Shipping,0.972,high_confidence_disagreement
+T11134,A,Technical,Other,0.972,high_confidence_disagreement
+T12352,A,Account Access,Technical,0.972,high_confidence_disagreement
+T15728,A,Billing,Shipping,0.972,high_confidence_disagreement
+T19936,A,Technical,Billing,0.972,high_confidence_disagreement
+T20983,B,Other,Shipping,0.972,high_confidence_disagreement
+T21341,B,Account Access,Refund,0.972,high_confidence_disagreement
+T21758,B,Account Access,Technical,0.972,high_confidence_disagreement
+T23373,B,Technical,Billing,0.972,high_confidence_disagreement
+T25738,B,Technical,Account Access,0.972,high_confidence_disagreement
+T29182,B,Account Access,Technical,0.972,high_confidence_disagreement
+T30196,B,Other,Shipping,0.972,high_confidence_disagreement
+T33803,B,Account Access,Technical,0.972,high_confidence_disagreement
+T35043,B,Account Access,Technical,0.972,high_confidence_disagreement
+T38267,B,Account Access,Technical,0.972,high_confidence_disagreement
+T38465,B,Account Access,Technical,0.972,high_confidence_disagreement
+T39394,B,Technical,Account Access,0.972,high_confidence_disagreement
+T41865,B,Refund,Other,0.972,high_confidence_disagreement
+T42691,B,Technical,Account Access,0.972,high_confidence_disagreement
+T43341,B,Technical,Account Access,0.972,high_confidence_disagreement
+T02150,A,Billing,Refund,0.971,high_confidence_disagreement
+T06832,A,Technical,Billing,0.971,high_confidence_disagreement
+T09907,A,Technical,Other,0.971,high_confidence_disagreement
+T12609,A,Account Access,Other,0.971,high_confidence_disagreement
+T12978,A,Technical,Other,0.971,high_confidence_disagreement
+T15028,A,Billing,Shipping,0.971,high_confidence_disagreement
+T17636,A,Billing,Account Access,0.971,high_confidence_disagreement
+T22437,B,Refund,Billing,0.971,high_confidence_disagreement
+T23099,B,Technical,Account Access,0.971,high_confidence_disagreement
+T23382,B,Refund,Billing,0.971,high_confidence_disagreement
+T25301,B,Other,Shipping,0.971,high_confidence_disagreement
+T25320,B,Billing,Refund,0.971,high_confidence_disagreement
+T26741,B,Technical,Account Access,0.971,high_confidence_disagreement
+T30689,B,Refund,Billing,0.971,high_confidence_disagreement
+T31121,B,Refund,Billing,0.971,high_confidence_disagreement
+T33622,B,Billing,Technical,0.971,high_confidence_disagreement
+T34963,B,Account Access,Technical,0.971,high_confidence_disagreement
+T35821,B,Refund,Billing,0.971,high_confidence_disagreement
+T35976,B,Billing,Account Access,0.971,high_confidence_disagreement
+T40961,B,Refund,Technical,0.971,high_confidence_disagreement
+T42430,B,Billing,Shipping,0.971,high_confidence_disagreement
+T43631,B,Billing,Refund,0.971,high_confidence_disagreement
+T02969,A,Technical,Account Access,0.97,high_confidence_disagreement
+T03369,A,Billing,Refund,0.97,high_confidence_disagreement
+T03418,A,Technical,Refund,0.97,high_confidence_disagreement
+T03838,A,Technical,Refund,0.97,high_confidence_disagreement
+T05055,A,Technical,Shipping,0.97,high_confidence_disagreement
+T05513,A,Technical,Billing,0.97,high_confidence_disagreement
+T09178,A,Billing,Other,0.97,high_confidence_disagreement
+T14950,A,Billing,Other,0.97,high_confidence_disagreement
+T15928,A,Technical,Account Access,0.97,high_confidence_disagreement
+T21080,B,Refund,Billing,0.97,high_confidence_disagreement
+T21156,B,Refund,Billing,0.97,high_confidence_disagreement
+T21270,B,Technical,Account Access,0.97,high_confidence_disagreement
+T21831,B,Refund,Billing,0.97,high_confidence_disagreement
+T23265,B,Refund,Billing,0.97,high_confidence_disagreement
+T24739,B,Refund,Billing,0.97,high_confidence_disagreement
+T25817,B,Refund,Billing,0.97,high_confidence_disagreement
+T25982,B,Account Access,Technical,0.97,high_confidence_disagreement
+T27119,B,Technical,Billing,0.97,high_confidence_disagreement
+T31193,B,Account Access,Shipping,0.97,high_confidence_disagreement
+T31354,B,Billing,Refund,0.97,high_confidence_disagreement
+T32038,B,Technical,Refund,0.97,high_confidence_disagreement
+T34120,B,Other,Shipping,0.97,high_confidence_disagreement
+T34943,B,Technical,Account Access,0.97,high_confidence_disagreement
+T35479,B,Technical,Account Access,0.97,high_confidence_disagreement
+T36069,B,Other,Technical,0.97,high_confidence_disagreement
+T38389,B,Technical,Account Access,0.97,high_confidence_disagreement
+T38868,B,Refund,Other,0.97,high_confidence_disagreement
+T38905,B,Account Access,Billing,0.97,high_confidence_disagreement
+T40054,B,Account Access,Technical,0.97,high_confidence_disagreement
+T40886,B,Account Access,Technical,0.97,high_confidence_disagreement
+T42608,B,Other,Shipping,0.97,high_confidence_disagreement
+T43190,B,Technical,Account Access,0.97,high_confidence_disagreement
+T43225,B,Billing,Refund,0.97,high_confidence_disagreement
+T44820,B,Other,Shipping,0.97,high_confidence_disagreement
+T44943,B,Billing,Refund,0.97,high_confidence_disagreement
+T06383,A,Refund,Shipping,0.969,high_confidence_disagreement
+T08698,A,Other,Shipping,0.969,high_confidence_disagreement
+T10606,A,Technical,Billing,0.969,high_confidence_disagreement
+T11913,A,Refund,Shipping,0.969,high_confidence_disagreement
+T14116,A,Technical,Refund,0.969,high_confidence_disagreement
+T14989,A,Other,Account Access,0.969,high_confidence_disagreement
+T16482,A,Billing,Shipping,0.969,high_confidence_disagreement
+T16623,A,Technical,Shipping,0.969,high_confidence_disagreement
+T16817,A,Billing,Refund,0.969,high_confidence_disagreement
+T18444,A,Billing,Technical,0.969,high_confidence_disagreement
+T19970,A,Technical,Account Access,0.969,high_confidence_disagreement
+T20844,B,Billing,Refund,0.969,high_confidence_disagreement
+T22440,B,Technical,Other,0.969,high_confidence_disagreement
+T23438,B,Refund,Billing,0.969,high_confidence_disagreement
+T25294,B,Technical,Refund,0.969,high_confidence_disagreement
+T25729,B,Shipping,Other,0.969,high_confidence_disagreement
+T25855,B,Billing,Shipping,0.969,high_confidence_disagreement
+T27255,B,Technical,Shipping,0.969,high_confidence_disagreement
+T27479,B,Shipping,Other,0.969,high_confidence_disagreement
+T28076,B,Refund,Account Access,0.969,high_confidence_disagreement
+T28555,B,Technical,Account Access,0.969,high_confidence_disagreement
+T33254,B,Technical,Account Access,0.969,high_confidence_disagreement
+T34006,B,Refund,Billing,0.969,high_confidence_disagreement
+T37225,B,Technical,Billing,0.969,high_confidence_disagreement
+T37944,B,Technical,Shipping,0.969,high_confidence_disagreement
+T39951,B,Account Access,Technical,0.969,high_confidence_disagreement
+T44168,B,Other,Shipping,0.969,high_confidence_disagreement
+T44307,B,Technical,Billing,0.969,high_confidence_disagreement
+T44629,B,Other,Shipping,0.969,high_confidence_disagreement
+T00152,A,Billing,Other,0.968,high_confidence_disagreement
+T01179,A,Billing,Account Access,0.968,high_confidence_disagreement
+T01396,A,Account Access,Technical,0.968,high_confidence_disagreement
+T02518,A,Technical,Account Access,0.968,high_confidence_disagreement
+T03028,A,Technical,Refund,0.968,high_confidence_disagreement
+T06417,A,Refund,Other,0.968,high_confidence_disagreement
+T06492,A,Technical,Account Access,0.968,high_confidence_disagreement
+T07423,A,Refund,Billing,0.968,high_confidence_disagreement
+T12857,A,Account Access,Shipping,0.968,high_confidence_disagreement
+T17992,A,Billing,Refund,0.968,high_confidence_disagreement
+T18530,A,Refund,Billing,0.968,high_confidence_disagreement
+T20122,B,Account Access,Other,0.968,high_confidence_disagreement
+T20645,B,Billing,Refund,0.968,high_confidence_disagreement
+T21457,B,Technical,Account Access,0.968,high_confidence_disagreement
+T21528,B,Refund,Billing,0.968,high_confidence_disagreement
+T21813,B,Billing,Refund,0.968,high_confidence_disagreement
+T22802,B,Account Access,Billing,0.968,high_confidence_disagreement
+T23412,B,Account Access,Other,0.968,high_confidence_disagreement
+T26121,B,Account Access,Technical,0.968,high_confidence_disagreement
+T27708,B,Account Access,Technical,0.968,high_confidence_disagreement
+T28163,B,Billing,Refund,0.968,high_confidence_disagreement
+T29981,B,Billing,Refund,0.968,high_confidence_disagreement
+T33221,B,Refund,Billing,0.968,high_confidence_disagreement
+T34499,B,Account Access,Technical,0.968,high_confidence_disagreement
+T36021,B,Account Access,Technical,0.968,high_confidence_disagreement
+T36092,B,Technical,Account Access,0.968,high_confidence_disagreement
+T36652,B,Billing,Refund,0.968,high_confidence_disagreement
+T37562,B,Billing,Refund,0.968,high_confidence_disagreement
+T38610,B,Account Access,Billing,0.968,high_confidence_disagreement
+T39108,B,Shipping,Other,0.968,high_confidence_disagreement
+T41832,B,Shipping,Account Access,0.968,high_confidence_disagreement
+T43943,B,Other,Account Access,0.968,high_confidence_disagreement
+T00393,A,Technical,Billing,0.967,high_confidence_disagreement
+T00645,A,Billing,Refund,0.967,high_confidence_disagreement
+T02081,A,Billing,Refund,0.967,high_confidence_disagreement
+T04657,A,Account Access,Technical,0.967,high_confidence_disagreement
+T10511,A,Shipping,Account Access,0.967,high_confidence_disagreement
+T16462,A,Technical,Refund,0.967,high_confidence_disagreement
+T16787,A,Account Access,Billing,0.967,high_confidence_disagreement
+T17678,A,Technical,Account Access,0.967,high_confidence_disagreement
+T19648,A,Refund,Billing,0.967,high_confidence_disagreement
+T21640,B,Refund,Billing,0.967,high_confidence_disagreement
+T22384,B,Technical,Shipping,0.967,high_confidence_disagreement
+T24903,B,Billing,Refund,0.967,high_confidence_disagreement
+T25031,B,Other,Refund,0.967,high_confidence_disagreement
+T25403,B,Account Access,Technical,0.967,high_confidence_disagreement
+T25542,B,Refund,Shipping,0.967,high_confidence_disagreement
+T25838,B,Technical,Other,0.967,high_confidence_disagreement
+T26090,B,Other,Account Access,0.967,high_confidence_disagreement
+T28804,B,Billing,Technical,0.967,high_confidence_disagreement
+T29831,B,Refund,Billing,0.967,high_confidence_disagreement
+T30997,B,Account Access,Shipping,0.967,high_confidence_disagreement
+T32903,B,Account Access,Technical,0.967,high_confidence_disagreement
+T34885,B,Refund,Billing,0.967,high_confidence_disagreement
+T34981,B,Other,Shipping,0.967,high_confidence_disagreement
+T35236,B,Technical,Account Access,0.967,high_confidence_disagreement
+T36942,B,Refund,Billing,0.967,high_confidence_disagreement
+T37314,B,Refund,Billing,0.967,high_confidence_disagreement
+T37551,B,Account Access,Shipping,0.967,high_confidence_disagreement
+T37748,B,Billing,Refund,0.967,high_confidence_disagreement
+T38999,B,Shipping,Technical,0.967,high_confidence_disagreement
+T40060,B,Refund,Billing,0.967,high_confidence_disagreement
+T40606,B,Billing,Refund,0.967,high_confidence_disagreement
+T41057,B,Billing,Refund,0.967,high_confidence_disagreement
+T42317,B,Refund,Billing,0.967,high_confidence_disagreement
+T42659,B,Refund,Account Access,0.967,high_confidence_disagreement
+T42908,B,Refund,Billing,0.967,high_confidence_disagreement
+T43366,B,Refund,Billing,0.967,high_confidence_disagreement
+T44352,B,Shipping,Other,0.967,high_confidence_disagreement
+T44711,B,Refund,Billing,0.967,high_confidence_disagreement
+T02056,A,Account Access,Refund,0.966,high_confidence_disagreement
+T05630,A,Refund,Account Access,0.966,high_confidence_disagreement
+T06960,A,Refund,Billing,0.966,high_confidence_disagreement
+T13724,A,Billing,Account Access,0.966,high_confidence_disagreement
+T17573,A,Refund,Billing,0.966,high_confidence_disagreement
+T19743,A,Refund,Billing,0.966,high_confidence_disagreement
+T20127,B,Account Access,Technical,0.966,high_confidence_disagreement
+T20407,B,Technical,Billing,0.966,high_confidence_disagreement
+T21050,B,Billing,Other,0.966,high_confidence_disagreement
+T21833,B,Billing,Technical,0.966,high_confidence_disagreement
+T21877,B,Billing,Refund,0.966,high_confidence_disagreement
+T24852,B,Other,Shipping,0.966,high_confidence_disagreement
+T25466,B,Account Access,Other,0.966,high_confidence_disagreement
+T30773,B,Refund,Billing,0.966,high_confidence_disagreement
+T31621,B,Refund,Billing,0.966,high_confidence_disagreement
+T33862,B,Account Access,Technical,0.966,high_confidence_disagreement
+T35142,B,Refund,Billing,0.966,high_confidence_disagreement
+T35724,B,Refund,Billing,0.966,high_confidence_disagreement
+T36342,B,Account Access,Technical,0.966,high_confidence_disagreement
+T36671,B,Technical,Refund,0.966,high_confidence_disagreement
+T37623,B,Technical,Account Access,0.966,high_confidence_disagreement
+T39595,B,Technical,Account Access,0.966,high_confidence_disagreement
+T40122,B,Account Access,Refund,0.966,high_confidence_disagreement
+T41328,B,Billing,Refund,0.966,high_confidence_disagreement
+T42528,B,Billing,Refund,0.966,high_confidence_disagreement
+T42581,B,Account Access,Technical,0.966,high_confidence_disagreement
+T43856,B,Billing,Other,0.966,high_confidence_disagreement
+T02121,A,Billing,Technical,0.965,high_confidence_disagreement
+T03632,A,Billing,Refund,0.965,high_confidence_disagreement
+T04061,A,Account Access,Technical,0.965,high_confidence_disagreement
+T04662,A,Refund,Billing,0.965,high_confidence_disagreement
+T04742,A,Billing,Refund,0.965,high_confidence_disagreement
+T04883,A,Refund,Billing,0.965,high_confidence_disagreement
+T04955,A,Other,Shipping,0.965,high_confidence_disagreement
+T09463,A,Other,Shipping,0.965,high_confidence_disagreement
+T09680,A,Account Access,Shipping,0.965,high_confidence_disagreement
+T12603,A,Shipping,Other,0.965,high_confidence_disagreement
+T16522,A,Billing,Account Access,0.965,high_confidence_disagreement
+T20446,B,Technical,Account Access,0.965,high_confidence_disagreement
+T22381,B,Account Access,Technical,0.965,high_confidence_disagreement
+T24596,B,Refund,Billing,0.965,high_confidence_disagreement
+T26497,B,Account Access,Technical,0.965,high_confidence_disagreement
+T28090,B,Other,Shipping,0.965,high_confidence_disagreement
+T30681,B,Billing,Account Access,0.965,high_confidence_disagreement
+T31395,B,Billing,Refund,0.965,high_confidence_disagreement
+T31712,B,Shipping,Technical,0.965,high_confidence_disagreement
+T33343,B,Shipping,Refund,0.965,high_confidence_disagreement
+T35514,B,Refund,Billing,0.965,high_confidence_disagreement
+T36241,B,Other,Shipping,0.965,high_confidence_disagreement
+T36525,B,Billing,Refund,0.965,high_confidence_disagreement
+T38746,B,Refund,Other,0.965,high_confidence_disagreement
+T39338,B,Refund,Billing,0.965,high_confidence_disagreement
+T40891,B,Account Access,Technical,0.965,high_confidence_disagreement
+T41111,B,Refund,Billing,0.965,high_confidence_disagreement
+T41539,B,Technical,Account Access,0.965,high_confidence_disagreement
+T41546,B,Refund,Billing,0.965,high_confidence_disagreement
+T44131,B,Account Access,Shipping,0.965,high_confidence_disagreement
+T03164,A,Shipping,Refund,0.964,high_confidence_disagreement
+T06288,A,Account Access,Billing,0.964,high_confidence_disagreement
+T07680,A,Billing,Refund,0.964,high_confidence_disagreement
+T12798,A,Billing,Refund,0.964,high_confidence_disagreement
+T13585,A,Refund,Billing,0.964,high_confidence_disagreement
+T17803,A,Technical,Refund,0.964,high_confidence_disagreement
+T20398,B,Technical,Billing,0.964,high_confidence_disagreement
+T21232,B,Refund,Billing,0.964,high_confidence_disagreement
+T21258,B,Account Access,Shipping,0.964,high_confidence_disagreement
+T21736,B,Refund,Technical,0.964,high_confidence_disagreement
+T24142,B,Refund,Billing,0.964,high_confidence_disagreement
+T26366,B,Account Access,Technical,0.964,high_confidence_disagreement
+T26759,B,Account Access,Technical,0.964,high_confidence_disagreement
+T28146,B,Refund,Billing,0.964,high_confidence_disagreement
+T30199,B,Account Access,Technical,0.964,high_confidence_disagreement
+T30283,B,Account Access,Billing,0.964,high_confidence_disagreement
+T31721,B,Billing,Refund,0.964,high_confidence_disagreement
+T33729,B,Account Access,Technical,0.964,high_confidence_disagreement
+T33889,B,Account Access,Technical,0.964,high_confidence_disagreement
+T35200,B,Account Access,Technical,0.964,high_confidence_disagreement
+T36600,B,Technical,Account Access,0.964,high_confidence_disagreement
+T38423,B,Refund,Shipping,0.964,high_confidence_disagreement
+T38593,B,Account Access,Technical,0.964,high_confidence_disagreement
+T38855,B,Technical,Account Access,0.964,high_confidence_disagreement
+T39608,B,Account Access,Technical,0.964,high_confidence_disagreement
+T40778,B,Shipping,Billing,0.964,high_confidence_disagreement
+T41106,B,Billing,Refund,0.964,high_confidence_disagreement
+T41685,B,Shipping,Refund,0.964,high_confidence_disagreement
+T42099,B,Refund,Billing,0.964,high_confidence_disagreement
+T42738,B,Other,Shipping,0.964,high_confidence_disagreement
+T44338,B,Refund,Other,0.964,high_confidence_disagreement
+T05128,A,Technical,Account Access,0.963,high_confidence_disagreement
+T07687,A,Technical,Account Access,0.963,high_confidence_disagreement
+T07972,A,Billing,Refund,0.963,high_confidence_disagreement
+T08787,A,Refund,Technical,0.963,high_confidence_disagreement
+T09974,A,Refund,Technical,0.963,high_confidence_disagreement
+T10152,A,Refund,Billing,0.963,high_confidence_disagreement
+T11910,A,Refund,Technical,0.963,high_confidence_disagreement
+T20982,B,Refund,Billing,0.963,high_confidence_disagreement
+T21522,B,Other,Shipping,0.963,high_confidence_disagreement
+T23225,B,Billing,Other,0.963,high_confidence_disagreement
+T24284,B,Refund,Billing,0.963,high_confidence_disagreement
+T25806,B,Billing,Refund,0.963,high_confidence_disagreement
+T26478,B,Refund,Billing,0.963,high_confidence_disagreement
+T27281,B,Billing,Other,0.963,high_confidence_disagreement
+T28792,B,Account Access,Refund,0.963,high_confidence_disagreement
+T29355,B,Technical,Refund,0.963,high_confidence_disagreement
+T33585,B,Billing,Technical,0.963,high_confidence_disagreement
+T35637,B,Account Access,Technical,0.963,high_confidence_disagreement
+T36449,B,Technical,Account Access,0.963,high_confidence_disagreement
+T37403,B,Refund,Account Access,0.963,high_confidence_disagreement
+T39149,B,Account Access,Technical,0.963,high_confidence_disagreement
+T39967,B,Billing,Account Access,0.963,high_confidence_disagreement
+T41019,B,Billing,Technical,0.963,high_confidence_disagreement
+T43826,B,Account Access,Technical,0.963,high_confidence_disagreement
+T00896,A,Technical,Account Access,0.962,high_confidence_disagreement
+T05060,A,Billing,Refund,0.962,high_confidence_disagreement
+T08668,A,Account Access,Technical,0.962,high_confidence_disagreement
+T13355,A,Billing,Other,0.962,high_confidence_disagreement
+T15149,A,Other,Shipping,0.962,high_confidence_disagreement
+T18504,A,Account Access,Other,0.962,high_confidence_disagreement
+T19033,A,Other,Account Access,0.962,high_confidence_disagreement
+T21614,B,Account Access,Technical,0.962,high_confidence_disagreement
+T22217,B,Account Access,Technical,0.962,high_confidence_disagreement
+T23725,B,Technical,Account Access,0.962,high_confidence_disagreement
+T24153,B,Account Access,Technical,0.962,high_confidence_disagreement
+T25672,B,Billing,Technical,0.962,high_confidence_disagreement
+T26118,B,Refund,Technical,0.962,high_confidence_disagreement
+T26881,B,Billing,Refund,0.962,high_confidence_disagreement
+T27705,B,Billing,Refund,0.962,high_confidence_disagreement
+T28064,B,Refund,Other,0.962,high_confidence_disagreement
+T29090,B,Shipping,Other,0.962,high_confidence_disagreement
+T31374,B,Billing,Refund,0.962,high_confidence_disagreement
+T32124,B,Other,Refund,0.962,high_confidence_disagreement
+T32609,B,Shipping,Refund,0.962,high_confidence_disagreement
+T33256,B,Shipping,Other,0.962,high_confidence_disagreement
+T34428,B,Refund,Billing,0.962,high_confidence_disagreement
+T34595,B,Billing,Account Access,0.962,high_confidence_disagreement
+T36568,B,Billing,Refund,0.962,high_confidence_disagreement
+T37888,B,Billing,Refund,0.962,high_confidence_disagreement
+T39410,B,Refund,Billing,0.962,high_confidence_disagreement
+T40515,B,Other,Shipping,0.962,high_confidence_disagreement
+T41664,B,Technical,Billing,0.962,high_confidence_disagreement
+T44385,B,Account Access,Technical,0.962,high_confidence_disagreement
+T00473,A,Billing,Refund,0.961,high_confidence_disagreement
+T03474,A,Account Access,Other,0.961,high_confidence_disagreement
+T03533,A,Account Access,Technical,0.961,high_confidence_disagreement
+T07822,A,Other,Shipping,0.961,high_confidence_disagreement
+T11670,A,Refund,Billing,0.961,high_confidence_disagreement
+T15369,A,Other,Shipping,0.961,high_confidence_disagreement
+T16602,A,Billing,Refund,0.961,high_confidence_disagreement
+T16608,A,Account Access,Shipping,0.961,high_confidence_disagreement
+T19137,A,Refund,Shipping,0.961,high_confidence_disagreement
+T20099,B,Account Access,Technical,0.961,high_confidence_disagreement
+T24384,B,Technical,Account Access,0.961,high_confidence_disagreement
+T24385,B,Refund,Billing,0.961,high_confidence_disagreement
+T25244,B,Billing,Other,0.961,high_confidence_disagreement
+T25394,B,Account Access,Technical,0.961,high_confidence_disagreement
+T25635,B,Billing,Refund,0.961,high_confidence_disagreement
+T26062,B,Billing,Other,0.961,high_confidence_disagreement
+T27282,B,Refund,Billing,0.961,high_confidence_disagreement
+T30754,B,Billing,Refund,0.961,high_confidence_disagreement
+T32865,B,Refund,Billing,0.961,high_confidence_disagreement
+T33354,B,Other,Shipping,0.961,high_confidence_disagreement
+T33976,B,Refund,Billing,0.961,high_confidence_disagreement
+T34443,B,Billing,Other,0.961,high_confidence_disagreement
+T35224,B,Technical,Account Access,0.961,high_confidence_disagreement
+T35926,B,Refund,Billing,0.961,high_confidence_disagreement
+T37341,B,Account Access,Shipping,0.961,high_confidence_disagreement
+T40634,B,Technical,Billing,0.961,high_confidence_disagreement
+T40877,B,Technical,Other,0.961,high_confidence_disagreement
+T41210,B,Technical,Account Access,0.961,high_confidence_disagreement
+T42168,B,Other,Shipping,0.961,high_confidence_disagreement
+T43169,B,Technical,Account Access,0.961,high_confidence_disagreement
+T44964,B,Refund,Billing,0.961,high_confidence_disagreement
+T01595,A,Billing,Account Access,0.96,high_confidence_disagreement
+T10675,A,Billing,Account Access,0.96,high_confidence_disagreement
+T10964,A,Billing,Refund,0.96,high_confidence_disagreement
+T14572,A,Shipping,Technical,0.96,high_confidence_disagreement
+T14971,A,Account Access,Shipping,0.96,high_confidence_disagreement
+T15428,A,Refund,Technical,0.96,high_confidence_disagreement
+T16872,A,Refund,Account Access,0.96,high_confidence_disagreement
+T17805,A,Account Access,Shipping,0.96,high_confidence_disagreement
+T20137,B,Technical,Account Access,0.96,high_confidence_disagreement
+T20168,B,Technical,Shipping,0.96,high_confidence_disagreement
+T24079,B,Account Access,Technical,0.96,high_confidence_disagreement
+T24359,B,Account Access,Technical,0.96,high_confidence_disagreement
+T25312,B,Other,Shipping,0.96,high_confidence_disagreement
+T25467,B,Shipping,Other,0.96,high_confidence_disagreement
+T26328,B,Technical,Account Access,0.96,high_confidence_disagreement
+T26520,B,Refund,Billing,0.96,high_confidence_disagreement
+T26630,B,Refund,Technical,0.96,high_confidence_disagreement
+T27803,B,Shipping,Other,0.96,high_confidence_disagreement
+T29073,B,Billing,Other,0.96,high_confidence_disagreement
+T30279,B,Account Access,Technical,0.96,high_confidence_disagreement
+T30680,B,Account Access,Technical,0.96,high_confidence_disagreement
+T33443,B,Refund,Billing,0.96,high_confidence_disagreement
+T36731,B,Shipping,Other,0.96,high_confidence_disagreement
+T36885,B,Account Access,Technical,0.96,high_confidence_disagreement
+T37246,B,Refund,Billing,0.96,high_confidence_disagreement
+T37785,B,Technical,Account Access,0.96,high_confidence_disagreement
+T39991,B,Refund,Billing,0.96,high_confidence_disagreement
+T42259,B,Refund,Other,0.96,high_confidence_disagreement
+T43570,B,Billing,Refund,0.96,high_confidence_disagreement
+T44240,B,Account Access,Other,0.96,high_confidence_disagreement
+T44502,B,Other,Shipping,0.96,high_confidence_disagreement
+T03429,A,Technical,Shipping,0.959,high_confidence_disagreement
+T06804,A,Billing,Technical,0.959,high_confidence_disagreement
+T12473,A,Technical,Billing,0.959,high_confidence_disagreement
+T12490,A,Technical,Account Access,0.959,high_confidence_disagreement
+T16495,A,Account Access,Technical,0.959,high_confidence_disagreement
+T17274,A,Billing,Other,0.959,high_confidence_disagreement
+T21800,B,Account Access,Technical,0.959,high_confidence_disagreement
+T22973,B,Shipping,Other,0.959,high_confidence_disagreement
+T23727,B,Technical,Account Access,0.959,high_confidence_disagreement
+T24720,B,Account Access,Other,0.959,high_confidence_disagreement
+T27712,B,Technical,Account Access,0.959,high_confidence_disagreement
+T29369,B,Technical,Account Access,0.959,high_confidence_disagreement
+T29657,B,Account Access,Technical,0.959,high_confidence_disagreement
+T30285,B,Billing,Technical,0.959,high_confidence_disagreement
+T31681,B,Refund,Billing,0.959,high_confidence_disagreement
+T32191,B,Other,Billing,0.959,high_confidence_disagreement
+T33068,B,Refund,Billing,0.959,high_confidence_disagreement
+T33962,B,Account Access,Technical,0.959,high_confidence_disagreement
+T34600,B,Account Access,Technical,0.959,high_confidence_disagreement
+T34710,B,Technical,Billing,0.959,high_confidence_disagreement
+T37261,B,Refund,Technical,0.959,high_confidence_disagreement
+T38365,B,Refund,Billing,0.959,high_confidence_disagreement
+T39996,B,Refund,Shipping,0.959,high_confidence_disagreement
+T40412,B,Billing,Refund,0.959,high_confidence_disagreement
+T41458,B,Refund,Billing,0.959,high_confidence_disagreement
+T42208,B,Refund,Billing,0.959,high_confidence_disagreement
+T42557,B,Billing,Refund,0.959,high_confidence_disagreement
+T43588,B,Refund,Billing,0.959,high_confidence_disagreement
+T43619,B,Refund,Billing,0.959,high_confidence_disagreement
+T44410,B,Billing,Shipping,0.959,high_confidence_disagreement
+T44895,B,Refund,Billing,0.959,high_confidence_disagreement
+T00049,A,Technical,Billing,0.958,high_confidence_disagreement
+T02247,A,Billing,Other,0.958,high_confidence_disagreement
+T02333,A,Billing,Refund,0.958,high_confidence_disagreement
+T02376,A,Technical,Other,0.958,high_confidence_disagreement
+T03296,A,Technical,Account Access,0.958,high_confidence_disagreement
+T05528,A,Shipping,Technical,0.958,high_confidence_disagreement
+T10357,A,Billing,Account Access,0.958,high_confidence_disagreement
+T13294,A,Shipping,Account Access,0.958,high_confidence_disagreement
+T13721,A,Technical,Account Access,0.958,high_confidence_disagreement
+T16178,A,Technical,Account Access,0.958,high_confidence_disagreement
+T17500,A,Technical,Other,0.958,high_confidence_disagreement
+T18621,A,Technical,Account Access,0.958,high_confidence_disagreement
+T21668,B,Technical,Account Access,0.958,high_confidence_disagreement
+T21995,B,Account Access,Technical,0.958,high_confidence_disagreement
+T27608,B,Refund,Billing,0.958,high_confidence_disagreement
+T31199,B,Account Access,Technical,0.958,high_confidence_disagreement
+T31833,B,Refund,Billing,0.958,high_confidence_disagreement
+T31980,B,Billing,Shipping,0.958,high_confidence_disagreement
+T36063,B,Account Access,Technical,0.958,high_confidence_disagreement
+T36364,B,Account Access,Technical,0.958,high_confidence_disagreement
+T36931,B,Account Access,Technical,0.958,high_confidence_disagreement
+T37359,B,Other,Shipping,0.958,high_confidence_disagreement
+T38262,B,Other,Shipping,0.958,high_confidence_disagreement
+T39317,B,Refund,Billing,0.958,high_confidence_disagreement
+T42217,B,Account Access,Shipping,0.958,high_confidence_disagreement
+T43133,B,Account Access,Technical,0.958,high_confidence_disagreement
+T44222,B,Account Access,Technical,0.958,high_confidence_disagreement
+T01377,A,Shipping,Billing,0.957,high_confidence_disagreement
+T01487,A,Technical,Account Access,0.957,high_confidence_disagreement
+T04275,A,Refund,Billing,0.957,high_confidence_disagreement
+T05017,A,Refund,Billing,0.957,high_confidence_disagreement
+T09403,A,Other,Account Access,0.957,high_confidence_disagreement
+T13237,A,Billing,Other,0.957,high_confidence_disagreement
+T13976,A,Technical,Billing,0.957,high_confidence_disagreement
+T18393,A,Technical,Shipping,0.957,high_confidence_disagreement
+T19446,A,Shipping,Other,0.957,high_confidence_disagreement
+T20802,B,Account Access,Technical,0.957,high_confidence_disagreement
+T21373,B,Refund,Billing,0.957,high_confidence_disagreement
+T21968,B,Refund,Shipping,0.957,high_confidence_disagreement
+T25106,B,Refund,Shipping,0.957,high_confidence_disagreement
+T25501,B,Account Access,Billing,0.957,high_confidence_disagreement
+T30011,B,Other,Shipping,0.957,high_confidence_disagreement
+T31211,B,Billing,Refund,0.957,high_confidence_disagreement
+T34984,B,Billing,Refund,0.957,high_confidence_disagreement
+T35777,B,Billing,Refund,0.957,high_confidence_disagreement
+T35894,B,Account Access,Technical,0.957,high_confidence_disagreement
+T38052,B,Refund,Billing,0.957,high_confidence_disagreement
+T39660,B,Refund,Other,0.957,high_confidence_disagreement
+T40146,B,Technical,Other,0.957,high_confidence_disagreement
+T40607,B,Account Access,Technical,0.957,high_confidence_disagreement
+T44685,B,Other,Shipping,0.957,high_confidence_disagreement
+T01128,A,Account Access,Billing,0.956,high_confidence_disagreement
+T05607,A,Billing,Other,0.956,high_confidence_disagreement
+T06473,A,Billing,Account Access,0.956,high_confidence_disagreement
+T07912,A,Billing,Account Access,0.956,high_confidence_disagreement
+T08956,A,Billing,Refund,0.956,high_confidence_disagreement
+T10594,A,Account Access,Billing,0.956,high_confidence_disagreement
+T16649,A,Billing,Other,0.956,high_confidence_disagreement
+T17120,A,Billing,Refund,0.956,high_confidence_disagreement
+T19545,A,Account Access,Technical,0.956,high_confidence_disagreement
+T21899,B,Technical,Account Access,0.956,high_confidence_disagreement
+T24635,B,Other,Shipping,0.956,high_confidence_disagreement
+T24985,B,Billing,Refund,0.956,high_confidence_disagreement
+T29839,B,Billing,Refund,0.956,high_confidence_disagreement
+T31615,B,Billing,Technical,0.956,high_confidence_disagreement
+T31697,B,Technical,Account Access,0.956,high_confidence_disagreement
+T36997,B,Refund,Billing,0.956,high_confidence_disagreement
+T37694,B,Billing,Refund,0.956,high_confidence_disagreement
+T39238,B,Billing,Shipping,0.956,high_confidence_disagreement
+T39319,B,Billing,Refund,0.956,high_confidence_disagreement
+T41627,B,Technical,Shipping,0.956,high_confidence_disagreement
+T42688,B,Billing,Shipping,0.956,high_confidence_disagreement
+T44372,B,Refund,Other,0.956,high_confidence_disagreement
+T02264,A,Account Access,Technical,0.955,high_confidence_disagreement
+T05228,A,Refund,Billing,0.955,high_confidence_disagreement
+T07337,A,Technical,Refund,0.955,high_confidence_disagreement
+T20061,B,Account Access,Technical,0.955,high_confidence_disagreement
+T21788,B,Account Access,Technical,0.955,high_confidence_disagreement
+T21920,B,Technical,Shipping,0.955,high_confidence_disagreement
+T23661,B,Technical,Account Access,0.955,high_confidence_disagreement
+T28057,B,Billing,Refund,0.955,high_confidence_disagreement
+T28482,B,Account Access,Technical,0.955,high_confidence_disagreement
+T30676,B,Account Access,Technical,0.955,high_confidence_disagreement
+T30984,B,Account Access,Technical,0.955,high_confidence_disagreement
+T31950,B,Refund,Technical,0.955,high_confidence_disagreement
+T35251,B,Technical,Shipping,0.955,high_confidence_disagreement
+T36378,B,Account Access,Technical,0.955,high_confidence_disagreement
+T36737,B,Technical,Account Access,0.955,high_confidence_disagreement
+T40340,B,Refund,Billing,0.955,high_confidence_disagreement
+T40860,B,Account Access,Technical,0.955,high_confidence_disagreement
+T42683,B,Account Access,Technical,0.955,high_confidence_disagreement
+T44035,B,Billing,Other,0.955,high_confidence_disagreement
+T01635,A,Technical,Billing,0.954,high_confidence_disagreement
+T03095,A,Billing,Shipping,0.954,high_confidence_disagreement
+T03216,A,Shipping,Other,0.954,high_confidence_disagreement
+T04871,A,Account Access,Technical,0.954,high_confidence_disagreement
+T06128,A,Technical,Refund,0.954,high_confidence_disagreement
+T06158,A,Shipping,Billing,0.954,high_confidence_disagreement
+T08144,A,Technical,Shipping,0.954,high_confidence_disagreement
+T08599,A,Technical,Refund,0.954,high_confidence_disagreement
+T10572,A,Billing,Account Access,0.954,high_confidence_disagreement
+T11823,A,Refund,Billing,0.954,high_confidence_disagreement
+T13484,A,Technical,Account Access,0.954,high_confidence_disagreement
+T13773,A,Other,Account Access,0.954,high_confidence_disagreement
+T21141,B,Other,Shipping,0.954,high_confidence_disagreement
+T22396,B,Shipping,Refund,0.954,high_confidence_disagreement
+T24068,B,Refund,Shipping,0.954,high_confidence_disagreement
+T25586,B,Refund,Billing,0.954,high_confidence_disagreement
+T26449,B,Billing,Account Access,0.954,high_confidence_disagreement
+T28705,B,Account Access,Technical,0.954,high_confidence_disagreement
+T29238,B,Billing,Refund,0.954,high_confidence_disagreement
+T31152,B,Account Access,Technical,0.954,high_confidence_disagreement
+T35163,B,Account Access,Refund,0.954,high_confidence_disagreement
+T35248,B,Billing,Refund,0.954,high_confidence_disagreement
+T35361,B,Other,Shipping,0.954,high_confidence_disagreement
+T38393,B,Account Access,Shipping,0.954,high_confidence_disagreement
+T44263,B,Shipping,Billing,0.954,high_confidence_disagreement
+T00314,A,Technical,Refund,0.953,high_confidence_disagreement
+T06124,A,Technical,Refund,0.953,high_confidence_disagreement
+T07286,A,Other,Refund,0.953,high_confidence_disagreement
+T09365,A,Account Access,Technical,0.953,high_confidence_disagreement
+T11640,A,Billing,Account Access,0.953,high_confidence_disagreement
+T12190,A,Refund,Billing,0.953,high_confidence_disagreement
+T17358,A,Account Access,Shipping,0.953,high_confidence_disagreement
+T19734,A,Technical,Account Access,0.953,high_confidence_disagreement
+T22533,B,Account Access,Refund,0.953,high_confidence_disagreement
+T22537,B,Refund,Shipping,0.953,high_confidence_disagreement
+T23455,B,Refund,Billing,0.953,high_confidence_disagreement
+T23620,B,Account Access,Technical,0.953,high_confidence_disagreement
+T24054,B,Account Access,Other,0.953,high_confidence_disagreement
+T26174,B,Account Access,Technical,0.953,high_confidence_disagreement
+T28750,B,Other,Shipping,0.953,high_confidence_disagreement
+T29449,B,Other,Account Access,0.953,high_confidence_disagreement
+T31187,B,Other,Shipping,0.953,high_confidence_disagreement
+T32554,B,Account Access,Other,0.953,high_confidence_disagreement
+T33876,B,Billing,Other,0.953,high_confidence_disagreement
+T36312,B,Technical,Shipping,0.953,high_confidence_disagreement
+T36826,B,Refund,Billing,0.953,high_confidence_disagreement
+T39812,B,Refund,Billing,0.953,high_confidence_disagreement
+T40405,B,Billing,Refund,0.953,high_confidence_disagreement
+T44186,B,Account Access,Technical,0.953,high_confidence_disagreement
+T00502,A,Shipping,Account Access,0.952,high_confidence_disagreement
+T01745,A,Account Access,Refund,0.952,high_confidence_disagreement
+T02948,A,Technical,Other,0.952,high_confidence_disagreement
+T05308,A,Refund,Account Access,0.952,high_confidence_disagreement
+T13306,A,Account Access,Billing,0.952,high_confidence_disagreement
+T16539,A,Refund,Billing,0.952,high_confidence_disagreement
+T20481,B,Refund,Billing,0.952,high_confidence_disagreement
+T22038,B,Refund,Billing,0.952,high_confidence_disagreement
+T25011,B,Refund,Billing,0.952,known_confusion_pair
+T25262,B,Refund,Billing,0.952,known_confusion_pair
+T26037,B,Refund,Billing,0.952,known_confusion_pair
+T27550,B,Technical,Account Access,0.952,known_confusion_pair
+T31055,B,Billing,Refund,0.952,known_confusion_pair
+T31376,B,Account Access,Technical,0.952,known_confusion_pair
+T31524,B,Technical,Account Access,0.952,known_confusion_pair
+T33165,B,Account Access,Technical,0.952,known_confusion_pair
+T33200,B,Billing,Refund,0.952,known_confusion_pair
+T33893,B,Account Access,Technical,0.952,known_confusion_pair
+T33920,B,Refund,Billing,0.952,known_confusion_pair
+T36585,B,Refund,Billing,0.952,known_confusion_pair
+T36857,B,Shipping,Other,0.952,known_confusion_pair
+T37061,B,Refund,Billing,0.952,known_confusion_pair
+T37120,B,Billing,Refund,0.952,known_confusion_pair
+T44130,B,Account Access,Technical,0.952,known_confusion_pair
+T05608,A,Billing,Refund,0.951,known_confusion_pair
+T10319,A,Shipping,Other,0.951,known_confusion_pair
+T14396,A,Technical,Account Access,0.951,known_confusion_pair
+T17338,A,Refund,Billing,0.951,known_confusion_pair
+T20074,B,Other,Shipping,0.951,known_confusion_pair
+T20819,B,Account Access,Technical,0.951,known_confusion_pair
+T22101,B,Refund,Billing,0.951,known_confusion_pair
+T26936,B,Account Access,Technical,0.951,known_confusion_pair
+T28385,B,Account Access,Technical,0.951,known_confusion_pair
+T28948,B,Technical,Account Access,0.951,known_confusion_pair
+T29602,B,Refund,Billing,0.951,known_confusion_pair
+T33218,B,Billing,Refund,0.951,known_confusion_pair
+T33703,B,Shipping,Other,0.951,known_confusion_pair
+T36529,B,Account Access,Technical,0.951,known_confusion_pair
+T36607,B,Billing,Refund,0.951,known_confusion_pair
+T37324,B,Account Access,Technical,0.951,known_confusion_pair
+T39028,B,Account Access,Technical,0.951,known_confusion_pair
+T40005,B,Shipping,Other,0.951,known_confusion_pair
+T03070,A,Other,Shipping,0.95,known_confusion_pair
+T06084,A,Billing,Refund,0.95,known_confusion_pair
+T08799,A,Account Access,Technical,0.95,known_confusion_pair
+T13530,A,Technical,Account Access,0.95,known_confusion_pair
+T16365,A,Refund,Billing,0.95,known_confusion_pair
+T18491,A,Technical,Account Access,0.95,known_confusion_pair
+T23361,B,Technical,Account Access,0.95,known_confusion_pair
+T27095,B,Other,Shipping,0.95,known_confusion_pair
+T27489,B,Account Access,Technical,0.95,known_confusion_pair
+T29590,B,Account Access,Technical,0.95,known_confusion_pair
+T32757,B,Refund,Billing,0.95,known_confusion_pair
+T37464,B,Other,Shipping,0.95,known_confusion_pair
+T38624,B,Billing,Refund,0.95,known_confusion_pair
+T39436,B,Technical,Account Access,0.95,known_confusion_pair
+T39680,B,Refund,Billing,0.95,known_confusion_pair
+T41510,B,Account Access,Technical,0.95,known_confusion_pair
+T41888,B,Technical,Account Access,0.95,known_confusion_pair
+T04108,A,Account Access,Technical,0.949,known_confusion_pair
+T13936,A,Refund,Billing,0.949,known_confusion_pair
+T15186,A,Shipping,Other,0.949,known_confusion_pair
+T19060,A,Refund,Billing,0.949,known_confusion_pair
+T20405,B,Account Access,Technical,0.949,known_confusion_pair
+T23766,B,Technical,Account Access,0.949,known_confusion_pair
+T24355,B,Account Access,Technical,0.949,known_confusion_pair
+T24479,B,Account Access,Technical,0.949,known_confusion_pair
+T26792,B,Other,Shipping,0.949,known_confusion_pair
+T27637,B,Other,Shipping,0.949,known_confusion_pair
+T27718,B,Refund,Billing,0.949,known_confusion_pair
+T30417,B,Billing,Refund,0.949,known_confusion_pair
+T30548,B,Account Access,Technical,0.949,known_confusion_pair
+T31064,B,Account Access,Technical,0.949,known_confusion_pair
+T32229,B,Refund,Billing,0.949,known_confusion_pair
+T32984,B,Billing,Refund,0.949,known_confusion_pair
+T35334,B,Other,Shipping,0.949,known_confusion_pair
+T41222,B,Technical,Account Access,0.949,known_confusion_pair
+T13532,A,Refund,Billing,0.948,known_confusion_pair
+T23930,B,Account Access,Technical,0.948,known_confusion_pair
+T25368,B,Shipping,Other,0.948,known_confusion_pair
+T25524,B,Technical,Account Access,0.948,known_confusion_pair
+T25870,B,Shipping,Other,0.948,known_confusion_pair
+T26113,B,Refund,Billing,0.948,known_confusion_pair
+T30335,B,Technical,Account Access,0.948,known_confusion_pair
+T31148,B,Technical,Account Access,0.948,known_confusion_pair
+T32929,B,Refund,Billing,0.948,known_confusion_pair
+T33846,B,Refund,Billing,0.948,known_confusion_pair
+T34604,B,Shipping,Other,0.948,known_confusion_pair
+T38735,B,Shipping,Other,0.948,known_confusion_pair
+T39729,B,Refund,Billing,0.948,known_confusion_pair
+T42865,B,Billing,Refund,0.948,known_confusion_pair
+T43059,B,Billing,Refund,0.948,known_confusion_pair
+T44637,B,Other,Shipping,0.948,known_confusion_pair
+T14808,A,Technical,Account Access,0.947,known_confusion_pair
+T19704,A,Refund,Billing,0.947,known_confusion_pair
+T23095,B,Refund,Billing,0.947,known_confusion_pair
+T25735,B,Refund,Billing,0.947,known_confusion_pair
+T27933,B,Refund,Billing,0.947,known_confusion_pair
+T29593,B,Billing,Refund,0.947,known_confusion_pair
+T32174,B,Billing,Refund,0.947,known_confusion_pair
+T32641,B,Other,Shipping,0.947,known_confusion_pair
+T33710,B,Billing,Refund,0.947,known_confusion_pair
+T35199,B,Shipping,Other,0.947,known_confusion_pair
+T38898,B,Shipping,Other,0.947,known_confusion_pair
+T07289,A,Refund,Billing,0.946,known_confusion_pair
+T18202,A,Other,Shipping,0.946,known_confusion_pair
+T20745,B,Account Access,Technical,0.946,known_confusion_pair
+T21837,B,Other,Shipping,0.946,known_confusion_pair
+T23145,B,Account Access,Technical,0.946,known_confusion_pair
+T25159,B,Account Access,Technical,0.946,known_confusion_pair
+T34215,B,Refund,Billing,0.946,known_confusion_pair
+T37270,B,Refund,Billing,0.946,known_confusion_pair
+T38175,B,Refund,Billing,0.946,known_confusion_pair
+T42145,B,Billing,Refund,0.946,known_confusion_pair
+T42504,B,Refund,Billing,0.946,known_confusion_pair
+T43640,B,Shipping,Other,0.946,known_confusion_pair
+T03195,A,Billing,Refund,0.945,known_confusion_pair
+T06377,A,Refund,Billing,0.945,known_confusion_pair
+T09946,A,Other,Shipping,0.945,known_confusion_pair
+T14163,A,Technical,Account Access,0.945,known_confusion_pair
+T15315,A,Refund,Billing,0.945,known_confusion_pair
+T25055,B,Refund,Billing,0.945,known_confusion_pair
+T26555,B,Refund,Billing,0.945,known_confusion_pair
+T30319,B,Account Access,Technical,0.945,known_confusion_pair
+T30679,B,Account Access,Technical,0.945,known_confusion_pair
+T37110,B,Billing,Refund,0.945,known_confusion_pair
+T38327,B,Shipping,Other,0.945,known_confusion_pair
+T38995,B,Billing,Refund,0.945,known_confusion_pair
+T43234,B,Billing,Refund,0.945,known_confusion_pair
+T44719,B,Refund,Billing,0.945,known_confusion_pair
+T08367,A,Account Access,Technical,0.944,known_confusion_pair
+T09548,A,Refund,Billing,0.944,known_confusion_pair
+T20872,B,Other,Shipping,0.944,known_confusion_pair
+T21059,B,Refund,Billing,0.944,known_confusion_pair
+T21431,B,Billing,Refund,0.944,known_confusion_pair
+T24148,B,Refund,Billing,0.944,known_confusion_pair
+T25439,B,Account Access,Technical,0.944,known_confusion_pair
+T25825,B,Other,Shipping,0.944,known_confusion_pair
+T28598,B,Account Access,Technical,0.944,known_confusion_pair
+T30390,B,Account Access,Technical,0.944,known_confusion_pair
+T30537,B,Billing,Refund,0.944,known_confusion_pair
+T34312,B,Account Access,Technical,0.944,known_confusion_pair
+T38023,B,Refund,Billing,0.944,known_confusion_pair
+T38087,B,Account Access,Technical,0.944,known_confusion_pair
+T38887,B,Refund,Billing,0.944,known_confusion_pair
+T39699,B,Technical,Account Access,0.944,known_confusion_pair
+T43683,B,Refund,Billing,0.944,known_confusion_pair
+T00943,A,Refund,Billing,0.943,known_confusion_pair
+T02541,A,Account Access,Technical,0.943,known_confusion_pair
+T12953,A,Refund,Billing,0.943,known_confusion_pair
+T20607,B,Account Access,Technical,0.943,known_confusion_pair
+T23931,B,Account Access,Technical,0.943,known_confusion_pair
+T26273,B,Account Access,Technical,0.943,known_confusion_pair
+T26728,B,Billing,Refund,0.943,known_confusion_pair
+T27852,B,Refund,Billing,0.943,known_confusion_pair
+T27866,B,Technical,Account Access,0.943,known_confusion_pair
+T28249,B,Billing,Refund,0.943,known_confusion_pair
+T29381,B,Account Access,Technical,0.943,known_confusion_pair
+T29551,B,Refund,Billing,0.943,known_confusion_pair
+T30445,B,Refund,Billing,0.943,known_confusion_pair
+T32386,B,Billing,Refund,0.943,known_confusion_pair
+T32546,B,Technical,Account Access,0.943,known_confusion_pair
+T34311,B,Account Access,Technical,0.943,known_confusion_pair
+T34726,B,Billing,Refund,0.943,known_confusion_pair
+T37467,B,Account Access,Technical,0.943,known_confusion_pair
+T39509,B,Refund,Billing,0.943,known_confusion_pair
+T43624,B,Billing,Refund,0.943,known_confusion_pair
+T12012,A,Account Access,Technical,0.942,known_confusion_pair
+T20215,B,Account Access,Technical,0.942,known_confusion_pair
+T21740,B,Other,Shipping,0.942,known_confusion_pair
+T24509,B,Billing,Refund,0.942,known_confusion_pair
+T27263,B,Refund,Billing,0.942,known_confusion_pair
+T30352,B,Refund,Billing,0.942,known_confusion_pair
+T31861,B,Shipping,Other,0.942,known_confusion_pair
+T32913,B,Other,Shipping,0.942,known_confusion_pair
+T33678,B,Account Access,Technical,0.942,known_confusion_pair
+T34920,B,Shipping,Other,0.942,known_confusion_pair
+T35325,B,Technical,Account Access,0.942,known_confusion_pair
+T37164,B,Refund,Billing,0.942,known_confusion_pair
+T38883,B,Other,Shipping,0.942,known_confusion_pair
+T13209,A,Refund,Billing,0.941,known_confusion_pair
+T13477,A,Refund,Billing,0.941,known_confusion_pair
+T20967,B,Billing,Refund,0.941,known_confusion_pair
+T24676,B,Refund,Billing,0.941,known_confusion_pair
+T24933,B,Technical,Account Access,0.941,known_confusion_pair
+T26844,B,Other,Shipping,0.941,known_confusion_pair
+T27424,B,Refund,Billing,0.941,known_confusion_pair
+T27879,B,Refund,Billing,0.941,known_confusion_pair
+T29164,B,Shipping,Other,0.941,known_confusion_pair
+T29953,B,Refund,Billing,0.941,known_confusion_pair
+T33408,B,Other,Shipping,0.941,known_confusion_pair
+T34745,B,Refund,Billing,0.941,known_confusion_pair
+T35415,B,Technical,Account Access,0.941,known_confusion_pair
+T36524,B,Technical,Account Access,0.941,known_confusion_pair
+T40262,B,Refund,Billing,0.941,known_confusion_pair
+T40887,B,Technical,Account Access,0.941,known_confusion_pair
+T03573,A,Refund,Billing,0.94,known_confusion_pair
+T13703,A,Refund,Billing,0.94,known_confusion_pair
+T24074,B,Account Access,Technical,0.94,known_confusion_pair
+T26905,B,Billing,Refund,0.94,known_confusion_pair
+T27010,B,Technical,Account Access,0.94,known_confusion_pair
+T27169,B,Shipping,Other,0.94,known_confusion_pair
+T27536,B,Refund,Billing,0.94,known_confusion_pair
+T29586,B,Billing,Refund,0.94,known_confusion_pair
+T29648,B,Other,Shipping,0.94,known_confusion_pair
+T32363,B,Shipping,Other,0.94,known_confusion_pair
+T34298,B,Technical,Account Access,0.94,known_confusion_pair
+T34528,B,Other,Shipping,0.94,known_confusion_pair
+T34532,B,Refund,Billing,0.94,known_confusion_pair
+T36332,B,Refund,Billing,0.94,known_confusion_pair
+T40899,B,Billing,Refund,0.94,known_confusion_pair
+T44757,B,Refund,Billing,0.94,known_confusion_pair
+T03511,A,Technical,Account Access,0.939,known_confusion_pair
+T06721,A,Account Access,Technical,0.939,known_confusion_pair
+T09598,A,Account Access,Technical,0.939,known_confusion_pair
+T13855,A,Billing,Refund,0.939,known_confusion_pair
+T22611,B,Account Access,Technical,0.939,known_confusion_pair
+T22672,B,Technical,Account Access,0.939,known_confusion_pair
+T23586,B,Account Access,Technical,0.939,known_confusion_pair
+T26943,B,Technical,Account Access,0.939,known_confusion_pair
+T27166,B,Refund,Billing,0.939,known_confusion_pair
+T27740,B,Technical,Account Access,0.939,known_confusion_pair
+T28676,B,Account Access,Technical,0.939,known_confusion_pair
+T36909,B,Other,Shipping,0.939,known_confusion_pair
+T37416,B,Account Access,Technical,0.939,known_confusion_pair
+T39502,B,Account Access,Technical,0.939,known_confusion_pair
+T42618,B,Refund,Billing,0.939,known_confusion_pair
+T43887,B,Other,Shipping,0.939,known_confusion_pair
+T13014,A,Technical,Account Access,0.938,known_confusion_pair
+T19750,A,Technical,Account Access,0.938,known_confusion_pair
+T20843,B,Technical,Account Access,0.938,known_confusion_pair
+T23399,B,Billing,Refund,0.938,known_confusion_pair
+T25601,B,Refund,Billing,0.938,known_confusion_pair
+T26225,B,Technical,Account Access,0.938,known_confusion_pair
+T26351,B,Account Access,Technical,0.938,known_confusion_pair
+T26821,B,Refund,Billing,0.938,known_confusion_pair
+T28589,B,Other,Shipping,0.938,known_confusion_pair
+T29270,B,Account Access,Technical,0.938,known_confusion_pair
+T30455,B,Account Access,Technical,0.938,known_confusion_pair
+T31899,B,Other,Shipping,0.938,known_confusion_pair
+T33819,B,Account Access,Technical,0.938,known_confusion_pair
+T35601,B,Technical,Account Access,0.938,known_confusion_pair
+T36779,B,Account Access,Technical,0.938,known_confusion_pair
+T39000,B,Billing,Refund,0.938,known_confusion_pair
+T39137,B,Technical,Account Access,0.938,known_confusion_pair
+T39271,B,Billing,Refund,0.938,known_confusion_pair
+T39305,B,Refund,Billing,0.938,known_confusion_pair
+T41889,B,Refund,Billing,0.938,known_confusion_pair
+T43965,B,Refund,Billing,0.938,known_confusion_pair
+T01171,A,Account Access,Technical,0.937,known_confusion_pair
+T17431,A,Refund,Billing,0.937,known_confusion_pair
+T20722,B,Billing,Refund,0.937,known_confusion_pair
+T21297,B,Account Access,Technical,0.937,known_confusion_pair
+T23310,B,Billing,Refund,0.937,known_confusion_pair
+T23392,B,Technical,Account Access,0.937,known_confusion_pair
+T24199,B,Account Access,Technical,0.937,known_confusion_pair
+T24273,B,Other,Shipping,0.937,known_confusion_pair
+T24673,B,Account Access,Technical,0.937,known_confusion_pair
+T29455,B,Refund,Billing,0.937,known_confusion_pair
+T29863,B,Technical,Account Access,0.937,known_confusion_pair
+T30366,B,Account Access,Technical,0.937,known_confusion_pair
+T30487,B,Account Access,Technical,0.937,known_confusion_pair
+T31208,B,Other,Shipping,0.937,known_confusion_pair
+T36400,B,Billing,Refund,0.937,known_confusion_pair
+T38125,B,Refund,Billing,0.937,known_confusion_pair
+T38838,B,Technical,Account Access,0.937,known_confusion_pair
+T39609,B,Other,Shipping,0.937,known_confusion_pair
+T40934,B,Refund,Billing,0.937,known_confusion_pair
+T41867,B,Technical,Account Access,0.937,known_confusion_pair
+T41973,B,Technical,Account Access,0.937,known_confusion_pair
+T43385,B,Refund,Billing,0.937,known_confusion_pair
+T44780,B,Account Access,Technical,0.937,known_confusion_pair
+T05376,A,Refund,Billing,0.936,known_confusion_pair
+T06765,A,Other,Shipping,0.936,known_confusion_pair
+T11484,A,Account Access,Technical,0.936,known_confusion_pair
+T18937,A,Account Access,Technical,0.936,known_confusion_pair
+T20861,B,Account Access,Technical,0.936,known_confusion_pair
+T24272,B,Technical,Account Access,0.936,known_confusion_pair
+T24711,B,Refund,Billing,0.936,known_confusion_pair
+T25094,B,Account Access,Technical,0.936,known_confusion_pair
+T26019,B,Technical,Account Access,0.936,known_confusion_pair
+T26053,B,Refund,Billing,0.936,known_confusion_pair
+T26982,B,Refund,Billing,0.936,known_confusion_pair
+T28608,B,Refund,Billing,0.936,known_confusion_pair
+T29185,B,Refund,Billing,0.936,known_confusion_pair
+T30508,B,Refund,Billing,0.936,known_confusion_pair
+T31538,B,Refund,Billing,0.936,known_confusion_pair
+T31858,B,Account Access,Technical,0.936,known_confusion_pair
+T32466,B,Billing,Refund,0.936,known_confusion_pair
+T40214,B,Refund,Billing,0.936,known_confusion_pair
+T19752,A,Account Access,Technical,0.935,known_confusion_pair
+T23408,B,Refund,Billing,0.935,known_confusion_pair
+T25878,B,Technical,Account Access,0.935,known_confusion_pair
+T36076,B,Technical,Account Access,0.935,known_confusion_pair
+T37936,B,Refund,Billing,0.935,known_confusion_pair
+T41339,B,Other,Shipping,0.935,known_confusion_pair
+T01979,A,Technical,Account Access,0.934,known_confusion_pair
+T13330,A,Shipping,Other,0.934,known_confusion_pair
+T30168,B,Account Access,Technical,0.934,known_confusion_pair
+T30391,B,Account Access,Technical,0.934,known_confusion_pair
+T36955,B,Billing,Refund,0.934,known_confusion_pair
+T43491,B,Refund,Billing,0.934,known_confusion_pair
+T44051,B,Other,Shipping,0.934,known_confusion_pair
+T00204,A,Other,Shipping,0.933,known_confusion_pair
+T07857,A,Refund,Billing,0.933,known_confusion_pair
+T09503,A,Account Access,Technical,0.933,known_confusion_pair
+T10101,A,Refund,Billing,0.933,known_confusion_pair
+T23962,B,Shipping,Other,0.933,known_confusion_pair
+T25325,B,Refund,Billing,0.933,known_confusion_pair
+T26533,B,Billing,Refund,0.933,known_confusion_pair
+T27422,B,Technical,Account Access,0.933,known_confusion_pair
+T37899,B,Account Access,Technical,0.933,known_confusion_pair
+T39687,B,Account Access,Technical,0.933,known_confusion_pair
+T39722,B,Account Access,Technical,0.933,known_confusion_pair
+T44474,B,Technical,Account Access,0.933,known_confusion_pair
+T44936,B,Refund,Billing,0.933,known_confusion_pair
+T02128,A,Refund,Billing,0.932,known_confusion_pair
+T11253,A,Account Access,Technical,0.932,known_confusion_pair
+T12589,A,Technical,Account Access,0.932,known_confusion_pair
+T12668,A,Other,Shipping,0.932,known_confusion_pair
+T13396,A,Other,Shipping,0.932,known_confusion_pair
+T17855,A,Shipping,Other,0.932,known_confusion_pair
+T20416,B,Account Access,Technical,0.932,known_confusion_pair
+T24302,B,Billing,Refund,0.932,known_confusion_pair
+T24809,B,Refund,Billing,0.932,known_confusion_pair
+T25003,B,Account Access,Technical,0.932,known_confusion_pair
+T25083,B,Refund,Billing,0.932,known_confusion_pair
+T26331,B,Refund,Billing,0.932,known_confusion_pair
+T27365,B,Refund,Billing,0.932,known_confusion_pair
+T29654,B,Account Access,Technical,0.932,known_confusion_pair
+T32826,B,Account Access,Technical,0.932,known_confusion_pair
+T33038,B,Account Access,Technical,0.932,known_confusion_pair
+T34231,B,Account Access,Technical,0.932,known_confusion_pair
+T36990,B,Billing,Refund,0.932,known_confusion_pair
+T38095,B,Other,Shipping,0.932,known_confusion_pair
+T40852,B,Refund,Billing,0.932,known_confusion_pair
+T43802,B,Account Access,Technical,0.932,known_confusion_pair
+T03873,A,Account Access,Technical,0.931,known_confusion_pair
+T14594,A,Account Access,Technical,0.931,known_confusion_pair
+T16655,A,Refund,Billing,0.931,known_confusion_pair
+T18402,A,Billing,Refund,0.931,known_confusion_pair
+T19536,A,Technical,Account Access,0.931,known_confusion_pair
+T20109,B,Account Access,Technical,0.931,known_confusion_pair
+T21133,B,Refund,Billing,0.931,known_confusion_pair
+T21420,B,Refund,Billing,0.931,known_confusion_pair
+T22001,B,Account Access,Technical,0.931,known_confusion_pair
+T25637,B,Other,Shipping,0.931,known_confusion_pair
+T32135,B,Refund,Billing,0.931,known_confusion_pair
+T34808,B,Billing,Refund,0.931,known_confusion_pair
+T35800,B,Refund,Billing,0.931,known_confusion_pair
+T38045,B,Account Access,Technical,0.931,known_confusion_pair
+T38833,B,Refund,Billing,0.931,known_confusion_pair
+T40514,B,Technical,Account Access,0.931,known_confusion_pair
+T44640,B,Billing,Refund,0.931,known_confusion_pair
+T01537,A,Refund,Billing,0.93,known_confusion_pair
+T12943,A,Other,Shipping,0.93,known_confusion_pair
+T14538,A,Technical,Account Access,0.93,known_confusion_pair
+T17436,A,Account Access,Technical,0.93,known_confusion_pair
+T19679,A,Account Access,Technical,0.93,known_confusion_pair
+T20107,B,Technical,Account Access,0.93,known_confusion_pair
+T20252,B,Refund,Billing,0.93,known_confusion_pair
+T20470,B,Refund,Billing,0.93,known_confusion_pair
+T20873,B,Account Access,Technical,0.93,known_confusion_pair
+T22660,B,Account Access,Technical,0.93,known_confusion_pair
+T22868,B,Billing,Refund,0.93,known_confusion_pair
+T24439,B,Account Access,Technical,0.93,known_confusion_pair
+T25485,B,Refund,Billing,0.93,known_confusion_pair
+T26603,B,Technical,Account Access,0.93,known_confusion_pair
+T28817,B,Other,Shipping,0.93,known_confusion_pair
+T32490,B,Refund,Billing,0.93,known_confusion_pair
+T33087,B,Other,Shipping,0.93,known_confusion_pair
+T33741,B,Technical,Account Access,0.93,known_confusion_pair
+T35599,B,Account Access,Technical,0.93,known_confusion_pair
+T37847,B,Shipping,Other,0.93,known_confusion_pair
+T41100,B,Refund,Billing,0.93,known_confusion_pair
+T44160,B,Other,Shipping,0.93,known_confusion_pair
+T00602,A,Other,Shipping,0.929,known_confusion_pair
+T01053,A,Technical,Account Access,0.929,known_confusion_pair
+T16514,A,Account Access,Technical,0.929,known_confusion_pair
+T18506,A,Billing,Refund,0.929,known_confusion_pair
+T18593,A,Billing,Refund,0.929,known_confusion_pair
+T21779,B,Billing,Refund,0.929,known_confusion_pair
+T23263,B,Account Access,Technical,0.929,known_confusion_pair
+T23535,B,Account Access,Technical,0.929,known_confusion_pair
+T23615,B,Account Access,Technical,0.929,known_confusion_pair
+T31231,B,Refund,Billing,0.929,known_confusion_pair
+T34335,B,Technical,Account Access,0.929,known_confusion_pair
+T34812,B,Refund,Billing,0.929,known_confusion_pair
+T35849,B,Technical,Account Access,0.929,known_confusion_pair
+T36134,B,Refund,Billing,0.929,known_confusion_pair
+T36452,B,Technical,Account Access,0.929,known_confusion_pair
+T37424,B,Refund,Billing,0.929,known_confusion_pair
+T40152,B,Refund,Billing,0.929,known_confusion_pair
+T42362,B,Technical,Account Access,0.929,known_confusion_pair
+T04944,A,Technical,Account Access,0.928,known_confusion_pair
+T10441,A,Refund,Billing,0.928,known_confusion_pair
+T11757,A,Other,Shipping,0.928,known_confusion_pair
+T12106,A,Refund,Billing,0.928,known_confusion_pair
+T16976,A,Account Access,Technical,0.928,known_confusion_pair
+T22073,B,Refund,Billing,0.928,known_confusion_pair
+T23288,B,Account Access,Technical,0.928,known_confusion_pair
+T24904,B,Shipping,Other,0.928,known_confusion_pair
+T25110,B,Refund,Billing,0.928,known_confusion_pair
+T25912,B,Account Access,Technical,0.928,known_confusion_pair
+T31875,B,Billing,Refund,0.928,known_confusion_pair
+T32165,B,Refund,Billing,0.928,known_confusion_pair
+T35992,B,Billing,Refund,0.928,known_confusion_pair
+T40245,B,Technical,Account Access,0.928,known_confusion_pair
+T40615,B,Refund,Billing,0.928,known_confusion_pair
+T41118,B,Refund,Billing,0.928,known_confusion_pair
+T41682,B,Refund,Billing,0.928,known_confusion_pair
+T43483,B,Technical,Account Access,0.928,known_confusion_pair
+T44993,B,Account Access,Technical,0.928,known_confusion_pair
+T02885,A,Billing,Refund,0.927,known_confusion_pair
+T09836,A,Billing,Refund,0.927,known_confusion_pair
+T11315,A,Technical,Account Access,0.927,known_confusion_pair
+T16180,A,Refund,Billing,0.927,known_confusion_pair
+T20477,B,Account Access,Technical,0.927,known_confusion_pair
+T20782,B,Account Access,Technical,0.927,known_confusion_pair
+T20943,B,Billing,Refund,0.927,known_confusion_pair
+T23091,B,Refund,Billing,0.927,known_confusion_pair
+T23148,B,Refund,Billing,0.927,known_confusion_pair
+T24339,B,Refund,Billing,0.927,known_confusion_pair
+T25160,B,Shipping,Other,0.927,known_confusion_pair
+T29421,B,Account Access,Technical,0.927,known_confusion_pair
+T37695,B,Account Access,Technical,0.927,known_confusion_pair
+T38742,B,Account Access,Technical,0.927,known_confusion_pair
+T39614,B,Other,Shipping,0.927,known_confusion_pair
+T39817,B,Technical,Account Access,0.927,known_confusion_pair
+T06102,A,Other,Shipping,0.926,known_confusion_pair
+T10897,A,Billing,Refund,0.926,known_confusion_pair
+T12533,A,Billing,Refund,0.926,known_confusion_pair
+T22255,B,Technical,Account Access,0.926,known_confusion_pair
+T24786,B,Refund,Billing,0.926,known_confusion_pair
+T25178,B,Other,Shipping,0.926,known_confusion_pair
+T31033,B,Account Access,Technical,0.926,known_confusion_pair
+T31334,B,Account Access,Technical,0.926,known_confusion_pair
+T32193,B,Refund,Billing,0.926,known_confusion_pair
+T32263,B,Refund,Billing,0.926,known_confusion_pair
+T33776,B,Technical,Account Access,0.926,known_confusion_pair
+T36125,B,Account Access,Technical,0.926,known_confusion_pair
+T39737,B,Billing,Refund,0.926,known_confusion_pair
+T43076,B,Billing,Refund,0.926,known_confusion_pair
+T00206,A,Technical,Account Access,0.925,known_confusion_pair
+T10081,A,Other,Shipping,0.925,known_confusion_pair
+T12600,A,Account Access,Technical,0.925,known_confusion_pair
+T13462,A,Account Access,Technical,0.925,known_confusion_pair
+T14522,A,Account Access,Technical,0.925,known_confusion_pair
+T15546,A,Technical,Account Access,0.925,known_confusion_pair
+T19106,A,Technical,Account Access,0.925,known_confusion_pair
+T19226,A,Technical,Account Access,0.925,known_confusion_pair
+T20913,B,Account Access,Technical,0.925,known_confusion_pair
+T21982,B,Account Access,Technical,0.925,known_confusion_pair
+T22495,B,Shipping,Other,0.925,known_confusion_pair
+T22637,B,Shipping,Other,0.925,known_confusion_pair
+T24617,B,Other,Shipping,0.925,known_confusion_pair
+T24653,B,Billing,Refund,0.925,known_confusion_pair
+T25688,B,Refund,Billing,0.925,known_confusion_pair
+T26117,B,Shipping,Other,0.925,known_confusion_pair
+T30154,B,Refund,Billing,0.925,known_confusion_pair
+T33580,B,Billing,Refund,0.925,known_confusion_pair
+T33916,B,Refund,Billing,0.925,known_confusion_pair
+T36289,B,Technical,Account Access,0.925,known_confusion_pair
+T39297,B,Technical,Account Access,0.925,known_confusion_pair
+T41835,B,Billing,Refund,0.925,known_confusion_pair
+T44237,B,Account Access,Technical,0.925,known_confusion_pair
+T00135,A,Technical,Account Access,0.924,known_confusion_pair
+T04727,A,Technical,Account Access,0.924,known_confusion_pair
+T07306,A,Technical,Account Access,0.924,known_confusion_pair
+T08613,A,Technical,Account Access,0.924,known_confusion_pair
+T19210,A,Other,Shipping,0.924,known_confusion_pair
+T20822,B,Refund,Billing,0.924,known_confusion_pair
+T22655,B,Other,Shipping,0.924,known_confusion_pair
+T24030,B,Billing,Refund,0.924,known_confusion_pair
+T27454,B,Technical,Account Access,0.924,known_confusion_pair
+T31186,B,Shipping,Other,0.924,known_confusion_pair
+T34992,B,Refund,Billing,0.924,known_confusion_pair
+T35515,B,Refund,Billing,0.924,known_confusion_pair
+T37058,B,Billing,Refund,0.924,known_confusion_pair
+T37426,B,Other,Shipping,0.924,known_confusion_pair
+T37745,B,Refund,Billing,0.924,known_confusion_pair
+T41884,B,Technical,Account Access,0.924,known_confusion_pair
+T43784,B,Billing,Refund,0.924,known_confusion_pair
+T18500,A,Billing,Refund,0.923,known_confusion_pair
+T20329,B,Refund,Billing,0.923,known_confusion_pair
+T24636,B,Technical,Account Access,0.923,known_confusion_pair
+T25006,B,Technical,Account Access,0.923,known_confusion_pair
+T25193,B,Account Access,Technical,0.923,known_confusion_pair
+T25708,B,Other,Shipping,0.923,known_confusion_pair
+T26338,B,Refund,Billing,0.923,known_confusion_pair
+T28735,B,Billing,Refund,0.923,known_confusion_pair
+T30406,B,Other,Shipping,0.923,known_confusion_pair
+T30443,B,Refund,Billing,0.923,known_confusion_pair
+T33939,B,Refund,Billing,0.923,known_confusion_pair
+T34877,B,Technical,Account Access,0.923,known_confusion_pair
+T37370,B,Billing,Refund,0.923,known_confusion_pair
+T38652,B,Refund,Billing,0.923,known_confusion_pair
+T39637,B,Refund,Billing,0.923,known_confusion_pair
+T40310,B,Other,Shipping,0.923,known_confusion_pair
+T43502,B,Refund,Billing,0.923,known_confusion_pair
+T02844,A,Refund,Billing,0.922,known_confusion_pair
+T06716,A,Account Access,Technical,0.922,known_confusion_pair
+T14777,A,Technical,Account Access,0.922,known_confusion_pair
+T17107,A,Technical,Account Access,0.922,known_confusion_pair
+T21189,B,Refund,Billing,0.922,known_confusion_pair
+T30019,B,Other,Shipping,0.922,known_confusion_pair
+T30235,B,Billing,Refund,0.922,known_confusion_pair
+T33260,B,Account Access,Technical,0.922,known_confusion_pair
+T08521,A,Other,Other,0.55,uncertain_or_rare_class
+T09916,A,Shipping,Shipping,0.55,uncertain_or_rare_class
+T29890,B,Shipping,Shipping,0.55,uncertain_or_rare_class
+T30458,B,Other,Other,0.55,uncertain_or_rare_class
+T36648,B,Other,Other,0.55,uncertain_or_rare_class
+T03902,A,Shipping,Shipping,0.551,uncertain_or_rare_class
+T08031,A,Other,Account Access,0.551,uncertain_or_rare_class
+T08890,A,Shipping,Other,0.551,uncertain_or_rare_class
+T09096,A,Shipping,Shipping,0.551,uncertain_or_rare_class
+T09929,A,Other,Shipping,0.551,uncertain_or_rare_class
+T11205,A,Other,Other,0.551,uncertain_or_rare_class
+T17617,A,Shipping,Shipping,0.551,uncertain_or_rare_class
+T18157,A,Other,Other,0.551,uncertain_or_rare_class
+T19126,A,Shipping,Shipping,0.551,uncertain_or_rare_class
+T23275,B,Shipping,Other,0.551,uncertain_or_rare_class
+T27023,B,Shipping,Shipping,0.551,uncertain_or_rare_class
+T30506,B,Other,Shipping,0.551,uncertain_or_rare_class
+T35237,B,Shipping,Shipping,0.551,uncertain_or_rare_class
+T36408,B,Other,Shipping,0.551,uncertain_or_rare_class
+T37586,B,Shipping,Technical,0.551,uncertain_or_rare_class
+T42699,B,Shipping,Shipping,0.551,uncertain_or_rare_class
+T44876,B,Shipping,Shipping,0.551,uncertain_or_rare_class
+T00581,A,Shipping,Shipping,0.552,uncertain_or_rare_class
+T02254,A,Shipping,Shipping,0.552,uncertain_or_rare_class
+T04832,A,Shipping,Shipping,0.552,uncertain_or_rare_class
+T07389,A,Other,Other,0.552,uncertain_or_rare_class
+T13363,A,Other,Other,0.552,uncertain_or_rare_class
+T17096,A,Other,Other,0.552,uncertain_or_rare_class
+T23439,B,Other,Other,0.552,uncertain_or_rare_class
+T23770,B,Shipping,Shipping,0.552,uncertain_or_rare_class
+T30197,B,Other,Other,0.552,uncertain_or_rare_class
+T30512,B,Shipping,Other,0.552,uncertain_or_rare_class
+T31565,B,Shipping,Shipping,0.552,uncertain_or_rare_class
+T33314,B,Other,Other,0.552,uncertain_or_rare_class
+T34141,B,Other,Shipping,0.552,uncertain_or_rare_class
+T35134,B,Shipping,Billing,0.552,uncertain_or_rare_class
+T01643,A,Shipping,Shipping,0.553,uncertain_or_rare_class
+T02075,A,Shipping,Shipping,0.553,uncertain_or_rare_class
+T06413,A,Other,Other,0.553,uncertain_or_rare_class
+T08071,A,Other,Other,0.553,uncertain_or_rare_class
+T10429,A,Other,Shipping,0.553,uncertain_or_rare_class
+T13643,A,Shipping,Shipping,0.553,uncertain_or_rare_class
+T19728,A,Shipping,Shipping,0.553,uncertain_or_rare_class
+T20834,B,Other,Other,0.553,uncertain_or_rare_class
+T28324,B,Shipping,Shipping,0.553,uncertain_or_rare_class
+T31881,B,Shipping,Shipping,0.553,uncertain_or_rare_class
+T32798,B,Shipping,Shipping,0.553,uncertain_or_rare_class
+T36001,B,Shipping,Shipping,0.553,uncertain_or_rare_class
+T04837,A,Shipping,Shipping,0.554,uncertain_or_rare_class
+T05786,A,Shipping,Shipping,0.554,uncertain_or_rare_class
+T06913,A,Other,Other,0.554,uncertain_or_rare_class
+T08077,A,Shipping,Other,0.554,uncertain_or_rare_class
+T12663,A,Other,Other,0.554,uncertain_or_rare_class
+T13017,A,Shipping,Technical,0.554,uncertain_or_rare_class
+T13150,A,Shipping,Shipping,0.554,uncertain_or_rare_class
+T17685,A,Shipping,Shipping,0.554,uncertain_or_rare_class
+T21147,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T26978,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T29374,B,Other,Shipping,0.554,uncertain_or_rare_class
+T35186,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T36514,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T39176,B,Shipping,Other,0.554,uncertain_or_rare_class
+T40844,B,Other,Other,0.554,uncertain_or_rare_class
+T41386,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T42379,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T42551,B,Other,Other,0.554,uncertain_or_rare_class
+T44011,B,Shipping,Shipping,0.554,uncertain_or_rare_class
+T00924,A,Shipping,Shipping,0.555,uncertain_or_rare_class
+T01845,A,Shipping,Shipping,0.555,uncertain_or_rare_class
+T08005,A,Shipping,Technical,0.555,uncertain_or_rare_class
+T12811,A,Shipping,Shipping,0.555,uncertain_or_rare_class
+T15653,A,Other,Other,0.555,uncertain_or_rare_class
+T26583,B,Other,Other,0.555,uncertain_or_rare_class
+T28878,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T30531,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T31689,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T33283,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T34272,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T37537,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T39310,B,Other,Other,0.555,uncertain_or_rare_class
+T39953,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T42092,B,Other,Other,0.555,uncertain_or_rare_class
+T43525,B,Shipping,Shipping,0.555,uncertain_or_rare_class
+T01076,A,Shipping,Shipping,0.556,uncertain_or_rare_class
+T02629,A,Shipping,Shipping,0.556,uncertain_or_rare_class
+T02640,A,Other,Other,0.556,uncertain_or_rare_class
+T03133,A,Shipping,Shipping,0.556,uncertain_or_rare_class
+T03913,A,Shipping,Shipping,0.556,uncertain_or_rare_class
+T10869,A,Other,Other,0.556,uncertain_or_rare_class
+T25883,B,Shipping,Shipping,0.556,uncertain_or_rare_class
+T28524,B,Shipping,Shipping,0.556,uncertain_or_rare_class
+T30392,B,Other,Other,0.556,uncertain_or_rare_class
+T33045,B,Other,Other,0.556,uncertain_or_rare_class
+T38345,B,Other,Shipping,0.556,uncertain_or_rare_class
+T40160,B,Shipping,Shipping,0.556,uncertain_or_rare_class
+T40639,B,Other,Shipping,0.556,uncertain_or_rare_class
+T41281,B,Other,Other,0.556,uncertain_or_rare_class
+T41635,B,Shipping,Shipping,0.556,uncertain_or_rare_class
+T43096,B,Shipping,Shipping,0.556,uncertain_or_rare_class
+T00501,A,Shipping,Shipping,0.557,uncertain_or_rare_class
+T01350,A,Other,Other,0.557,uncertain_or_rare_class
+T02487,A,Other,Other,0.557,uncertain_or_rare_class
+T04697,A,Other,Other,0.557,uncertain_or_rare_class
+T05414,A,Shipping,Shipping,0.557,uncertain_or_rare_class
+T06057,A,Other,Other,0.557,uncertain_or_rare_class
+T08395,A,Other,Shipping,0.557,uncertain_or_rare_class
+T20976,B,Shipping,Shipping,0.557,uncertain_or_rare_class
+T22541,B,Shipping,Shipping,0.557,uncertain_or_rare_class
+T22686,B,Other,Other,0.557,uncertain_or_rare_class
+T27338,B,Shipping,Shipping,0.557,uncertain_or_rare_class
+T41164,B,Shipping,Shipping,0.557,uncertain_or_rare_class
+T42436,B,Other,Billing,0.557,uncertain_or_rare_class
+T43230,B,Other,Shipping,0.557,uncertain_or_rare_class
+T44873,B,Other,Billing,0.557,uncertain_or_rare_class
+T04537,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T09013,A,Other,Other,0.558,uncertain_or_rare_class
+T14400,A,Other,Other,0.558,uncertain_or_rare_class
+T14857,A,Other,Other,0.558,uncertain_or_rare_class
+T14863,A,Other,Shipping,0.558,uncertain_or_rare_class
+T16312,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T16915,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T17542,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T17724,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T19453,A,Shipping,Shipping,0.558,uncertain_or_rare_class
+T22693,B,Shipping,Shipping,0.558,uncertain_or_rare_class
+T27800,B,Shipping,Shipping,0.558,uncertain_or_rare_class
+T30928,B,Other,Other,0.558,uncertain_or_rare_class
+T32285,B,Shipping,Shipping,0.558,uncertain_or_rare_class
+T35151,B,Shipping,Other,0.558,uncertain_or_rare_class
+T40540,B,Shipping,Other,0.558,uncertain_or_rare_class
+T41962,B,Shipping,Shipping,0.558,uncertain_or_rare_class
+T42884,B,Shipping,Shipping,0.558,uncertain_or_rare_class
+T01549,A,Shipping,Shipping,0.559,uncertain_or_rare_class
+T02344,A,Other,Other,0.559,uncertain_or_rare_class
+T06341,A,Shipping,Shipping,0.559,uncertain_or_rare_class
+T09695,A,Shipping,Shipping,0.559,uncertain_or_rare_class
+T09934,A,Shipping,Shipping,0.559,uncertain_or_rare_class
+T13001,A,Shipping,Billing,0.559,uncertain_or_rare_class
+T13568,A,Shipping,Shipping,0.559,uncertain_or_rare_class
+T17916,A,Other,Technical,0.559,uncertain_or_rare_class
+T20440,B,Shipping,Shipping,0.559,uncertain_or_rare_class
+T21587,B,Shipping,Other,0.559,uncertain_or_rare_class
+T34655,B,Shipping,Shipping,0.559,uncertain_or_rare_class
+T36293,B,Shipping,Shipping,0.559,uncertain_or_rare_class
+T38870,B,Other,Other,0.559,uncertain_or_rare_class
+T38944,B,Shipping,Shipping,0.559,uncertain_or_rare_class
+T42731,B,Shipping,Shipping,0.559,uncertain_or_rare_class
+T44961,B,Other,Other,0.559,uncertain_or_rare_class
+T03186,A,Shipping,Shipping,0.56,uncertain_or_rare_class
+T03314,A,Shipping,Shipping,0.56,uncertain_or_rare_class
+T03599,A,Other,Other,0.56,uncertain_or_rare_class
+T03922,A,Shipping,Shipping,0.56,uncertain_or_rare_class
+T06697,A,Shipping,Shipping,0.56,uncertain_or_rare_class
+T14413,A,Shipping,Shipping,0.56,uncertain_or_rare_class
+T14984,A,Other,Account Access,0.56,uncertain_or_rare_class
+T15680,A,Other,Other,0.56,uncertain_or_rare_class
+T19756,A,Other,Other,0.56,uncertain_or_rare_class
+T21860,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T22393,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T25638,B,Other,Shipping,0.56,uncertain_or_rare_class
+T26701,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T30476,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T30535,B,Other,Other,0.56,uncertain_or_rare_class
+T32042,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T32300,B,Other,Other,0.56,uncertain_or_rare_class
+T33018,B,Other,Other,0.56,uncertain_or_rare_class
+T34056,B,Other,Other,0.56,uncertain_or_rare_class
+T34911,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T36749,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T38081,B,Shipping,Shipping,0.56,uncertain_or_rare_class
+T44861,B,Other,Other,0.56,uncertain_or_rare_class
+T00079,A,Other,Other,0.561,uncertain_or_rare_class
+T01431,A,Other,Other,0.561,uncertain_or_rare_class
+T02147,A,Shipping,Refund,0.561,uncertain_or_rare_class
+T03566,A,Shipping,Other,0.561,uncertain_or_rare_class
+T05804,A,Other,Other,0.561,uncertain_or_rare_class
+T05934,A,Shipping,Shipping,0.561,uncertain_or_rare_class
+T06649,A,Shipping,Shipping,0.561,uncertain_or_rare_class
+T12116,A,Shipping,Shipping,0.561,uncertain_or_rare_class
+T14088,A,Shipping,Shipping,0.561,uncertain_or_rare_class
+T21163,B,Other,Shipping,0.561,uncertain_or_rare_class
+T29507,B,Other,Other,0.561,uncertain_or_rare_class
+T30251,B,Shipping,Shipping,0.561,uncertain_or_rare_class
+T34293,B,Shipping,Other,0.561,uncertain_or_rare_class
+T37704,B,Other,Other,0.561,uncertain_or_rare_class
+T37961,B,Shipping,Shipping,0.561,uncertain_or_rare_class
+T02380,A,Other,Other,0.562,uncertain_or_rare_class
+T05022,A,Shipping,Shipping,0.562,uncertain_or_rare_class
+T05611,A,Other,Other,0.562,uncertain_or_rare_class
+T08841,A,Shipping,Shipping,0.562,uncertain_or_rare_class
+T11291,A,Other,Other,0.562,uncertain_or_rare_class
+T14581,A,Shipping,Shipping,0.562,uncertain_or_rare_class
+T17694,A,Shipping,Shipping,0.562,uncertain_or_rare_class
+T18132,A,Other,Other,0.562,uncertain_or_rare_class
+T18319,A,Shipping,Shipping,0.562,uncertain_or_rare_class
+T21561,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T27331,B,Other,Shipping,0.562,uncertain_or_rare_class
+T30660,B,Shipping,Other,0.562,uncertain_or_rare_class
+T31964,B,Shipping,Billing,0.562,uncertain_or_rare_class
+T33775,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T34294,B,Other,Other,0.562,uncertain_or_rare_class
+T34573,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T36003,B,Other,Shipping,0.562,uncertain_or_rare_class
+T37502,B,Other,Shipping,0.562,uncertain_or_rare_class
+T40232,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T41439,B,Other,Shipping,0.562,uncertain_or_rare_class
+T43334,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T44586,B,Shipping,Shipping,0.562,uncertain_or_rare_class
+T05405,A,Shipping,Shipping,0.563,uncertain_or_rare_class
+T05547,A,Other,Other,0.563,uncertain_or_rare_class
+T05790,A,Other,Other,0.563,uncertain_or_rare_class
+T08904,A,Shipping,Shipping,0.563,uncertain_or_rare_class
+T11017,A,Other,Other,0.563,uncertain_or_rare_class
+T11791,A,Shipping,Technical,0.563,uncertain_or_rare_class
+T12030,A,Shipping,Shipping,0.563,uncertain_or_rare_class
+T23338,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T24335,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T32719,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T36468,B,Other,Other,0.563,uncertain_or_rare_class
+T36642,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T39042,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T41963,B,Shipping,Shipping,0.563,uncertain_or_rare_class
+T02434,A,Shipping,Shipping,0.564,uncertain_or_rare_class
+T12298,A,Shipping,Shipping,0.564,uncertain_or_rare_class
+T15530,A,Shipping,Shipping,0.564,uncertain_or_rare_class
+T17422,A,Shipping,Shipping,0.564,uncertain_or_rare_class
+T17679,A,Shipping,Shipping,0.564,uncertain_or_rare_class
+T21359,B,Shipping,Shipping,0.564,uncertain_or_rare_class
+T23162,B,Shipping,Shipping,0.564,uncertain_or_rare_class
+T25957,B,Other,Refund,0.564,uncertain_or_rare_class
+T26308,B,Shipping,Other,0.564,uncertain_or_rare_class
+T26740,B,Shipping,Shipping,0.564,uncertain_or_rare_class
+T27040,B,Shipping,Shipping,0.564,uncertain_or_rare_class
+T28844,B,Shipping,Other,0.564,uncertain_or_rare_class
+T41649,B,Shipping,Other,0.564,uncertain_or_rare_class
+T08752,A,Shipping,Shipping,0.565,uncertain_or_rare_class
+T09323,A,Other,Other,0.565,uncertain_or_rare_class
+T13279,A,Other,Other,0.565,uncertain_or_rare_class
+T16150,A,Shipping,Shipping,0.565,uncertain_or_rare_class
+T18121,A,Shipping,Other,0.565,uncertain_or_rare_class
+T19654,A,Other,Other,0.565,uncertain_or_rare_class
+T21571,B,Shipping,Shipping,0.565,uncertain_or_rare_class
+T22930,B,Other,Other,0.565,uncertain_or_rare_class
+T26991,B,Shipping,Account Access,0.565,uncertain_or_rare_class
+T28253,B,Other,Other,0.565,uncertain_or_rare_class
+T28996,B,Shipping,Shipping,0.565,uncertain_or_rare_class
+T33360,B,Shipping,Other,0.565,uncertain_or_rare_class
+T37407,B,Other,Other,0.565,uncertain_or_rare_class
+T38375,B,Shipping,Shipping,0.565,uncertain_or_rare_class
+T39532,B,Shipping,Other,0.565,uncertain_or_rare_class
+T06811,A,Shipping,Other,0.566,uncertain_or_rare_class
+T14515,A,Shipping,Shipping,0.566,uncertain_or_rare_class
+T15556,A,Other,Account Access,0.566,uncertain_or_rare_class
+T19212,A,Shipping,Shipping,0.566,uncertain_or_rare_class
+T22605,B,Shipping,Other,0.566,uncertain_or_rare_class
+T22833,B,Shipping,Shipping,0.566,uncertain_or_rare_class
+T24231,B,Other,Other,0.566,uncertain_or_rare_class
+T24976,B,Shipping,Billing,0.566,uncertain_or_rare_class
+T25710,B,Other,Other,0.566,uncertain_or_rare_class
+T33879,B,Shipping,Shipping,0.566,uncertain_or_rare_class
+T34448,B,Shipping,Shipping,0.566,uncertain_or_rare_class
+T34986,B,Shipping,Technical,0.566,uncertain_or_rare_class
+T39161,B,Other,Other,0.566,uncertain_or_rare_class
+T41738,B,Shipping,Shipping,0.566,uncertain_or_rare_class
+T06527,A,Other,Shipping,0.567,uncertain_or_rare_class
+T11562,A,Other,Other,0.567,uncertain_or_rare_class
+T13351,A,Shipping,Shipping,0.567,uncertain_or_rare_class
+T13438,A,Shipping,Shipping,0.567,uncertain_or_rare_class
+T13501,A,Shipping,Shipping,0.567,uncertain_or_rare_class
+T15262,A,Other,Shipping,0.567,uncertain_or_rare_class
+T19020,A,Shipping,Shipping,0.567,uncertain_or_rare_class
+T22474,B,Shipping,Shipping,0.567,uncertain_or_rare_class
+T22608,B,Other,Other,0.567,uncertain_or_rare_class
+T27922,B,Shipping,Shipping,0.567,uncertain_or_rare_class
+T31680,B,Other,Other,0.567,uncertain_or_rare_class
+T35074,B,Other,Other,0.567,uncertain_or_rare_class
+T39249,B,Other,Shipping,0.567,uncertain_or_rare_class
+T40077,B,Shipping,Other,0.567,uncertain_or_rare_class
+T01750,A,Other,Other,0.568,uncertain_or_rare_class
+T07646,A,Shipping,Shipping,0.568,uncertain_or_rare_class
+T10399,A,Other,Other,0.568,uncertain_or_rare_class
+T14762,A,Shipping,Shipping,0.568,uncertain_or_rare_class
+T14876,A,Shipping,Shipping,0.568,uncertain_or_rare_class
+T17930,A,Shipping,Other,0.568,uncertain_or_rare_class
+T21580,B,Shipping,Shipping,0.568,uncertain_or_rare_class
+T23397,B,Shipping,Shipping,0.568,uncertain_or_rare_class
+T27610,B,Shipping,Shipping,0.568,uncertain_or_rare_class
+T38013,B,Shipping,Shipping,0.568,uncertain_or_rare_class
+T39398,B,Other,Other,0.568,uncertain_or_rare_class
+T41803,B,Shipping,Technical,0.568,uncertain_or_rare_class
+T02108,A,Other,Other,0.569,uncertain_or_rare_class
+T04145,A,Shipping,Shipping,0.569,uncertain_or_rare_class
+T05718,A,Shipping,Shipping,0.569,uncertain_or_rare_class
+T07637,A,Other,Other,0.569,uncertain_or_rare_class
+T10262,A,Shipping,Shipping,0.569,uncertain_or_rare_class
+T10627,A,Shipping,Refund,0.569,uncertain_or_rare_class
+T18419,A,Other,Other,0.569,uncertain_or_rare_class
+T23204,B,Shipping,Shipping,0.569,uncertain_or_rare_class
+T27560,B,Other,Shipping,0.569,uncertain_or_rare_class
+T29347,B,Other,Shipping,0.569,uncertain_or_rare_class
