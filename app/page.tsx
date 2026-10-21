@@ -159,6 +159,7 @@ export default function Page() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [allGigs, setAllGigs] = useState<Gig[]>([])
   const [discoverGigs, setDiscoverGigs] = useState<Gig[]>([])
+  const [discoverReady, setDiscoverReady] = useState(false)
   const [applications, setApplications] = useState<Application[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
@@ -223,7 +224,7 @@ export default function Page() {
     if (mode !== 'All gigs') params.type = mode
     if (minBudget) params.min_budget = minBudget
     if (maxBudget) params.max_budget = maxBudget
-    api.gigs(params).then(setDiscoverGigs).catch(() => setDiscoverGigs([]))
+    api.gigs(params).then((g) => { setDiscoverGigs(g); setDiscoverReady(true) }).catch(() => { setDiscoverGigs([]); setDiscoverReady(true) })
   }, [query, category, payment, mode, minBudget, maxBudget, loadAll, allGigs])
 
   useEffect(() => {
@@ -526,14 +527,14 @@ export default function Page() {
                 ))}
               </div>
 
-              {loading ? (
+              {!discoverReady ? (
                 <GigGridSkeleton />
               ) : (
                 <div className="gig-grid">
                   {visibleGigs.map((gig) => renderGigCard(gig))}
                 </div>
               )}
-              {!loading && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
+              {discoverReady && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
 
             </>
           )}
