@@ -1,0 +1,196 @@
+import { useQuery } from "convex/react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../convex/_generated/api";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/shadcn/command";
+import { fmt, initials, pct, qty } from "../lib/format";
+import { useViewer } from "../lib/viewer";
+import { Avatar, Badge, PlusIcon, SearchIcon, cx } from "./ui";
+
+const COORDINATOR_PAGES = [
+  { to: "/", label: "Overview", hint: "Situation report and map" },
+  { to: "/log", label: "Quick log", hint: "Type what happened, it becomes the form" },
+  { to: "/camps", label: "Camps", hint: "Registry, occupancy, locations" },
+  { to: "/needs", label: "Needs", hint: "Everything camps are short of" },
+  { to: "/warehouse", label: "Warehouse", hint: "Stock on hand and reorder levels" },
+  { to: "/dispatches", label: "Dispatches", hint: "Trucks pending, on the road, delivered" },
+  { to: "/donations", label: "Donations", hint: "Cash and in-kind records" },
+  { to: "/volunteers", label: "Volunteers", hint: "Field team and assignments" },
+];
+
+const VOLUNTEER_PAGES = [
+  { to: "/assignment", label: "My assignment", hint: "Your camp, its needs and incoming deliveries" },
+  { to: "/profile", label: "Profile", hint: "Your name, skill and phone number" },
+];
+
+/** Word-start matches rank above substring matches; no fuzzy matching, so "ins" finds Insulin, not Khairpur. */
+function filter(value: string, search: string, keywords?: string[]) {
+  const q = search.trim().toLowerCase();
+  if (!q) return 1;
+  // The first word of each value is the group tag ("camp", "item", …) that keeps values unique.
+  const text = [value.split(" ").slice(1).join(" "), ...(keywords ?? [])].join(" ").toLowerCase();
+  if (text.startsWith(q)) return 1;
+  if (text.split(/[\s·,]+/).some((w) => w.startsWith(q))) return 0.8;
+  return text.includes(q) ? 0.4 : 0;
+}
+
+function campDot(status: string, critical: number) {
+  if (status === "Closed") return "bg-faint";
+  if (critical > 0) return "bg-alert";
+  if (status === "Full") return "bg-warn";
+  return "bg-ok";
+}
+
+/** Header search button plus the ⌘K command palette it opens. */
+export default function CommandPalette() {
+  const navigate = useNavigate();
+  const { isCoordinator } = useViewer();
+  const [open, setOpen] = useState(false);
+  const fetchAll = open && isCoordinator;
+  const camps = useQuery(api.camps.list, fetchAll ? {} : "skip");
+  const items = useQuery(api.inventory.list, fetchAll ? {} : "skip");
+  const volunteers = useQuery(api.volunteers.list, fetchAll ? {} : "skip");
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const typing = e.target instanceof HTMLElement && (e.target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName));
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing)) {
+        e.preventDefault();
+        setOpen((o) => !o);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const go = (to: string) => {
+    setOpen(false);
+    navigate(to);
+  };
+  const pages = isCoordinator ? COORDINATOR_PAGES : VOLUNTEER_PAGES;
+  const loading = isCoordinator && (!camps || !items || !volunteers);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        className="flex h-[38px] w-[300px] cursor-pointer items-center gap-2.5 rounded-lg border border-line-strong bg-paper px-3 text-left text-muted transition-[border-color] duration-150 hover:border-ink-2"
+      >
+        <SearchIcon />
+        <span className="flex-1 truncate text-sm text-faint">Search or jump to…</span>
+        <kbd className="rounded border border-line px-1.5 py-px font-mono text-[11px]">⌘K</kbd>
+      </button>
+
+      <CommandDialog open={open} onOpenChange={setOpen} commandProps={{ loop: true, filter }}>
+        <CommandInput placeholder={isCoordinator ? "Search camps, districts, stock, volunteers or pages…" : "Jump to a page…"} />
+        <CommandList>
+          <CommandEmpty>{loading ? "Loading…" : "Nothing matches that search."}</CommandEmpty>
+
+          {isCoordinator && (
+            <>
+              <CommandGroup heading="Actions">
+                <CommandItem value="action new dispatch send supplies" onSelect={() => go("/dispatches?new")}>
+                  <span className="grid size-7 place-items-center rounded-md bg-ink text-white">
+                    <PlusIcon />
+                  </span>
+                  <span className="flex-1 font-semibold">New dispatch</span>
+                  <CommandShortcut>reserve stock</CommandShortcut>
+                </CommandItem>
+                <CommandItem value="action review critical needs" onSelect={() => go("/needs")}>
+                  <span className="grid size-7 place-items-center rounded-md bg-alert-wash">
+                    <span className="size-2 rounded-full bg-alert" />
+                  </span>
+                  <span className="flex-1 font-semibold">Review critical needs</span>
+                  <CommandShortcut>under 40%</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator />
+            </>
+          )}
+
+          <CommandGroup heading="Go to">
+            {pages.map((p) => (
+              <CommandItem key={p.to} value={`page ${p.label}`} keywords={[p.hint]} onSelect={() => go(p.to)}>
+                <span className="w-24 shrink-0 font-semibold">{p.label}</span>
+                <span className="flex-1 truncate text-xs text-muted">{p.hint}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+
+          {camps && camps.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Camps">
+                {camps.map((c) => (
+                  <CommandItem key={c._id} value={`camp ${c.name} ${c.district}`} keywords={[c.status]} onSelect={() => go(`/camps/${c._id}`)}>
+                    <span className={cx("size-2 rounded-full", campDot(c.status, c.criticalGaps))} />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-semibold">{c.name}</span>
+                      <span className="truncate text-xs text-muted">
+                        {c.district} · {fmt(c.current_families)} families
+                      </span>
+                    </span>
+                    {c.status === "Closed" ? (
+                      <Badge tone="neutral">Closed</Badge>
+                    ) : c.criticalGaps > 0 ? (
+                      <Badge tone="danger">{c.criticalGaps} critical</Badge>
+                    ) : (
+                      <CommandShortcut>{pct(c.needsMet)} met</CommandShortcut>
+                    )}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          )}
+
+          {items && items.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Warehouse">
+                {items.map((i) => (
+                  <CommandItem key={i._id} value={`item ${i.name} ${i.category}`} onSelect={() => go(`/warehouse?q=${encodeURIComponent(i.name)}`)}>
+                    <span className={cx("size-2 rounded-[3px]", i.lowStock ? "bg-warn" : "bg-ok")} />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-semibold">{i.name}</span>
+                      <span className="truncate text-xs text-muted">
+                        {i.category} · {qty(i.stock, i.unit)} on hand
+                      </span>
+                    </span>
+                    {i.lowStock ? <Badge tone="warning">Low stock</Badge> : <CommandShortcut>in stock</CommandShortcut>}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          )}
+
+          {volunteers && volunteers.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Volunteers">
+                {volunteers.map((v) => (
+                  <CommandItem key={v._id} value={`volunteer ${v.name} ${v.skill} ${v.campName ?? "unassigned"}`} onSelect={() => go(`/volunteers?q=${encodeURIComponent(v.name)}`)}>
+                    <Avatar name={initials(v.name)} />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-semibold">{v.name}</span>
+                      <span className={cx("truncate text-xs", v.campName ? "text-muted" : "text-warn-ink")}>
+                        {v.skill} · {v.campName ?? "Waiting for a camp"}
+                      </span>
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          )}
+        </CommandList>
+        <div className="flex items-center gap-4 border-t border-line bg-tint px-3.5 py-2 font-mono text-[11px] text-muted">
+          <span>↑↓ move</span>
+          <span>↵ open</span>
+          <span>esc close</span>
+          <span className="ml-auto">⌘K or / to open</span>
+        </div>
+      </CommandDialog>
+    </>
+  );
+}

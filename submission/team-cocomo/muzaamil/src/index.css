@@ -1,0 +1,248 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@theme {
+  --color-canvas: #f4f5f2;
+  --color-paper: #ffffff;
+  --color-tint: #f7f7f4;
+  --color-track: #ecede8;
+  --color-ink: #111311;
+  --color-ink-2: #30332f;
+  --color-muted: #5f635d;
+  --color-faint: #8b8f88;
+  --color-ghost: #b9bcb5;
+  --color-line: #e4e5e0;
+  --color-line-strong: #d2d4cd;
+
+  /* Brand accent: yellow is the ReliefHub mark and the "act here" highlight. */
+  --color-signal: #ffc700;
+  --color-signal-wash: #fff8db;
+
+  /* Semantic status colours. */
+  --color-alert: #d92d20;
+  --color-alert-ink: #b42318;
+  --color-alert-wash: #fef3f2;
+  --color-alert-line: #fecdca;
+  --color-warn: #f79009;
+  --color-warn-ink: #b54708;
+  --color-warn-wash: #fffaeb;
+  --color-warn-line: #fedf89;
+  --color-ok: #079455;
+  --color-ok-ink: #067647;
+  --color-ok-wash: #ecfdf3;
+  --color-ok-line: #abefc6;
+  --color-info: #1570ef;
+  --color-info-ink: #175cd3;
+  --color-info-wash: #eff8ff;
+  --color-info-line: #b2ddff;
+  --color-river: #7fa6cf;
+
+  /* Tokens the EvilCharts (shadcn) components expect. */
+  --color-background: #ffffff;
+  --color-foreground: #111311;
+  --color-muted-foreground: #5f635d;
+  --color-border: #e4e5e0;
+  --color-primary: #111311;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #111311;
+  --color-accent: #f4f5f2;
+  --color-accent-foreground: #111311;
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Stronger than the built-in curves; overriding --ease-out also upgrades Tailwind's ease-out utility. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --shadow-card: 0 1px 2px 0 rgb(16 24 16 / 0.05);
+  --shadow-border: 0px 0px 0px 1px oklch(0 0 0 / 0.06), 0px 1px 2px -1px oklch(0 0 0 / 0.06), 0px 2px 4px 0px oklch(0 0 0 / 0.04);
+  --shadow-border-hover: 0px 0px 0px 1px oklch(0 0 0 / 0.08), 0px 1px 2px -1px oklch(0 0 0 / 0.08), 0px 2px 4px 0px oklch(0 0 0 / 0.06);
+  --shadow-pop: 0 12px 32px -8px rgb(16 24 16 / 0.18), 0 2px 6px rgb(16 24 16 / 0.06);
+}
+
+:root {
+  --background: #ffffff;
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 1;
+}
+
+.display {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* Opacity runs for everyone; movement joins it only when the user hasn't asked for reduced motion. */
+.rise {
+  animation: fade-in 250ms var(--ease-out) both;
+  animation-delay: var(--stagger, 0ms);
+}
+
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 #07945566;
+  }
+  80%,
+  100% {
+    box-shadow: 0 0 0 7px #07945500;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation-name: rise;
+    animation-duration: 300ms;
+  }
+  .pulse {
+    animation: pulse-dot 2s infinite;
+  }
+  .route {
+    animation: dash 1.2s linear infinite;
+  }
+}
+/* Chart axis ticks use the mono face so numbers line up. */
+[data-slot="chart"] .recharts-cartesian-axis-tick text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+[data-slot="chart"] .recharts-radial-bar-background-sector {
+  fill: var(--color-track);
+}
+
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  opacity: 0.4;
+}
+
+/* In the base layer so components can restyle or move the ring with utilities. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-ink);
+}
+
+@keyframes modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes modal-sink {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* Enter 250ms, exit 150ms: the system responding should feel quicker than the system arriving. */
+.modal-backdrop {
+  animation: fade-in 200ms var(--ease-out) both;
+}
+.modal-panel {
+  animation: fade-in 200ms var(--ease-out) both;
+}
+.modal-backdrop[data-closing],
+.modal-backdrop[data-closing] .modal-panel {
+  animation: fade-out 150ms var(--ease-out) forwards;
+  pointer-events: none;
+}
+/* The form inside already has its own card entrance; the dialog carries the motion instead. */
+.modal-panel .rise {
+  animation: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .modal-panel {
+    animation: modal-rise 250ms var(--ease-out) both;
+  }
+  .modal-backdrop[data-closing] .modal-panel {
+    animation: modal-sink 150ms var(--ease-out) forwards;
+  }
+}
+
+/* Toasts transition in and out so a burst of them retargets instead of restarting. */
+.toast {
+  transition-property: opacity, transform;
+  transition-duration: 250ms;
+  transition-timing-function: var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.toast[data-leaving] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition-duration: 150ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast[data-leaving] {
+    transform: none;
+    @starting-style {
+      transform: none;
+    }
+  }
+}
+
+/* Page sections cascade in; cards inside each section inherit the section's delay. */
+main > :nth-child(2) {
+  --stagger: 40ms;
+}
+main > :nth-child(3) {
+  --stagger: 80ms;
+}
+main > :nth-child(4) {
+  --stagger: 120ms;
+}
+main > :nth-child(5) {
+  --stagger: 160ms;
+}
+main > :nth-child(n + 6) {
+  --stagger: 200ms;
+}
+
