@@ -1,17 +1,17 @@
 {
   "name": "campusgig",
   "version": "1.0.0",
-  "description": "**Team Name:** ClaudeBuster  \r **Branch:** `ClaudeBuster`  \r **Folder:** `submission/ClaudeBuster/CampusGig`  \r **Platform:** Modern Web Application (HTML5, Vanilla Glassmorphism CSS, ES6 Modules, Node.js)",
+  "description": "Campus Gig & SkillSwap Portal - student peer marketplace (ClaudeBuster)",
   "main": "server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/test-api.js",
     "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module"
 }
