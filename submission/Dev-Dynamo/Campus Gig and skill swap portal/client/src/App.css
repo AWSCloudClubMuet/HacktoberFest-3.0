@@ -1,0 +1,19 @@
+main{max-width:1000px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.nav{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background:var(--ink);color:#fff;padding:.7rem 1.2rem}
+.brand{font-weight:700;font-size:1.2rem;text-decoration:none;background:var(--hi);color:var(--ink);padding:.1rem .6rem;border-radius:4px}
+.nav nav{display:flex;gap:1rem;flex:1;flex-wrap:wrap}.nav nav a{text-decoration:none;opacity:.8}.nav nav a.active{opacity:1;border-bottom:2px solid var(--hi)}
+.who{font-size:.85rem;display:flex;gap:.5rem;align-items:center}
+input,select,textarea,button{font:inherit;padding:.5rem .7rem;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+button{background:var(--accent);color:#fff;border:0;cursor:pointer}button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-bottom:1.2rem}.filters input:first-child{grid-column:1/-1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem;margin-bottom:1rem;display:block;text-decoration:none}
+.card{margin:0}.card:hover{border-color:var(--accent)}.card h3{margin:.5rem 0 .2rem}.card p{color:var(--muted);margin:.2rem 0 .8rem}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}.meta{display:flex;gap:1rem;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.badge{font-size:.75rem;padding:.1rem .55rem;border-radius:99px;background:#e3e8f2}
+.b-open,.b-accepted,.b-completed{background:#c8f0e4}.b-inprogress,.b-pending{background:#ffe9a8}.b-expired,.b-cancelled,.b-rejected{background:#f6cfcf}
+.form{display:flex;flex-direction:column;gap:.8rem}.form label{display:flex;flex-direction:column;gap:.25rem;font-size:.9rem}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
+.item{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;border-top:1px solid var(--line);padding:.7rem 0}.panel.item{border:1px solid var(--line);align-items:center}
+.error{color:#b42318}.success{color:var(--accent)}.empty{color:var(--muted)}
+.stats{display:flex;gap:2rem;margin-top:1rem;flex-wrap:wrap}.stats div{color:var(--muted);font-size:.85rem}.stats b{display:block;font-size:1.8rem;color:var(--ink)}

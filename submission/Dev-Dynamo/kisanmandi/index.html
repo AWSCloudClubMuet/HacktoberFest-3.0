@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KisanMandi</title><link rel="stylesheet" href="css/style.css"></head>
+<body data-tab="prices">
+<header><div><h1>🌾 KisanMandi</h1><small>Crop prices &amp; produce marketplace · Sindh</small></div><button id="btnRefresh" class="btn light">↻ Refresh</button></header>
+<div id="err" class="err" hidden></div>
+<nav><button data-tab="prices">📈 Prices</button><button data-tab="market">🛒 Marketplace</button><button data-tab="calc" class="f-only">🧮 Calculator</button><button data-tab="alerts">🔔 Alerts</button><button data-tab="profile">👤 Profile</button></nav>
+<main>
+<section class="tab" id="t-prices"><div id="stats" class="stats"></div>
+<div class="bar"><select id="mkt"></select><input id="q" type="search" placeholder="Search crops…"><select id="cat"></select></div>
+<div id="priceGrid" class="grid"></div></section>
+
+<section class="tab" id="t-market">
+<div class="bar"><input id="lq" type="search" placeholder="Search crop, district, seller…"><select id="lDist"></select><select id="lCrop"></select><select id="lGrade"></select>
+<select id="lSort"><option value="new">Newest</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="qty">Quantity</option></select>
+<label class="chk f-only"><input type="checkbox" id="lMine"> My listings</label><button id="btnNew" class="btn f-only">+ New listing</button></div>
+<div id="listGrid" class="grid"></div></section>
+
+<section class="tab" id="t-calc"><div class="card"><h2>Profit calculator</h2>
+<div class="two"><label>Crop<select id="cCrop"></select></label><label>Quantity<input id="cQty" type="number" min="0" value="100"></label></div>
+<div class="two"><label>Selling price per unit (Rs)<input id="cPrice" type="number" min="0"></label><label>Price adjustment: <b id="cAdjV">0%</b><input id="cAdj" type="range" min="-20" max="20" step="1" value="0"></label></div>
+<h3>Production costs (Rs)</h3>
+<div class="three"><label>Seed<input id="cSeed" type="number" min="0" value="0"></label><label>Fertilizer<input id="cFert" type="number" min="0" value="0"></label><label>Labour<input id="cLab" type="number" min="0" value="0"></label><label>Water<input id="cWater" type="number" min="0" value="0"></label><label>Transport<input id="cTrans" type="number" min="0" value="0"></label><label>Other<input id="cOther" type="number" min="0" value="0"></label></div></div>
+<div id="cOut" class="card"></div></section>
+
+<section class="tab" id="t-alerts"><div class="card"><h2>New price alert</h2>
+<div class="bar"><select id="aCrop"></select><select id="aMarket"></select><select id="aDir"><option>Above</option><option>Below</option></select><input id="aTarget" type="number" min="1" placeholder="Target price (Rs)"><button id="btnAlert" class="btn">Add alert</button></div><div id="aErr" class="err"></div></div>
+<div class="row"><b id="aSum"></b><button id="btnEval" class="btn light">Evaluate now</button></div>
+<div id="alertList" class="grid"></div></section>
+
+<section class="tab" id="t-profile"><div id="profileBox" class="card"></div></section>
+</main>
+
+<dialog id="dSetup"><form id="sForm"><h2 id="sTitle">Welcome to KisanMandi</h2><div id="sErr" class="err"></div>
+<label>Full name<input name="uname" autocomplete="name"></label><label>Phone<input name="phone" type="tel" placeholder="03001234567"></label>
+<label>District<select name="district"></select></label>
+<label>I am a</label><div class="seg"><label><input type="radio" name="role" value="Farmer" checked> 🌾 Farmer</label><label><input type="radio" name="role" value="Buyer"> 🛒 Buyer</label></div>
+<div class="actions"><button type="button" class="btn light" id="sCancel" hidden data-close>Cancel</button><button class="btn">Save profile</button></div>
+<div id="quick"></div></form></dialog>
+
+<dialog id="dCrop"><div id="cBody"></div></dialog>
+
+<dialog id="dListing"><form id="lForm"><h2 id="lTitle">New listing</h2><div id="lErr" class="err"></div>
+<label>Crop<select name="cropId"></select></label>
+<div class="two"><label>Quantity<input name="quantity" type="number" min="1" step="any"></label><label>Asking price (Rs)<input name="askingPrice" type="number" min="1" step="any"></label></div>
+<div class="two"><label>District<select name="district"></select></label><label>Grade<select name="grade"></select></label></div>
+<div class="two"><label>Available from<input name="availableFrom" type="date"></label><label>Contact phone<input name="contactPhone" type="tel"></label></div>
+<div class="actions"><button type="button" class="btn light" data-close>Cancel</button><button class="btn">Save listing</button></div></form></dialog>
+<div id="toast" class="toast"></div>
+<script src="js/app.js"></script></body></html>

@@ -1,0 +1,1 @@
+{"name":"gig-server","version":"1.0.0","main":"server.js","scripts":{"seed":"node seed.js","start":"node server.js"},"dependencies":{"cors":"^2.8.6","express":"^4.22.3"}}
