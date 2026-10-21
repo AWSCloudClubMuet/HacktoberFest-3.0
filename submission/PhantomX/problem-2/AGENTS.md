@@ -170,6 +170,8 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 - [x] M4 Two-way reviews and computed reputation.
 - [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.
 
+A compliance pass against the problem statement found the milestones implemented in the API. `Expired` is computed when a stored `Open` gig is past its deadline, and it is not saved as its own status. The default catalogue hides Expired and Cancelled gigs; gig detail, My gigs, and the search status filter still show them. Profile averages are calculated on read.
+
 ## App sections
 
 Logged-in browsing is two sections of the existing gig `type`. Login and signup stay outside them and do not show the switcher.

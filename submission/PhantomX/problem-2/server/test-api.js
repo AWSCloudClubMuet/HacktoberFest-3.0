@@ -277,7 +277,11 @@ try {
     check(badUrl.status === 400, 'portfolio_link must be a valid URL', badUrl);
   }
 
-  const noteGig = openGigs.find((item) => item.id !== gig.id && item.id !== swapGig?.id);
+  const noteGig = openGigs.find((item) => (
+    item.id !== gig.id
+    && item.id !== swapGig?.id
+    && existingApps.some((application) => application.gig_id === item.id && application.status === 'Pending')
+  ));
   const noteApp = noteGig && existingApps.find((application) => application.gig_id === noteGig.id && application.status === 'Pending');
   if (noteGig && noteApp) {
     const tooLong = await api('PATCH', `/applications/${noteApp.id}`, {
@@ -317,6 +321,100 @@ try {
     },
   });
   check(duplicateReview.status === 409, 'duplicate review conflicts', duplicateReview);
+
+  const invalidToken = await api('GET', '/gigs', { token: 'not-a-token' });
+  check(invalidToken.status === 401, 'an invalid token is rejected', invalidToken);
+  const missingGig = await api('GET', '/gigs/missing-gig');
+  check(missingGig.status === 404, 'an unknown gig is not found', missingGig);
+  const future = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
+  const freeBudget = await api('POST', '/gigs', {
+    user: 'u05',
+    body: {
+      title: 'Free with a budget',
+      description: 'This should be rejected.',
+      category: 'Writing',
+      type: 'Offering',
+      payment_type: 'Free',
+      budget: 12,
+      deadline: future,
+    },
+  });
+  check(freeBudget.status === 400, 'a Free gig cannot include a budget', freeBudget);
+  const pastDeadline = await api('POST', '/gigs', {
+    user: 'u05',
+    body: {
+      title: 'Already due',
+      description: 'This should be rejected.',
+      category: 'Writing',
+      type: 'Requesting',
+      payment_type: 'Free',
+      budget: null,
+      deadline: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    },
+  });
+  check(pastDeadline.status === 400, 'a past deadline is rejected', pastDeadline);
+
+  const expired = gigs.find((gig) => gig.status === 'Expired');
+  const applyExpired = await api('POST', '/applications', {
+    user: 'u05',
+    body: { gig_id: expired.id, message: 'This deadline has passed.' },
+  });
+  check(applyExpired.status === 409, 'an Expired gig cannot take a new application', applyExpired);
+  const expiredPending = existingApps.find((application) => {
+    const gig = gigs.find((item) => item.id === application.gig_id);
+    return gig && gig.status === 'Expired' && application.status === 'Pending';
+  });
+  const expiredGig = gigs.find((gig) => gig.id === expiredPending.gig_id);
+  const acceptExpired = await api('PATCH', `/applications/${expiredPending.id}`, {
+    user: expiredGig.user_id,
+    body: { status: 'Accepted' },
+  });
+  check(acceptExpired.status === 409, 'an Expired gig cannot accept an applicant', acceptExpired);
+
+  const stranger = users.find((user) => user.id !== otherOpen.user_id);
+  const strangerStatus = await api('PATCH', `/gigs/${otherOpen.id}`, {
+    user: stranger.id,
+    body: { status: 'Cancelled' },
+  });
+  check(strangerStatus.status === 403, 'a non-owner cannot change gig status', strangerStatus);
+  const patchedProgress = await api('PATCH', `/gigs/${otherOpen.id}`, {
+    user: otherOpen.user_id,
+    body: { status: 'In Progress' },
+  });
+  check(patchedProgress.status === 409, 'In Progress is not set by patching the gig', patchedProgress);
+
+  const completedGig = gigs.find((gig) => gig.status === 'Completed' && gig.accepted_applicant_id);
+  const outsiderReviewer = users.find((user) => user.id !== completedGig.user_id && user.id !== completedGig.accepted_applicant_id);
+  const thirdReview = await api('POST', '/reviews', {
+    user: outsiderReviewer.id,
+    body: {
+      gig_id: completedGig.id,
+      reviewee_id: completedGig.user_id,
+      rating: 5,
+      comment: 'I was not part of this gig.',
+    },
+  });
+  check(thirdReview.status === 403, 'a student outside the gig cannot review', thirdReview);
+  const highRating = await api('POST', '/reviews', {
+    user: completedGig.user_id,
+    body: {
+      gig_id: completedGig.id,
+      reviewee_id: completedGig.accepted_applicant_id,
+      rating: 6,
+      comment: 'This rating is out of range.',
+    },
+  });
+  check(highRating.status === 400, 'a rating of 6 is rejected', highRating);
+  const lowRating = await api('POST', '/reviews', {
+    user: completedGig.user_id,
+    body: {
+      gig_id: completedGig.id,
+      reviewee_id: completedGig.accepted_applicant_id,
+      rating: 0,
+      comment: 'This rating is out of range.',
+    },
+  });
+  check(lowRating.status === 400, 'a rating of 0 is rejected', lowRating);
 
   const profile = await api('GET', `/users/${existingReview.reviewee_id}`);
   const received = await api('GET', `/reviews?reviewee_id=${existingReview.reviewee_id}`);
