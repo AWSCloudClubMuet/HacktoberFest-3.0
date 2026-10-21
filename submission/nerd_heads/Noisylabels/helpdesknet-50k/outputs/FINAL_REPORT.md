@@ -99,4 +99,78 @@ The analysis identified concentrated patterns of labeling disagreement, particul
 
 These findings support improving the annotation process through clearer category definitions, targeted training, and expert review.
 
-Reducing such disagreements could improve the reliability of training and evaluation labels used in future machine learning experiments.
+Reducing such disagreements could improve the reliability of training and evaluation labels used in future machine learning experiments.  
+
+
+
+
+Milestone 3: Reasoning About the Accuracy Ceiling
+
+ Objective
+
+The objective of this milestone is to investigate how noisy evaluation labels can affect reported classifier accuracy and estimate the underlying true accuracy under a simplified label-noise assumption.
+
+ Given Information
+
+The HelpDeskNet-50K classifier reports 82% accuracy against crowd-labeled evaluation data.
+
+The observed annotation disagreement rate is approximately 15%, and the dataset contains six ticket categories.
+
+For this milestone, we assume that each true label has an independent 15% probability of being replaced uniformly by one of the other five classes.
+
+ Methodology
+
+Let:
+
+- A_noisy = 0.82 represent observed accuracy.
+- A_true represent actual accuracy against correct labels.
+- η = 0.15 represent the assumed label-flipping probability.
+- K = 6 represent the number of classes.
+
+Under the uniform label-noise model:
+
+A_noisy = (1 − η) × A_true + [η / (K − 1)] × (1 − A_true)
+
+Rearranging:
+
+A_true = [A_noisy − η / (K − 1)] / [1 − η − η / (K − 1)]
+
+Substituting the supplied values:
+
+A_true = (0.82 − 0.15/5) / (1 − 0.15 − 0.15/5)
+
+A_true = 0.79 / 0.82
+
+Estimated true accuracy = 96.34%.
+
+ Implementation
+
+The calculation was implemented in Python through the `corrected_accuracy()` function inside `src/analysis.py`.
+
+The resulting estimate was saved in `outputs/results.json` under the field `noise_model_accuracy_estimate`.
+
+ Interpretation
+
+The calculation indicates that a classifier reporting 82% accuracy against noisy evaluation labels could have an estimated true accuracy of approximately 96.34% under the specified uniform-flipping model.
+
+This illustrates how inaccurate evaluation labels can make a classifier appear less accurate than it actually is.
+
+ Limitations:
+
+The estimate is theoretical and has not been validated using a clean, expert-labeled test set.
+
+The actual annotation process may violate the independence and uniform-noise assumptions.
+
+For example, the audit shows concentrated confusion between Billing and Refund, while annotator tiers exhibit different disagreement rates.
+
+These patterns suggest that the actual noise process may be class-dependent or annotator-dependent.
+
+Therefore, 96.34% must not be presented as an experimentally verified model accuracy.
+
+Conclusion:
+
+Noisy evaluation labels can substantially distort reported classifier performance.
+
+Although the uniform-noise model produces an estimated true accuracy of 96.34%, trustworthy evaluation requires a separate, representative expert-labeled test set.
+
+This motivates the improved evaluation procedure proposed in Milestone 5.
