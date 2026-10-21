@@ -89,7 +89,8 @@
       .sim-row:first-child { border-top: 0; }
       .sim-row-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
       .sim-row-title { font-weight: 600; font-size: var(--fs-sm); }
-      .sim-row-sub { font-size: var(--fs-xs); color: var(--muted); margin-left: auto; }
+      .sim-row-sub { font-size: var(--fs-xs); color: var(--muted); margin-left: auto; font-family: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace; }
+      .sim-loc { color: var(--muted); font-weight: 500; font-size: var(--fs-xs); }
       .sim-track { display: flex; height: 8px; border-radius: var(--r-pill); overflow: hidden; background: var(--line); }
       .sim-track-now { background: var(--brand); height: 100%; }
       .sim-track-gain { background: var(--brand-400); height: 100%; transition: width var(--dur-2) var(--ease); }
@@ -179,8 +180,48 @@ function projectScenario(needs, inventory, deltas) {
     };
   }
 
+  /* top movers: the needs whose fulfilment % improves most */
+  const topMovers = perNeed
+    .filter(p => p.gainPts > 0)
+    .sort((a, b) => b.gainPts - a.gainPts || b.allocated - a.allocated || a.id - b.id)
+    .slice(0, 5);
+
+  /* still unrecoverable: High-priority needs that stay under the dashboard's
+   * 40% critical threshold even after the hypothetical inflow */
+  const uncoveredHigh = perNeed
+    .filter(p => p.priority === 'High' && p.projectedPct < 40)
+    .sort((a, b) => a.projectedPct - b.projectedPct || a.id - b.id);
+
+  /* camp level: average fulfilment across a camp's needs, now vs projected */
+  const campAgg = {};
+  for (const p of perNeed) {
+    const c = (campAgg[p.camp_id] = campAgg[p.camp_id] || { now: [], projected: [] });
+    c.now.push(p.currentPct);
+    c.projected.push(p.projectedPct);
+  }
+  const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
+  const camps = Object.entries(campAgg).map(([campId, agg]) => ({
+    camp_id: +campId, needs: agg.now.length,
+    nowAvg: avg(agg.now), projAvg: avg(agg.projected),
+    gainPts: avg(agg.projected) - avg(agg.now),
+  })).sort((a, b) => b.gainPts - a.gainPts || a.camp_id - b.camp_id);
+
+  /* category level (for the before/after chart): average fulfilment % */
+  const itemById = Object.fromEntries(inventory.map(i => [i.id, i]));
+  const catAgg = {};
+  for (const p of perNeed) {
+    const cat = (itemById[p.inventory_item_id] || {}).category || 'Other';
+    const c = (catAgg[cat] = catAgg[cat] || { now: [], projected: [] });
+    c.now.push(p.currentPct);
+    c.projected.push(p.projectedPct);
+  }
+  const byCategory = {};
+  for (const [cat, agg] of Object.entries(catAgg)) {
+    byCategory[cat] = { now: avg(agg.now), projected: avg(agg.projected) };
+  }
+
   return {
-    perNeed, items,
+    perNeed, items, topMovers, uncoveredHigh, camps, byCategory,
     overallNow: pct(sumNow, sumReq),
     overallProjected: pct(sumProj, sumReq),
     overallDelta: pct(sumProj, sumReq) - pct(sumNow, sumReq),
@@ -311,9 +352,127 @@ const simulator = {
       );
     }
 
+    /* ---- 4. Top movers + camps that improve ---- */
+    const moversList = UI.h('div', {}, []);
+    const simNote = UI.h('div', { class: 'sim-note', hidden: true }, []);
+    const campsList = UI.h('div', {}, []);
+    root.append(UI.h('div', { class: 'sim-grid2' }, [
+      UI.h('section', { class: 'panel reveal', style: '--d:180ms' }, [
+        UI.h('h3', {}, 'Top movers — needs that improve most'),
+        moversList,
+        simNote,
+      ]),
+      UI.h('section', { class: 'panel reveal', style: '--d:220ms' }, [
+        UI.h('h3', {}, 'Camps that improve'),
+        UI.h('p', { class: 'sim-hint' },
+          'Average fulfilment across each camp\u2019s needs. Pressure = families \u00f7 capacity.'),
+        campsList,
+      ]),
+    ]));
+
+    /* One comparison row: emerald = fulfilment now, mint = the projected gain. */
+    function barRow(title, loc, tag, nowPct, projPct, gain) {
+      const now = Math.min(nowPct, 100);
+      const pts = UI.h('span', { class: 'sim-pts ' + (gain > 0 ? 'sim-pts-up' : 'sim-pts-flat') },
+        (gain > 0 ? '+' : '\u00b1') + gain + ' pts');
+      return UI.h('div', { class: 'sim-row' }, [
+        UI.h('div', { class: 'sim-row-meta' }, [
+          UI.h('span', { class: 'sim-row-title' }, title),
+          loc ? UI.h('span', { class: 'sim-loc' }, loc) : null,
+          tag || null,
+          UI.h('span', { class: 'sim-row-sub' }, nowPct + '% \u2192 ' + projPct + '%'),
+          pts,
+        ]),
+        UI.h('div', { class: 'sim-track', role: 'img', 'aria-label': title + ': ' + nowPct + '% now, projected ' + projPct + '%' }, [
+          UI.h('div', { class: 'sim-track-now', style: 'width:' + now + '%' }),
+          UI.h('div', { class: 'sim-track-gain', style: 'width:' + Math.max(0, Math.min(gain, 100 - now)) + '%' }),
+        ]),
+      ]);
+    }
+
+    function renderMovers(res) {
+      moversList.innerHTML = '';
+      if (!res.topMovers.length) {
+        moversList.append(UI.h('p', { class: 'sim-hint' },
+          'No change yet \u2014 pull a slider up to add incoming stock.'));
+        return;
+      }
+      for (const p of res.topMovers) {
+        moversList.append(barRow(
+          (itemById[p.inventory_item_id] || {}).name || 'Supplies',
+          'at ' + ((campById[p.camp_id] || {}).name || 'Camp ' + p.camp_id),
+          UI.priorityBadge(p.priority),
+          p.currentPct, p.projectedPct, p.gainPts));
+      }
+    }
+
+    function renderCamps(res) {
+      campsList.innerHTML = '';
+      if (!res.camps.length) {
+        campsList.append(UI.h('p', { class: 'sim-hint' }, 'No camps with open needs.'));
+        return;
+      }
+      for (const c of res.camps) {
+        const camp = campById[c.camp_id] || {};
+        const pressure = camp.capacity ? Math.round((+camp.current_families || 0) / +camp.capacity * 100) : null;
+        campsList.append(barRow(
+          camp.name || 'Camp ' + c.camp_id,
+          c.needs + (c.needs === 1 ? ' need' : ' needs'),
+          pressure != null ? UI.badge('pressure ' + pressure + '%', pressure >= 90 ? 'warn' : 'muted') : null,
+          c.nowAvg, c.projAvg, c.gainPts));
+      }
+    }
+
+    function renderNote(res) {
+      const uh = res.uncoveredHigh;
+      if (!uh.length) { simNote.hidden = true; simNote.textContent = ''; return; }
+      const names = uh.slice(0, 3).map(p =>
+        ((itemById[p.inventory_item_id] || {}).name || 'Supplies') + ' at ' +
+        ((campById[p.camp_id] || {}).name || 'Camp ' + p.camp_id) + ' (' + p.projectedPct + '%)');
+      simNote.textContent = 'Even with this inflow, ' + uh.length + ' high-priority need' +
+        (uh.length > 1 ? 's' : '') + ' stay' + (uh.length > 1 ? '' : 's') +
+        ' under 40% \u2014 stock alone can\u2019t close ' + (uh.length > 1 ? 'them' : 'it') +
+        ': ' + names.join(', ') + '.';
+      simNote.hidden = false;
+    }
+
+    /* ---- 5. Before/after chart: fulfilment % by category ---- */
+    const cats = Object.keys(baseline.byCategory).sort();
+    const chartBox = UI.h('section', { class: 'chart-box reveal', style: '--d:260ms' }, [
+      UI.h('h3', {}, 'Fulfilment % by category \u2014 current vs projected'),
+      UI.h('canvas', { height: '220', role: 'img', 'aria-label': 'Fulfilment by category, current versus projected' }),
+    ]);
+    root.append(chartBox);
+    const canvas = chartBox.querySelector('canvas');
+    let chart = null;
+    let lastRes = null;
+    function ensureChart() {
+      if (!window.Chart || chart || !canvas) return;
+      const res = lastRes || baseline;
+      chart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: cats,
+          datasets: [
+            { label: 'Current', data: cats.map(c => res.byCategory[c].now),
+              backgroundColor: '#0d5c46', borderRadius: 6 },
+            { label: 'Projected', data: cats.map(c => res.byCategory[c].projected),
+              backgroundColor: '#34d399', borderRadius: 6 },
+          ],
+        },
+        options: {
+          scales: { y: { beginAtZero: true, max: 100 } },
+          plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 } } } },
+        },
+      });
+    }
+    setTimeout(ensureChart, 0);
+
     /* ---- recompute: pure math + DOM diff, debounced ~100ms ---- */
     function recompute() {
       const res = simulator.projectScenario(needs, inventory, deltas);
+      lastRes = res;
+
       flow(kpiValue, res.overallNow + '%', res.overallProjected + '%');
       kpiBadge.innerHTML = '';
       kpiBadge.append(UI.badge(
@@ -323,8 +482,17 @@ const simulator = {
       unmetBadge.innerHTML = '';
       const saved = res.unmetNow - res.unmetProjected;
       unmetBadge.append(UI.badge(
-        (saved > 0 ? '−' : '') + saved.toLocaleString() + ' units covered',
+        (saved > 0 ? '\u2212' : '') + saved.toLocaleString() + ' units covered',
         saved > 0 ? 'ok' : 'muted'));
+
+      renderMovers(res);
+      renderCamps(res);
+      renderNote(res);
+
+      if (chart) {
+        chart.data.datasets[1].data = cats.map(c => res.byCategory[c].projected);
+        chart.update('none'); /* instant — it must keep up with the sliders */
+      }
     }
 
     let timer = null;
