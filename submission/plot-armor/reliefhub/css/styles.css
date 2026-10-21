@@ -575,6 +575,8 @@ p.empty { display: block; padding: var(--sp-5); }
   .view > * { animation: none; }
   .skel { animation: none; }
   .reveal { opacity: 1; transform: none; }
+  .home-mission .feature-card { animation: none; } /* breathing float off */
+  .feature-tilt { transform: none; }
 }
 
 /* ==========================================================================
@@ -737,6 +739,47 @@ body.route-home .view > * { animation: none; } /* sections use .reveal instead *
 .gap-item { font-weight: 600; font-size: var(--fs-sm); }
 .gap-camp { font-size: var(--fs-xs); color: var(--muted); }
 .gap-none { color: var(--muted); font-size: var(--fs-sm); margin: 0 0 var(--sp-5); }
+
+/* ---- Mid-page motion: section rhythm + mission card tilt/float ---- */
+/* Rhythm: roomy scroll anchors and a soft vertical brand connector at the top
+   of each mid-page section, so the eye flows hero -> mission -> stats -> needs. */
+.home-section { position: relative; scroll-margin-top: clamp(72px, 12vh, 128px); }
+.home-mission::before, .home-stats::before, .home-needs::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  width: 1px; height: clamp(48px, 8vh, 96px);
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0), rgba(52, 211, 153, .6), rgba(52, 211, 153, 0));
+  pointer-events: none;
+}
+
+/* Mission cards: the staggered reveal owns the card transform; the 3D tilt
+   lives on an inner wrapper (perspective comes from the card) so hover never
+   fights the reveal, and lift/tilt stay snappy after the rise settles. */
+.home-mission .feature-card {
+  transition:
+    opacity var(--dur-4) var(--ease) var(--d, 0ms),
+    transform var(--dur-4) var(--ease) var(--d, 0ms),
+    box-shadow var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease);
+  perspective: 950px;
+  /* flourish: slow, desynchronised breathing float — done via the translate
+     property so it composes with (not overrides) the reveal/tilt transforms */
+  animation: featureFloat 7.5s ease-in-out infinite;
+}
+.home-mission .feature-card:nth-child(2) { animation-delay: -2.5s; }
+.home-mission .feature-card:nth-child(3) { animation-delay: -5s; }
+@keyframes featureFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+.home-mission .feature-card:hover {
+  transform: none; /* lift moved to .feature-tilt so it skips the reveal delay */
+  border-color: var(--brand-200); box-shadow: var(--shadow-md);
+}
+.feature-tilt {
+  transform: translate3d(0, var(--lift, 0px), 0) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
+  transform-style: preserve-3d;
+  transition: transform var(--dur-2) var(--ease);
+  will-change: transform;
+}
+.home-mission .feature-card:hover .feature-tilt,
+.home-mission .feature-card:focus-within .feature-tilt { --lift: -4px; }
 
 /* ---- Footer ---- */
 .home-footer {

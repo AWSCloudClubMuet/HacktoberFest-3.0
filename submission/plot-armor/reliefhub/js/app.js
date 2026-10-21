@@ -308,12 +308,15 @@ App.registerModule({
         UI.h('p', { class: 'home-kicker' }, 'What we coordinate'),
         UI.h('h2', {}, 'Three moving parts, one shared picture'),
         UI.h('div', { class: 'home-features' }, features.map((f, i) =>
-          UI.h('article', { class: 'feature-card reveal', style: `--d:${i * 90}ms` }, [
-            UI.h('img', { class: 'feature-img', src: f.img, alt: f.title + ' — relief operations photo', loading: 'lazy', decoding: 'async' }),
-            UI.h('div', { class: 'feature-body' }, [
-              UI.h('h3', {}, f.title),
-              UI.h('p', {}, f.copy),
-              UI.h('a', { class: 'feature-link', href: f.link }, f.linkLabel + ' →'),
+          UI.h('article', { class: 'feature-card reveal', style: `--d:${i * 110}ms` }, [
+            /* inner wrapper takes the hover tilt so it never fights the reveal transform */
+            UI.h('div', { class: 'feature-tilt' }, [
+              UI.h('img', { class: 'feature-img', src: f.img, alt: f.title + ' — relief operations photo', loading: 'lazy', decoding: 'async' }),
+              UI.h('div', { class: 'feature-body' }, [
+                UI.h('h3', {}, f.title),
+                UI.h('p', {}, f.copy),
+                UI.h('a', { class: 'feature-link', href: f.link }, f.linkLabel + ' →'),
+              ]),
             ]),
           ]))),
       ]),
@@ -377,7 +380,30 @@ App.registerModule({
 
     /* Count-up starts on the frame after the node is appended to the view. */
     requestAnimationFrame(() => this._runCountUps(root, stats));
+    /* pointer-driven 3D tilt on the mission cards */
+    this._setupTilt(root);
     return root;
+  },
+
+  /* Subtle 3D tilt on hover: pointer position drives --tx/--ty custom props;
+   * the inner .feature-tilt wrapper rotates (perspective from the card) and
+   * springs back on leave. Skipped for reduced motion and touch devices. */
+  _setupTilt(root) {
+    if (App._reduceMotion()) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    root.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;   /* -0.5 .. 0.5 across the card */
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty('--ty', (px * 7).toFixed(2) + 'deg');
+        card.style.setProperty('--tx', (-py * 5).toFixed(2) + 'deg');
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--tx', '0deg');
+        card.style.setProperty('--ty', '0deg');
+      });
+    });
   },
 
   _runCountUps(root, stats) {
