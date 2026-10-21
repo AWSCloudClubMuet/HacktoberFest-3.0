@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -15,14 +14,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import {
   ArrowRight,
-  Bell,
-  BookOpen,
   BriefcaseBusiness,
   Check,
-  ChevronDown,
   Clock3,
   Compass,
-  DollarSign,
   Filter,
   Heart,
   LayoutDashboard,
@@ -32,7 +27,6 @@ import {
   Search,
   Send,
   Settings,
-  Sparkles,
   Star,
   Users,
   X,
@@ -47,7 +41,7 @@ const colorFor = (id: number) => COLORS[(id - 1) % COLORS.length]
 const yearLabel = (semester: number) => (semester <= 2 ? 'Freshman' : semester <= 4 ? 'Sophomore' : semester <= 6 ? 'Junior' : 'Senior')
 const majorLine = (name: string, major: string, semester?: number) => (semester ? `${major} · ${yearLabel(semester)}` : major)
 const paymentLabel = (p: Gig['payment_type']) => (p === 'SkillSwap' ? 'Skill swap' : p)
-const paymentClass = (p: Gig['payment_type']) => `payment-${paymentLabel(p).toLowerCase().replace(' ', '-')}`
+const paymentText = (gig: Gig) => (gig.payment_type === 'Paid' ? `Paid · $${Number(gig.budget)}` : paymentLabel(gig.payment_type))
 
 function deadlineInfo(deadline: string) {
   const date = new Date(`${deadline.slice(0, 10)}T00:00:00`)
@@ -327,13 +321,12 @@ export default function Page() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><img src="/logo.png" alt="campusloop logo" className="brand-logo" /><span>campus<span className="brand-accent">loop</span></span></div>
-        <div className="campus-switcher"><div className="campus-icon">NU</div><div><strong>Northwestern</strong><span>Student community</span></div><ChevronDown className="muted-icon" /></div>
         <nav className="main-nav" aria-label="Main navigation">
-          <span className="nav-label">WORKSPACE</span>
+          <span className="nav-label">Workspace</span>
           <button className={`nav-item ${view === 'Discover' ? 'active' : ''}`} onClick={() => { setView('Discover'); setSavedOnly(false) }}><Compass />Discover</button>
           <button className={`nav-item ${view === 'My activity' ? 'active' : ''}`} onClick={() => setView('My activity')}><LayoutDashboard />My activity{(myApplications.length + reviewableGigs.length) > 0 && <span className="nav-count">{myApplications.length + reviewableGigs.length}</span>}</button>
           <button className="nav-item" onClick={() => notify('Messaging is not part of this portal yet')}><MessageCircle />Messages</button>
-          <span className="nav-label nav-label-spaced">YOUR SPACE</span>
+          <span className="nav-label nav-label-spaced">Your space</span>
           <button className="nav-item" onClick={() => { setActivityTab('my-gigs'); setView('My activity') }}><BriefcaseBusiness />My gigs{myGigs.length > 0 && <span className="nav-count">{myGigs.length}</span>}</button>
           <button className="nav-item" onClick={() => { setSavedOnly(true); setView('Discover') }}><Heart />Saved <span className="nav-count">{savedIds.length || 0}</span></button>
         </nav>
@@ -354,8 +347,7 @@ export default function Page() {
           <div className="topbar-actions">
             {me && <span className="acting-as-label signed-in-as">Signed in as {me.name}</span>}
             <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={doSignOut}><LogOut /></button>
-            <button className="icon-button notification-button" aria-label="Notifications"><Bell /><span /></button>
-            {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /><ChevronDown /></button>}
+            {me && <button className="profile-trigger" onClick={() => openProfile(me.id)}><Avatar name={me.name} id={me.id} size="sm" /></button>}
           </div>
         </header>
 
@@ -372,21 +364,17 @@ export default function Page() {
             <>
               <section className="welcome-row">
                 <div>
-                  <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase()}</p>
-                  <h1>Find your next <span>collaboration.</span></h1>
-                  <p className="welcome-copy">Share what you know. Find what you need. Grow together.</p>
+                  <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <h1>Campus gigs</h1>
+                  <p className="welcome-copy">Small jobs and skill swaps posted by Northwestern students.</p>
+                  {stats && <p className="stats-line">{stats.open_gigs} open · {stats.active_students} students · {stats.avg_rating} average rating from {stats.review_count} reviews</p>}
                 </div>
                 <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
               </section>
 
-              <div className="stats-row">
-                <div className="stat-card"><div className="stat-icon stat-icon-coral"><Compass /></div><div><span>Open gigs</span><strong>{stats?.open_gigs ?? '—'}</strong></div><small>right now</small></div>
-                <div className="stat-card"><div className="stat-icon stat-icon-mint"><Users /></div><div><span>Active students</span><strong>{stats?.active_students ?? '—'}</strong></div><small>on campus</small></div>
-                <div className="stat-card"><div className="stat-icon stat-icon-yellow"><Star /></div><div><span>Community rating</span><strong>{stats?.avg_rating ?? '—'}</strong></div><small>from {stats?.review_count ?? 0} reviews</small></div>
-              </div>
 
               <div className="section-heading">
-                <div><h2>{savedOnly ? 'Saved gigs' : 'Explore opportunities'}</h2><p>Discover ways to learn, earn, and connect with your campus community.</p></div>
+                <div><h2>{savedOnly ? 'Saved gigs' : 'Latest gigs'}</h2></div>
                 <button className="text-button" onClick={() => { setQuery(''); setCategory('all'); setPayment('all'); setMinBudget(''); setMaxBudget(''); setMode('All gigs'); setSavedOnly(false) }}>View all <ArrowRight /></button>
               </div>
 
@@ -430,11 +418,7 @@ export default function Page() {
                       </div>
                       <h3>{gig.title}</h3>
                       <p className="gig-description">{gig.description}</p>
-                      <div className="gig-tags">
-                        <span>{gig.category}</span>
-                        <span className={paymentClass(gig.payment_type)}>{gig.payment_type === 'Paid' ? <DollarSign /> : gig.payment_type === 'Free' ? <Sparkles /> : <ArrowRight />}{paymentLabel(gig.payment_type)}{gig.budget ? ` · $${Number(gig.budget)}` : ''}</span>
-                        {(gig.applications_count ?? 0) > 0 && <span>{gig.applications_count} applicant{gig.applications_count === 1 ? '' : 's'}</span>}
-                      </div>
+                      <p className="gig-meta-line">{gig.category} · {paymentText(gig)}{(gig.applications_count ?? 0) > 0 ? ` · ${gig.applications_count} applicant${gig.applications_count === 1 ? '' : 's'}` : ''}</p>
                       <div className="gig-card-footer">
                         <div className="person"><Avatar name={gig.owner_name} id={gig.user_id} size="sm" /><div><strong>{gig.owner_name}</strong><span>{gig.owner_major}</span></div></div>
                         <span className="deadline"><Clock3 />{deadlineInfo(gig.deadline).label}</span>
@@ -445,18 +429,13 @@ export default function Page() {
               )}
               {!loading && visibleGigs.length === 0 && <div className="empty-state"><Search /><h3>No gigs found</h3><p>Try another keyword or reset your filters.</p></div>}
 
-              <div className="bottom-callout">
-                <div className="callout-icon"><BookOpen /></div>
-                <div><strong>Have a skill to share?</strong><p>Post a gig and find a collaborator in your community.</p></div>
-                <Button variant="outline" onClick={() => setShowPost(true)}>Share a skill <ArrowRight data-icon="inline-end" /></Button>
-              </div>
             </>
           )}
 
           {view === 'My activity' && me && (
             <>
               <div className="section-heading view-heading">
-                <div><h2>My activity</h2><p>Your applications, your gigs, and reviews — as {me.name}.</p></div>
+                <div><h2>My activity</h2><p>Everything you have posted and applied to.</p></div>
                 <Button className="post-button" onClick={() => setShowPost(true)}><Plus data-icon="inline-start" />Post a gig</Button>
               </div>
               <Tabs value={activityTab} onValueChange={setActivityTab}>
@@ -537,7 +516,7 @@ export default function Page() {
                             <button className="link-title" onClick={() => setSelectedGigId(gig.id)}>{gig.title}</button>
                             <StatusBadge status="Completed" />
                           </div>
-                          <p className="activity-message">How was working with {other?.name}? Your review builds their reputation.</p>
+                          <p className="activity-message">How did it go with {other?.name}?</p>
                           <div className="card-actions"><Button size="sm" onClick={() => { setReviewGig(gig); setReviewRating(5); setReviewComment('') }}><Star data-icon="inline-start" />Review {other?.name.split(' ')[0]}</Button></div>
                         </Card>
                       )
@@ -560,7 +539,7 @@ export default function Page() {
           {view === 'Profile' && (
             <>
               <div className="section-heading view-heading">
-                <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Reputation is calculated from completed-gig reviews.</p></div>
+                <div><h2>{profile?.id === me?.id ? 'My profile' : 'Profile'}</h2><p>Ratings come from completed-gig reviews.</p></div>
                 <button className="text-button" onClick={() => setView('Discover')}><ArrowRight /> Back to Discover</button>
               </div>
               {!profile ? (
@@ -579,9 +558,7 @@ export default function Page() {
                       </div>
                     </div>
                     <p className="modal-description">{profile.bio}</p>
-                    <div className="gig-tags profile-skills">
-                      {profile.skills.map((s) => <Badge key={s} variant="secondary" className="skill-badge">{s}</Badge>)}
-                    </div>
+                    {profile.skills.length > 0 && <p className="gig-meta-line profile-skills-line">Skills: {profile.skills.join(' · ')}</p>}
                     <Separator />
                     <div className="profile-stats">
                       <div><strong>{profile.gigs_posted}</strong><span>Gigs posted</span></div>
@@ -705,9 +682,8 @@ export default function Page() {
       <Dialog open={showPost} onOpenChange={(open) => { setShowPost(open); if (!open) setPostError('') }}>
         <DialogContent className="gig-dialog">
           <DialogHeader>
-            <p className="eyebrow">NEW OPPORTUNITY</p>
             <DialogTitle className="dialog-title">Post a gig</DialogTitle>
-            <DialogDescription className="modal-description">Tell your campus community what you need or what you can offer.</DialogDescription>
+            <DialogDescription className="modal-description">Say what you need, or what you can do.</DialogDescription>
           </DialogHeader>
           <div className="dialog-form">
             <div>
@@ -775,7 +751,6 @@ export default function Page() {
           {reviewGig && me && (
             <>
               <DialogHeader>
-                <p className="eyebrow">MUTUAL REVIEW</p>
                 <DialogTitle className="dialog-title">Review this gig</DialogTitle>
                 <DialogDescription className="modal-description">
                   {reviewGig.title} — your rating goes to {users.find((u) => u.id === (reviewGig.user_id === me.id ? reviewGig.accepted_applicant_id : reviewGig.user_id))?.name} and counts toward their profile average.

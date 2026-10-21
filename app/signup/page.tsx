@@ -51,7 +51,7 @@ export default function SignupPage() {
           <span>campus<span className="brand-accent">loop</span></span>
         </div>
         <h1 className="auth-title">Create your account</h1>
-        <p className="modal-description">One account, both roles — post gigs as a Poster and apply as an Applicant.</p>
+        <p className="modal-description">One account for posting gigs and applying to them.</p>
         <form className="dialog-form auth-form" onSubmit={signUp}>
           <div>
             <Label htmlFor="su-name">Full name</Label>
