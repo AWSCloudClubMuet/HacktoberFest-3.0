@@ -29,7 +29,7 @@ Authentication is handled by **Better Auth**, hosted by the Express API at `/api
 - **New accounts:** sign up at `/signup` (name, email, password), then the profile step creates the domain profile (`POST /api/profile`, session required).
 - First-time setup against a fresh database: `npm --prefix server run migrate:auth` once to create Better Auth's tables, then start the API (it seeds demo accounts automatically).
 
-`server/.env` (gitignored) holds `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
+`server/.env` (gitignored) holds `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` — copy `server/.env.example` to get started.
 
 ## Run it
 
