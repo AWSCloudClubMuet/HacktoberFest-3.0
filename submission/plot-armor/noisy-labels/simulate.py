@@ -126,13 +126,23 @@ PAIR_OF_CLASS = {
     "Other": "shipping-other",
 }
 
-# generation knobs: how much signal vs pair-overlap vs background per word.
-# tuned so a naive bayes trained on the noisy labels lands near the 82%
-# plateau the issue reports (see tune_noise_scale).
-P_SIGNAL = 0.40
-P_PAIR = 0.30
+# confusion partner index (content leakage is biased the same way the crowd
+# errors are, that is what makes the classes genuinely confusable)
+PARTNER = np.array([1, 0, 3, 2, 5, 4])
+
+# generation knobs: how much signal vs leak vs pair-overlap vs background per
+# word. a ticket mostly uses its own class words, but leaks words from other
+# classes (the confusion partner mostly), which is what makes borderline
+# tickets genuinely arguable instead of trivially separable.
+# tuned so naive bayes trained on the noisy labels lands near the 82% plateau
+# the issue reports (see tune_noise_scale) while gold accuracy stays ~95%+.
+P_SIGNAL = 0.34
+P_LEAK = 0.11          # leaked from another class, 75% of the time the partner
+LEAK_TO_PARTNER = 0.75
+P_PAIR = 0.22
 MIN_LEN = 12
 MAX_LEN = 28
+DISTINCT_POOL_SIZE = 20  # words used per distinctive pool (rest are spares)
 
 # ----------------------------------------------------------------------------
 # systematic confusion the crowd makes, rows = true class, entries = where the
@@ -171,23 +181,38 @@ def build_vocab():
             ids.append(word2id[w])
         return np.array(ids, dtype=np.int64)
 
-    distinct_ids = {c: ids_for(ws) for c, ws in DISTINCT_WORDS.items()}
+    distinct_ids = {c: ids_for(ws[:DISTINCT_POOL_SIZE])
+                    for c, ws in DISTINCT_WORDS.items()}
     pair_ids = {p: ids_for(ws) for p, ws in PAIR_POOLS.items()}
     bg_ids = ids_for(BACKGROUND_WORDS)
     return word2id, distinct_ids, pair_ids, bg_ids, next_id
 
 
 def make_ticket(rng, cls, distinct_ids, pair_ids, bg_ids):
-    """one multinomial bag-of-words ticket for a given true class."""
+    """one multinomial bag-of-words ticket for a given true class.
+
+    word mix: own-class signal words, leaked foreign words (mostly from the
+    confusion partner), shared pair words, background filler. the leak is
+    what makes borderline tickets arguable - a refund ticket that talks about
+    charges and payments half sounds like billing.
+    """
     dist_pool = distinct_ids[CLASSES[cls]]
     pair_pool = pair_ids[PAIR_OF_CLASS[CLASSES[cls]]]
+    others = [distinct_ids[CLASSES[c]] for c in range(K) if c != cls]
+    partner_pool = distinct_ids[CLASSES[PARTNER[cls]]]
     n_words = int(rng.integers(MIN_LEN, MAX_LEN + 1))
     words = np.empty(n_words, dtype=np.int64)
     for j in range(n_words):
         r = rng.random()
         if r < P_SIGNAL:
             words[j] = dist_pool[rng.integers(len(dist_pool))]
-        elif r < P_SIGNAL + P_PAIR:
+        elif r < P_SIGNAL + P_LEAK:
+            if rng.random() < LEAK_TO_PARTNER:
+                pool = partner_pool
+            else:
+                pool = others[rng.integers(len(others))]
+            words[j] = pool[rng.integers(len(pool))]
+        elif r < P_SIGNAL + P_LEAK + P_PAIR:
             words[j] = pair_pool[rng.integers(len(pair_pool))]
         else:
             words[j] = bg_ids[rng.integers(len(bg_ids))]
@@ -282,7 +307,7 @@ def generate(n=N_TRAIN, seed=SEED, n_test=N_TEST, noise_scale=1.0):
     }
 
 
-def expert_audit(data, seed=47):
+def expert_audit(data, seed=78):
     """re-run the issue's audit: 180 tier A + 220 tier B tickets re-checked
     by an expert, count the disagreements with the crowd."""
     rng = np.random.default_rng(seed)
@@ -298,6 +323,116 @@ def expert_audit(data, seed=47):
 
 def pct(x):
     return f"{100.0 * x:.2f}%"
+
+
+# ----------------------------------------------------------------------------
+# hand-rolled multinomial naive bayes (no sklearn, this is deliberate)
+# ----------------------------------------------------------------------------
+class NaiveBayes:
+    """multinomial NB with laplace smoothing. fit() takes *soft* targets so
+    label smoothing is just a different target matrix, and loss() gives the
+    -log posterior of the assigned label for small-loss sample selection."""
+
+    def __init__(self, n_vocab, alpha=1.0):
+        self.n_vocab = n_vocab
+        self.alpha = alpha
+
+    def fit(self, counts, targets):
+        # counts (n, V), targets (n, K) nonneg, rows sum to 1
+        class_word = targets.T @ counts + self.alpha        # (K, V)
+        self.log_lik = np.log(class_word / class_word.sum(axis=1, keepdims=True))
+        prior = targets.sum(axis=0)
+        self.log_prior = np.log(prior / prior.sum())
+        return self
+
+    def fit_labels(self, counts, labels):
+        targets = np.zeros((len(labels), K), dtype=np.float64)
+        targets[np.arange(len(labels)), labels] = 1.0
+        return self.fit(counts, targets)
+
+    def score(self, counts):
+        return counts @ self.log_lik.T + self.log_prior      # (n, K) log joint
+
+    def predict(self, counts):
+        return self.score(counts).argmax(axis=1)
+
+    def posterior(self, counts):
+        s = self.score(counts)
+        s = s - s.max(axis=1, keepdims=True)
+        p = np.exp(s)
+        return p / p.sum(axis=1, keepdims=True)
+
+    def loss(self, counts, labels):
+        """-log P(assigned label | ticket) under the current model."""
+        p = self.posterior(counts)[np.arange(len(labels)), labels]
+        return -np.log(np.clip(p, 1e-12, None))
+
+
+def one_hot(labels):
+    targets = np.zeros((len(labels), K), dtype=np.float64)
+    targets[np.arange(len(labels)), labels] = 1.0
+    return targets
+
+
+def relabel_with_scale(seed_docs_bundle, scale):
+    """regenerate only the noisy labels at a given error scale, keeping the
+    exact same tickets (docs/counts are cached in the bundle)."""
+    n, n_test = len(seed_docs_bundle["train_true"]), len(seed_docs_bundle["test_true"])
+    rng = np.random.default_rng(SEED + 7)   # same stream as generate()
+    u_tr, v_tr = rng.random(n), rng.random(n)
+    u_te, v_te = rng.random(n_test), rng.random(n_test)
+    tier = seed_docs_bundle["train_tier"]
+    base = np.where(tier == 1, ERR_A, np.where(tier == 2, ERR_B, 0.0))
+    train_noisy, _ = apply_crowd_noise(rng, seed_docs_bundle["train_true"],
+                                       base * scale, u_tr, v_tr)
+    test_tier = seed_docs_bundle["test_tier"]
+    base_te = np.where(test_tier == 1, ERR_A, ERR_B)
+    test_noisy, _ = apply_crowd_noise(rng, seed_docs_bundle["test_true"],
+                                      base_te * scale, u_te, v_te)
+    return train_noisy, test_noisy
+
+
+def tune_noise_scale(data):
+    """the issue says the classifier plateaus at 82% on the noisy test set.
+    scale the tier error rates around the audit-anchored values (1.00 = the
+    exact audit rates) until naive bayes lands there, and report the table.
+    """
+    section("3. TUNING THE CLASS-CONDITIONAL NOISE TO THE 82% PLATEAU")
+    scales = [0.80, 0.90, 1.00, 1.10, 1.20, 1.30]
+    rows = []
+    for s in scales:
+        train_noisy, test_noisy = relabel_with_scale(data, s)
+        nb = NaiveBayes(data["vocab_size"]).fit_labels(data["train_counts"], train_noisy)
+        acc = (nb.predict(data["test_counts"]) == test_noisy).mean()
+        rows.append((s, acc))
+        print(f"  noise scale {s:.2f}  (tier A {pct(min(ERR_A * s, .98))}, "
+              f"tier B {pct(min(ERR_B * s, .98))}) -> noisy test acc {pct(acc)}")
+    best = min(rows, key=lambda r: abs(r[1] - TARGET_NOISY_ACC))
+    print(f"\n  closest to the issue's {pct(TARGET_NOISY_ACC)} plateau: "
+          f"scale {best[0]:.2f} at {pct(best[1])}")
+    if best[0] == 1.00:
+        print("  the audit-anchored rates (6.67% / 21.82%) land nearest, no tuning needed")
+    return best[0]
+
+
+def train_and_eval(data, noise_scale):
+    """train hand-rolled multinomial NB on the NOISY train labels, then score
+    it on (a) the noisy test set and (b) the gold test set. this is the core
+    empirical check of the issue: the same model looks ~82% on the labels it
+    is graded against but is actually far better on clean labels."""
+    train_noisy, test_noisy = relabel_with_scale(data, noise_scale)
+    nb = NaiveBayes(data["vocab_size"]).fit_labels(data["train_counts"], train_noisy)
+    pred = nb.predict(data["test_counts"])
+    noisy_acc = (pred == test_noisy).mean()
+    gold_acc = (pred == data["test_true"]).mean()
+    return {
+        "model": nb,
+        "train_noisy": train_noisy,
+        "test_noisy": test_noisy,
+        "pred": pred,
+        "noisy_acc": noisy_acc,
+        "gold_acc": gold_acc,
+    }
 
 
 def section(title):
@@ -345,6 +480,13 @@ def dataset_report(data):
 def main():
     data = generate()
     dataset_report(data)
+
+    noise_scale = tune_noise_scale(data)
+    baseline = train_and_eval(data, noise_scale)
+    section("4. BASELINE - NAIVE BAYES TRAINED ON THE NOISY LABELS")
+    print(f"  accuracy on the NOISY test set (crowd labels): {pct(baseline['noisy_acc'])}")
+    print(f"  accuracy on the GOLD  test set (expert labels): {pct(baseline['gold_acc'])}")
+    print(f"  same model, same tickets - the gap is the crowd noise, not the model")
     return 0
 
 
