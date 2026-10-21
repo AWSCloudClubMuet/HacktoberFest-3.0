@@ -1,0 +1,226 @@
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 100vh;
+  padding: 27px 18px 18px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-right: 1px solid #ecebfa;
+  scrollbar-width: thin;
+  scrollbar-color: #d8d5f5 transparent;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 5px;
+  margin-bottom: 42px;
+  color: #222044;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7667f5, #5746d9);
+  border-radius: 15px;
+  box-shadow: 0 7px 16px #7667f533;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brandText strong {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.brandText small {
+  color: #8b8ba5;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.menuHeading {
+  padding: 0 11px;
+  margin-bottom: 13px;
+  color: #a2a0ba;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 49px;
+  padding: 0 13px;
+  color: #777790;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.navLink:hover {
+  color: #6555e8;
+  background: #f5f3ff;
+}
+
+.active {
+  color: #ffffff;
+  background: linear-gradient(105deg, #7868f7, #5a49dc);
+  box-shadow: 0 7px 16px #6c5ce733;
+}
+
+.active:hover {
+  color: #ffffff;
+  background: linear-gradient(105deg, #6f5eed, #5140d0);
+}
+
+.linkArrow {
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.sidebarBottom {
+  margin-top: auto;
+  padding-top: 35px;
+}
+
+.promoCard {
+  padding: 18px 15px;
+  background: linear-gradient(145deg, #f1efff, #faf8ff);
+  border: 1px solid #e8e3ff;
+  border-radius: 17px;
+}
+
+.promoIcon {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  color: #6655e7;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.promoCard h3 {
+  margin: 15px 0 8px;
+  color: #30295c;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.promoCard p {
+  margin: 0;
+  color: #85829e;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.promoLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 15px;
+  color: #6553df;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sidebarFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 5px 0;
+  color: #9997ad;
+  font-size: 11px;
+}
+
+.footerDot {
+  width: 8px;
+  height: 8px;
+  background: #49c99a;
+  border-radius: 50%;
+}
+
+@media screen and (max-width: 900px) {
+  .sidebar {
+    width: 210px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .brandText strong {
+    font-size: 19px;
+  }
+
+  .navLink {
+    gap: 9px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 14px;
+    overflow: visible;
+    border-right: none;
+    border-bottom: 1px solid #ecebfa;
+  }
+
+  .brand {
+    margin-bottom: 18px;
+  }
+
+  .menuHeading,
+  .sidebarBottom {
+    display: none;
+  }
+
+  .navigation {
+    flex-direction: row;
+    gap: 8px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+
+  .navLink {
+    flex: 0 0 auto;
+    min-height: 42px;
+    white-space: nowrap;
+  }
+
+  .navLink svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .linkArrow {
+    display: none;
+  }
+}

@@ -1,0 +1,261 @@
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 23px;
+  background: #ffffff;
+  border: 1px solid #ececf5;
+  border-radius: 20px;
+  box-shadow: 0 5px 18px rgba(31, 41, 77, 0.035);
+  transition: transform 0.22s ease, box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #dcd5ff;
+  box-shadow: 0 15px 32px rgba(49, 38, 105, 0.09);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 17px;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 5px 10px;
+  color: #674bd5;
+  background: #f0edff;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.typeBadge {
+  padding: 6px 9px;
+  border-radius: 7px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.offerBadge {
+  color: #167d60;
+  background: #e6f8f0;
+}
+
+.requestBadge {
+  color: #b76a24;
+  background: #fff2e3;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.titleRow h3 {
+  margin: 0;
+  color: #202947;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.arrowButton {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #7257df;
+  background: #f2efff;
+  border: none;
+  border-radius: 10px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.arrowButton:hover {
+  color: #ffffff;
+  background: #7257df;
+}
+
+.description {
+  display: -webkit-box;
+  min-height: 60px;
+  margin: 12px 0 17px;
+  overflow: hidden;
+  color: #798198;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+  padding: 13px 0;
+  border-top: 1px solid #f0eff7;
+  border-bottom: 1px solid #f0eff7;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #747d96;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.metaItem svg {
+  flex-shrink: 0;
+  color: #8a79e7;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.budget {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.budgetLabel {
+  color: #9097aa;
+  font-size: 10px;
+}
+
+.budget strong {
+  color: #202947;
+  font-size: 15px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.open {
+  color: #16835f;
+  background: #e6f8f0;
+}
+
+.inProgress {
+  color: #a36b13;
+  background: #fff3d9;
+}
+
+.completed {
+  color: #6553b7;
+  background: #efebff;
+}
+
+.detailsButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  color: #674bd5;
+  background: transparent;
+  border: 1px solid #e4dfff;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.detailsButton:hover {
+  color: #ffffff;
+  background: #7257df;
+  border-color: #7257df;
+}
+
+.compact {
+  padding: 18px;
+  border-radius: 16px;
+}
+
+.compact .description {
+  min-height: 44px;
+  margin: 9px 0 12px;
+  -webkit-line-clamp: 2;
+}
+
+.compact .titleRow h3 {
+  font-size: 15px;
+}
+
+.compact .cardFooter {
+  margin-top: 13px;
+}
+
+@media screen and (max-width: 520px) {
+  .card {
+    padding: 18px;
+  }
+
+  .titleRow h3 {
+    font-size: 16px;
+  }
+
+  .cardFooter {
+    align-items: flex-start;
+  }
+
+  .budget strong {
+    font-size: 13px;
+  }
+
+  .detailsButton {
+    font-size: 9px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .cardFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .footerRight {
+    align-items: flex-start;
+  }
+}

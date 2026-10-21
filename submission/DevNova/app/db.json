@@ -1,0 +1,123 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Ayesha Jameel",
+      "major": "Software Engineering",
+      "skills": [
+        "React",
+        "JavaScript",
+        "CSS"
+      ],
+      "gigsPosted": 2,
+      "gigsCompleted": 3
+    },
+    {
+      "id": "2",
+      "name": "Ali Ahmed",
+      "major": "Computer Systems Engineering",
+      "skills": [
+        "UI Design",
+        "Figma"
+      ],
+      "gigsPosted": 1,
+      "gigsCompleted": 2
+    },
+    {
+      "id": "3",
+      "name": "Sara Khan",
+      "major": "Software Engineering",
+      "skills": [
+        "Writing",
+        "Documentation"
+      ],
+      "gigsPosted": 1,
+      "gigsCompleted": 1
+    }
+  ],
+  "gigs": [
+    {
+      "id": "1",
+      "ownerId": "1",
+      "title": "Build a React Landing Page",
+      "description": "Create a responsive landing page for a student project.",
+      "category": "Programming",
+      "type": "Offering",
+      "paymentType": "Paid",
+      "budget": 3000,
+      "deadline": "2026-11-15",
+      "status": "Completed"
+    },
+    {
+      "id": "2",
+      "ownerId": "2",
+      "title": "Design a Portfolio UI",
+      "description": "I can design a clean portfolio interface in Figma.",
+      "category": "Design",
+      "type": "Offering",
+      "paymentType": "Skill Swap",
+      "budget": null,
+      "deadline": "2026-11-20",
+      "status": "Open"
+    },
+    {
+      "id": "3",
+      "ownerId": "3",
+      "title": "Need Help with Technical Writing",
+      "description": "Looking for help improving my software project documentation.",
+      "category": "Writing",
+      "type": "Requesting",
+      "paymentType": "Free",
+      "budget": null,
+      "deadline": "2026-11-25",
+      "status": "Open"
+    },
+    {
+      "id": "4",
+      "ownerId": "1",
+      "title": "Programming Tutoring",
+      "description": "Offering beginner JavaScript tutoring to fellow students.",
+      "category": "Tutoring",
+      "type": "Offering",
+      "paymentType": "Free",
+      "budget": null,
+      "deadline": "2026-11-30",
+      "status": "In Progress"
+    }
+  ],
+  "applications": [
+    {
+      "id": "1",
+      "gigId": "1",
+      "applicantId": "2",
+      "message": "I have experience building responsive React interfaces.",
+      "status": "Pending"
+    },
+    {
+      "id": "2",
+      "gigId": "3",
+      "applicantId": "1",
+      "message": "I can help improve the documentation.",
+      "status": "Pending"
+    },
+    {
+      "gigId": "2",
+      "applicantId": "1",
+      "message": "hi",
+      "status": "Pending",
+      "createdAt": "2026-10-21T09:04:58.236Z",
+      "id": "5xtc4q-AWr8"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "1",
+      "gigId": "4",
+      "reviewerId": "2",
+      "revieweeId": "1",
+      "rating": 5,
+      "comment": "Clear explanations and helpful tutoring."
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

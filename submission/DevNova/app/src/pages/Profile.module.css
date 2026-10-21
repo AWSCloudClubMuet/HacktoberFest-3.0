@@ -1,0 +1,466 @@
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  color: #202947;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  color: #785ce0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.header h1 {
+  margin: 9px 0;
+  font-size: clamp(26px, 3vw, 34px);
+  letter-spacing: -1.2px;
+}
+
+.header p {
+  margin: 0;
+  color: #858ba0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 13px;
+  color: #7155d8;
+  background: #f3f0ff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.refreshButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.profileCard,
+.contentCard {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ececf5;
+  border-radius: 19px;
+  box-shadow: 0 5px 20px rgba(31, 41, 77, 0.025);
+}
+
+.cover {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  background: linear-gradient(115deg, #5b46c8, #957ef4 60%, #c4b9ff);
+}
+
+.coverPattern {
+  position: absolute;
+  top: -85px;
+  right: 8%;
+  width: 240px;
+  height: 240px;
+  border: 35px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
+.coverPattern::after {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  width: 190px;
+  height: 190px;
+  border: 22px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  content: "";
+}
+
+.profileBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 0 28px 27px;
+}
+
+.avatar {
+  display: grid;
+  width: 94px;
+  height: 94px;
+  flex-shrink: 0;
+  place-items: center;
+  margin-top: -39px;
+  color: #fff;
+  background: linear-gradient(135deg, #7b61e8, #533bc0);
+  border: 5px solid #fff;
+  border-radius: 26px;
+  box-shadow: 0 5px 18px rgba(65, 48, 151, 0.16);
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.identity {
+  flex: 1;
+  min-width: 0;
+  padding-top: 18px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nameRow h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.memberBadge {
+  padding: 6px 9px;
+  color: #6f52d5;
+  background: #f0ecff;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.role {
+  margin: 8px 0 12px;
+  color: #707990;
+  font-size: 13px;
+}
+
+.userMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  color: #858ba0;
+  font-size: 11px;
+}
+
+.userMeta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.email {
+  margin: 12px 0 0;
+  color: #7657df;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 20px 17px;
+  background: #fff;
+  border: 1px solid #ececf5;
+  border-radius: 16px;
+}
+
+.statIcon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #7657df;
+  background: #f0ecff;
+  border-radius: 13px;
+}
+
+.greenIcon {
+  color: #15916a;
+  background: #e5f8ef;
+}
+
+.yellowIcon {
+  color: #d58a23;
+  background: #fff3dc;
+}
+
+.statCard div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.statCard div span {
+  color: #858ba0;
+  font-size: 11px;
+}
+
+.statCard strong {
+  font-size: 21px;
+  overflow-wrap: anywhere;
+}
+
+.contentCard {
+  padding: 23px 25px;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 20px;
+}
+
+.headingIcon {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #7657df;
+  background: #f0ecff;
+  border-radius: 13px;
+}
+
+.skillsIcon {
+  color: #3984db;
+  background: #e8f2ff;
+}
+
+.reviewIcon {
+  color: #d58a23;
+  background: #fff3dc;
+}
+
+.sectionHeading h2 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.sectionHeading p {
+  margin: 0;
+  color: #858ba0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.aboutText,
+.mutedText {
+  margin: 0;
+  color: #747c92;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.skillTag {
+  padding: 9px 13px;
+  color: #6f52d5;
+  background: #f3f0ff;
+  border: 1px solid #e8e1ff;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ratingSummary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: #d58a23;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.reviewItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 17px;
+  border-top: 1px solid #f0eff6;
+}
+
+.reviewerAvatar {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #7657df;
+  background: #f0ecff;
+  border-radius: 12px;
+}
+
+.reviewContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.reviewTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reviewTop strong {
+  font-size: 12px;
+}
+
+.reviewStars {
+  color: #e4a12c;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.reviewContent p {
+  margin: 8px 0 0;
+  color: #747c92;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.emptyReviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 10px;
+  color: #a0a5b7;
+  text-align: center;
+}
+
+.emptyReviews p {
+  margin: 12px 0 5px;
+  color: #454d66;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.emptyReviews span {
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.error {
+  padding: 13px 15px;
+  color: #b83e4b;
+  background: #ffebed;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.stateBox {
+  padding: 50px 20px;
+  color: #858ba0;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #ececf5;
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+@media screen and (max-width: 760px) {
+  .profileBody {
+    gap: 13px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .avatar {
+    width: 76px;
+    height: 76px;
+    font-size: 29px;
+  }
+
+  .identity {
+    padding-top: 12px;
+  }
+
+  .nameRow h2 {
+    font-size: 19px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .statCard {
+    padding: 14px;
+  }
+
+  .contentCard {
+    padding: 19px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .cover {
+    height: 105px;
+  }
+
+  .profileBody {
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 22px;
+  }
+
+  .avatar {
+    margin-top: -34px;
+  }
+
+  .identity {
+    padding-top: 12px;
+  }
+
+  .memberBadge {
+    font-size: 9px;
+  }
+
+  .sectionHeading {
+    gap: 10px;
+  }
+
+  .headingIcon {
+    width: 38px;
+    height: 38px;
+  }
+}

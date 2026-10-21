@@ -1,0 +1,38 @@
+
+.layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.content {
+  min-width: 0;
+}
+
+.page {
+  width: 100%;
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+@media screen and (max-width: 900px) {
+  .layout {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .page {
+    padding: 22px 20px;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page {
+    padding: 18px 14px;
+  }
+}
