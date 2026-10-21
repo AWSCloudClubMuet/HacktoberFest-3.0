@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#1e2f7a">
+    <title>KisanMandi</title>
+    <link rel="icon" type="image/png" href="/images/favicon1.png">
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+    <div id="ptr">↓ Release to refresh prices</div>
+    <div id="app"></div>
+    <div id="modal"></div>
+    <div id="toast"></div>
+    <script>
+        // ---------- config & helpers ----------
+        const API = new URLSearchParams(location.search).get('api') || localStorage.kmApi || (location.protocol === 'file:' ? 'http://localhost:3000' : location.origin);
+        const $ = s => document.querySelector(s);
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const api = async (p, o = {}) => { const r = await fetch(API + '/' + p, { ...o, headers: { 'Content-Type': 'application/json' }, body: o.body && JSON.stringify(o.body) }); if (!r.ok) throw new Error(r.status); return r.json() };
+        const DIST = ['Hyderabad', 'Sukkur', 'Larkana', 'Jamshoro', 'Thatta', 'Badin', 'Dadu', 'Nawabshah', 'Mirpurkhas', 'Khairpur'];
+        const S = { user: null, crops: [], markets: [], prices: [], listings: [], alerts: [], users: [], P: {}, tab: 'prices', market: 0, q: '', cat: 'All', lq: '', lc: '', ld: '', lg: '', ls: 'new' };
+        const money = n => 'Rs ' + Math.round(n).toLocaleString('en-PK');
+        const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+        const toast = t => { const e = $('#toast'); e.textContent = t; e.className = 'show'; setTimeout(() => e.className = '', 2200) };
+        const sid = x => [x, x];
+        const opts = (a, sel, f = x => [x.id, x.name]) => a.map(x => { const [v, t] = f(x); return `<option value="${esc(v)}"${v == sel ? ' selected' : ''}>${esc(t)}</option>` }).join('');
+        const cn = id => (S.crops.find(c => c.id == id) || {}).name, mn = id => (S.markets.find(m => m.id == id) || {}).name;
+        const isF = () => S.user.role === 'Farmer';
+        const ph = s => { const d = s.replace(/\D/g, ''); return d[0] == '0' ? '92' + d.slice(1) : d };
+        // ---------- price maths ----------
+        const ser = (c, m) => S.P[c + '_' + m] || [], last = (c, m) => ser(c, m).at(-1);
+        const chg = (c, m) => { const a = ser(c, m), n = a.length; if (n < 2) return { d: 0, p: 0 }; const d = a[n - 1].price - a[n - 2].price; return { d, p: d / a[n - 2].price * 100 } };
+        const avgNow = c => { const v = S.markets.map(m => last(c, m.id)).filter(Boolean).map(x => x.price); return v.reduce((a, b) => a + b, 0) / v.length };
+        const pill = h => `<span class="pill ${h.d >= 0 ? 'up' : 'dn'}">${h.d >= 0 ? '▲' : '▼'} ${Math.abs(h.d).toFixed(0)} (${Math.abs(h.p).toFixed(1)}%)</span>`;
+        const trig = a => { const l = last(a.crop_id, a.market_id); return !!(a.active_status && l && (a.condition == 'Above' ? l.price >= a.target_price : l.price <= a.target_price)) };
+        const badge = () => S.alerts.filter(a => a.user_id == S.user.id && trig(a)).length;
+        // ---------- data ----------
+        async function load() {
+            const [c, m, p, l, a, u] = await Promise.all(['crops', 'markets', 'prices', 'listings', 'alerts', 'users'].map(x => api(x)));
+            Object.assign(S, { crops: c, markets: m, prices: p, listings: l, alerts: a, users: u, P: {} }); if (!S.market) S.market = m[0].id;
+            p.forEach(x => (S.P[x.crop_id + '_' + x.market_id] ??= []).push(x)); for (const k in S.P) S.P[k].sort((x, y) => x.date < y.date ? -1 : 1)
+        }
+        async function refresh() { try { await load(); S.user = S.users.find(u => u.id == S.user.id) || S.user; render(); toast('Prices and alerts updated') } catch { toast('Network error — is the API running?') } }
+        const done = async m => { await load(); $('#modal').innerHTML = ''; render(); toast(m) };
+        // ---------- views ----------
+        function onboard() {
+            $('#app').innerHTML = `<div class=hero><div class="card auth"><h2>KisanMandi</h2><p class=mu>Today's mandi rates for Sindh's farmers and buyers.</p>
+<form data-f=reg novalidate><label>Name</label><input name=name><label>Phone</label><input name=phone placeholder="0300-5550101"><label>District</label><select name=district>${opts(DIST, 'Hyderabad', sid)}</select>
+<label>I am a</label><select name=role><option>Farmer</option><option>Buyer</option></select><p class=err id=err></p><button class=btn style="width:100%;margin-top:14px">Continue</button></form>
+<hr><label>Or try a demo user</label><select id=demo><option value="">Choose a user…</option>${S.users.map(u => `<option value=${u.id}>${esc(u.name)} (${u.role})</option>`).join('')}</select></div></div>`
+        }
+        function render() {
+            if (!S.user) return onboard(); const T = [['prices', '📈', 'Prices'], ['market', '🛒', 'Marketplace']]; if (isF()) T.push(['alerts', '🔔', 'Alerts'], ['mine', '📦', 'My Listings']);
+            if (!T.some(t => t[0] == S.tab)) S.tab = 'prices'; const b = badge(), V = { prices: vPrices, market: vMarket, alerts: vAlerts, mine: vMine };
+            $('#app').innerHTML = `<header><b style="font-size:18px">🌾 KisanMandi</b><span class=row style="gap:8px"><small>${esc(S.user.name)} · ${S.user.role}</small><button class="btn s o" data-a=refresh title=Refresh>⟳</button><button class="btn s o" data-a=logout>Exit</button></span></header>
+<nav>${T.map(t => `<button class="${t[0] == S.tab ? 'on' : ''}" data-a=tab data-v=${t[0]}><span>${t[1]}</span><span>${t[2]}</span>${t[0] == 'alerts' && b ? `<i class=bd>${b}</i>` : ''}</button>`).join('')}</nav><main><div class=wrap>${V[S.tab]()}</div></main>`
+        }
+        // Prices
+        function vPrices() {
+            return `<div class=row><div><h2>Market prices</h2><small>Rs per 40 kg · today vs yesterday</small></div>${isF() ? '<button class="btn s" data-a=calc>Profit calculator</button>' : ''}</div>
+<div class=bar><select id=mk>${opts(S.markets, S.market, m => [m.id, m.name + ' · ' + m.district])}</select><input id=q placeholder="Search crop…" value="${esc(S.q)}"></div>
+<div class=chips>${['All', ...new Set(S.crops.map(c => c.category))].map(c => `<button class="chip ${c == S.cat ? 'on' : ''}" data-a=cat data-v="${c}">${c}</button>`).join('')}</div><div class=grid id=list>${pList()}</div>`
+        }
+        function pList() {
+            const r = S.crops.filter(c => (S.cat == 'All' || c.category == S.cat) && c.name.toLowerCase().includes(S.q.toLowerCase()));
+            return r.map(c => { const l = last(c.id, S.market); return l ? `<div class="card tap" data-a=crop data-v=${c.id}><div class=row><div><b>${esc(c.name)}</b><small>${esc(c.category)}</small></div><div class=r><b style="font-size:18px">${money(l.price)}</b><br>${pill(chg(c.id, S.market))}</div></div></div>` : '' }).join('') || '<p class=mu>No crops match your search.</p>'
+        }
+        function chart(a) {
+            const W = 600, H = 220, p = 36, v = a.map(x => x.price), lo = Math.min(...v), hi = Math.max(...v), X = i => p + i * (W - 2 * p) / (a.length - 1), Y = y => H - p - (y - lo) / ((hi - lo) || 1) * (H - 2 * p), pts = v.map((y, i) => X(i) + ',' + Y(y)).join(' ');
+            return `<svg viewBox="0 0 ${W} ${H}" style="width:100%"><polygon points="${X(0)},${H - p} ${pts} ${X(v.length - 1)},${H - p}" fill="#1e2f7a18"/><polyline points="${pts}" fill=none stroke="#1e2f7a" stroke-width=3 stroke-linejoin=round />${v.map((y, i) => `<circle cx=${X(i)} cy=${Y(y)} r=4 fill="#b42a2f"><title>${a[i].date}: ${money(y)}</title></circle>`).join('')}<text x=4 y=${Y(hi) + 4} font-size=11 fill="#66708a">${hi}</text><text x=4 y=${Y(lo) + 4} font-size=11 fill="#66708a">${lo}</text><text x=${p} y=${H - 8} font-size=11 fill="#66708a">${a[0].date.slice(5)}</text><text x=${W - p} y=${H - 8} text-anchor=end font-size=11 fill="#66708a">${a.at(-1).date.slice(5)}</text></svg>`
+        }
+        function detail(c) {
+            const a = ser(c, S.market).slice(-14), v = a.map(x => x.price), lo = Math.min(...v), hi = Math.max(...v), av = v.reduce((s, x) => s + x, 0) / v.length;
+            const cmp = S.markets.map(k => ({ k, l: last(c, k.id) })).filter(x => x.l).sort((x, y) => y.l.price - x.l.price);
+            modal(`<div class=row><div><h3>${esc(cn(c))}</h3><small>${esc(mn(S.market))} · last 14 days</small></div><button class="btn s o" data-a=close>✕</button></div>${chart(a)}
+<div class=row style="margin:6px 0 14px;text-align:center"><div><small>Minimum</small><b>${money(lo)}</b></div><div><small>Average</small><b>${money(av)}</b></div><div><small>Maximum</small><b>${money(hi)}</b></div></div>
+<h3 style="font-size:16px;margin-bottom:8px">Compare markets</h3>${cmp.map((x, i) => `<div class="card row ${i ? '' : 'best'}" style="margin-bottom:8px"><div><b>${esc(x.k.name)}</b><small>${esc(x.k.district)}</small></div><div class=r><b>${money(x.l.price)}</b>${i ? '' : '<br><span class="pill up">★ Best place to sell today</span>'}</div></div>`).join('')}
+${isF() ? `<div class=row style="margin-top:12px"><button class="btn o" style="flex:1" data-a=newA data-v=${c}>🔔 Set alert</button><button class=btn style="flex:1" data-a=calc data-v=${c}>🧮 Profit calc</button></div>` : ''}`)
+        }
+        // Alerts
+        function vAlerts() {
+            const r = S.alerts.filter(a => a.user_id == S.user.id); return `<div class=row><div><h2>Price alerts</h2><small>Checked every time prices refresh</small></div><button class="btn s" data-a=newA>+ New alert</button></div><div class=grid style="margin-top:12px">${r.map(a => {
+                const l = last(a.crop_id, a.market_id), t = trig(a);
+                return `<div class=card style="border-left:5px solid ${t ? '#15803d' : '#dde2ee'}"><div class=row><div><b>${esc(cn(a.crop_id))}</b><small>${esc(mn(a.market_id))} · ${a.condition} ${money(a.target_price)}</small></div><label class=sw><input type=checkbox data-a=tog data-v=${a.id} ${a.active_status ? 'checked' : ''}> Active</label></div>
+<div class=row style="margin-top:10px"><span>Now <b>${l ? money(l.price) : '–'}</b> ${t ? '<span class="pill up">🔔 Triggered</span>' : '<span class="pill nu">Waiting</span>'}</span><span><button class="btn s o" data-a=editA data-v=${a.id}>Edit</button> <button class="btn s d" data-a=delA data-v=${a.id}>Delete</button></span></div></div>`
+            }).join('') || '<p class=mu>No alerts yet. Create one to get notified when a price target is reached.</p>'}</div>`
+        }
+        function aForm(id, cid) {
+            const a = S.alerts.find(x => x.id == id) || { crop_id: cid || S.crops[0].id, market_id: S.market, condition: 'Above', target_price: '' };
+            modal(`<div class=row><h3>${id ? 'Edit' : 'New'} alert</h3><button class="btn s o" data-a=close>✕</button></div><form data-f=alert data-id="${id || ''}" novalidate><label>Crop</label><select name=crop_id>${opts(S.crops, a.crop_id)}</select><label>Market</label><select name=market_id>${opts(S.markets, a.market_id)}</select>
+<label>Notify me when the price is</label><select name=condition>${opts(['Above', 'Below'], a.condition, x => [x, x == 'Above' ? 'Above (price ≥ target)' : 'Below (price ≤ target)'])}</select><label>Target price (Rs / 40 kg)</label><input name=target_price type=number step=any value="${a.target_price}"><p class=err id=err></p><button class=btn style="width:100%;margin-top:12px">Save alert</button></form>`)
+        }
+        // Marketplace
+        function lbl(l) { const a = avgNow(l.crop_id), d = (l.asking_price - a) / a * 100; return Math.abs(d) <= 5 ? ['At market', 'nu', d] : d < 0 ? ['Below market', 'up', d] : ['Above market', 'dn', d] }
+        function lCard(l, own) {
+            const [t, c, d] = lbl(l), u = S.users.find(x => x.id == l.user_id) || {};
+            return `<div class="card tap" data-a=open data-v=${l.id}><div class=row><b>${esc(cn(l.crop_id))}</b><span class="pill ${c}">${t} ${d > 0 ? '+' : ''}${d.toFixed(0)}%</span></div><div class=row style="margin-top:6px"><span>${l.quantity} × 40 kg · Grade ${l.grade}</span><b style="font-size:17px">${money(l.asking_price)}</b></div>
+<small>📍 ${esc(l.district)} · available ${l.available_from} · ${esc(u.name)}${l.status == 'Sold' ? ' · <b style="color:var(--dn)">SOLD</b>' : ''}</small>${own ? `<div class=row style="margin-top:10px;justify-content:flex-start"><button class="btn s o" data-a=editL data-v=${l.id}>Edit</button>${l.status == 'Active' ? `<button class="btn s o" data-a=sold data-v=${l.id}>Mark sold</button>` : ''}<button class="btn s d" data-a=delL data-v=${l.id}>Delete</button></div>` : ''}</div>`
+        }
+        function mList() {
+            const q = S.lq.toLowerCase(), r = S.listings.filter(l => l.status == 'Active' && (!S.lc || l.crop_id == S.lc) && (!S.ld || l.district == S.ld) && (!S.lg || l.grade == S.lg) && cn(l.crop_id).toLowerCase().includes(q));
+            r.sort(S.ls == 'price' ? (a, b) => a.asking_price - b.asking_price : (a, b) => a.created_at < b.created_at ? 1 : -1); return r.map(l => lCard(l)).join('') || '<p class=mu>No active listings match these filters.</p>'
+        }
+        function vMarket() { return `<h2>Marketplace</h2><small>Fresh produce listed directly by farmers</small><div class=bar style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"><input id=lq placeholder="Search crop…" value="${esc(S.lq)}"><select id=lc><option value="">All crops</option>${opts(S.crops, S.lc)}</select><select id=ld><option value="">All districts</option>${opts(DIST, S.ld, sid)}</select><select id=lg><option value="">All grades</option>${opts(['A', 'B', 'C'], S.lg, x => [x, 'Grade ' + x])}</select><select id=ls>${opts(['new', 'price'], S.ls, x => [x, x == 'new' ? 'Newest first' : 'Price: low to high'])}</select></div><div class=grid id=list>${mList()}</div>` }
+        function vMine() { const r = S.listings.filter(l => l.user_id == S.user.id); return `<div class=row><div><h2>My listings</h2><small>Only you can edit or remove these</small></div><button class="btn s" data-a=newL>+ New listing</button></div><div class=grid style="margin-top:12px">${r.map(l => lCard(l, 1)).join('') || '<p class=mu>You have no listings. Post your first crop for buyers to see.</p>'}</div>` }
+        function open_(id) {
+            const l = S.listings.find(x => x.id == id), u = S.users.find(x => x.id == l.user_id) || {}, [t, c, d] = lbl(l), msg = encodeURIComponent(`Hi ${u.name}, I'm interested in your ${cn(l.crop_id)} listing on KisanMandi.`);
+            modal(`<div class=row><h3>${esc(cn(l.crop_id))} · Grade ${l.grade}</h3><button class="btn s o" data-a=close>✕</button></div><p style="margin:8px 0"><b style="font-size:22px">${money(l.asking_price)}</b> / 40 kg <span class="pill ${c}">${t} ${d > 0 ? '+' : ''}${d.toFixed(1)}%</span></p><small>Average market price today: ${money(avgNow(l.crop_id))}</small>
+<div class="card" style="margin:12px 0"><div class=row><span>Quantity</span><b>${l.quantity} × 40 kg</b></div><div class=row><span>District</span><b>${esc(l.district)}</b></div><div class=row><span>Available from</span><b>${l.available_from}</b></div><div class=row><span>Seller</span><b>${esc(u.name)}</b></div><div class=row><span>Status</span><b>${l.status}</b></div></div>
+<div class=row><a class=btn style="flex:1;text-align:center;text-decoration:none" href="tel:${esc(l.contact_phone)}">📞 Call</a><a class=btn style="flex:1;text-align:center;text-decoration:none;background:#128c4a" target=_blank rel=noopener href="https://wa.me/${ph(l.contact_phone)}?text=${msg}">💬 WhatsApp</a></div>`)
+        }
+        function lForm(id) {
+            const l = S.listings.find(x => x.id == id) || { district: S.user.district, grade: 'A', contact_phone: S.user.phone, available_from: today() };
+            modal(`<div class=row><h3>${id ? 'Edit' : 'New'} listing</h3><button class="btn s o" data-a=close>✕</button></div><form data-f=list data-id="${id || ''}" novalidate><label>Crop</label><select name=crop_id>${opts(S.crops, l.crop_id)}</select><label>Quantity (units of 40 kg)</label><input name=quantity type=number step=any value="${l.quantity || ''}"><label>Asking price (Rs / 40 kg)</label><input name=asking_price type=number step=any value="${l.asking_price || ''}">
+<label>District</label><select name=district>${opts(DIST, l.district, sid)}</select><label>Grade</label><select name=grade>${opts(['A', 'B', 'C'], l.grade, x => [x, 'Grade ' + x])}</select><label>Available from</label><input name=available_from type=date min="${today()}" value="${l.available_from}"><label>Contact phone</label><input name=contact_phone value="${esc(l.contact_phone)}"><p class=err id=err></p><button class=btn style="width:100%;margin-top:12px">Save listing</button></form>`)
+        }
+        // Calculator
+        function calc(cid) {
+            modal(`<div class=row><h3>🧮 Profit calculator</h3><button class="btn s o" data-a=close>✕</button></div><div id=calc><label>Crop</label><select id=cc>${opts(S.crops, cid || S.crops[0].id)}</select><label>Market</label><select id=cm>${opts(S.markets, S.market)}</select><label>Quantity (units of 40 kg)</label><input id=cq type=number value=100 min=0><label>Cost of production per unit (Rs)</label><input id=cp type=number value=3000 min=0>
+<label>What-if price change: <b id=sv>0%</b></label><input id=cs type=range min=-20 max=20 value=0 style="padding:0"><div id=res class=card style="margin-top:14px"></div></div>`); calcUpdate()
+        }
+        function calcUpdate() {
+            const g = i => +$('#' + i).value, l = last(g('cc'), g('cm')), s = g('cs'); $('#sv').textContent = (s > 0 ? '+' : '') + s + '%'; const pr = l.price * (1 + s / 100), rev = pr * g('cq'), cost = g('cp') * g('cq'), pf = rev - cost, mg = rev ? pf / rev * 100 : 0, R = (a, b, c = '') => `<div class=row style="padding:4px 0"><span>${a}</span><b style="${c}">${b}</b></div>`;
+            $('#res').innerHTML = R('Price per unit', money(pr)) + R('Revenue', money(rev)) + R('Total cost', money(cost)) + R(pf >= 0 ? 'Profit' : 'Loss', money(Math.abs(pf)), `color:${pf >= 0 ? '#15803d' : '#b91c1c'};font-size:18px`) + R('Margin', mg.toFixed(1) + '%', `color:${pf >= 0 ? '#15803d' : '#b91c1c'}`)
+        }
+        const modal = h => { $('#modal').innerHTML = `<div class=modal data-a=close><div class=sheet>${h}</div></div>` };
+        // ---------- events ----------
+        const mine = id => S.listings.find(l => l.id == id && l.user_id == S.user.id);
+        const A = {
+            tab: v => { S.tab = v; render(); scrollTo(0, 0) }, cat: v => { S.cat = v; render() }, refresh, close: () => $('#modal').innerHTML = '', crop: v => detail(+v), calc: v => calc(v && +v), open: v => open_(v),
+            logout: () => { localStorage.removeItem('kmUser'); S.user = null; render() }, newA: v => aForm(0, v && +v), editA: v => aForm(v), newL: () => lForm(0),
+            delA: async v => { if (confirm('Delete this alert?')) await api('alerts/' + v, { method: 'DELETE' }), done('Alert deleted') },
+            tog: async (v, el) => { await api('alerts/' + v, { method: 'PATCH', body: { active_status: el.checked } }); done(el.checked ? 'Alert turned on' : 'Alert turned off') },
+            editL: v => mine(v) ? lForm(v) : toast('You can only edit your own listings'),
+            sold: async v => { if (!mine(v)) return toast('Not your listing'); await api('listings/' + v, { method: 'PATCH', body: { status: 'Sold' } }); done('Marked as sold') },
+            delL: async v => { if (!mine(v)) return toast('Not your listing'); if (confirm('Delete this listing?')) { await api('listings/' + v, { method: 'DELETE' }); done('Listing deleted') } }
+        };
+        document.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (!t) return; if (t.dataset.a == 'close' && e.target != t) return; Promise.resolve(A[t.dataset.a]?.(t.dataset.v, t)).catch(() => toast('Something went wrong — try again')) });
+        document.addEventListener('input', e => { const i = e.target.id; if (i == 'q') { S.q = e.target.value; $('#list').innerHTML = pList() } else if (i == 'lq') { S.lq = e.target.value; $('#list').innerHTML = mList() } else if (e.target.closest('#calc')) calcUpdate() });
+        document.addEventListener('change', e => {
+            const i = e.target.id, v = e.target.value;
+            if (i == 'mk') { S.market = +v; render() } else if (['lc', 'ld', 'lg', 'ls'].includes(i)) { S[i] = v; $('#list').innerHTML = mList() } else if (i == 'demo' && v) { localStorage.kmUser = v; S.user = S.users.find(u => u.id == v); render() } else if (e.target.closest('#calc')) calcUpdate()
+        });
+        document.addEventListener('keydown', e => { if (e.key == 'Escape') A.close() });
+        document.addEventListener('submit', async e => {
+            e.preventDefault(); const F = e.target, f = Object.fromEntries(new FormData(F)), id = F.dataset.id, err = m => { $('#err').textContent = m };
+            try {
+                if (F.dataset.f == 'reg') { if (!f.name.trim()) return err('Enter your name'); if (!/^\+?[\d\- ]{10,15}$/.test(f.phone)) return err('Enter a valid phone number'); const u = await api('users', { method: 'POST', body: { ...f, name: f.name.trim() } }); localStorage.kmUser = u.id; await load(); S.user = S.users.find(x => x.id == u.id); render() }
+                else if (F.dataset.f == 'alert') {
+                    if (!(+f.target_price > 0)) return err('Target price must be greater than 0'); const b = { crop_id: +f.crop_id, market_id: +f.market_id, condition: f.condition, target_price: +f.target_price };
+                    id ? await api('alerts/' + id, { method: 'PATCH', body: b }) : await api('alerts', { method: 'POST', body: { ...b, user_id: S.user.id, active_status: true } }); done('Alert saved')
+                }
+                else if (F.dataset.f == 'list') {
+                    if (id && !mine(id)) return err('You can only edit your own listings');
+                    const m = !(+f.quantity > 0) ? 'Quantity must be greater than 0' : !(+f.asking_price > 0) ? 'Asking price must be greater than 0' : !f.available_from || f.available_from < today() ? 'Available-from date cannot be in the past' : !/^\+?[\d\- ]{10,15}$/.test(f.contact_phone) ? 'Enter a valid contact phone' : ''; if (m) return err(m);
+                    const b = { crop_id: +f.crop_id, quantity: +f.quantity, asking_price: +f.asking_price, district: f.district, grade: f.grade, available_from: f.available_from, contact_phone: f.contact_phone };
+                    id ? await api('listings/' + id, { method: 'PATCH', body: b }) : await api('listings', { method: 'POST', body: { ...b, user_id: S.user.id, status: 'Active', created_at: new Date().toISOString() } }); done('Listing saved')
+                }
+            } catch { toast('Could not save — check the API connection') }
+        });
+        // pull-to-refresh (touch)
+        let ty = null; addEventListener('touchstart', e => { ty = scrollY <= 0 && !$('.modal') ? e.touches[0].clientY : null }, { passive: true });
+        addEventListener('touchmove', e => { if (ty != null) $('#ptr').style.height = Math.max(0, Math.min((e.touches[0].clientY - ty) / 2, 34)) + 'px' }, { passive: true });
+        addEventListener('touchend', e => { if (ty != null) { $('#ptr').style.height = 0; if (e.changedTouches[0].clientY - ty > 110) refresh() } ty = null });
+        // boot
+        (async () => { try { await load(); S.user = S.users.find(u => u.id == localStorage.kmUser) || null; render() } catch { $('#app').innerHTML = `<div class=card style="margin:20px"><b>Can't reach the mock API</b><p class=mu>Expected at ${esc(API)}. Run <code>npx json-server@0.17.4 db.json --host 0.0.0.0</code> in the project folder, or open this page with <code>?api=https://your-mockapi-url</code>.</p></div>` } })();
+    </script>
+</body>
+
+</html>

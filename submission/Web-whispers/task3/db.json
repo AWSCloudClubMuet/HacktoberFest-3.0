@@ -1,0 +1,834 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Sarah Chen",
+      "email": "sarah@campus.edu",
+      "password": "demo",
+      "major": "Graphic Design",
+      "semester": 4,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Figma",
+        "Illustration",
+        "Branding"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Alex Rivera",
+      "email": "alex@campus.edu",
+      "password": "demo",
+      "major": "Computer Science",
+      "semester": 6,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "React",
+        "Node",
+        "Python"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Emma Watson",
+      "email": "emma@campus.edu",
+      "password": "demo",
+      "major": "English",
+      "semester": 5,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Writing",
+        "Resume",
+        "Editing"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Ali Raza",
+      "email": "ali@campus.edu",
+      "password": "demo",
+      "major": "Mathematics",
+      "semester": 6,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Calculus",
+        "Statistics",
+        "Python"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Hina Memon",
+      "email": "hina@campus.edu",
+      "password": "demo",
+      "major": "Software Engineering",
+      "semester": 4,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Django",
+        "SQL",
+        "UI"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Bilal Khan",
+      "email": "bilal@campus.edu",
+      "password": "demo",
+      "major": "Media Studies",
+      "semester": 3,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Video Editing",
+        "Premiere"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Zara Ahmed",
+      "email": "zara@campus.edu",
+      "password": "demo",
+      "major": "Computer Science",
+      "semester": 7,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Flutter",
+        "Firebase"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Omar Sheikh",
+      "email": "omar@campus.edu",
+      "password": "demo",
+      "major": "Physics",
+      "semester": 5,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Tutoring",
+        "Physics",
+        "LaTeX"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Maria Soomro",
+      "email": "maria@campus.edu",
+      "password": "demo",
+      "major": "Business",
+      "semester": 4,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Copywriting",
+        "SEO"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Usman Ali",
+      "email": "usman@campus.edu",
+      "password": "demo",
+      "major": "Data Science",
+      "semester": 6,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "ML",
+        "Pandas",
+        "Tableau"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Ayesha Noor",
+      "email": "ayesha@campus.edu",
+      "password": "demo",
+      "major": "Architecture",
+      "semester": 8,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Canva",
+        "Sketching",
+        "3D"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Daniel Park",
+      "email": "daniel@campus.edu",
+      "password": "demo",
+      "major": "Economics",
+      "semester": 5,
+      "bio": "Campus student who enjoys collaborating on short projects.",
+      "skills": [
+        "Excel",
+        "Essays",
+        "Tutoring"
+      ]
+    },
+    {
+      "name": "Maria",
+      "email": "maria@gmail.com",
+      "password": "SDFKDSLF",
+      "major": "fsaf",
+      "semester": 5,
+      "bio": "sdofdskg",
+      "skills": [
+        "py",
+        "c++"
+      ],
+      "id": 13
+    }
+  ],
+  "gigs": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "title": "Figma Mobile App UI Kit",
+      "description": "Offering: Figma Mobile App UI Kit. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-02",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "title": "React Native Tailwind Debugging",
+      "description": "Requesting: React Native Tailwind Debugging. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-28",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "title": "Resume & LinkedIn Revamp",
+      "description": "Offering: Resume & LinkedIn Revamp. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 1500,
+      "deadline": "2026-10-30",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 4,
+      "user_id": 4,
+      "title": "1-on-1 Calculus II Tutoring",
+      "description": "Offering: 1-on-1 Calculus II Tutoring. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 800,
+      "deadline": "2026-11-05",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 5,
+      "user_id": 5,
+      "title": "Logo for Society Event",
+      "description": "Requesting: Logo for Society Event. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 3000,
+      "deadline": "2026-10-26",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 6,
+      "user_id": 6,
+      "title": "Python Pandas Assignment Help",
+      "description": "Requesting: Python Pandas Assignment Help. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 2000,
+      "deadline": "2026-10-27",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 7,
+      "user_id": 7,
+      "title": "YouTube Intro Video Editing",
+      "description": "Offering: YouTube Intro Video Editing. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 2500,
+      "deadline": "2026-10-31",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 8,
+      "user_id": 8,
+      "title": "Proofread Final Year Thesis",
+      "description": "Requesting: Proofread Final Year Thesis. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 2200,
+      "deadline": "2026-10-29",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 9,
+      "user_id": 9,
+      "title": "Physics Numericals Crash Course",
+      "description": "Offering: Physics Numericals Crash Course. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-25",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 10,
+      "user_id": 10,
+      "title": "Build a Portfolio Website",
+      "description": "Requesting: Build a Portfolio Website. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 6000,
+      "deadline": "2026-11-10",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 11,
+      "user_id": 11,
+      "title": "Tech Club Blog Writing",
+      "description": "Offering: Tech Club Blog Writing. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-04",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 12,
+      "user_id": 12,
+      "title": "Statistics Exam Prep Group",
+      "description": "Requesting: Statistics Exam Prep Group. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-01",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "title": "Poster Design for Fest",
+      "description": "Requesting: Poster Design for Fest. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-18",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 14,
+      "user_id": 2,
+      "title": "Flutter Login Screen Help",
+      "description": "Offering: Flutter Login Screen Help. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 1800,
+      "deadline": "2026-10-16",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 15,
+      "user_id": 3,
+      "title": "Essay Editing Service",
+      "description": "Offering: Essay Editing Service. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-19",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 16,
+      "user_id": 4,
+      "title": "Django REST API Mentoring",
+      "description": "Offering: Django REST API Mentoring. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-11-08",
+      "status": "In Progress",
+      "accepted_applicant_id": 9,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 17,
+      "user_id": 5,
+      "title": "Brand Identity for Cafe",
+      "description": "Requesting: Brand Identity for Cafe. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Design",
+      "payment_type": "Paid",
+      "budget": 5000,
+      "deadline": "2026-10-30",
+      "status": "In Progress",
+      "accepted_applicant_id": 10,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 18,
+      "user_id": 6,
+      "title": "SQL Query Tutor Needed",
+      "description": "Requesting: SQL Query Tutor Needed. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Tutoring",
+      "payment_type": "Paid",
+      "budget": 1000,
+      "deadline": "2026-10-27",
+      "status": "In Progress",
+      "accepted_applicant_id": 11,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 19,
+      "user_id": 7,
+      "title": "Instagram Caption Pack",
+      "description": "Offering: Instagram Caption Pack. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 1200,
+      "deadline": "2026-10-11",
+      "status": "Completed",
+      "accepted_applicant_id": 12,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 20,
+      "user_id": 8,
+      "title": "React Dashboard Build",
+      "description": "Requesting: React Dashboard Build. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 7000,
+      "deadline": "2026-10-13",
+      "status": "Completed",
+      "accepted_applicant_id": 1,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 21,
+      "user_id": 9,
+      "title": "Illustration Set for Zine",
+      "description": "Offering: Illustration Set for Zine. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Design",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-09",
+      "status": "Completed",
+      "accepted_applicant_id": 2,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 22,
+      "user_id": 10,
+      "title": "Linear Algebra Tutoring",
+      "description": "Offering: Linear Algebra Tutoring. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "Free",
+      "budget": null,
+      "deadline": "2026-10-15",
+      "status": "Completed",
+      "accepted_applicant_id": 3,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 23,
+      "user_id": 11,
+      "title": "Press Release Draft",
+      "description": "Requesting: Press Release Draft. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Requesting",
+      "category": "Writing",
+      "payment_type": "Paid",
+      "budget": 900,
+      "deadline": "2026-10-17",
+      "status": "Completed",
+      "accepted_applicant_id": 4,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 24,
+      "user_id": 12,
+      "title": "Excel Dashboard Tutorial",
+      "description": "Offering: Excel Dashboard Tutorial. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Tutoring",
+      "payment_type": "SkillSwap",
+      "budget": null,
+      "deadline": "2026-10-14",
+      "status": "Cancelled",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "title": "Python Chatbot Demo",
+      "description": "Offering: Python Chatbot Demo. Clear deliverables, quick turnaround and friendly communication on campus.",
+      "type": "Offering",
+      "category": "Programming",
+      "payment_type": "Paid",
+      "budget": 4000,
+      "deadline": "2026-11-06",
+      "status": "Open",
+      "accepted_applicant_id": null,
+      "created_at": "2026-10-07"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "gig_id": 1,
+      "applicant_id": 3,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 2,
+      "gig_id": 1,
+      "applicant_id": 8,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 3,
+      "gig_id": 2,
+      "applicant_id": 4,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 4,
+      "gig_id": 2,
+      "applicant_id": 9,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 5,
+      "gig_id": 3,
+      "applicant_id": 5,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 6,
+      "gig_id": 3,
+      "applicant_id": 10,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 7,
+      "gig_id": 4,
+      "applicant_id": 6,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 8,
+      "gig_id": 4,
+      "applicant_id": 11,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 9,
+      "gig_id": 5,
+      "applicant_id": 7,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 10,
+      "gig_id": 5,
+      "applicant_id": 12,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 11,
+      "gig_id": 6,
+      "applicant_id": 8,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 12,
+      "gig_id": 6,
+      "applicant_id": 1,
+      "message": "I can help with this and can start right away.",
+      "status": "Pending",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 13,
+      "gig_id": 16,
+      "applicant_id": 9,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 14,
+      "gig_id": 16,
+      "applicant_id": 1,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 15,
+      "gig_id": 17,
+      "applicant_id": 10,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 16,
+      "gig_id": 17,
+      "applicant_id": 2,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 17,
+      "gig_id": 18,
+      "applicant_id": 11,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 18,
+      "gig_id": 18,
+      "applicant_id": 3,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 19,
+      "gig_id": 19,
+      "applicant_id": 12,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 20,
+      "gig_id": 19,
+      "applicant_id": 4,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 21,
+      "gig_id": 20,
+      "applicant_id": 1,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 22,
+      "gig_id": 20,
+      "applicant_id": 5,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 23,
+      "gig_id": 21,
+      "applicant_id": 2,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 24,
+      "gig_id": 21,
+      "applicant_id": 6,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 25,
+      "gig_id": 22,
+      "applicant_id": 3,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 26,
+      "gig_id": 22,
+      "applicant_id": 7,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 27,
+      "gig_id": 23,
+      "applicant_id": 4,
+      "message": "I can help with this and can start right away.",
+      "status": "Accepted",
+      "created_at": "2026-10-18"
+    },
+    {
+      "id": 28,
+      "gig_id": 23,
+      "applicant_id": 8,
+      "message": "I can help with this and can start right away.",
+      "status": "Rejected",
+      "created_at": "2026-10-18"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "gig_id": 19,
+      "reviewer_id": 7,
+      "reviewee_id": 12,
+      "rating": 3,
+      "comment": "Great work, very reliable!"
+    },
+    {
+      "id": 2,
+      "gig_id": 19,
+      "reviewer_id": 12,
+      "reviewee_id": 7,
+      "rating": 4,
+      "comment": "Delivered on time and communicated well."
+    },
+    {
+      "id": 3,
+      "gig_id": 20,
+      "reviewer_id": 8,
+      "reviewee_id": 1,
+      "rating": 4,
+      "comment": "Delivered on time and communicated well."
+    },
+    {
+      "id": 4,
+      "gig_id": 20,
+      "reviewer_id": 1,
+      "reviewee_id": 8,
+      "rating": 5,
+      "comment": "Really helpful, would collaborate again."
+    },
+    {
+      "id": 5,
+      "gig_id": 21,
+      "reviewer_id": 9,
+      "reviewee_id": 2,
+      "rating": 5,
+      "comment": "Really helpful, would collaborate again."
+    },
+    {
+      "id": 6,
+      "gig_id": 21,
+      "reviewer_id": 2,
+      "reviewee_id": 9,
+      "rating": 4,
+      "comment": "Clear brief and quick feedback."
+    },
+    {
+      "id": 7,
+      "gig_id": 22,
+      "reviewer_id": 10,
+      "reviewee_id": 3,
+      "rating": 3,
+      "comment": "Clear brief and quick feedback."
+    },
+    {
+      "id": 8,
+      "gig_id": 22,
+      "reviewer_id": 3,
+      "reviewee_id": 10,
+      "rating": 5,
+      "comment": "Great work, very reliable!"
+    },
+    {
+      "id": 9,
+      "gig_id": 23,
+      "reviewer_id": 11,
+      "reviewee_id": 4,
+      "rating": 4,
+      "comment": "Great work, very reliable!"
+    }
+  ]
+}
