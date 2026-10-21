@@ -1,0 +1,5 @@
+# Created at 2026-10-21T14:57:08.123
+Boot Manifest-JAR contains absolute paths in classpath 'D:\awsHackathon\404-mercy\submission\404-mercy\TuneWave\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+
