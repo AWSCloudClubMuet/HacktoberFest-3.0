@@ -3,3 +3,4 @@
 .row-actions { display: flex; gap: 6px; }
 .need-progress { display: flex; align-items: center; gap: 8px; }
 .toolbar-note { font-size: 12px; color: var(--muted); margin-left: auto; }
+.toolbar input[type="search"] { min-width: 230px; }

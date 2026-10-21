@@ -33,6 +33,51 @@ App.registerModule({
     const canEdit = App.canEdit();
     const root = UI.h('div');
 
+    /* Filter state — the table body refreshes live without refetching. */
+    let query = '';
+    let statusFilter = 'All';
+    const tableBox = UI.h('div');
+    const countNote = UI.h('span', { class: 'toolbar-note' });
+
+    function matches(c) {
+      if (statusFilter !== 'All' && c.status !== statusFilter) return false;
+      const q = query.trim().toLowerCase();
+      if (!q) return true;
+      return c.name.toLowerCase().includes(q) || c.district.toLowerCase().includes(q);
+    }
+
+    function refresh() {
+      const visible = camps.filter(matches);
+      countNote.textContent = `${visible.length} of ${camps.length} camps shown`;
+      tableBox.innerHTML = '';
+      tableBox.append(buildTable(visible));
+    }
+
+    function buildTable(rows) {
+      return UI.table(buildColumns(), rows, query || statusFilter !== 'All'
+        ? 'No camps match your search or filter.'
+        : (canEdit ? 'No camps yet — add the first one.' : 'No camps registered yet.'));
+    }
+
+    function buildColumns() {
+      const columns = [
+        { key: 'name', label: 'Camp Name' },
+        { key: 'district', label: 'District' },
+        { key: 'current_families', label: 'Families (current / capacity)', render: c => `${c.current_families} / ${c.capacity}` },
+        { key: 'status', label: 'Status', render: c => UI.statusBadge(c.status) },
+      ];
+      if (canEdit) {
+        columns.push({
+          label: 'Actions',
+          render: c => UI.h('div', { class: 'row-actions' }, [
+            UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openCampForm(c) }, 'Edit'),
+            UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeCamp(c) }, 'Delete'),
+          ]),
+        });
+      }
+      return columns;
+    }
+
     function openCampForm(camp) {
       const fields = [
         { name: 'name', label: 'Camp Name', placeholder: 'e.g. Jamshoro Relief Camp' },
@@ -86,31 +131,20 @@ App.registerModule({
       }
     }
 
-    if (canEdit) {
-      root.append(UI.h('div', { class: 'toolbar' }, [
-        UI.h('button', { class: 'btn btn-primary', onclick: () => openCampForm(null) }, '+ Add Camp'),
-      ]));
-    }
-
-    const columns = [
-      { key: 'name', label: 'Camp Name' },
-      { key: 'district', label: 'District' },
-      { key: 'current_families', label: 'Families (current / capacity)', render: c => `${c.current_families} / ${c.capacity}` },
-      { key: 'status', label: 'Status', render: c => UI.statusBadge(c.status) },
-    ];
-    if (canEdit) {
-      columns.push({
-        label: 'Actions',
-        render: c => UI.h('div', { class: 'row-actions' }, [
-          UI.h('button', { class: 'btn btn-sm btn-ghost', onclick: () => openCampForm(c) }, 'Edit'),
-          UI.h('button', { class: 'btn btn-sm btn-danger', onclick: () => removeCamp(c) }, 'Delete'),
-        ]),
-      });
-    }
-
-    root.append(UI.table(columns, camps, canEdit
-      ? 'No camps yet — add the first one.'
-      : 'No camps registered yet.'));
+    const toolbar = UI.h('div', { class: 'toolbar' }, [
+      UI.h('input', {
+        type: 'search', placeholder: 'Search by name or district…',
+        oninput: e => { query = e.target.value; refresh(); },
+      }),
+      UI.h('select', {
+        onchange: e => { statusFilter = e.target.value; refresh(); },
+      }, ['All', 'Active', 'Full', 'Closed'].map(s =>
+        UI.h('option', { value: s }, s === 'All' ? 'All statuses' : s))),
+      canEdit ? UI.h('button', { class: 'btn btn-primary', onclick: () => openCampForm(null) }, '+ Add Camp') : null,
+      countNote,
+    ]);
+    root.append(toolbar, tableBox);
+    refresh();
 
     return root;
   },
