@@ -1,0 +1,14 @@
+{
+  "name": "team-shenova-submission",
+  "version": "1.0.0",
+  "description": "Team SheNova HacktoberFest 3.0 Submissions Hub",
+  "scripts": {
+    "dev": "npm --prefix \"Campus Gig & SkillSwap Portal\" run dev",
+    "start": "npm --prefix \"Campus Gig & SkillSwap Portal\" start",
+    "test": "npm --prefix \"Campus Gig & SkillSwap Portal\" test",
+    "build": "npm --prefix \"Campus Gig & SkillSwap Portal/client\" run build",
+    "install:all": "npm --prefix \"Campus Gig & SkillSwap Portal\" run install:all"
+  },
+  "author": "Team SheNova",
+  "license": "MIT"
+}
