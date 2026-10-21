@@ -145,7 +145,7 @@
     </div>
     <a href="index.html">&larr; back to the Team Plot Armor showcase</a> &nbsp;·&nbsp;
     <a href="https://github.com/HussamHaroon/Plot-Armor/actions/workflows/security.yml" target="_blank" rel="noopener">original runs on GitHub Actions</a>
-    <br><span style="font-family:var(--mono);font-size:11px;">data: secure-pipeline/scripts/fixtures/*.json · counted client-side, same severity mapping as the pipeline gate</span>
+    <br><span style="font-family:var(--mono);font-size:11px;" id="dataSrc">data: secure-pipeline/scripts/fixtures/*.json · counted client-side, same severity mapping as the pipeline gate</span>
   </footer>
 
 <script>
@@ -380,7 +380,7 @@ function announcePassed() {
   $("fixHint").textContent = "wave complete \u2014 pipeline is green";
 }
 
-function resetBoard(counts) {
+function resetBoard() {
   JOBS.forEach(function (_, i) {
     var j = $("job-" + i);
     j.classList.remove("running", "done", "gate-red");
@@ -483,7 +483,10 @@ state.totals = FALLBACK_TOTALS;
 state.live = false;
 
 loadFixtures().then(function (docs) {
-  if (!docs) return; // file:// or blocked -> recorded totals stay
+  if (!docs) { // file:// or blocked -> recorded totals stay
+    $("dataSrc").textContent = "data: scan fixtures unreachable from this location \u00b7 replaying the recorded 48-finding run totals";
+    return;
+  }
   try {
     var scanners = {
       "semgrep":   countSemgrep(docs[0]),
@@ -496,6 +499,7 @@ loadFixtures().then(function (docs) {
     state.scanners = scanners;
     state.totals = totals;
     state.live = true;
+    $("dataSrc").textContent = "data: counted live from secure-pipeline/scripts/fixtures \u00b7 " + totals.total + " findings (" + totals.critical + " critical \u00b7 " + totals.high + " high \u00b7 " + totals.medium + " medium" + (totals.low ? " \u00b7 " + totals.low + " low" : "") + ")";
   } catch (e) { /* keep fallback */ }
 });
 
