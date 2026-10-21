@@ -1,0 +1,11 @@
+{
+  "name": "reliefhub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Flood relief coordination dashboard with a MySQL API",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.14.0"
+  }
+}
