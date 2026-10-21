@@ -575,9 +575,6 @@ p.empty { display: block; padding: var(--sp-5); }
   .view > * { animation: none; }
   .skel { animation: none; }
   .reveal { opacity: 1; transform: none; }
-  .home-mission .feature-card { animation: none; } /* breathing float off */
-  .feature-tilt { transform: none; }
-  .home-needs .progress > div { transition-delay: 0ms; }
 }
 
 /* ==========================================================================
@@ -801,6 +798,14 @@ body.route-home .view > * { animation: none; } /* sections use .reveal instead *
 }
 .home-mission .feature-card:hover .feature-tilt,
 .home-mission .feature-card:focus-within .feature-tilt { --lift: -4px; }
+
+/* Landing motion off-switch — placed after the base rules so it wins the
+   cascade (the global reduced-motion block sits earlier in the file). */
+@media (prefers-reduced-motion: reduce) {
+  .home-mission .feature-card { animation: none; } /* no breathing float */
+  .feature-tilt { transform: none; }               /* no hover tilt */
+  .home-needs .progress > div { transition-delay: 0ms; } /* bars fill instantly */
+}
 
 /* ---- Footer ---- */
 .home-footer {
