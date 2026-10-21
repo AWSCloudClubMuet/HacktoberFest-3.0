@@ -1,113 +1,90 @@
-# 🎵 TuneWave Music Player (GitHub Issue #13)
+# TuneWave Music Player (GitHub Issue #13)
 
-A pure Java 17 core music streaming player built with **zero external dependencies** (no Maven, Gradle, or external testing frameworks). Powered by foundational Data Structures & Algorithms (DSA): Doubly Linked List, Hash Map, FIFO Queue, Bounded LIFO Stack, Binary Search Tree (BST) with branch pruning, and an Undirected Graph.
+A Java 17 music player core built without external dependencies (no Maven, Gradle, or external test runners). It implements playlist tracking, queueing, playback history, song search, and artist recommendations using custom data structures.
 
----
-
-## 🖥️ Interactive Terminal Demo
+## Terminal Preview
 
 ![TuneWave Interactive Terminal Demo](./docs/demo.png)
 
-The player includes an interactive command-line interface (`com.tunewave.Main`) preloaded with sample music tracks and artist connections, allowing full manual control of playlist navigation, queuing, history replay, BST search, and artist recommendations.
+The application includes an interactive console (`com.tunewave.Main`) preloaded with sample tracks and artist links for testing navigation, queuing, search, and recommendations.
 
----
+## Data Structures and Complexity
 
-## 🏗️ Data Structures & Complexity
+| Component | Underlying Data Structure | Operations | Time Complexity | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| Playlist Tracks | Custom Doubly Linked List (`SongNode`) | `next()`, `previous()` | $O(1)$ | Nodes store `prev` and `next` references for constant-time bidirectional movement and pointer unlinking. |
+| Playlist Index | `HashMap<String, SongNode>` | `addSong()`, `removeSong()` | $O(1)$ average | Maps song IDs directly to linked list nodes, allowing $O(1)$ duplicate checks on insertion and direct unlinking on removal. |
+| Up Next Queue | `ArrayDeque<Song>` | `addToUpNext()`, `playNext()` | $O(1)$ | FIFO queue. Songs in this queue play before the playlist resumes. |
+| Playback History | `ArrayDeque<Song>` | `pushHistory()`, `back()` | $O(1)$ | Bounded LIFO stack (maximum 10 entries). Pushing an eleventh item drops the oldest entry in $O(1)$ time. |
+| Song Search | Custom Binary Search Tree (`SongBST`) | `findSong()`, `prefixSearch()` | $O(\log n)$ average search, $O(k + m)$ prefix | Ordered by title. In-order traversal yields alphabetical results. Prefix searches skip subtrees that cannot match based on lexicographical bounds. Stores duplicate titles via a list of IDs per node. |
+| Artist Network | Undirected Graph (`ArtistGraph`) | `addRelation()`, `recommendArtists()` | $O(1)$ add, $O(V + E)$ recommendations | Adjacency list modeling mutual artist collaborations. Recommends artists exactly two links away, excluding the artist and direct neighbors, sorted alphabetically. |
 
-| Component | Data Structure | Operations & Complexity | Architectural Rationale |
-| :--- | :--- | :--- | :--- |
-| **Playlist Tracks** | Custom Doubly Linked List (`SongNode`) | `next()`, `previous()`: $O(1)$ | Stores `prev` and `next` pointers to enable bidirectional traversal and constant-time unlinking without shifting elements. |
-| **Playlist Index** | `HashMap<String, SongNode>` | `addSong()`, `removeSong()`: $O(1)$ | Enables instant duplicate ID detection on insertion and direct node reference lookup for removal without scanning the list. |
-| **Up Next Queue** | `ArrayDeque<Song>` (FIFO) | `addToUpNext()`, `pollFirst()`: $O(1)$ | Enforces First-In, First-Out priority for queued songs before the playlist resumes. |
-| **Playback History** | `ArrayDeque<Song>` (Bounded Stack) | `pushHistory()`, `back()`: $O(1)$ | Maintains exactly the last 10 songs played in LIFO order. When the 11th song arrives, the oldest is discarded in $O(1)$. |
-| **Song Search** | Custom Binary Search Tree (`SongBST`) | `findSong()`: $O(\log n)$<br>`prefixSearch()`: $O(k + m)$ | Keyed by title. Uses in-order traversal for strictly alphabetical results. Prunes impossible subtrees based on lexicographical ordering. Supports duplicate titles via an ID list at the node. |
-| **Artist Network** | Undirected Graph (`ArtistGraph`) | `addRelation()`: $O(1)$<br>`recommendArtists()`: $O(V + E)$ | Models mutual artist collaborations using adjacency lists. Recommends artists exactly 2 edges away, excluding the artist themselves and any direct neighbors, sorted alphabetically. |
+## Core Architecture and Rules
 
----
+### Milestone 1: Playlist
+- Each song can appear only once in the playlist. The hash map validates incoming IDs in $O(1)$ before touching linked list pointers.
+- When repeat is off, calling `next()` at the end of the playlist stays on the last song and returns `"end"`.
+- When repeat is on, calling `next()` on the tail wraps around to the head. Calling `previous()` on the head wraps to the tail.
+- Removing the current song moves the cursor to `next`. If the tail was removed, the cursor falls back to `prev`. If the playlist becomes empty, the cursor resets to `null`.
 
-## 📍 Milestones & Features
+### Milestone 2: Up Next and Playback History
+- The Up Next queue has higher priority than the playlist. Calling `playNext()` polls the queue first until it is empty.
+- Playing from the Up Next queue or pressing `back()` does not change the playlist position. When the queue finishes, the playlist continues from where it was paused.
+- The history stack records up to 10 recently played songs. When history exceeds 10 entries, the oldest song is removed.
+- `back()` pops the most recent song from history and replays it. It does not push the replaced song back into history.
 
-### 🧩 Milestone 1 — Playlist (Doubly Linked List + Hash Map)
-- **$O(1)$ Bidirectional Navigation**: Move forward with `next()` and backward with `previous()`.
-- **Zero-Scan Lookups & Deduplication**: Songs can only appear once in a playlist. A `HashMap<String, SongNode>` rejects duplicate IDs on insertion and enables direct pointer unlinking on removal in $O(1)$ time.
-- **Repeat Boundary Rules**:
-  - **Repeat ON**: Calling `next()` on the last song wraps around to the first song (`head`). Calling `previous()` on the first song wraps to the last song (`tail`).
-  - **Repeat OFF**: Calling `next()` on the last song stays on the last song and returns the string `"end"`.
-- **Safe Cursor Management**: Removing the currently playing song cleanly advances the cursor to the adjacent track (`node.next`, or falls back to `node.prev` if the tail was removed).
+### Milestone 3: Song Search and Related Artists
+- Song titles are indexed in a custom binary search tree. Duplicate titles (such as covers or tracks with identical names by different artists) append their IDs to the existing node rather than overwriting it.
+- `prefixSearch(prefix)` traverses the tree in-order to return matches alphabetically. If a node is lexicographically smaller or larger than the prefix, the search prunes the impossible subtree.
+- Collaborations are stored as undirected edges in an adjacency list (`A <-> B`). Self-relations are rejected.
+- `recommendArtists(artist)` collects artists two hops away. Direct neighbors (one hop) and the artist (zero hops) are excluded. Results are deduplicated and sorted alphabetically.
 
-### 🧩 Milestone 2 — Up Next and History (Queue + Stack)
-- **VIP Queue Priority**: `playNext()` always checks the Up Next queue first. Queued songs play before the playlist continues.
-- **The "Freeze Cursor" Rule**: Playing from Up Next or replaying from history **never moves the playlist cursor**. When queued songs finish, the playlist resumes from the exact position where it was paused.
-- **Bounded 10-Item History Stack**: Keeps strictly the last 10 songs played. Older tracks automatically drop off the bottom in $O(1)$ time.
-- **History Back Navigation**: `back()` pops the most recently played song and replays it, without pushing the replaced track back into history to prevent oscillation loops.
+## Building and Running
 
-### 🧩 Milestone 3 — Song Search and Related Artists (BST + Graph)
-- **Custom BST with Title Indexing**: Case-insensitive binary search tree. Multiple songs sharing the same title (e.g. covers or different artists) are supported by storing a list of song IDs at that title's node.
-- **Alphabetical Prefix Search with Subtree Pruning**:
-  - Traverses in-order (`left -> node -> right`) to guarantee results return in alphabetical order.
-  - Skips subtrees that cannot match based on lexicographical order.
-- **Undirected Artist Graph & 2-Hop Recommendations**:
-  - Connects artists symmetrically (`A <-> B`).
-  - `recommendArtists(artist)` collects collaborators of collaborators (exactly 2 edges away).
-  - Automatically excludes the original artist (0 hops) and direct collaborators (1 hop).
-  - Deduplicates candidates reachable through multiple paths and returns recommendations sorted alphabetically.
+The project runs on standard Java 17 or higher.
 
----
-
-## 🚀 How to Build and Run
-
-This project requires standard **JDK 17 or higher** and zero external build tools.
-
-### 1. Compile the Project
-From this directory:
+### 1. Compile
 ```bash
 mkdir -p bin
 javac -d bin src/main/java/com/tunewave/*.java src/test/java/com/tunewave/*.java
 ```
 
-### 2. Launch the Interactive Player
+### 2. Run the Interactive Player
 ```bash
 java -cp bin com.tunewave.Main
 ```
 
-### 3. Run the Automated Test Suite (49 Tests)
+### 3. Run the Automated Tests (49 Tests)
 ```bash
 java -cp bin com.tunewave.TestRunner
 ```
 
----
+## Interactive Console Controls
 
-## 🎮 Interactive Console Controls
-
-When running `com.tunewave.Main`, you can type commands or numbers directly:
+When running `com.tunewave.Main`, you can type commands or numbers:
 
 | Command | Shortcut | Description | Example |
 | :--- | :---: | :--- | :--- |
-| `play` | `1` | Play next song (Up Next queue first, then playlist) | `play` |
-| `back` | `2` | Replay previous song from the 10-item history stack | `back` |
-| `next` | `3` | Move forward to next playlist song | `next` |
-| `prev` | `4` | Move backward to previous playlist song | `prev` |
-| `queue` | `5` | Add a song to Up Next by ID | `queue S99` |
-| `search` | `6` | Search exact song title in the BST | `search Borderline` |
-| `prefix` | `7` | Find all titles starting with prefix (alphabetical) | `prefix Bo` |
-| `rec` | `8` | Recommend artists 2 hops away in the graph | `rec The Weeknd` |
-| `add` | `9` | Add a new song to the playlist and catalog | `add` |
-| `repeat` | `10` | Toggle repeat mode ON / OFF | `repeat` |
-| `status` | `11` | View active song, playlist cursor, queue, and history | `status` |
-| `demo` | `12` | Run a quick automated walkthrough demo | `demo` |
-| `exit` | `0` | Exit the player | `exit` |
+| `play` | `1` | Play next song (queue first, then playlist) | `play` |
+| `back` | `2` | Replay previous song from history | `back` |
+| `next` | `3` | Move forward in playlist | `next` |
+| `prev` | `4` | Move backward in playlist | `prev` |
+| `queue` | `5` | Add song to Up Next by ID | `queue S99` |
+| `search` | `6` | Search exact title in BST | `search Borderline` |
+| `prefix` | `7` | Search titles by prefix alphabetically | `prefix Bo` |
+| `rec` | `8` | Recommend artists two links away | `rec The Weeknd` |
+| `add` | `9` | Add a new song to playlist and search tree | `add` |
+| `repeat` | `10` | Toggle repeat mode on or off | `repeat` |
+| `status` | `11` | Print current playback, cursor, queue, and history | `status` |
+| `demo` | `12` | Run automated demo walkthrough | `demo` |
+| `exit` | `0` | Quit the application | `exit` |
 
----
+## Edge Cases Handled
 
-## 🛡️ Edge Cases Handled
-
-1. **Duplicate Song ID Rejection**: `PlaylistManager` checks the hash map in $O(1)$ before touching any pointers, preventing duplicate entries or pointer corruption.
-2. **Current Track Removal**: If the song being removed is the active cursor, the cursor smoothly advances to `node.next`. If removing the tail, it falls back to `node.prev`. If the playlist becomes empty, cursor safely resets to `null`.
-3. **Repeat Boundary Wrapping**:
-   - `next()` on tail with repeat ON wraps to `head`.
-   - `next()` on tail with repeat OFF stays at `tail` and returns `"end"`.
-   - `previous()` on head with repeat ON wraps to `tail`.
-4. **Queue & Cursor Isolation**: Queued songs and `back()` replaying never advance the playlist cursor.
-5. **Subtree Pruning Integrity**: Pruning relies on lexicographical comparisons. A node named `"Apple"` does not discard a right child named `"Banana"` when searching for prefix `"Ba"`.
-6. **Graph Loops & Triangle Shortcuts**: The recommendation algorithm properly ignores self-relations, prevents cycles, deduplicates multi-path candidates (e.g. Diamond graphs), and excludes direct 1-hop neighbors even if reachable via a triangle shortcut in 2 hops.
-7. **Comprehensive Test Coverage**: All 49 automated unit and integration tests run through `TestRunner.java` with a 100% pass rate.
+- **Duplicate song IDs**: Rejected in $O(1)$ time via map lookup before modifying node pointers.
+- **Current track deletion**: Safely advances the playlist cursor to `node.next`, or falls back to `node.prev` if deleting the tail.
+- **Repeat boundary transitions**: Repeat off stays at the boundary and returns `"end"`; repeat on wraps between head and tail.
+- **Queue and cursor independence**: Queue playback and history replays leave the playlist position untouched.
+- **Subtree pruning boundaries**: Pruning uses prefix lexicographical checks. For instance, a root named `"Apple"` does not discard a right child named `"Banana"` when searching for prefix `"Ba"`.
+- **Graph cycles and multi-path duplicates**: Diamond connections and shared secondary neighbors are deduplicated. Direct neighbors are excluded even if reachable through an alternate two-hop path.
+- **Automated verification**: 49 tests in `TestRunner.java` verify every stated rule and operation.
