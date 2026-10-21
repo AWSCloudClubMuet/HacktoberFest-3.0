@@ -1,5 +1,10 @@
 # ReliefHub — Flood Relief Coordination Dashboard
 
+Team Lead: Nabeel Shahid ( didn't worked on this project )
+Members : 
+Ahmed Khan -> Backend 
+Saif Sangrasi -> Frontend 
+
 ReliefHub is a web-based coordination dashboard for managing flood-relief operations. It brings camp capacity, relief needs, warehouse inventory, dispatches, donations, and volunteers together so coordinators can monitor activity and prioritize urgent gaps.
 
 ## Live Demo
