@@ -156,3 +156,31 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 - [x] M3 Applicant selection, In Progress, completion, and cancel.
 - [x] M4 Two-way reviews and computed reputation.
 - [x] M5 Seeded Express API covers the endpoints above with at least 12 users, 25 gigs, 20 applications, and 8 reviews.
+
+## Visual design
+
+Colors live in `client/src/index.css` as Tailwind theme tokens. Components use those utilities instead of hard-coded hex values.
+
+Sampled from the Gray swatch, with the card's title color for text:
+
+| Role | Hex |
+| --- | --- |
+| Primary | `#414359` |
+| Secondary | `#484F69` |
+| Accent | `#51587B` |
+| Faint band | `#6C738F` |
+| Text | `#35306D` |
+| Canvas | `#F3F4F8` |
+| Surface | `#FFFFFF` |
+| Border | `#D5D7E3` |
+| Success | `#146B45` |
+| Warning | `#8A5A10` |
+| Danger | `#9B2F3C` |
+| In progress | `#1E4B86` |
+| Skill swap | `#5B4688` |
+
+Success, warning, danger, in-progress, and skill-swap colors are derived so each status and payment badge stays distinct and meets WCAG AA on its tinted background.
+
+Fonts: Outfit for headings, Source Sans 3 for body and form text. Headings use `clamp()` so they shrink on small screens. Inputs stay at 16px.
+
+Breakpoints are mobile-first Tailwind defaults. Gig cards are 1 column below 768px, 2 from `md` (768px), and 3 from `lg` (1024px). The navbar collapses into a hamburger below `lg`. Page content stops at `max-w-6xl` (72rem). Checked at 320, 375, 768, 1024, and 1440px, plus a short landscape width, with no horizontal overflow.
