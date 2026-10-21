@@ -1,0 +1,9 @@
+customer_id,company,contact_email,plan,region,active
+C-1001,Northwind Traders,ops@northwind.example,enterprise,us-east-1,true
+C-1002,Bluebird Logistics,admin@bluebird.example,business,us-west-2,true
+C-1003,Cedar Analytics,data@cedar.example,enterprise,eu-west-1,true
+C-1004,Delta Workshops,hello@delta.example,starter,us-east-1,false
+C-1005,Evergreen Health,security@evergreen.example,business,us-east-1,true
+C-1006,Fjord Commerce,team@fjord.example,business,eu-central-1,true
+C-1007,Golden Gate Foods,it@goldengate.example,enterprise,us-west-2,true
+C-1008,Harbor Finance,infra@harbor.example,enterprise,us-east-1,true

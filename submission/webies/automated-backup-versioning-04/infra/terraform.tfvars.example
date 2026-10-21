@@ -1,0 +1,17 @@
+# Copy to terraform.tfvars for local overrides. Do not commit terraform.tfvars.
+
+aws_region                        = "us-east-1"
+use_localstack                    = true
+localstack_endpoint               = "http://localhost:4566"
+project_name                      = "webies-backup-04"
+bucket_prefix                     = "webies-backup-04-"
+force_destroy                     = true
+noncurrent_version_retention_days = 7
+alert_email                       = ""
+enable_cloudwatch_alarm           = false
+
+# Real AWS example (do not commit):
+# use_localstack          = false
+# alert_email             = "team@example.com"
+# enable_cloudwatch_alarm = true
+# force_destroy           = true   # demo only; set false for retained data
