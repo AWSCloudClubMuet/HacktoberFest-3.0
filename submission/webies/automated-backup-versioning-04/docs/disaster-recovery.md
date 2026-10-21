@@ -9,7 +9,7 @@
 | Recovery point objective (RPO) - scheduled target | 24 hours | Daily backup at 02:00 UTC. A failure at 01:59 UTC can lose almost 24 hours of changes. |
 | Recovery point objective (RPO) - demo actual | Last successful backup | The hackathon demo has no deployed scheduler, so the RPO is the time of the last manual successful run. |
 | Noncurrent version recovery window | 7 days | Lifecycle expiry is set to 7 days for the demo. After that, noncurrent versions are gone. |
-| Alert detection | 5 minutes after a failed run / next queue poll | SNS publishes immediately; the optional CloudWatch alarm evaluates a 5-minute period. |
+| Alert detection | 5 minutes after a failed run / next queue poll | SNS publishes immediately and the SQS queue makes the alert inspectable. |
 
 These targets are commitments for the demo scenario, not a production SLA.
 They must be re-approved if the dataset, schedule, region or retention window
@@ -24,8 +24,9 @@ changes.
 - The operator has working AWS credentials and Terraform state for the demo.
 - A regional failure is out of scope for automatic recovery. There is no
   cross-region replication or AWS Backup vault in the core solution.
-- LocalStack proves the workflow and checksum logic, not AWS durability or
-  email delivery.
+- The 2026-10-21 real-AWS run proved the workflow and checksum logic against
+  AWS. It did not prove durability across a regional outage or actual inbox
+  receipt of email alerts.
 
 ## How the controls reduce risk
 
@@ -114,7 +115,7 @@ previous versions remain addressable.
    ```
 
 3. If the previous run passes, restore from that run and continue.
-4. If multiple runs fail, check credentials, endpoint, bucket policy and
+4. If multiple runs fail, check credentials, bucket policy, region and
    upstream source changes before retrying.
 5. Record the incident and add a prevention action, such as a pre-upload
    checksum review or a larger SDK retry budget.
@@ -139,8 +140,7 @@ Terraform to do so.
 ### Scenario 5: Credentials are compromised
 
 1. Disable or rotate the exposed access key, session or role.
-2. Revoke the LocalStack test credentials from the shell; they are not valid
-   on real AWS but should still be removed from shared terminals.
+2. Remove any exported session credentials from shared terminals.
 3. Inspect CloudTrail for S3, IAM and SNS changes.
 4. Compare the latest manifest with `restore.mjs --list` for unexpected
    versions and delete markers.
@@ -214,7 +214,7 @@ Record the bucket name and run ID in the incident notes.
 | Accidental `terraform destroy` | Bucket and all versions removed | Demo uses `force_destroy = true` intentionally | Demo-only setting. Real buckets need `false`, deletion protection and approvals. |
 | Source data changed during a run | Mixed versions in one run | Files are read one at a time and hashed before upload | Take a consistent snapshot or quiesce writers for production. |
 | Missed schedule | No backup, no failure event | Manual run, report and `check-freshness.mjs` | Invoke the check from a scheduler. Add an external dead-man's-switch if the scheduler itself can fail silently. |
-| LocalStack fidelity | Local tests pass but AWS behavior differs | Real-AWS checklist and explicit limitations | Run the final evidence in real AWS; do not claim email, IAM enforcement or alarm transitions from LocalStack. |
+| Environment difference | A sandbox test passes but another AWS account behaves differently | Real-AWS evidence and explicit limitations | Re-run the checklist in the target account before relying on the backup. |
 | SSE-S3 only | Account-level readers can decrypt | Bucket policy, IAM, encryption at rest | A customer-managed KMS key with tighter key policy is a production option; deliberately not used to stay under budget. |
 | No MFA delete | A compromised root/admin can delete versions | IAM scope and approvals | Enable MFA delete or Object Lock for high-value buckets. |
 
@@ -225,6 +225,5 @@ Record the bucket name and run ID in the incident notes.
 - Before the final submission: complete every item in `docs/evidence.md`.
 - After any policy or Terraform change: repeat the restore test and update the
   RTO/RPO if the change affects recovery.
-- After the hackathon: destroy the demo stack and remove the LocalStack
-  container. The evidence is the report, manifest and captured logs, not the
-  live bucket.
+- After the hackathon: destroy the demo stack. The evidence is the report,
+  manifest and captured logs, not the live bucket.

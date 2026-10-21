@@ -1,8 +1,7 @@
 /**
  * Failure notification helpers.
  *
- * SNS is the core alert path. The optional CloudWatch custom metric feeds the
- * opt-in alarm in Terraform. Both are best-effort: a monitoring failure must
+ * SNS is the alert path. Alerting is best-effort: a monitoring failure must
  * never hide the result of the backup or verification operation.
  */
 
@@ -39,59 +38,13 @@ export async function publishAlert({ topicArn, subject, event, details }) {
   return { published: true, messageId: response.MessageId || null };
 }
 
-export async function publishFailureMetric({ namespace, failureCount }) {
-  if (!namespace) {
-    return {
-      published: false,
-      reason: "CLOUDWATCH_NAMESPACE is not set; CloudWatch metric skipped.",
-    };
-  }
-
-  const { CloudWatchClient, PutMetricDataCommand } = await import(
-    "@aws-sdk/client-cloudwatch"
-  );
-  const client = new CloudWatchClient(baseClientConfig());
-
-  await client.send(
-    new PutMetricDataCommand({
-      Namespace: namespace,
-      MetricData: [
-        {
-          MetricName: "BackupFailures",
-          Unit: "Count",
-          Value: Math.max(1, Number(failureCount) || 1),
-          Timestamp: new Date(),
-        },
-      ],
-    }),
-  );
-
-  return { published: true };
-}
-
-export async function notifyFailure({
-  topicArn,
-  subject,
-  event,
-  details,
-  metricNamespace,
-  failureCount,
-}) {
-  const result = { alert: null, metric: null, errors: [] };
+export async function notifyFailure({ topicArn, subject, event, details }) {
+  const result = { alert: null, errors: [] };
 
   try {
     result.alert = await publishAlert({ topicArn, subject, event, details });
   } catch (error) {
     result.errors.push(`SNS publish failed: ${friendlyAwsError(error)}`);
-  }
-
-  try {
-    result.metric = await publishFailureMetric({
-      namespace: metricNamespace,
-      failureCount,
-    });
-  } catch (error) {
-    result.errors.push(`CloudWatch metric publish failed: ${friendlyAwsError(error)}`);
   }
 
   return result;
@@ -102,12 +55,6 @@ export function printNotificationResult(result) {
     console.log(`[alerts] SNS message published (${result.alert.messageId || "no message id"}).`);
   } else if (result.alert?.reason) {
     console.warn(`[alerts] ${result.alert.reason}`);
-  }
-
-  if (result.metric?.published) {
-    console.log("[alerts] CloudWatch BackupFailures metric published.");
-  } else if (result.metric?.reason && result.alert?.published) {
-    console.warn(`[alerts] ${result.metric.reason}`);
   }
 
   for (const error of result.errors) {

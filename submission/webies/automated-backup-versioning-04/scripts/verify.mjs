@@ -17,7 +17,6 @@ import {
   DEFAULT_MANIFEST,
   friendlyAwsError,
   isNotFound,
-  getMetricNamespace,
   getTopicArn,
   readManifest,
   resolveInputPath,
@@ -37,7 +36,6 @@ Options:
   --bucket NAME          Bucket override (default: BUCKET_NAME or run bucket)
   --manifest FILE        Manifest path (default: manifests/manifest.json)
   --topic-arn ARN        SNS topic override (default: BACKUP_ALERTS_TOPIC_ARN)
-  --metric-namespace NS  CloudWatch namespace override (default: CLOUDWATCH_NAMESPACE)
   --no-alert             Do not publish an SNS failure alert
   --help                 Show this help
 
@@ -140,7 +138,6 @@ async function main() {
     "bucket",
     "manifest",
     "topic-arn",
-    "metric-namespace",
     "no-alert",
     "help",
   ]);
@@ -322,8 +319,6 @@ async function main() {
           manifest: toDisplayPath(manifestPath),
           failures: failedFiles,
         },
-        metricNamespace: getMetricNamespace(args),
-        failureCount: filesFailed,
       });
       printNotificationResult(notification);
     }

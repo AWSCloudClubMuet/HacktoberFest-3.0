@@ -29,7 +29,7 @@ restore, reporting, alert polling and missed-backup detection.
  |                                                        |          v         v
  |  lifecycle: noncurrent versions expire after 7 days    |     +---------+ +--------+
  +---------------------------+----------------------------+     | SQS     | | email  |
-                             |                                  | (local) | | (AWS)  |
+                             |                                  | queue   | | (opt.) |
                              | GetObject(VersionId)             +---------+ +--------+
                              v
  +--------------------------------------------------------+
@@ -43,11 +43,6 @@ restore, reporting, alert polling and missed-backup detection.
                   reports/backup-status.md
 ```
 
-The optional CloudWatch alarm watches a custom `BackupFailures` metric and
-publishes to the same SNS topic. It is disabled by default and is not required
-for the local demo because LocalStack alarm evaluation is not a reliable
-substitute for the SQS proof.
-
 ## Components
 
 | Component | Terraform resource | Purpose |
@@ -60,12 +55,11 @@ substitute for the SQS proof.
 | Lifecycle | `aws_s3_bucket_lifecycle_configuration.backup` | Expire noncurrent versions after 7 days; abort incomplete multipart uploads after 1 day. |
 | TLS policy | `aws_s3_bucket_policy.backup` | Deny all S3 actions when `aws:SecureTransport` is false. |
 | Backup IAM role | `aws_iam_role.backup` | Trusts the configured service principal (default `lambda.amazonaws.com`). |
-| Backup policy | `aws_iam_policy.backup` | List bucket/versions, get/put objects, publish alerts, optional metrics. |
+| Backup policy | `aws_iam_policy.backup` | List bucket/versions, get/put objects and publish alerts. |
 | Alert topic | `aws_sns_topic.backup_alerts` | Receives failed backup and failed verification events. |
-| Alert queue | `aws_sqs_queue.backup_alerts` | Local, inspectable subscriber; proves the SNS path without email. |
+| Alert queue | `aws_sqs_queue.backup_alerts` | Durable, inspectable subscriber for the SNS alert path. |
 | Queue policy | `aws_sqs_queue_policy.backup_alerts` | Allows only the matching SNS topic to send messages. |
 | Subscriptions | `aws_sns_topic_subscription.sqs`, `.email` | SQS always; email only when `alert_email` is set. |
-| Alarm (optional) | `aws_cloudwatch_metric_alarm.backup_failures` | Fires when `BackupFailures` is at least 1 in a 5-minute period. |
 
 ## Data flow
 
@@ -110,39 +104,28 @@ is `backups/20261021T062253222Z-d4b5f98d/customers.csv`.
 - The bucket is private. Block Public Access is fully enabled.
 - ACLs are disabled with `BucketOwnerEnforced`.
 - Objects are encrypted with SSE-S3 and uploads explicitly request `AES256`.
-- The bucket policy rejects plaintext HTTP. LocalStack runs on HTTP and may
-  not evaluate the condition; real AWS does.
+- The bucket policy rejects plaintext HTTP.
 - The backup role has no delete permissions and no wildcard bucket access.
-  It can list the bucket, get/put objects, list versions, publish to the
-  alert topic, and put the optional failure metric in one namespace.
-- Scripts use the standard AWS credential chain. No access key, secret key,
-  session token or LocalStack license token appears in source, Terraform or
-  documentation.
+  It can list the bucket, get/put objects, list versions and publish to the
+  alert topic.
+- Scripts use the standard AWS credential chain. No access key, secret key or
+  session token appears in source, Terraform or documentation.
 - SNS to SQS is restricted by a queue policy with an `aws:SourceArn`
   condition.
 - Terraform state, provider caches, `terraform.tfvars`, `node_modules` and
   restored files are gitignored.
 
-The IAM role is attached to no compute by default because the demo runs as a
-local CLI. For a scheduled deployment, attach the role to a Lambda function,
-ECS task or EC2 instance and change `backup_job_principal` to the matching
-service principal.
+The IAM role is attached to no compute by default because the demo runs as an
+operator CLI. For a scheduled deployment, attach the role to a Lambda
+function, ECS task or EC2 instance and change `backup_job_principal` to the
+matching service principal.
 
-## LocalStack and real AWS
+## AWS environment
 
-The Terraform provider is selected by one variable:
-
-- `use_localstack = true` (default): sets S3, SNS, SQS, IAM, STS and
-  CloudWatch endpoints to `localstack_endpoint`, enables path-style S3, and
-  skips account/credential validation. `AWS_ACCESS_KEY_ID=test` and
-  `AWS_SECRET_ACCESS_KEY=test` are exported by the operator.
-- `use_localstack = false`: all endpoints are null, so the provider uses
-  normal AWS endpoints and the standard credential chain.
-
-The Node code uses `AWS_ENDPOINT_URL` only. When set, the S3 client uses that
-endpoint and `forcePathStyle: true`. When unset, it uses virtual-hosted-style
-requests and normal AWS endpoints. No application code changes are needed to
-switch environments.
+Terraform uses the standard AWS provider and the standard credential chain.
+Set `AWS_PROFILE`, `AWS_REGION` or the corresponding role/session environment
+before running `terraform` or the Node scripts. There is one code path for
+real AWS; no endpoint override or path-style switch is needed.
 
 ## Failure and alert design
 
@@ -152,11 +135,8 @@ switch environments.
   `backup.missed` JSON events with the run ID, bucket, failure details and
   manifest path.
 - SQS uses raw message delivery, so the queue body is the original JSON.
-- The same SNS topic can have an email subscription on real AWS. The email
-  must be confirmed before delivery works.
-- The optional CloudWatch alarm uses `BackupFailures`; `backup.mjs`,
-  `verify.mjs` and `check-freshness.mjs` publish the metric only when
-  `CLOUDWATCH_NAMESPACE` is set.
+- The same SNS topic can have an email subscription. The email must be
+  confirmed before delivery works.
 - `check-freshness.mjs` detects a missed backup by comparing the latest
   successful manifest run with a configurable age limit (default 26 hours).
   It exits 1 and publishes `backup.missed` when the data is stale. It still
@@ -180,14 +160,14 @@ switch environments.
 ## Optional AWS extensions (documented only, not implemented)
 
 These are deliberately outside the core solution because the demo must remain
-small, cheap and fully testable under LocalStack.
+small and cheap to run in a sandbox.
 
 | Extension | How it would fit | Why it is not in the core |
 | --- | --- | --- |
 | S3 report storage | Upload `reports/backup-status.md` and the manifest to a separate `reports/` prefix or a separate bucket after each run. | The demo reports locally for easy review; IAM already permits PutObject under `reports/`. |
 | Cross-region replication | Replicate the versioned bucket to a second region with replication rules and a replica KMS/SSE policy. | Adds a second region, replication IAM, storage and transfer cost; regional failover is outside a 5-hour demo. |
-| AWS Backup | Create a backup plan and vault for a second, independent recovery copy. | The issue asks for a small S3 versioning demo; AWS Backup adds a vault and plan that LocalStack does not faithfully emulate. |
-| EventBridge + Lambda | Run `backup.mjs` on a schedule inside Lambda and emit a success heartbeat for a dead-man's-switch alarm. | Requires packaging, a Lambda role/trust change, and scheduled invocation; the core role is ready but no compute is deployed. |
+| AWS Backup | Create a backup plan and vault for a second, independent recovery copy. | The issue asks for a small S3 versioning demo; AWS Backup adds a vault and plan that is outside the requested scope. |
+| EventBridge + Lambda | Run `backup.mjs` on a schedule inside Lambda and emit a success heartbeat for an external dead-man's-switch check. | Requires packaging, a Lambda role/trust change, and scheduled invocation; the core role is ready but no compute is deployed. |
 
 If these are added later, keep the least-privilege role scoped to the new
 bucket, prefix and topic rather than granting wildcard S3 access.
@@ -197,6 +177,4 @@ bucket, prefix and topic rather than granting wildcard S3 access.
 - S3 storage for the five sample files is negligible.
 - SNS and SQS are within the free tier for this volume.
 - SSE-S3 avoids KMS key and request charges.
-- The optional custom metric and alarm cost roughly USD 0.40 per month; they
-  are disabled by default.
 - No NAT Gateway, cross-region replication or AWS Backup resources are created.

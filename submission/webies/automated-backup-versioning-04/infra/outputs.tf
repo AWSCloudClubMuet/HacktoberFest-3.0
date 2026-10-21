@@ -24,7 +24,7 @@ output "region" {
 }
 
 output "sqs_queue_url" {
-  description = "SQS queue URL that receives SNS failure alerts for local verification."
+  description = "SQS queue URL that receives SNS failure alerts for verification."
   value       = aws_sqs_queue.backup_alerts.id
 }
 
@@ -38,22 +38,7 @@ output "noncurrent_version_retention_days" {
   value       = var.noncurrent_version_retention_days
 }
 
-output "cloudwatch_metric_namespace" {
-  description = "Namespace expected by the optional CloudWatch failure alarm."
-  value       = var.cloudwatch_metric_namespace
-}
-
-output "cloudwatch_alarm_name" {
-  description = "Name of the optional CloudWatch alarm, or null when it is disabled."
-  value       = var.enable_cloudwatch_alarm ? aws_cloudwatch_metric_alarm.backup_failures[0].alarm_name : null
-}
-
 output "alert_email_subscription_arn" {
   description = "ARN of the optional email subscription, or null when no email is configured."
   value       = var.alert_email == "" ? null : aws_sns_topic_subscription.email[0].arn
-}
-
-output "localstack_endpoint" {
-  description = "LocalStack endpoint in use, or null for real AWS."
-  value       = var.use_localstack ? var.localstack_endpoint : null
 }

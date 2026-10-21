@@ -1,88 +1,61 @@
 # Limitations
 
-This document separates what the demo actually proves from what LocalStack
-can only approximate and from what the production design deliberately leaves
-out. Do not present an approximation as a real AWS result.
+This document separates what the demo actually proves from what remains
+untested or deliberately out of scope. Do not present an unverified
+assumption as a real AWS result.
 
-## LocalStack fidelity
+## Verification boundaries
 
 ### SNS email delivery
 
-LocalStack can create an email subscription, but it does not deliver real
-email. The core demo therefore uses an SQS queue as the local subscriber and
-`scripts/poll-alerts.mjs` to read the raw JSON message. On real AWS the same
-SNS topic can have an email subscription, but the recipient must confirm the
-subscription before messages are delivered.
+The SNS topic can have an email subscription. The 2026-10-21 real-AWS run
+confirmed the subscription and SNS accepted a test publish. Actual inbox
+receipt is external to the automation and is not claimed as evidence.
 
-Evidence that is valid locally: the SNS publish call succeeds and the SQS
-queue contains the expected JSON. Evidence that is not valid locally: an inbox
-screenshot or a claim that email works.
-
-### CloudWatch alarm evaluation
-
-LocalStack can store a metric alarm, and `backup.mjs` can publish the custom
-`BackupFailures` metric. LocalStack's alarm evaluation, state transitions and
-alarm actions are not reliable enough to be the demo's proof, so the alarm is
-disabled by default. The demo proves the core SNS -> SQS path instead.
-
-On real AWS, create the alarm with
-`-var="enable_cloudwatch_alarm=true"`, export `CLOUDWATCH_NAMESPACE`, trigger a
-failure, and capture the alarm state change and notification. Do not claim the
-alarm fired locally unless the LocalStack console actually shows it.
+SQS is the durable, inspectable subscriber: the queue contains the raw JSON
+event, and `scripts/poll-alerts.mjs` reads it without depending on email.
 
 ### IAM enforcement
 
-LocalStack commonly accepts the conventional `test`/`test` credentials and may
-not enforce the least-privilege IAM policy for S3, SNS and CloudWatch calls.
-The Terraform policy is still created and can be inspected, but a successful
-local upload does not prove that the role is sufficient or that an
-over-permissioned role would fail.
+The Terraform policy is created and was checked with
+`aws iam simulate-principal-policy`. The simulation allowed bucket listing,
+object reads and writes, and SNS publishing, and returned implicit deny for
+`DeleteObject` and `DeleteObjectVersion`.
 
-Some LocalStack Pro configurations can enable IAM enforcement. If you enable
-it, the scripts must assume or use a role with the policy; the default demo
-does not do that. Real AWS is the authoritative IAM test. Treat the role as a
-deliverable to be reviewed and attached to a real runtime, not as a local
-security boundary that was exercised.
+The role is not attached to compute in the demo, so actual role assumption and
+runtime enforcement were not exercised. The operator CLI uses its own
+credentials. Treat the role as a deliverable to be reviewed and attached to a
+real runtime, not as a security boundary that was exercised end to end.
 
 ### Lifecycle timing
 
-The lifecycle rule is created and can be read back. LocalStack does not wait
-seven days or reliably run the same lifecycle scheduler as S3. A local
-`get-bucket-lifecycle-configuration` proves the configuration, not that a
-noncurrent version expired on day 7.
-
-Real S3 evaluates lifecycle rules asynchronously, typically once per day, and
-does not guarantee an exact expiration timestamp. The 7-day value is a policy
+The lifecycle rule is created and can be read back. The 7-day rule was not
+waited for, and S3 evaluates lifecycle rules asynchronously, typically once
+per day, without an exact expiration timestamp. The 7-day value is a policy
 window, not a stopwatch. Plan retention with margin.
 
 ### TLS-only bucket policy
 
-The bucket policy denies requests where `aws:SecureTransport` is false. Real
-AWS enforces this. LocalStack serves plain HTTP on `localhost:4566` and may
-not populate or evaluate that condition consistently, so local requests can
-still succeed with the policy present.
-
-This means the local demo does not prove TLS enforcement. The policy JSON is
-the evidence locally; an HTTPS-only access test is the evidence on real AWS.
+The bucket policy denies requests where `aws:SecureTransport` is false. The
+real-AWS run proved this with a presigned URL: HTTPS returned 200 and the same
+URL over HTTP returned 403.
 
 ### S3 versioning and encryption
 
-LocalStack implements version IDs and delete markers well enough for this
-workflow, and the `AES256` encryption setting is stored. It does not reproduce
-AWS durability, storage-class behavior, cross-region behavior or the actual
-server-side encryption boundary. SSE-S3 is an AWS-managed encryption at rest,
-not client-side encryption and not a KMS customer-managed key.
+The real-AWS run proved version IDs, noncurrent versions and restore by exact
+version ID. It did not reproduce AWS durability across availability zones or a
+regional outage. SSE-S3 is AWS-managed encryption at rest, not client-side
+encryption and not a KMS customer-managed key.
 
 ### Other service differences
 
-- SNS/SQS quotas, retry behavior and visibility-timeout edge cases differ.
-- SQS queue URLs may use a LocalStack host-style name; the poller rewrites
-  the host to the configured edge endpoint.
-- CloudWatch metric retention and alarm action delivery are not production
-  equivalents.
-- IAM policy simulation and AWS Organizations controls are out of scope.
+- SNS/SQS quotas, retry behavior and visibility-timeout edge cases were not
+  exhaustively tested.
+- IAM policy simulation does not replace a runtime test with the actual role.
 - S3 event notifications, Object Lock, MFA delete and replication are not
   exercised.
+- AWS Organizations controls, service quotas and billing guardrails are out of
+  scope.
 
 ## Application limitations
 
@@ -98,28 +71,30 @@ not client-side encryption and not a KMS customer-managed key.
 | No MFA delete | A compromised administrator can delete versions. | Enable MFA delete for high-value buckets and restrict root use. |
 | No KMS customer-managed key | Account-level readers can decrypt SSE-S3 data. | Use SSE-KMS with a tightly scoped key policy if required; this was excluded to stay under budget. |
 | `force_destroy = true` | `terraform destroy` deletes every version, which is convenient for the demo and unsafe for real data. | Set `force_destroy = false` for retained data and require an approved deletion process. |
-| Role not attached to compute | The IAM role exists but the local CLI uses the operator's credentials. | Attach the role to Lambda/ECS/EC2 and change `backup_job_principal`. |
+| Role not attached to compute | The IAM role exists but the operator CLI uses its own credentials. | Attach the role to Lambda/ECS/EC2 and change `backup_job_principal`. |
 | Local reports | `reports/backup-status.md` is a file, not a hosted dashboard. | Publish it to S3 static hosting or a monitoring system; optional only. |
 | Synthetic data | The sample contains no personal or regulated data. | Classify and review real data before extending the scope. |
 
-## What was not validated locally
+## What was not proven
 
-The following items require real AWS and are intentionally left for the final
-manual evidence run:
+The 2026-10-21 real-AWS run covered the core requirements, but the following
+remain unproven or out of scope:
 
-- Real SNS email delivery and subscription confirmation.
-- Real CloudWatch alarm state transitions and alarm action delivery.
-- Actual IAM enforcement of the least-privilege policy.
-- Real lifecycle expiration after the retention period.
-- TLS-only enforcement against an HTTP client.
+- Actual inbox receipt of the SNS email test. The subscription was confirmed
+  and SNS accepted the publish.
+- Actual lifecycle expiration after the retention period. The 7-day rule was
+  captured but not waited for.
+- Actual role assumption and runtime IAM enforcement. The policy was
+  simulated, and the role is not attached to compute.
 - Cross-region behavior, AWS Backup and replication (not implemented).
 - AWS service quotas, billing and account-level guardrails.
 
-The LocalStack validation does cover: Terraform apply/validate, bucket
-versioning, public access block, SSE-S3 configuration, ownership controls,
-lifecycle configuration, version listing, upload of two versions, restore by
-version ID with SHA-256 proof, manifest append, verification pass and failure,
-SNS -> SQS delivery, report rendering and `terraform destroy`.
+The real-AWS run did cover: Terraform apply/validate, bucket versioning,
+public access block, SSE-S3 configuration, ownership controls, lifecycle
+configuration, version listing, upload of two versions, restore by version ID
+with SHA-256 proof, manifest append, verification pass and failure, SNS to SQS
+delivery, report rendering, TLS-only enforcement, IAM policy simulation and
+`terraform destroy`.
 
 ## Scope exclusions
 

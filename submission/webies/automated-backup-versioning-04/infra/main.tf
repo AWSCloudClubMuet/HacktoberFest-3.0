@@ -160,28 +160,6 @@ resource "aws_sns_topic_subscription" "email" {
 }
 
 ###############################################################################
-# Optional CloudWatch alarm on the custom BackupFailures metric
-###############################################################################
-
-resource "aws_cloudwatch_metric_alarm" "backup_failures" {
-  count = var.enable_cloudwatch_alarm ? 1 : 0
-
-  alarm_name          = "${var.project_name}-backup-failures"
-  alarm_description   = "At least one backup file failed in the last 5 minutes. Check the backup manifest and S3."
-  namespace           = var.cloudwatch_metric_namespace
-  metric_name         = "BackupFailures"
-  statistic           = "Sum"
-  period              = 300
-  evaluation_periods  = 1
-  threshold           = 1
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.backup_alerts.arn]
-
-  tags = var.tags
-}
-
-###############################################################################
 # Least-privilege role for the backup process
 ###############################################################################
 
@@ -233,23 +211,6 @@ data "aws_iam_policy_document" "backup" {
     sid       = "PublishFailureAlerts"
     actions   = ["sns:Publish"]
     resources = [aws_sns_topic.backup_alerts.arn]
-  }
-
-  dynamic "statement" {
-    for_each = var.enable_cloudwatch_alarm ? [1] : []
-
-    content {
-      sid       = "PublishFailureMetric"
-      actions   = ["cloudwatch:PutMetricData"]
-      resources = ["*"]
-
-      # PutMetricData has no resource-level ARN; constrain it to the app namespace.
-      condition {
-        test     = "StringEquals"
-        variable = "cloudwatch:namespace"
-        values   = [var.cloudwatch_metric_namespace]
-      }
-    }
   }
 }
 

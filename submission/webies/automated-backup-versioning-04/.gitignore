@@ -36,10 +36,12 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Local temporary report output
+# Default generated outputs. Use --manifest / --out to keep a copy elsewhere.
+manifests/manifest.json
+reports/backup-status.md
 reports/*.tmp
 
-# Keep the generated evidence reports required by issue #4. The team-level
-# .gitignore excludes generated reports; these two are intentional evidence.
-!reports/backup-status.md
+# Keep the sample render and the real-AWS evidence report. The team-level
+# .gitignore excludes generated reports; these are intentional evidence.
 !reports/backup-status.sample.md
+!reports/real-aws-backup-status.md

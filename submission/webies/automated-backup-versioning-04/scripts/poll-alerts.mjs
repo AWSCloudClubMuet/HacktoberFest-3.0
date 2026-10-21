@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Receive failure alerts from the SQS queue that is subscribed to the SNS
- * alert topic. LocalStack does not deliver real email, so this queue is the
- * local proof that the SNS -> SQS alert path works.
+ * alert topic. The queue is a durable subscriber alongside any optional email
+ * subscription.
  */
 
 import {
@@ -16,7 +16,7 @@ import {
   parseIntegerOption,
   printFatal,
 } from "./lib/cli.mjs";
-import { baseClientConfig, friendlyAwsError, getEndpoint } from "./lib/s3.mjs";
+import { baseClientConfig, friendlyAwsError } from "./lib/s3.mjs";
 
 const HELP = `Usage: node scripts/poll-alerts.mjs [options]
 
@@ -34,22 +34,6 @@ Exit codes:
   0  messages printed, or no messages and --expect was not set
   1  no messages and --expect was set, or the queue could not be read
 `;
-
-function normalizeQueueUrl(queueUrl, endpoint) {
-  if (!endpoint) {
-    return queueUrl;
-  }
-
-  try {
-    const queue = new URL(queueUrl);
-    const edge = new URL(endpoint);
-    // LocalStack returns host-style queue URLs. Point the path at the edge
-    // endpoint so the same script works with http://localhost:4566.
-    return `${edge.origin}${queue.pathname}${queue.search}`;
-  } catch {
-    return queueUrl;
-  }
-}
 
 function formatBody(body) {
   try {
@@ -87,7 +71,7 @@ async function main() {
     max: 20,
     fallback: 5,
   });
-  const queueUrl = normalizeQueueUrl(rawQueueUrl, getEndpoint());
+  const queueUrl = rawQueueUrl;
   const client = new SQSClient(baseClientConfig());
 
   const response = await client.send(

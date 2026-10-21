@@ -4,23 +4,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "use_localstack" {
-  description = "Send provider traffic to LocalStack instead of real AWS."
-  type        = bool
-  default     = true
-}
-
-variable "localstack_endpoint" {
-  description = "LocalStack edge endpoint for S3, SNS, SQS, IAM, STS and CloudWatch."
-  type        = string
-  default     = "http://localhost:4566"
-
-  validation {
-    condition     = can(regex("^https?://[^/]+", var.localstack_endpoint))
-    error_message = "localstack_endpoint must start with http:// or https://."
-  }
-}
-
 variable "project_name" {
   description = "Prefix used for named AWS resources."
   type        = string
@@ -68,23 +51,6 @@ variable "alert_email" {
   validation {
     condition     = var.alert_email == "" || can(regex("^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$", var.alert_email))
     error_message = "alert_email must be empty or look like name@example.com."
-  }
-}
-
-variable "enable_cloudwatch_alarm" {
-  description = "Create the optional CloudWatch alarm on the custom BackupFailures metric."
-  type        = bool
-  default     = false
-}
-
-variable "cloudwatch_metric_namespace" {
-  description = "Namespace used by backup.mjs for the optional failure metric."
-  type        = string
-  default     = "WebiesBackup"
-
-  validation {
-    condition     = can(regex("^[A-Za-z0-9._-]{1,255}$", var.cloudwatch_metric_namespace))
-    error_message = "cloudwatch_metric_namespace contains invalid characters."
   }
 }
 
