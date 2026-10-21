@@ -46,7 +46,7 @@ export default function LoginPage() {
           <span>campus<span className="brand-accent">loop</span></span>
         </div>
         <h1 className="auth-title">Welcome back</h1>
-        <p className="modal-description">Sign in to post gigs, apply, and build your reputation.</p>
+        <p className="modal-description">Sign in to post and apply to gigs.</p>
         <form className="dialog-form auth-form" onSubmit={signIn}>
           <div>
             <Label htmlFor="login-email">Email</Label>
