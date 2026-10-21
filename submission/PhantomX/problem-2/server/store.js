@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-let state = { users: [], gigs: [], applications: [], reviews: [] };
+let state = { users: [], gigs: [], applications: [], reviews: [], messages: [] };
 let loadedMtime = -1;
 
 export function dataFile() {
@@ -14,6 +14,7 @@ export function dataFile() {
 function readFromDisk() {
   const file = dataFile();
   state = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (!Array.isArray(state.messages)) state.messages = [];
   loadedMtime = fs.statSync(file).mtimeMs;
 }
 

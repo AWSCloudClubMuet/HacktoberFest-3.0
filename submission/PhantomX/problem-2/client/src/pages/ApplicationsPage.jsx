@@ -110,6 +110,9 @@ function ApplicationCard({ application }) {
       ) : null}
       <p className="break-words text-base text-secondary">{application.message}</p>
       <p className="text-sm text-muted">Submitted {formatWhen(application.created_at)}</p>
+      {accepted && gig?.accepted_applicant_id ? (
+        <Link to={`/gigs/${application.gig_id}#chat`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Open chat</Link>
+      ) : null}
       {accepted && gig?.status === 'Completed' ? (
         <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Leave a review</Link>
       ) : null}

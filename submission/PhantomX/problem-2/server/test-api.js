@@ -334,6 +334,29 @@ try {
     stored.users.every((user) => user.average_rating === undefined && user.gigs_posted === undefined),
     'average rating is not stored on the user',
   );
+
+  const chatGig = gigs.find((item) => item.status === 'In Progress' && item.accepted_applicant_id);
+  const outsider = users.find((user) => user.id !== chatGig.user_id && user.id !== chatGig.accepted_applicant_id);
+  const deniedRead = await api('GET', `/gigs/${chatGig.id}/messages`, { user: outsider.id });
+  check(deniedRead.status === 403, 'outsider cannot read chat', deniedRead);
+  const deniedSend = await api('POST', `/gigs/${chatGig.id}/messages`, {
+    user: outsider.id,
+    body: { text: 'Hello from outside the gig.' },
+  });
+  check(deniedSend.status === 403, 'outsider cannot send chat', deniedSend);
+  const sent = await api('POST', `/gigs/${chatGig.id}/messages`, {
+    user: chatGig.user_id,
+    body: { text: 'See you at the walkthrough.' },
+  });
+  const thread = await api('GET', `/gigs/${chatGig.id}/messages`, { user: chatGig.accepted_applicant_id });
+  check(
+    sent.status === 201
+      && sent.data.text === 'See you at the walkthrough.'
+      && thread.status === 200
+      && thread.data.some((message) => message.id === sent.data.id && message.sender_id === chatGig.user_id),
+    'participant can send and read chat',
+    { sent, thread: thread.status },
+  );
 } catch (error) {
   console.error(error);
   failures.push(error.message);

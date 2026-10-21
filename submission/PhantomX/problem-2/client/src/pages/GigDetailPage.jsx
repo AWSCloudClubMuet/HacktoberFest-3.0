@@ -18,7 +18,7 @@ import {
   statusTone,
   textLinkClass,
 } from '../components.jsx';
-import { ApplicantCard, ApplyWizard, ConfirmDialog, GigStepper, Tabs } from '../flow.jsx';
+import { ApplicantCard, ApplyWizard, ConfirmDialog, GigChat, GigStepper, Tabs } from '../flow.jsx';
 
 export function GigDetailPage({ gigId }) {
   const { userId, users, pushToast } = useApp();
@@ -339,6 +339,7 @@ export function GigDetailPage({ gigId }) {
           )}
         </aside>
       </div>
+      {isParty && gig.accepted_applicant_id ? <GigChat gig={gig} userId={userId} users={users} /> : null}
       <ApplyWizard
         gig={gig}
         poster={poster}

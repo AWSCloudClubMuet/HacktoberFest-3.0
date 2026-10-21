@@ -25,11 +25,20 @@ Log out from the name in the header when you want to switch students.
 
 | Student | What you will see |
 | --- | --- |
-| Aisha Khan | Poster view. Her open gig **React office hours** has pending applications from Bilal, Sara, and Fatima. Accept one to move it to In Progress and reject the others. |
-| Bilal Ahmed | Applicant view. **React office hours** is Pending, **Portfolio thumbnail set** is Accepted, and **Slide deck critique for a logo** is Rejected. |
-| Sara Malik | Completed work and a rating. She is the accepted student on **Design critique session** and **Abstract rewrite**, and her profile average comes from those reviews. |
-| Hamza Raza | An in-progress gig. He owns **Node API walkthrough**, with Fatima Noor already accepted. |
+| Aisha Khan | Poster view. Her open gig **React office hours** has pending applications from Bilal, Sara, and Fatima. Accept one to move it to In Progress and reject the others. She also has a chat with Sara on the completed gig **Abstract rewrite**. |
+| Bilal Ahmed | Applicant view. **React office hours** is Pending, **Portfolio thumbnail set** is Accepted, and **Slide deck critique for a logo** is Rejected. He has no seeded chat. |
+| Sara Malik | Completed work and a rating. She is the accepted student on **Design critique session** and **Abstract rewrite**, and her profile average comes from those reviews. **Abstract rewrite** has a chat with Aisha. |
+| Hamza Raza | An in-progress gig. He owns **Node API walkthrough**, with Fatima Noor already accepted. That gig has a chat between Hamza and Fatima. |
 | Zainab Tariq | A fresh account. She has no gigs and no applications, so she is the right person for creating a gig and applying for the first time. |
+
+## Chats
+
+Run `npm run seed` so these threads are in `data/db.json`.
+
+- **Node API walkthrough** — Hamza Raza (owner) and Fatima Noor (accepted). In Progress, so both can send. Open it from Hamza's **My gigs** via **Open chat**.
+- **Abstract rewrite** — Aisha Khan (owner) and Sara Malik (accepted). Completed, so the chat stays open. Sara reaches it from **My applications**.
+
+**Start video call** opens a Jitsi room in a new tab. **Share call link** posts that same URL into the chat. Zainab is not on either thread, so she cannot read or send.
 
 ## Suggested 5-minute walkthrough
 

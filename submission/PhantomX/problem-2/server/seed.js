@@ -154,11 +154,39 @@ const reviews = reviewRows.map(([id, gig_id, reviewer_id, reviewee_id, rating, c
   created_at: createdAfter(gig_id, 2),
 }));
 
+function hoursAfter(gigId, hours) {
+  const gig = gigById.get(gigId);
+  return new Date(new Date(gig.created_at).getTime() + hours * 60 * 60 * 1000).toISOString();
+}
+
+// Two existing threads: Hamza and Fatima on the in-progress API walkthrough,
+// and Aisha and Sara on the completed abstract rewrite.
+const messageRows = [
+  ['m01', 'g17', 'u06', 'Can we start with the routes, then the error handler?', 2],
+  ['m02', 'g17', 'u04', 'Yes. Bring the repo and we will follow one request through to the JSON response.', 3],
+  ['m03', 'g17', 'u06', 'I am free tomorrow after 4. Does that still work?', 26],
+  ['m04', 'g17', 'u04', 'Tomorrow after 4 works. I will share a video call link in this chat.', 27],
+  ['m05', 'g17', 'u06', 'Perfect. I will have the failing request ready.', 28],
+  ['m06', 'g25', 'u03', 'The second paragraph of the abstract is the one I am unsure about.', 2],
+  ['m07', 'g25', 'u01', 'I will tighten that paragraph and keep the word count under 250.', 5],
+  ['m08', 'g25', 'u03', 'Thank you. The claim in the last sentence can be shorter too.', 6],
+  ['m09', 'g25', 'u01', 'Done. The rewrite is shorter and the claim is easier to follow.', 30],
+  ['m10', 'g25', 'u03', 'This reads much more clearly. I will leave a review.', 32],
+];
+
+const messages = messageRows.map(([id, gig_id, sender_id, text, hours]) => ({
+  id,
+  gig_id,
+  sender_id,
+  text,
+  created_at: hoursAfter(gig_id, hours),
+}));
+
 function assertSeed(data) {
   const fail = (message) => {
     throw new Error(`Seed check failed: ${message}`);
   };
-  const { users: seededUsers, gigs: seededGigs, applications: seededApps, reviews: seededReviews } = data;
+  const { users: seededUsers, gigs: seededGigs, applications: seededApps, reviews: seededReviews, messages: seededMessages } = data;
 
   if (seededUsers.length < 12) fail(`expected at least 12 users, got ${seededUsers.length}`);
   if (seededGigs.length < 25) fail(`expected at least 25 gigs, got ${seededGigs.length}`);
@@ -176,6 +204,27 @@ function assertSeed(data) {
   unique(seededGigs, 'gig');
   unique(seededApps, 'application');
   unique(seededReviews, 'review');
+  unique(seededMessages, 'message');
+  if (seededMessages.length < 8 || seededMessages.length > 10) {
+    fail(`expected 8 to 10 messages, got ${seededMessages.length}`);
+  }
+  const gigBySeedId = new Map(seededGigs.map((gig) => [gig.id, gig]));
+  const chatGigIds = new Set();
+  for (const message of seededMessages) {
+    const gig = gigBySeedId.get(message.gig_id);
+    if (!gig) fail(`message ${message.id} references unknown gig ${message.gig_id}`);
+    if (gig.status !== 'In Progress' && gig.status !== 'Completed') {
+      fail(`message ${message.id} is on a gig that is ${gig.status}`);
+    }
+    if (message.sender_id !== gig.user_id && message.sender_id !== gig.accepted_applicant_id) {
+      fail(`message ${message.id} sender is not a participant`);
+    }
+    if (typeof message.text !== 'string' || message.text.trim() === '' || message.text.length > 1000) {
+      fail(`message ${message.id} has invalid text`);
+    }
+    chatGigIds.add(message.gig_id);
+  }
+  if (chatGigIds.size !== 2) fail(`expected messages on 2 gigs, got ${chatGigIds.size}`);
 
   const userIds = new Set(seededUsers.map((user) => user.id));
   for (const category of ['Programming', 'Design', 'Writing', 'Tutoring']) {
@@ -322,7 +371,7 @@ function assertSeed(data) {
 }
 
 export function buildData() {
-  return { users, gigs, applications, reviews };
+  return { users, gigs, applications, reviews, messages };
 }
 
 export function writeSeed() {
@@ -337,6 +386,6 @@ export function writeSeed() {
 const invoked = process.argv[1] ? path.resolve(process.argv[1]) : '';
 if (invoked === fileURLToPath(import.meta.url)) {
   const data = writeSeed();
-  console.log(`Seeded ${data.users.length} users, ${data.gigs.length} gigs, ${data.applications.length} applications, ${data.reviews.length} reviews`);
+  console.log(`Seeded ${data.users.length} users, ${data.gigs.length} gigs, ${data.applications.length} applications, ${data.reviews.length} reviews, ${data.messages.length} messages`);
   console.log(`Wrote ${dataFile()}`);
 }

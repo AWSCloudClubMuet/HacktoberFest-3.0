@@ -51,6 +51,8 @@ Computed on read, never stored or patched:
 
 **Reviews:** `id`, `gig_id`, `reviewer_id`, `reviewee_id`, `rating` (integer 1–5), `comment`.
 
+**Messages:** `id`, `gig_id`, `sender_id`, `text` (required, max 1000), `created_at`. Only the gig owner and the accepted applicant can read or send them.
+
 ## Gig status workflow
 
 Effective status: if stored `status` is `Open` and `deadline` is before now, the gig is `Expired`. List, detail, filters, and rules use effective status. Do not let clients set `Expired` directly.
@@ -102,6 +104,13 @@ Reviews:
 - `rating` integer 1–5. `comment` required, non-empty, max 500 characters.
 - Profile averages come from these rows. No endpoint edits `average_rating`.
 
+Chat (`GET` and `POST /gigs/:id/messages`):
+
+- The gig must have `accepted_applicant_id`. Otherwise `409`.
+- Only the owner and the accepted applicant may read or send. Anyone else is `403`.
+- Sending is allowed when the effective status is `In Progress` or `Completed`. `Cancelled` and `Expired` are read-only (`409` on send).
+- `text` is required, trimmed, and at most 1000 characters.
+
 ## API
 
 | Method | Path | Purpose |
@@ -120,6 +129,8 @@ Reviews:
 | PATCH | `/applications/:id` | Owner sets `Accepted` or `Rejected` |
 | GET | `/reviews` | Query: `reviewee_id`. Omit it to return every review |
 | POST | `/reviews` | Review the other party |
+| GET | `/gigs/:id/messages` | Chat for the owner and accepted applicant |
+| POST | `/gigs/:id/messages` | Send `{ text }`. Read-only when Cancelled or Expired |
 
 Errors use `{ "error": "..." }`. `400` validation. `401` missing or invalid token, or wrong login (`Invalid email or password`). `403` not the owner, applying to your own gig, or reviewing when you are not a participant. `404` unknown user, gig, or application. `409` duplicate email, duplicate application, duplicate review, or an illegal status change.
 
@@ -127,7 +138,7 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 
 ## Seed data
 
-`npm run seed` writes `data/db.json`. Counts are minimums; relationships must already satisfy the rules above. The current seed is 12 users, 27 gigs, 35 applications, and 9 reviews. Every user has `firstname.lastname@campus.edu` and the bcrypt hash of `Demo@1234`. u01–u05 are Aisha Khan, Bilal Ahmed, Sara Malik, Hamza Raza, and Zainab Tariq. See `DEMO_ACCOUNTS.md`.
+`npm run seed` writes `data/db.json`. Counts are minimums; relationships must already satisfy the rules above. The current seed is 12 users, 27 gigs, 35 applications, 9 reviews, and 10 messages. Every user has `firstname.lastname@campus.edu` and the bcrypt hash of `Demo@1234`. u01–u05 are Aisha Khan, Bilal Ahmed, Sara Malik, Hamza Raza, and Zainab Tariq. See `DEMO_ACCOUNTS.md`.
 
 - At least 12 users with names, majors, semesters, bios, and skills.
 - At least 25 gigs across Programming, Design, Writing, and Tutoring; both `Offering` and `Requesting`; all three payment types; all five effective statuses.
@@ -135,6 +146,7 @@ Every route except `/auth/*` requires a bearer token. `/auth/me` still requires 
 - Each `In Progress` and `Completed` gig has `accepted_applicant_id` and exactly one `Accepted` application. Other applications on that gig are `Rejected`.
 - At least 20 applications mixed across `Pending`, `Accepted`, and `Rejected`.
 - At least 8 reviews, only on `Completed` gigs, each from owner or accepted applicant to the other, one per reviewer per gig, ratings 1–5.
+- 10 messages across two gigs: Hamza Raza and Fatima Noor on **Node API walkthrough** (In Progress), and Aisha Khan and Sara Malik on **Abstract rewrite** (Completed).
 
 ## Coding conventions
 
@@ -174,7 +186,8 @@ Each section is what the visitor wants to do, so the catalogue shows the opposit
 - A section catalogue, its search results, category chips, and See all rows show only that browse type, excluding the current user's gigs. Expired and Cancelled gigs stay out of the catalogue.
 - My gigs lists everything the user posted, with sub-tabs "Offered by me" and "Requested by me". My applications lists every application, with counts for All, Under review, Accepted, and Rejected. Pending is shown as Under review.
 - "Post a gig" inside Offer a service opens `/gigs/new?type=Offering`. Inside Request a service it opens `/gigs/new?type=Requesting`. The type control on the form stays editable. After a successful post the app opens the new gig and tells the student it is under My gigs.
-- Applying is a 3-step dialog (`ApplyWizard`): review the gig, write a proposal, then review and submit. Shared pieces live in `client/src/flow.jsx`: `Stepper`, `StatusTracker`, `ApplyWizard`, `ApplicantCard`, `ConfirmDialog`, `Tabs`, and `GigStepper`.
+- Applying is a 3-step dialog (`ApplyWizard`): review the gig, write a proposal, then review and submit. Shared pieces live in `client/src/flow.jsx`: `Stepper`, `StatusTracker`, `ApplyWizard`, `ApplicantCard`, `ConfirmDialog`, `Tabs`, `GigStepper`, and `GigChat`.
+- Once a gig has an accepted applicant, the owner and that applicant see a Chat panel on the gig. It polls every 3 seconds. **Start video call** opens `https://meet.jit.si/campus-gig-<gigId>-<suffix>`, and **Share call link** posts that URL. My gigs and My applications show **Open chat** for those gigs.
 - The navbar search opens a filter panel. API filters stay `category`, `payment_type`, `min`, `max`, and `q`, combined with the section's browse type. `status`, `sort`, and `group` (`unpaid` or `closing`) are applied in the browser because `GET /gigs` has no status or sort query. The panel writes those keys to the URL. Clearing them returns to the catalogue.
 
 ## Visual design

@@ -75,20 +75,23 @@ export function MyGigsPage() {
       {visible && visible.length > 0 ? (
         <ul className="space-y-3">
           {visible.map((gig) => (
-            <li key={gig.id}>
-              <Link to={`/gigs/${gig.id}`} className="block min-w-0 rounded-2xl border border-line bg-surface p-4 shadow-card transition duration-150 hover:-translate-y-0.5 hover:border-primary">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h2 className="min-w-0 break-words font-display text-lg font-semibold text-ink">{gig.title}</h2>
-                  <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
-                </div>
-                <p className="mt-2 break-words text-sm text-muted">
-                  {gig.category} · {gig.type} · {paymentLabel(gig.payment_type)}
-                  {gig.payment_type === 'Paid' && gig.budget != null ? ` · ${formatMoney(gig.budget)}` : ''}
-                </p>
-                <p className="mt-1 text-sm text-muted">
-                  {gig.applicantCount} {gig.applicantCount === 1 ? 'applicant' : 'applicants'}
-                </p>
-              </Link>
+            <li key={gig.id} className="min-w-0 rounded-2xl border border-line bg-surface p-4 shadow-card">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <Link to={`/gigs/${gig.id}`} className={`${textLinkClass} inline-flex min-h-11 min-w-0 items-center break-words font-display text-lg`}>
+                  {gig.title}
+                </Link>
+                <Badge tone={statusTone(gig.status)}>{gig.status}</Badge>
+              </div>
+              <p className="mt-2 break-words text-sm text-muted">
+                {gig.category} · {gig.type} · {paymentLabel(gig.payment_type)}
+                {gig.payment_type === 'Paid' && gig.budget != null ? ` · ${formatMoney(gig.budget)}` : ''}
+              </p>
+              <p className="mt-1 text-sm text-muted">
+                {gig.applicantCount} {gig.applicantCount === 1 ? 'applicant' : 'applicants'}
+              </p>
+              {gig.accepted_applicant_id ? (
+                <Link to={`/gigs/${gig.id}#chat`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Open chat</Link>
+              ) : null}
             </li>
           ))}
         </ul>

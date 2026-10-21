@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { api } from './api.js';
 import { paymentLabel } from './constants.js';
 import { formatMoney, formatWhen, initials } from './format.js';
-import { Alert, Badge, Link, Stars, buttonClass, dangerButtonClass, paymentTone, secondaryButtonClass, statusTone, textLinkClass } from './components.jsx';
+import { Alert, Badge, Link, Stars, buttonClass, dangerButtonClass, inputClass, paymentTone, secondaryButtonClass, statusTone, textLinkClass } from './components.jsx';
 
 const focusableSelector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -460,4 +460,164 @@ export function GigStepper({ status }) {
 export function wasAutoRejected(application, gig) {
   if (!application || application.status !== 'Rejected' || application.rejection_note) return false;
   return Boolean(gig?.accepted_applicant_id && gig.accepted_applicant_id !== application.applicant_id);
+}
+
+export function callRoomName(gigId) {
+  let hash = 0;
+  for (const char of String(gigId)) hash = (hash * 33 + char.charCodeAt(0)) >>> 0;
+  const suffix = hash.toString(36).slice(0, 4).padStart(4, '0');
+  return `campus-gig-${gigId}-${suffix}`;
+}
+
+export function callUrl(gigId) {
+  return `https://meet.jit.si/${callRoomName(gigId)}`;
+}
+
+export function GigChat({ gig, userId, users }) {
+  const [messages, setMessages] = useState(null);
+  const [text, setText] = useState('');
+  const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
+  const listRef = useRef(null);
+  const readOnly = gig.status === 'Cancelled' || gig.status === 'Expired';
+  const url = callUrl(gig.id);
+
+  useEffect(() => {
+    let cancelled = false;
+    api(`/gigs/${encodeURIComponent(gig.id)}/messages`)
+      .then((rows) => {
+        if (!cancelled) setMessages(rows);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setMessages([]);
+          setError(err.message);
+        }
+      });
+    const timer = setInterval(() => {
+      api(`/gigs/${encodeURIComponent(gig.id)}/messages`)
+        .then((rows) => {
+          if (!cancelled) setMessages(rows);
+        })
+        .catch(() => {});
+    }, 3000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [gig.id]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
+    if (window.location.hash === '#chat') {
+      document.getElementById('chat')?.scrollIntoView({ block: 'start' });
+    }
+  }, []);
+
+  function nameOf(id) {
+    return users.find((user) => user.id === id)?.name || 'Student';
+  }
+
+  async function post(value, clearDraft) {
+    const trimmed = value.trim();
+    if (!trimmed || readOnly || sending) return;
+    if (trimmed.length > 1000) {
+      setError('Message must be 1000 characters or fewer.');
+      return;
+    }
+    setSending(true);
+    setError('');
+    try {
+      const created = await api(`/gigs/${encodeURIComponent(gig.id)}/messages`, {
+        method: 'POST',
+        body: { text: trimmed },
+      });
+      if (clearDraft) setText('');
+      setMessages((current) => {
+        const rows = current || [];
+        if (rows.some((message) => message.id === created.id)) return rows;
+        return [...rows, created];
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function onKeyDown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      post(text, true);
+    }
+  }
+
+  return (
+    <section id="chat" className="min-w-0 space-y-3 rounded-3xl border border-line bg-surface p-4 shadow-card sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="font-display text-lg font-semibold text-ink">Chat</h2>
+          <p className="text-sm text-muted">Opens a secure video/voice call; share the same link with your partner.</p>
+        </div>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <a className={`${secondaryButtonClass} w-full sm:w-auto`} href={url} target="_blank" rel="noreferrer">Start video call</a>
+          <button type="button" className={`${buttonClass} w-full sm:w-auto`} disabled={readOnly || sending} onClick={() => post(url, false)}>
+            Share call link
+          </button>
+        </div>
+      </div>
+      {messages === null && !error ? <p className="text-base text-muted">Loading messages…</p> : null}
+      {messages && messages.length === 0 ? <p className="text-base text-muted">No messages yet. Say hello to get started.</p> : null}
+      {messages && messages.length > 0 ? (
+        <ol ref={listRef} className="max-h-80 space-y-3 overflow-y-auto pr-1" aria-label="Chat messages">
+          {messages.map((message) => {
+            const mine = message.sender_id === userId;
+            return (
+              <li key={message.id} className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : ''}`}>
+                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white ${mine ? 'bg-offer' : 'bg-ink'}`} aria-hidden="true">
+                  {initials(nameOf(message.sender_id))}
+                </span>
+                <div className={`min-w-0 max-w-[85%] rounded-2xl px-3 py-2 ${mine ? 'bg-offer text-white' : 'bg-canvas text-ink'}`}>
+                  <p className="whitespace-pre-wrap break-words text-base">{message.text}</p>
+                  <p className={`mt-1 text-xs ${mine ? 'text-offer-soft' : 'text-muted'}`}>{formatWhen(message.created_at)}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      ) : null}
+      <Alert>{error}</Alert>
+      {readOnly ? (
+        <p className="text-base text-muted">This gig is {gig.status}, so the chat is read-only.</p>
+      ) : (
+        <form
+          className="flex items-end gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            post(text, true);
+          }}
+        >
+          <label className="min-w-0 flex-1">
+            <span className="sr-only">Message</span>
+            <textarea
+              className={inputClass}
+              rows="2"
+              maxLength={1000}
+              value={text}
+              placeholder="Write a message"
+              onChange={(event) => setText(event.target.value)}
+              onKeyDown={onKeyDown}
+            />
+          </label>
+          <button type="submit" className={`${buttonClass} shrink-0`} disabled={sending || text.trim() === ''}>
+            {sending ? 'Sending…' : 'Send'}
+          </button>
+        </form>
+      )}
+    </section>
+  );
 }

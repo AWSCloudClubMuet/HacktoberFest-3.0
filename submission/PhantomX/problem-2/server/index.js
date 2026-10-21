@@ -106,6 +106,39 @@ function optionalUrl(value, field) {
   return { value: text.value };
 }
 
+function presentMessage(message) {
+  return {
+    id: message.id,
+    gig_id: message.gig_id,
+    sender_id: message.sender_id,
+    text: message.text,
+    created_at: message.created_at,
+  };
+}
+
+function messageList() {
+  const db = getDb();
+  if (!Array.isArray(db.messages)) db.messages = [];
+  return db.messages;
+}
+
+function chatAccess(gig, user, write) {
+  if (!gig.accepted_applicant_id) {
+    return { status: 409, error: 'Chat opens after an applicant is accepted' };
+  }
+  if (user.id !== gig.user_id && user.id !== gig.accepted_applicant_id) {
+    return { status: 403, error: 'Only the gig owner and the accepted applicant can use this chat' };
+  }
+  const status = effectiveStatus(gig);
+  if (write && (status === 'Cancelled' || status === 'Expired')) {
+    return { status: 409, error: `This gig is ${status}, so the chat is read-only` };
+  }
+  if (status !== 'In Progress' && status !== 'Completed' && status !== 'Cancelled' && status !== 'Expired') {
+    return { status: 409, error: 'Chat opens after an applicant is accepted' };
+  }
+  return null;
+}
+
 function presentApplication(application) {
   return {
     id: application.id,
@@ -407,6 +440,41 @@ export function createApp() {
     }
     save();
     return res.json(presentApplication(application));
+  });
+
+  app.get('/gigs/:id/messages', (req, res) => {
+    const user = requireUser(req, res);
+    if (!user) return undefined;
+    const gig = getDb().gigs.find((item) => item.id === req.params.id);
+    if (!gig) return sendError(res, 404, 'Gig not found');
+    const denied = chatAccess(gig, user, false);
+    if (denied) return sendError(res, denied.status, denied.error);
+    const messages = messageList()
+      .filter((message) => message.gig_id === gig.id)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      .map(presentMessage);
+    return res.json(messages);
+  });
+
+  app.post('/gigs/:id/messages', (req, res) => {
+    const user = requireUser(req, res);
+    if (!user) return undefined;
+    const gig = getDb().gigs.find((item) => item.id === req.params.id);
+    if (!gig) return sendError(res, 404, 'Gig not found');
+    const denied = chatAccess(gig, user, true);
+    if (denied) return sendError(res, denied.status, denied.error);
+    const textError = requireText((req.body || {}).text, 'text', 1000);
+    if (textError) return sendError(res, 400, textError);
+    const message = {
+      id: nextId(messageList(), 'm'),
+      gig_id: gig.id,
+      sender_id: user.id,
+      text: req.body.text.trim(),
+      created_at: new Date().toISOString(),
+    };
+    messageList().push(message);
+    save();
+    return res.status(201).json(presentMessage(message));
   });
 
   app.get('/reviews', (req, res) => {

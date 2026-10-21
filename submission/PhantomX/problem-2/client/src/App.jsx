@@ -30,14 +30,14 @@ function useRoute() {
 
   function navigate(to, options = {}) {
     const next = splitTarget(to);
-    const target = next.path + next.query;
-    const current = window.location.pathname + window.location.search;
+    const target = next.path + next.query + next.hash;
+    const current = window.location.pathname + window.location.search + window.location.hash;
     if (target !== current) {
       window.history[options.replace ? 'replaceState' : 'pushState']({}, '', target);
     }
     setPath(next.path);
     setQuery(next.query);
-    window.scrollTo(0, 0);
+    if (!next.hash) window.scrollTo(0, 0);
   }
 
   return { path, query, navigate };
@@ -45,10 +45,13 @@ function useRoute() {
 
 function splitTarget(to) {
   const raw = String(to || '/');
-  const mark = raw.indexOf('?');
-  const pathname = mark === -1 ? raw : raw.slice(0, mark);
-  const query = mark === -1 ? '' : raw.slice(mark);
-  return { path: normalize(pathname), query };
+  const hashAt = raw.indexOf('#');
+  const hash = hashAt === -1 ? '' : raw.slice(hashAt);
+  const withoutHash = hashAt === -1 ? raw : raw.slice(0, hashAt);
+  const mark = withoutHash.indexOf('?');
+  const pathname = mark === -1 ? withoutHash : withoutHash.slice(0, mark);
+  const query = mark === -1 ? '' : withoutHash.slice(mark);
+  return { path: normalize(pathname), query, hash };
 }
 
 function normalize(path) {
