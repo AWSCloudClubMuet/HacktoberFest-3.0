@@ -71,7 +71,7 @@ export function ApplicationsPage() {
       {visible && visible.length === 0 && !error ? (
         <Empty>
           Nothing in this list yet.{' '}
-          <Link to={`/${section}`} className={textLinkClass}>Keep browsing</Link>
+          <Link to={`/${section}`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Keep browsing</Link>
         </Empty>
       ) : null}
       {visible && visible.length > 0 ? (
@@ -97,7 +97,7 @@ function ApplicationCard({ application }) {
   return (
     <li className={`min-w-0 space-y-3 rounded-3xl border p-4 shadow-card ${shell}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} min-w-0 break-words font-display text-lg`}>
+        <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} inline-flex min-h-11 min-w-0 items-center break-words font-display text-lg`}>
           {gig?.title || 'Untitled gig'}
         </Link>
         {gig ? <Badge tone={statusTone(gig.status)}>{gig.status}</Badge> : null}
@@ -111,10 +111,10 @@ function ApplicationCard({ application }) {
       <p className="break-words text-base text-secondary">{application.message}</p>
       <p className="text-sm text-muted">Submitted {formatWhen(application.created_at)}</p>
       {accepted && gig?.status === 'Completed' ? (
-        <Link to={`/gigs/${application.gig_id}`} className={textLinkClass}>Leave a review</Link>
+        <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Leave a review</Link>
       ) : null}
       {accepted && gig && gig.status !== 'Completed' ? (
-        <Link to={`/gigs/${application.gig_id}`} className={textLinkClass}>Open the gig</Link>
+        <Link to={`/gigs/${application.gig_id}`} className={`${textLinkClass} inline-flex min-h-11 items-center`}>Open the gig</Link>
       ) : null}
     </li>
   );
