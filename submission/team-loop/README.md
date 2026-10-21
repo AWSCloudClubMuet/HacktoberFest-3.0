@@ -10,7 +10,13 @@ Team loop's workspace for HacktoberFest 3.0.
 | Kartik | Developer |
 | Laksh | Developer |
 
-Implementation responsibilities will be assigned after reviewing the selected problem statements.
+The recommended issues and working ownership are below. See [COORDINATION.md](COORDINATION.md) for the two-hour plan, exact working folders, setup, synchronization, and handoffs.
+
+| Issue | Owner | Deliverables | Status |
+| --- | --- | --- | --- |
+| [#8 Debugging, Attention Gradients & Evaluation](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/8) | Moksh | Analysis, NumPy attention, numerical gradient checks, training fixes | Planned; not implemented |
+| [#9 Noisy Labels: HelpDeskNet-50K](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/9) | Laksh | Calculations, annotation-quality analysis, review and evaluation plan | Planned; not implemented |
+| [#13 TuneWave Music Player](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/13) | Kartik | Data-structure core, tests, demo and complexity notes | Planned; not implemented |
 
 ## Repository and workspace
 
@@ -21,11 +27,11 @@ Implementation responsibilities will be assigned after reviewing the selected pr
 
 ## Project
 
-Project title, problem statement, description, and technologies will be added after the team selects its assigned work. This initial commit prepares the team workspace only.
+Proposed submission: three independent AI/ML and DSA solutions. Python is the common language; NumPy is required for issue 8. No large-model training, cloud deployment, or mock API is required by the selected issues. The task texts and individual working prompts are included in each issue folder. This is preparation, not a completed solution.
 
 ## Setup and verification
 
-Application installation, run instructions, configuration variable names, and test commands will be documented here when the project requirements are known.
+Create a local virtual environment and install `requirements.txt` as described in COORDINATION.md. Each owner must add exact run/test commands and actual results with their completed solution.
 
 Each contributor should use their own GitHub account and Git author identity, synchronize the team branch before working, and coordinate edits to shared files. Project files, documentation, and assets belong inside this team folder.
 
