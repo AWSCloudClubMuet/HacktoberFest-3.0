@@ -123,8 +123,8 @@ SNS -> SQS delivery, report rendering and `terraform destroy`.
 
 ## Scope exclusions
 
-The optional ECR, Amazon Inspector, S3 report storage, cross-region
-replication and AWS Backup ideas are documented in
-`docs/architecture.md` as extensions only. They are not implemented and are
-not claimed as evidence. Adding them would require new Terraform resources,
-new IAM permissions and a larger budget and test matrix.
+The optional S3 report storage, cross-region replication, AWS Backup and
+EventBridge/Lambda ideas are documented in `docs/architecture.md` as
+extensions only. They are not implemented and are not claimed as evidence.
+Adding them would require new Terraform resources, new IAM permissions and a
+larger budget and test matrix.

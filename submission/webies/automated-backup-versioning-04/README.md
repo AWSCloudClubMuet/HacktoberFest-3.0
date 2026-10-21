@@ -38,7 +38,8 @@ member names.
   successful run in the manifest, with an optional `backup.missed` SNS alert.
 - Generates `reports/backup-status.md` with job counts, last success,
   verification status, recovery status, storage and retention.
-- Uses a least-privilege IAM role for the backup process. No credentials are
+- Defines a least-privilege IAM role for a future AWS-hosted runner. The local
+  CLI uses the operator's standard AWS credential chain; no credentials are
   stored in the repository.
 
 ## Architecture at a glance

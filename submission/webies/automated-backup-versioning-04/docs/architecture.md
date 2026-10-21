@@ -8,8 +8,8 @@ how the design behaves when data is overwritten, deleted, corrupted or
 affected by a regional outage.
 
 The implementation is deliberately small: Terraform provisions the storage,
-security and alert resources; four Node scripts perform backup, verification,
-restore and reporting; a fifth script reads the local alert queue.
+security and alert resources; Node scripts perform backup, verification,
+restore, reporting, alert polling and missed-backup detection.
 
 ## Component view
 
@@ -184,8 +184,6 @@ small, cheap and fully testable under LocalStack.
 
 | Extension | How it would fit | Why it is not in the core |
 | --- | --- | --- |
-| Amazon ECR | Store a container image for the backup runner and pin the image digest for scheduled jobs. | No container runtime is needed for a local Node script. |
-| Amazon Inspector | Scan the runner image or EC2/ECS compute for CVEs before deployment. | Adds a paid/complex scanning pipeline and no runtime compute exists. |
 | S3 report storage | Upload `reports/backup-status.md` and the manifest to a separate `reports/` prefix or a separate bucket after each run. | The demo reports locally for easy review; IAM already permits PutObject under `reports/`. |
 | Cross-region replication | Replicate the versioned bucket to a second region with replication rules and a replica KMS/SSE policy. | Adds a second region, replication IAM, storage and transfer cost; regional failover is outside a 5-hour demo. |
 | AWS Backup | Create a backup plan and vault for a second, independent recovery copy. | The issue asks for a small S3 versioning demo; AWS Backup adds a vault and plan that LocalStack does not faithfully emulate. |
