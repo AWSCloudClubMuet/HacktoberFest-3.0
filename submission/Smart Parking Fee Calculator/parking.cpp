@@ -4,7 +4,7 @@
 #include <cmath>
 using namespace std;
 
-class carParking {
+class Parking {
 private:
     string registration_number;
 
@@ -12,7 +12,7 @@ public:
     string vehicle_type;
     double duration;
     char staff;
-    carParking(string registration_number, string vehicle_type, double duration,char staff = 'n') {
+    Parking(string registration_number, string vehicle_type, double duration,char staff = 'n') {
         this->registration_number = registration_number;
         this->vehicle_type = vehicle_type;
         this->duration = duration;
@@ -101,7 +101,7 @@ if (vehicle_type != "car" &&  vehicle_type != "bike" && vehicle_type != "van") {
         
             cout << "Is the vehicle owner a staff member? (y/n): ";
             cin >> staff;
-            carParking c1(registration_number, vehicle_type, duration, staff);
+            Parking c1(registration_number, vehicle_type, duration, staff);
             c1.calculateParkingFee();
 
         cout << "\nDo you want to continue (y/n)? ";
