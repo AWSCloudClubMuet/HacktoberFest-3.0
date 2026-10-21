@@ -188,6 +188,17 @@ input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
 .auth-brand { display: flex; align-items: center; gap: 9px; font-size: 20px; letter-spacing: -.7px; font-weight: 700; }
 .auth-title { font-size: 26px; letter-spacing: -.8px; margin: 22px 0 8px; }
 .auth-form { margin-top: 18px; }
+.signup-steps { display: flex; gap: 18px; margin-top: 20px; flex-wrap: wrap; }
+.signup-step { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #a19d95; }
+.signup-step svg { width: 13px; height: 13px; }
+.signup-step.current { color: #242321; }
+.signup-step.done { color: #3f7d66; }
+.signup-progress { height: 3px; background: #eeece7; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+.signup-progress span { display: block; height: 100%; background: #e96955; border-radius: 99px; transition: width .25s ease; }
+.signup-hint { margin-top: 12px; }
+.signup-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; }
+.signup-back { height: 40px; font-size: 12px; }
+.signup-nav .signup-next { width: auto; padding: 0 18px; margin-top: 0; }
 .auth-submit { width: 100%; height: 40px; background: #e96955; font-size: 12px; margin-top: 4px; }
 .auth-submit:hover { background: #e05a44; }
 .demo-box { background: #fff; border: 1px solid #e7e2da; border-radius: 8px; padding: 14px 16px; margin-top: 20px; }
