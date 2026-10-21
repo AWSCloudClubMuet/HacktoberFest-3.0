@@ -15,6 +15,13 @@ email).
 | Issue | [AWSCloudClubMuet/HacktoberFest-3.0#4](https://github.com/AWSCloudClubMuet/HacktoberFest-3.0/issues/4) |
 | Folder | `submission/webies/automated-backup-versioning-04` |
 
+| Field | Value |
+| --- | --- |
+| Member |	GitHub handle	Role |
+| Sunjay Kumar | 	@sunjay-dev	Team lead — AWS infrastructure, Terraform configuration, S3 backup automation, and project coordination |
+| Zaheer Ahmed | 	@zaheer-ahmed77	Backup and recovery engineer — S3 versioning, SHA-256 integrity verification, backup restoration, and retention policies |
+| Tufail Ahmed |	@Tufailsangrasi	Monitoring and disaster recovery — SNS/SQS failure alerts, backup freshness checks, disaster recovery documentation, and status reporting |
+
 The team roster is maintained in the event submission form. The
 implementation, commands and evidence in this folder do not depend on the
 member names.
