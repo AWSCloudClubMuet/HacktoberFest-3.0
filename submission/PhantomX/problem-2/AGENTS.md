@@ -189,6 +189,7 @@ Each section is what the visitor wants to do, so the catalogue shows the opposit
 - Applying is a 3-step dialog (`ApplyWizard`): review the gig, write a proposal, then review and submit. Shared pieces live in `client/src/flow.jsx`: `Stepper`, `StatusTracker`, `ApplyWizard`, `ApplicantCard`, `ConfirmDialog`, `Tabs`, `GigStepper`, and `GigChat`.
 - Once a gig has an accepted applicant, the owner and that applicant see a Chat panel on the gig. It polls every 3 seconds. **Start video call** opens `https://meet.jit.si/campus-gig-<gigId>-<suffix>`, and **Share call link** posts that URL. My gigs and My applications show **Open chat** for those gigs.
 - The navbar search opens a filter panel. API filters stay `category`, `payment_type`, `min`, `max`, and `q`, combined with the section's browse type. `status`, `sort`, and `group` (`unpaid` or `closing`) are applied in the browser because `GET /gigs` has no status or sort query. The panel writes those keys to the URL. Clearing them returns to the catalogue.
+- The search panel is portaled to `document.body`. The header blur would otherwise trap `position: fixed`. Below 768px it is a solid full-screen sheet (`100dvh`, z-index 1000) that locks body scroll and marks `#app-shell` inert. From 768px it is a solid popover under the search control. Esc, Back, Show results, and Clear all close it and unlock scrolling.
 
 ## Visual design
 

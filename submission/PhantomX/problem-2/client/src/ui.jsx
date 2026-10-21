@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Code2, GraduationCap, HandHelping, Megaphone, MessageCircle, Palette, PenLine, Search, Star, Wallet, X } from 'lucide-react';
 import logoUrl from './assets/logo.svg';
 import { CATEGORIES, PAYMENTS, paymentLabel } from './constants.js';
@@ -170,8 +171,8 @@ export function CatalogueSkeleton() {
 }
 
 function trapFocus(root, event) {
-  if (event.key !== 'Tab') return;
-  const items = [...root.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter((el) => !el.disabled && el.offsetParent !== null);
+  if (!root || event.key !== 'Tab') return;
+  const items = [...root.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter((el) => !el.disabled && el.getClientRects().length > 0);
   if (items.length === 0) return;
   const first = items[0];
   const last = items[items.length - 1];
@@ -184,11 +185,30 @@ function trapFocus(root, event) {
   }
 }
 
+function useSearchSheet() {
+  const query = '(max-width: 767px)';
+  const [sheet, setSheet] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const onChange = () => setSheet(media.matches);
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+  return sheet;
+}
+
+function visibleButton(root) {
+  return [...(root?.querySelectorAll('button') || [])].find((button) => button.getBoundingClientRect().width > 0);
+}
+
 export function SearchDock({ section, filters, open, onOpen, onClose, onApply, onClear }) {
   const panelId = useId();
   const inputRef = useRef(null);
   const panelRef = useRef(null);
   const rootRef = useRef(null);
+  const wasOpen = useRef(false);
+  const sheet = useSearchSheet();
+  const [popoverStyle, setPopoverStyle] = useState(null);
   const copy = SECTIONS[section] || SECTIONS.offer;
 
   useEffect(() => {
@@ -197,8 +217,8 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
       if (event.key === '/' && !typing) {
         event.preventDefault();
         onOpen();
-        inputRef.current?.focus();
       } else if (event.key === 'Escape' && open) {
+        event.preventDefault();
         onClose();
       }
     }
@@ -209,14 +229,78 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
   useEffect(() => {
     if (!open) return undefined;
     function onPointer(event) {
-      if (!rootRef.current?.contains(event.target)) onClose();
+      if (rootRef.current?.contains(event.target) || panelRef.current?.contains(event.target)) return;
+      onClose();
     }
     document.addEventListener('pointerdown', onPointer);
     return () => document.removeEventListener('pointerdown', onPointer);
   }, [open, onClose]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (!open || sheet) return undefined;
+    function place() {
+      const anchor = visibleButton(rootRef.current);
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(448, window.innerWidth - 16);
+      let left = rect.left;
+      if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
+      if (left < 8) left = 8;
+      setPopoverStyle({ top: `${Math.round(rect.bottom + 8)}px`, left: `${Math.round(left)}px`, width: `${Math.round(width)}px` });
+    }
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+    };
+  }, [open, sheet]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    inputRef.current?.focus();
+    if (!sheet) return undefined;
+    const scrollY = window.scrollY;
+    const { style } = document.body;
+    const previous = {
+      overflow: style.overflow,
+      position: style.position,
+      top: style.top,
+      left: style.left,
+      right: style.right,
+      width: style.width,
+    };
+    style.overflow = 'hidden';
+    style.position = 'fixed';
+    style.top = `-${scrollY}px`;
+    style.left = '0';
+    style.right = '0';
+    style.width = '100%';
+    const shell = document.getElementById('app-shell');
+    shell?.setAttribute('inert', '');
+    shell?.setAttribute('aria-hidden', 'true');
+    return () => {
+      style.overflow = previous.overflow;
+      style.position = previous.position;
+      style.top = previous.top;
+      style.left = previous.left;
+      style.right = previous.right;
+      style.width = previous.width;
+      shell?.removeAttribute('inert');
+      shell?.removeAttribute('aria-hidden');
+      window.scrollTo(0, scrollY);
+    };
+  }, [open, sheet]);
+
+  useEffect(() => {
+    if (open) {
+      wasOpen.current = true;
+      return;
+    }
+    if (!wasOpen.current) return;
+    wasOpen.current = false;
+    visibleButton(rootRef.current)?.focus();
   }, [open]);
 
   return (
@@ -248,6 +332,8 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
           inputRef={inputRef}
           section={section}
           initial={filters}
+          sheet={sheet}
+          popoverStyle={popoverStyle}
           onApply={onApply}
           onClear={onClear}
           onClose={onClose}
@@ -257,7 +343,7 @@ export function SearchDock({ section, filters, open, onOpen, onClose, onApply, o
   );
 }
 
-export function SearchPanel({ id, panelRef, inputRef, section, initial, onApply, onClear, onClose }) {
+export function SearchPanel({ id, panelRef, inputRef, section, initial, sheet, popoverStyle, onApply, onClear, onClose }) {
   const copy = SECTIONS[section] || SECTIONS.offer;
   const [draft, setDraft] = useState(() => ({
     ...emptyFilters(),
@@ -270,92 +356,111 @@ export function SearchPanel({ id, panelRef, inputRef, section, initial, onApply,
     setDraft((current) => ({ ...current, [field]: value }));
   }
 
-  function onKeyDown(event) {
-    if (window.matchMedia('(max-width: 767px)').matches) trapFocus(panelRef.current, event);
+  function clearAll() {
+    setDraft(emptyFilters());
+    onClear();
   }
 
-  return (
+  const fieldClass = 'mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal';
+
+  const form = (
     <form
       id={id}
       ref={panelRef}
       role="dialog"
+      aria-modal="true"
       aria-label={`Search ${copy.short}`}
-      className="fixed inset-0 z-50 flex flex-col bg-canvas p-4 md:absolute md:inset-auto md:left-0 md:right-0 md:top-[calc(100%+0.5rem)] md:max-h-[min(32rem,70vh)] md:overflow-y-auto md:rounded-3xl md:border md:border-line md:bg-surface md:p-5 md:shadow-pop"
+      className={sheet ? 'search-sheet' : 'search-popover'}
+      style={sheet ? undefined : popoverStyle || undefined}
       onSubmit={(event) => {
         event.preventDefault();
         onApply(draft);
       }}
-      onKeyDown={onKeyDown}
+      onKeyDown={(event) => {
+        if (sheet) trapFocus(panelRef.current, event);
+      }}
     >
-      <div className="mb-3 flex items-center justify-between md:hidden">
-        <h2 className="font-display text-lg font-semibold">Search {copy.short}</h2>
-        <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line" onClick={onClose} aria-label="Close search">
-          <X size={18} />
+      <div className="search-sheet-top">
+        <button type="button" className="inline-flex h-11 shrink-0 items-center gap-1 rounded-full border border-line bg-surface px-3 text-sm font-semibold" onClick={onClose}>
+          <X size={18} aria-hidden="true" />
+          Back
+        </button>
+        <input
+          ref={sheet ? inputRef : undefined}
+          className="min-h-11 min-w-0 flex-1 rounded-2xl border border-line bg-surface px-3 text-base font-normal"
+          placeholder={`Search gigs in ${copy.short}...`}
+          aria-label="Keyword"
+          value={draft.q}
+          onChange={(event) => update('q', event.target.value)}
+        />
+        <button type="button" className="inline-flex h-11 shrink-0 items-center rounded-full px-3 text-sm font-semibold text-primary" onClick={() => update('q', '')}>
+          Clear
         </button>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block text-sm font-semibold sm:col-span-2">
-          Keyword
-          <input
-            ref={inputRef}
-            className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal"
-            placeholder={`Search gigs in ${copy.short}...`}
-            value={draft.q}
-            onChange={(event) => update('q', event.target.value)}
-          />
-        </label>
-        <label className="block text-sm font-semibold">
-          Category
-          <select className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" value={draft.category} onChange={(event) => update('category', event.target.value)}>
-            <option value="">All categories</option>
-            {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
-          </select>
-        </label>
-        <label className="block text-sm font-semibold">
-          Payment
-          <select className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" value={draft.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
-            <option value="">Any payment</option>
-            {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
-          </select>
-        </label>
-        <label className="block text-sm font-semibold">
-          Min budget
-          <input className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" type="number" min="0" value={draft.min} onChange={(event) => update('min', event.target.value)} />
-        </label>
-        <label className="block text-sm font-semibold">
-          Max budget
-          <input className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" type="number" min="0" value={draft.max} onChange={(event) => update('max', event.target.value)} />
-        </label>
-        <label className="block text-sm font-semibold">
-          Status
-          <select className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" value={draft.status || 'Open'} onChange={(event) => update('status', event.target.value)}>
-            {STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
-          </select>
-        </label>
-        <label className="block text-sm font-semibold">
-          Sort
-          <select className="mt-1.5 min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-base font-normal" value={draft.sort || 'newest'} onChange={(event) => update('sort', event.target.value)}>
-            {SORTS.map((sort) => <option key={sort.value} value={sort.value}>{sort.label}</option>)}
-          </select>
-        </label>
+      <div className={sheet ? 'search-sheet-body' : undefined}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm font-semibold sm:col-span-2">
+            Keyword
+            <input
+              ref={sheet ? undefined : inputRef}
+              className={fieldClass}
+              placeholder={`Search gigs in ${copy.short}...`}
+              value={draft.q}
+              onChange={(event) => update('q', event.target.value)}
+            />
+          </label>
+          <label className="block text-sm font-semibold">
+            Category
+            <select className={fieldClass} value={draft.category} onChange={(event) => update('category', event.target.value)}>
+              <option value="">All categories</option>
+              {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+            </select>
+          </label>
+          <label className="block text-sm font-semibold">
+            Payment
+            <select className={fieldClass} value={draft.payment_type} onChange={(event) => update('payment_type', event.target.value)}>
+              <option value="">Any payment</option>
+              {PAYMENTS.map((payment) => <option key={payment.value} value={payment.value}>{payment.label}</option>)}
+            </select>
+          </label>
+          <label className="block text-sm font-semibold">
+            Min budget
+            <input className={fieldClass} type="number" min="0" value={draft.min} onChange={(event) => update('min', event.target.value)} />
+          </label>
+          <label className="block text-sm font-semibold">
+            Max budget
+            <input className={fieldClass} type="number" min="0" value={draft.max} onChange={(event) => update('max', event.target.value)} />
+          </label>
+          <label className="block text-sm font-semibold">
+            Status
+            <select className={fieldClass} value={draft.status || 'Open'} onChange={(event) => update('status', event.target.value)}>
+              {STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
+            </select>
+          </label>
+          <label className="block text-sm font-semibold">
+            Sort
+            <select className={fieldClass} value={draft.sort || 'newest'} onChange={(event) => update('sort', event.target.value)}>
+              {SORTS.map((sort) => <option key={sort.value} value={sort.value}>{sort.label}</option>)}
+            </select>
+          </label>
+        </div>
       </div>
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <button type="submit" className={`inline-flex min-h-11 flex-1 items-center justify-center rounded-full px-4 text-base font-semibold text-white ${section === 'request' ? 'fill-request' : 'fill-offer'}`}>
-          Apply filters
+      <div className={sheet ? 'search-sheet-actions' : 'mt-4 flex flex-col gap-2 sm:flex-row'}>
+        <button type="submit" className={`inline-flex min-h-11 w-full items-center justify-center rounded-full px-4 text-base font-semibold text-white ${section === 'request' ? 'fill-request' : 'fill-offer'} ${sheet ? '' : 'sm:flex-1'}`}>
+          {sheet ? 'Show results' : 'Apply filters'}
         </button>
         <button
           type="button"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-line bg-surface px-4 text-base font-semibold"
-          onClick={() => {
-            setDraft(emptyFilters());
-            onClear();
-          }}
+          className={`inline-flex min-h-11 w-full items-center justify-center rounded-full border border-line bg-surface px-4 text-base font-semibold ${sheet ? '' : 'sm:flex-1'}`}
+          onClick={clearAll}
         >
           Clear all
         </button>
       </div>
     </form>
   );
+
+  return createPortal(form, document.body);
 }
 
 const BANNER_POINTS = [

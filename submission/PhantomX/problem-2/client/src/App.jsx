@@ -269,7 +269,7 @@ export function App() {
   return (
     <AuthContext.Provider value={{ user, login, signup, logout }}>
     <AppContext.Provider value={{ path, query, navigate, userId, users, pushToast, section, chooseSection }}>
-      <div className="min-h-screen">
+      <div id="app-shell" className="min-h-screen">
         <header className="site-header sticky top-0 z-40 border-b border-white/10">
           <div className="header-bar mx-auto w-full max-w-7xl gap-x-2 px-3 sm:px-4 lg:gap-x-3 lg:px-6">
             <div className="header-brand flex h-16 items-center lg:h-20">
