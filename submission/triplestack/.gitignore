@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+# Runtime database (created from server/seed.json on first start)
+server/db.json
+*.log
+.DS_Store
