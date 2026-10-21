@@ -1,0 +1,176 @@
+#!/bin/bash
+# ──────────────────────────────────────────────────────────────────────────────
+# ScaleOps Demo — EC2 User Data Bootstrap Script
+# Runs once when an EC2 instance first starts.
+# Installs Node.js, downloads the versioned artifact from S3, and starts the
+# Next.js application as a systemd service.
+# ──────────────────────────────────────────────────────────────────────────────
+set -euo pipefail
+
+ARTIFACT_BUCKET="${artifact_bucket}"
+ARTIFACT_VERSION="${artifact_version}"
+AWS_REGION="${aws_region}"
+APP_PORT="${app_port}"
+NODE_VERSION="${node_version}"
+APP_DIR="/opt/scaleops-demo"
+SERVICE_NAME="scaleops-demo"
+APP_USER="scaleops"
+LOG_FILE="/var/log/scaleops-bootstrap.log"
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "=== ScaleOps Bootstrap started at $(date -u) ==="
+echo "Artifact: s3://$ARTIFACT_BUCKET/releases/$ARTIFACT_VERSION/scaleops-demo-$ARTIFACT_VERSION.tar.gz"
+
+# ──────────────────────────────────────────────
+# 1. System updates
+# ──────────────────────────────────────────────
+# NOTE: no "dnf update -y" here. The AL2023 AMI is already current, and a full
+# update on a 1 GB t3.micro takes minutes, which can exceed the ASG health-check
+# grace period and cause an endless launch/terminate loop.
+# curl is provided by curl-minimal on AL2023, so it is not installed explicitly.
+dnf install -y tar gzip shadow-utils
+
+# ──────────────────────────────────────────────
+# 2. Install Node.js
+# ──────────────────────────────────────────────
+if ! command -v node &>/dev/null; then
+  echo "Installing Node.js $NODE_VERSION..."
+  dnf install -y nodejs || {
+    curl -fsSL "https://rpm.nodesource.com/setup_$${NODE_VERSION}.x" | bash - || true
+    dnf install -y nodejs
+  }
+fi
+
+node_ver=$(node --version)
+echo "Node.js installed: $node_ver"
+
+# ──────────────────────────────────────────────
+# 3. Create application user (no login shell)
+# ──────────────────────────────────────────────
+if ! id "$APP_USER" &>/dev/null; then
+  useradd --system --shell /sbin/nologin --home-dir "$APP_DIR" --create-home "$APP_USER"
+fi
+
+# ──────────────────────────────────────────────
+# 4. Download artifact from S3 (uses instance IAM role)
+# ──────────────────────────────────────────────
+ARTIFACT_KEY="releases/$ARTIFACT_VERSION/scaleops-demo-$ARTIFACT_VERSION.tar.gz"
+ARTIFACT_LOCAL="/tmp/scaleops-demo-$ARTIFACT_VERSION.tar.gz"
+
+echo "Downloading artifact from S3..."
+# Retry: the instance profile credentials can take a few seconds to become usable.
+for attempt in 1 2 3 4 5 6; do
+  if aws s3 cp "s3://$ARTIFACT_BUCKET/$ARTIFACT_KEY" "$ARTIFACT_LOCAL" --region "$AWS_REGION"; then
+    break
+  fi
+  echo "S3 download attempt $attempt failed; retrying in 10s..."
+  sleep 10
+  if [ "$attempt" = "6" ]; then
+    echo "FATAL: could not download s3://$ARTIFACT_BUCKET/$ARTIFACT_KEY"
+    exit 1
+  fi
+done
+
+# ──────────────────────────────────────────────
+# 5. Extract and set up application directory
+# ──────────────────────────────────────────────
+echo "Extracting artifact..."
+rm -rf "$APP_DIR"
+mkdir -p "$APP_DIR"
+tar -xzf "$ARTIFACT_LOCAL" -C "$APP_DIR" --strip-components=1
+rm -f "$ARTIFACT_LOCAL"
+
+# Copy static assets into the standalone server directory
+# Next.js standalone output does not include .next/static or public by default
+if [ -d "$APP_DIR/.next/static" ]; then
+  mkdir -p "$APP_DIR/standalone/.next/static"
+  cp -r "$APP_DIR/.next/static/." "$APP_DIR/standalone/.next/static/"
+fi
+
+if [ -d "$APP_DIR/public" ]; then
+  mkdir -p "$APP_DIR/standalone/public"
+  cp -r "$APP_DIR/public/." "$APP_DIR/standalone/public/"
+fi
+
+chown -R "$APP_USER:$APP_USER" "$APP_DIR"
+
+# ──────────────────────────────────────────────
+# 6. Write environment file
+# ──────────────────────────────────────────────
+cat > /etc/scaleops-demo.env <<ENVFILE
+NODE_ENV=production
+PORT=$APP_PORT
+HOSTNAME=0.0.0.0
+APP_VERSION=$ARTIFACT_VERSION
+WORKLOAD_ENABLED=true
+ENVFILE
+
+chmod 600 /etc/scaleops-demo.env
+
+# ──────────────────────────────────────────────
+# 7. Create systemd service
+# ──────────────────────────────────────────────
+cat > /etc/systemd/system/$SERVICE_NAME.service <<SERVICE
+[Unit]
+Description=ScaleOps Demo Next.js Application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=$APP_USER
+WorkingDirectory=$APP_DIR/standalone
+EnvironmentFile=/etc/scaleops-demo.env
+ExecStart=/usr/bin/node $APP_DIR/standalone/server.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=$SERVICE_NAME
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=$APP_DIR
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
+# ──────────────────────────────────────────────
+# 8. Enable and start service
+# ──────────────────────────────────────────────
+systemctl daemon-reload
+systemctl enable "$SERVICE_NAME"
+systemctl start "$SERVICE_NAME"
+
+# ──────────────────────────────────────────────
+# 9. Wait for health check
+# ──────────────────────────────────────────────
+echo "Waiting for application to become healthy..."
+HEALTHY=false
+for i in $(seq 1 30); do
+  if curl -sf "http://localhost:$APP_PORT/api/health" > /dev/null 2>&1; then
+    echo "Application is healthy after $i attempts."
+    HEALTHY=true
+    break
+  fi
+  echo "Attempt $i/30: not healthy yet, sleeping 5s..."
+  sleep 5
+done
+
+if [ "$HEALTHY" != "true" ]; then
+  # Written to the console output so the failure can be read with:
+  #   aws ec2 get-console-output --instance-id <id> --latest --output text
+  echo "=== FATAL: application did not become healthy ==="
+  echo "--- node: $(command -v node || echo missing) ---"
+  echo "--- files in $APP_DIR/standalone ---"
+  ls -la "$APP_DIR/standalone" 2>&1 | head -30 || true
+  echo "--- systemctl status ---"
+  systemctl status "$SERVICE_NAME" --no-pager 2>&1 | head -30 || true
+  echo "--- journalctl ---"
+  journalctl -u "$SERVICE_NAME" -n 80 --no-pager 2>&1 || true
+  exit 1
+fi
+
+echo "=== ScaleOps Bootstrap completed at $(date -u) ==="
