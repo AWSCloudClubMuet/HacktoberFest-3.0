@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Briefcase, ClipboardList, MoreVertical } from 'lucide-react';
 import { api, getToken, setToken } from './api.js';
 import logoUrl from './assets/logo.svg';
 import { Link, buttonClass, secondaryButtonClass } from './components.jsx';
@@ -76,9 +78,13 @@ function matchRoute(path) {
   return { name: 'missing' };
 }
 
-const nav = [
-  { to: '/my-gigs', label: 'My gigs' },
-  { to: '/applications', label: 'My applications' },
+const workNav = [
+  { to: '/my-gigs', label: 'My gigs', icon: Briefcase, countKey: 'gigs_posted' },
+  { to: '/applications', label: 'My applications', icon: ClipboardList },
+];
+
+const mobileNav = [
+  ...workNav,
   { to: '/profile', label: 'Profile' },
 ];
 
@@ -87,31 +93,58 @@ function navClass(active) {
 }
 
 function menuItemClass(active) {
-  return `flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-semibold ${active ? 'bg-canvas text-ink' : 'text-muted hover:bg-canvas'}`;
+  return `flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-left text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${active ? 'bg-canvas text-ink' : 'text-muted hover:bg-canvas'}`;
 }
 
-function Brand({ to }) {
-  return (
-    <Link to={to} className="flex h-11 min-w-0 shrink-0 items-center gap-2 text-on-night lg:h-14 lg:gap-2.5">
-      <img src={logoUrl} alt="" width="48" height="48" className="h-10 w-10 shrink-0 lg:h-12 lg:w-12" />
-      <span className="min-w-0 leading-none">
-        <span className="block whitespace-nowrap font-display text-xl font-bold tracking-tight lg:text-2xl xl:text-[1.7rem]">
-          Campus Gig
-          <span className="hidden font-medium text-offer-soft sm:inline"> & SkillSwap</span>
-        </span>
-        <span className="mt-1 hidden text-xs font-medium tracking-wide text-on-night-muted xl:block">Learn. Offer. Earn.</span>
-      </span>
-    </Link>
-  );
-}
+function HeaderMenu({ id, label, open, onToggle, onClose, buttonClassName, button, children }) {
+  const buttonRef = useRef(null);
+  const panelRef = useRef(null);
+  const [style, setStyle] = useState(null);
+  const wasOpen = useRef(false);
+  const focusedMenu = useRef(false);
 
-function AccountMenu({ user, path, open, onToggle, onClose, onLogout }) {
-  const ref = useRef(null);
+  useLayoutEffect(() => {
+    if (!open) {
+      if (wasOpen.current) buttonRef.current?.focus();
+      wasOpen.current = false;
+      return undefined;
+    }
+    wasOpen.current = true;
+    function place() {
+      const anchor = buttonRef.current;
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(224, window.innerWidth - 16);
+      let left = rect.right - width;
+      if (left < 8) left = 8;
+      if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
+      setStyle({ top: `${Math.round(rect.bottom + 8)}px`, left: `${Math.round(left)}px` });
+    }
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      focusedMenu.current = false;
+      return undefined;
+    }
+    if (!style || focusedMenu.current) return undefined;
+    focusedMenu.current = true;
+    panelRef.current?.querySelector('[role="menuitem"]')?.focus();
+    return undefined;
+  }, [open, style]);
 
   useEffect(() => {
     if (!open) return undefined;
     function onPointer(event) {
-      if (!ref.current?.contains(event.target)) onClose();
+      if (buttonRef.current?.contains(event.target) || panelRef.current?.contains(event.target)) return;
+      onClose();
     }
     function onKey(event) {
       if (event.key === 'Escape') onClose();
@@ -124,34 +157,114 @@ function AccountMenu({ user, path, open, onToggle, onClose, onLogout }) {
     };
   }, [open, onClose]);
 
-  const first = user.name.split(' ')[0];
+  function onMenuKey(event) {
+    const items = [...(panelRef.current?.querySelectorAll('[role="menuitem"]') || [])];
+    const index = items.indexOf(document.activeElement);
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+    }
+    if (!items.length) return;
+    if (event.key === 'ArrowDown') items[index < 0 ? 0 : (index + 1) % items.length]?.focus();
+    else if (event.key === 'ArrowUp') items[index < 0 ? items.length - 1 : (index - 1 + items.length) % items.length]?.focus();
+    else if (event.key === 'Home') items[0]?.focus();
+    else if (event.key === 'End') items[items.length - 1]?.focus();
+  }
 
   return (
-    <div ref={ref} className="header-account relative hidden lg:block">
+    <>
       <button
+        ref={buttonRef}
         type="button"
-        className="inline-flex h-11 items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1 pl-1 pr-1 text-on-night xl:pr-3"
-        aria-expanded={open}
+        className={buttonClassName}
+        aria-label={label}
         aria-haspopup="menu"
-        aria-controls="account-menu"
+        aria-expanded={open}
+        aria-controls={id}
         onClick={onToggle}
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-offer-soft text-sm font-bold text-offer-deep" aria-hidden="true">{initials(user.name)}</span>
-        <span className="sr-only">{user.name}</span>
-        <span className="hidden max-w-28 truncate text-sm font-semibold xl:inline" aria-hidden="true">{first}</span>
+        {button}
       </button>
-      {open ? (
-        <div id="account-menu" role="menu" className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-line bg-surface p-2 text-ink shadow-pop">
-          <p className="truncate px-3 py-2 text-sm font-semibold text-ink">{user.name}</p>
-          {nav.map((item) => (
-            <Link key={item.to} to={item.to} className={menuItemClass(path === item.to)}>
-              {item.label}
-            </Link>
-          ))}
-          <button type="button" role="menuitem" className={`${menuItemClass(false)} text-danger`} onClick={onLogout}>Log out</button>
-        </div>
+      {open && style ? createPortal(
+        <div
+          ref={panelRef}
+          id={id}
+          role="menu"
+          aria-label={label}
+          className="header-popover"
+          style={style || undefined}
+          onKeyDown={onMenuKey}
+        >
+          {children}
+        </div>,
+        document.body,
       ) : null}
-    </div>
+    </>
+  );
+}
+
+function Brand({ to }) {
+  return (
+    <Link to={to} className="flex h-11 min-w-0 items-center gap-2 text-on-night lg:h-14 lg:gap-2.5">
+      <img src={logoUrl} alt="" width="48" height="48" className="h-10 w-10 shrink-0 lg:h-12 lg:w-12" />
+      <span className="min-w-0 leading-none">
+        <span className="block truncate font-display text-xl font-bold tracking-tight lg:text-2xl xl:text-[1.7rem]">
+          Campus Gig
+          <span className="hidden font-medium text-offer-soft sm:inline"> & SkillSwap</span>
+        </span>
+        <span className="mt-1 hidden text-xs font-medium tracking-wide text-on-night-muted xl:block">Learn. Offer. Earn.</span>
+      </span>
+    </Link>
+  );
+}
+
+function AccountMenu({ user, path, open, onToggle, onClose, onLogout }) {
+  const first = user.name.split(' ')[0];
+  return (
+    <HeaderMenu
+      id="account-menu"
+      label={`${user.name}, account`}
+      open={open}
+      onToggle={onToggle}
+      onClose={onClose}
+      buttonClassName="hidden h-11 items-center gap-2 rounded-full border border-white/25 bg-white/10 py-1 pl-1 pr-1 text-on-night focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-night lg:inline-flex xl:pr-3"
+      button={(
+        <>
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-offer-soft text-sm font-bold text-offer-deep" aria-hidden="true">{initials(user.name)}</span>
+          <span className="hidden max-w-28 truncate text-sm font-semibold xl:inline" aria-hidden="true">{first}</span>
+        </>
+      )}
+    >
+      <Link to="/profile" role="menuitem" className={menuItemClass(path === '/profile')} onClick={onClose}>Profile</Link>
+      <button type="button" role="menuitem" className={`${menuItemClass(false)} text-danger`} onClick={onLogout}>Log out</button>
+    </HeaderMenu>
+  );
+}
+
+function OptionsMenu({ user, path, open, onToggle, onClose }) {
+  return (
+    <HeaderMenu
+      id="options-menu"
+      label="My gigs and applications"
+      open={open}
+      onToggle={onToggle}
+      onClose={onClose}
+      buttonClassName="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-night"
+      button={<MoreVertical size={20} aria-hidden="true" />}
+    >
+      {workNav.map((item) => {
+        const Icon = item.icon;
+        const count = item.countKey != null ? user[item.countKey] : null;
+        return (
+          <Link key={item.to} to={item.to} role="menuitem" className={menuItemClass(path === item.to)} onClick={onClose}>
+            <Icon size={18} aria-hidden="true" />
+            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            {typeof count === 'number' ? (
+              <span className="rounded-full bg-band px-2 py-0.5 text-xs font-bold text-ink">{count}</span>
+            ) : null}
+          </Link>
+        );
+      })}
+    </HeaderMenu>
   );
 }
 
@@ -163,6 +276,7 @@ export function App() {
   const [toasts, setToasts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [section, setSection] = useState(() => sectionFromPath(normalize(window.location.pathname)) || readSection());
   const userId = user?.id || '';
@@ -234,6 +348,7 @@ export function App() {
   useEffect(() => {
     setMenuOpen(false);
     setAccountOpen(false);
+    setOptionsOpen(false);
     setSearchOpen(false);
   }, [path, query]);
 
@@ -299,27 +414,50 @@ export function App() {
                 {SECTIONS[section].post}
               </Link>
             ) : null}
-            {user ? (
-              <AccountMenu
-                user={user}
-                path={path}
-                open={accountOpen}
-                onToggle={() => setAccountOpen((open) => !open)}
-                onClose={() => setAccountOpen(false)}
-                onLogout={logout}
-              />
-            ) : (
-              <nav className="header-account hidden items-center gap-1 lg:flex" aria-label="Account">
-                <Link to="/login" className={navClass(path === '/login')}>Log in</Link>
-                <Link to="/signup" className={navClass(path === '/signup')}>Sign up</Link>
-              </nav>
-            )}
+            <div className="header-tools flex items-center justify-end gap-1">
+              {user && !isPublic ? (
+                <OptionsMenu
+                  user={user}
+                  path={path}
+                  open={optionsOpen}
+                  onToggle={() => {
+                    setOptionsOpen((open) => !open);
+                    setAccountOpen(false);
+                    setMenuOpen(false);
+                  }}
+                  onClose={() => setOptionsOpen(false)}
+                />
+              ) : null}
+              {user ? (
+                <AccountMenu
+                  user={user}
+                  path={path}
+                  open={accountOpen}
+                  onToggle={() => {
+                    setAccountOpen((open) => !open);
+                    setOptionsOpen(false);
+                    setMenuOpen(false);
+                  }}
+                  onClose={() => setAccountOpen(false)}
+                  onLogout={logout}
+                />
+              ) : (
+                <nav className="hidden items-center gap-1 lg:flex" aria-label="Account">
+                  <Link to="/login" className={navClass(path === '/login')}>Log in</Link>
+                  <Link to="/signup" className={navClass(path === '/signup')}>Sign up</Link>
+                </nav>
+              )}
+            </div>
             <button
               type="button"
               className="header-menu inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/25 text-on-night lg:hidden"
               aria-expanded={menuOpen}
               aria-controls="site-menu"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => {
+                setMenuOpen((open) => !open);
+                setAccountOpen(false);
+                setOptionsOpen(false);
+              }}
             >
               <span className="sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
               {menuOpen ? (
@@ -346,7 +484,7 @@ export function App() {
                     {SECTIONS[section].post}
                   </Link>
                 ) : null}
-                {user ? nav.map((item) => (
+                {user ? mobileNav.map((item) => (
                   <Link key={item.to} to={item.to} className={navClass(path === item.to)}>
                     {item.label}
                   </Link>

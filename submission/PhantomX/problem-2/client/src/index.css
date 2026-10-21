@@ -148,25 +148,37 @@
 
 .header-bar {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   grid-template-areas:
-    "brand search menu"
-    "tabs tabs tabs";
+    "brand search tools menu"
+    "tabs tabs tabs tabs";
   align-items: center;
 }
 
-.header-brand { grid-area: brand; }
+.header-brand { grid-area: brand; min-width: 0; }
 .header-search { grid-area: search; justify-self: end; min-width: 0; }
+.header-tools { grid-area: tools; }
 .header-menu { grid-area: menu; }
 .header-tabs { grid-area: tabs; }
 .header-post { grid-area: post; display: none; }
-.header-account { grid-area: account; }
+
+.header-popover {
+  position: fixed;
+  z-index: 1000;
+  width: min(14rem, calc(100vw - 16px));
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-pop);
+  padding: 0.5rem;
+}
 
 @media (min-width: 1024px) {
   .header-bar {
     height: 5rem;
     grid-template-columns: auto auto minmax(7.5rem, 1fr) auto auto;
-    grid-template-areas: "brand tabs search post account";
+    grid-template-areas: "brand tabs search post tools";
   }
 
   .header-search { justify-self: stretch; }

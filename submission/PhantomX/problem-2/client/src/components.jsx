@@ -175,15 +175,18 @@ export function Modal({ title, children, onClose }) {
   );
 }
 
-export function Link({ to, className, children }) {
+export function Link({ to, className, children, role, onClick }) {
   const { navigate, path } = useApp();
   const current = path === to;
   return (
     <a
       href={to}
       className={className}
+      role={role}
       aria-current={current ? 'page' : undefined}
       onClick={(event) => {
+        if (onClick) onClick(event);
+        if (event.defaultPrevented) return;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
         event.preventDefault();
         navigate(to);
