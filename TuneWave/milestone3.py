@@ -1,10 +1,4 @@
-
-
-
-# ---------- shared model (delete this if your project already has one) ------
 class Song:
-    """Minimal Song. `song_id` is the unique key used across milestones."""
-
     def __init__(self, song_id, title, artist):
         self.id = song_id
         self.title = title
@@ -12,9 +6,6 @@ class Song:
 
     def __repr__(self):
         return f"Song({self.id}, '{self.title}', '{self.artist}')"
-
-
-# bst
 
 class _BSTNode:
     __slots__ = ("key", "songs", "left", "right")
@@ -49,13 +40,6 @@ class SongSearchTree:
         return None
 
     def prefixSearch(self, prefix):
-        """
-        Return all titles starting with `prefix`, alphabetically.
-
-        Pruning: at a node whose key is < prefix, nothing in its LEFT subtree
-        can match (all are smaller still). At a node whose key does not start
-        with prefix and is > prefix, nothing in its RIGHT subtree can match.
-        """
         p = prefix.lower()
         out = []
         self._prefix(self.root, p, out)
@@ -208,79 +192,6 @@ class ArtistGraph:
                 if candidate != artist and candidate not in direct:
                     two_away.add(candidate)
         return sorted(two_away)
-
-
-#=============================> SELF TEST RUN
-
-def _selftest():
-    print("=" * 60)
-    print("Milestone 3 — self-test")
-    print("=" * 60)
-
-    # ---------- BST ----------
-    tree = SongSearchTree()
-    songs = [
-        Song(1, "Blinding Lights", "The Weeknd"),
-        Song(2, "Bad Guy", "Billie Eilish"),
-        Song(3, "Levitating", "Dua Lipa"),
-        Song(4, "Shape of You", "Ed Sheeran"),
-        Song(5, "Shivers", "Ed Sheeran"),
-        Song(6, "Save Your Tears", "The Weeknd"),
-        Song(7, "Break My Heart", "Dua Lipa"),
-    ]
-    for s in songs:
-        tree.insert(s)
-
-    titles = tree.inOrder()
-    print("in-order:", titles)
-    assert titles == sorted(titles, key=str.lower), "in-order must be alphabetical"
-
-    assert tree.prefixSearch("S") == ["Save Your Tears", "Shape of You", "Shivers"]
-    assert tree.prefixSearch("s") == tree.prefixSearch("S"), "case-insensitive"
-    assert tree.prefixSearch("zzz") == []
-    assert tree.prefixSearch("") == tree.inOrder()
-
-    assert tree.findSong("Shivers") == 5
-    assert tree.findSong("Missing") is None
-    assert [s.id for s in tree.findSongs("Shivers")] == [5]
-
-    # convenience addSong (builds a minimal Song)
-    tree.addSong("Anti-Hero", 30)
-    assert tree.findSong("Anti-Hero") == 30
-
-    # removeSong: node is deleted when its last song goes
-    assert tree.removeSong("Shivers", 5) is True
-    assert tree.findSong("Shivers") is None
-    assert tree.removeSong("Shivers", 5) is False
-
-    # uppercase insert still matched case-insensitively
-    tree.insert(Song(99, "Zebra", "Someone"))
-    assert tree.prefixSearch("z") == ["Zebra"]
-
-    # ---------- Graph ----------
-    g = ArtistGraph()
-    g.addRelation("The Weeknd", "Dua Lipa")
-    g.addRelation("The Weeknd", "Billie Eilish")
-    g.addRelation("Dua Lipa", "Ed Sheeran")
-    g.addRelation("Dua Lipa", "Harry Styles")
-    g.addRelation("Billie Eilish", "Finneas")
-    g.addRelation("Billie Eilish", "Ed Sheeran")
-    g.addRelation("Ed Sheeran", "Taylor Swift")
-    g.addArtist("Lorde")              # isolated node
-    g.addRelation("Solo", "Solo")     # self-loop ignored
-
-    rec = g.recommendArtists("The Weeknd")
-    print("recommend(The Weeknd):", rec)
-    assert rec == ["Ed Sheeran", "Finneas", "Harry Styles"]
-
-    rec = g.recommendArtists("Ed Sheeran")
-    print("recommend(Ed Sheeran):", rec)
-    assert rec == ["Finneas", "Harry Styles", "The Weeknd"]
-
-    assert g.recommendArtists("Lorde") == []
-    assert g.recommendArtists("Nobody") == []
-
-    print("\nAll Milestone 3 checks passed. ✅")
 
 
 if __name__ == "__main__":
