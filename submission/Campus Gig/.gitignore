@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+# Runtime data: created from the seed on first start, reset with `npm run reset-db`
+server/data/db.json
+server/data/*.tmp
