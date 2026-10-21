@@ -3,6 +3,7 @@
 import * as RechartsPrimitive from "recharts";
 import { cn } from "@/lib/utils";
 import * as React from "react";
+import { useI18n } from "@/i18n";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
@@ -129,6 +130,7 @@ function ChartContainer({
 }
 
 function LoadingIndicator({ isLoading }: { isLoading: boolean }) {
+  const { t } = useI18n();
   if (!isLoading) {
     return null;
   }
@@ -137,7 +139,7 @@ function LoadingIndicator({ isLoading }: { isLoading: boolean }) {
     <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
       <div className="text-primary bg-background flex items-center justify-center gap-2 rounded-md border px-2 py-0.5 text-sm">
         <div className="border-border border-t-primary h-3 w-3 animate-spin rounded-full border" />
-        <span>Loading</span>
+        <span>{t("Loading")}</span>
       </div>
     </div>
   );
