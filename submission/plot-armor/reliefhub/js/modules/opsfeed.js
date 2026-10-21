@@ -1,8 +1,8 @@
 /* MODULE: Live Ops Feed — OWNER: Eshaal (@Eshaal607)
  *
  * A read-only activity timeline that watches the API and turns snapshot diffs
- * into feed items. Makes the dashboard feel alive during the demo without
- * anybody touching it.
+ * into human sentences ("Jamshoro now sheltering 90 families"). Makes the
+ * dashboard feel alive during the demo without anybody touching it.
  *
  * How it works:
  *  - On first render we snapshot the five collections (camps, inventory,
@@ -11,10 +11,18 @@
  *  - The interval handle lives at MODULE level: every render stops it first,
  *    so re-renders can never stack timers. A hashchange listener stops it
  *    when you navigate away, and document.hidden pauses it too.
- *  - The diff engine between the [pure] markers is DOM-free, so it can be
- *    exercised from a plain node harness.
+ *  - Phrases follow the app's real business rules (see dispatches.js):
+ *    creating a dispatch reserves stock immediately, delivering bumps the
+ *    need's fulfilled_quantity, cancelling returns stock to the warehouse.
+ *    So a stock drop explained by a new dispatch is NOT reported as a
+ *    donation — only unexplained stock movements are.
+ *  - Demo mode (API._demoMode, set by api.js when no server answers): show a
+ *    banner and synthesize a plausible seed-derived timeline instead — polling
+ *    a static db.json can never produce diffs, so no timer runs in demo.
  *  - Single-file constraint: my styles ship inside this file as an injected
  *    <style> tag (styles.css belongs to the team lead).
+ *  - The diff engine between the [pure] markers is DOM-free, so it can be
+ *    exercised from a plain node harness.
  */
 (() => {
   /* my little stylesheet, injected once (styles.css itself is the lead's) */
@@ -259,6 +267,51 @@
     return evts;
   }
 
+  /* Demo mode: db.json is static, so nothing can ever diff — synthesize a
+   * plausible timeline straight from the seed's own dispatches/needs/camps. */
+  function synthDemoEvents(snap, now) {
+    now = now || Date.now();
+    const camps = snap.camps || [], items = snap.inventory || [], needs = snap.needs || [];
+    const ds = snap.dispatches || [], vols = snap.volunteers || [];
+    const camp = id => camps.find(c => c.id === id) || {};
+    const need = id => needs.find(n => n.id === id) || {};
+    const item = id => items.find(i => i.id === id) || {};
+    const byNewest = (a, b) => b.id - a.id;
+
+    const seq = [];
+    const deployed = vols.find(v => v.camp_id != null);
+    if (deployed) seq.push(['🙋', `${deployed.name} deployed to ${camp(deployed.camp_id).name || 'the field'}`, 'volunteer']);
+    const hygiene = items.find(i => /hygiene/i.test(i.name));
+    if (hygiene) seq.push(['📦', `+40 ${hygiene.name} donated into stock`, 'stock']);
+    const full = camps.find(c => c.status === 'Full');
+    if (full) seq.push(['🔴', `${full.name} is FULL`, 'camp']);
+    const busy = camps.filter(c => c.status !== 'Closed')
+      .sort((a, b) => b.current_families - a.current_families)[0];
+    if (busy) seq.push(['🏕️', `${busy.name} now sheltering ${busy.current_families} families`, 'camp']);
+    const cancelled = ds.filter(d => d.status === 'Cancelled').sort(byNewest)[0];
+    if (cancelled) seq.push(['🚫', `Dispatch #${cancelled.id} cancelled — stock returned to warehouse`, 'dispatch']);
+    const delivered = ds.filter(d => d.status === 'Delivered').sort(byNewest)[0];
+    if (delivered) {
+      const n = need(delivered.need_id), it = item(n.inventory_item_id);
+      const req = +n.required_quantity || 0;
+      seq.push(['✅', `${delivered.quantity} ${plural(it.unit || 'units', delivered.quantity)} delivered to ` +
+        (camp(delivered.camp_id).district || camp(delivered.camp_id).name || 'the field') +
+        (req ? ` — fulfilment up ${Math.round((delivered.quantity / req) * 100)}%` : ''), 'dispatch']);
+    }
+    const transit = ds.filter(d => d.status === 'In Transit').sort(byNewest)[0];
+    if (transit) seq.push(['🚚', `Dispatch #${transit.id} rolled out toward ` +
+      (camp(transit.camp_id).district || 'the field'), 'dispatch']);
+    const pending = ds.filter(d => d.status === 'Pending').sort(byNewest)[0];
+    if (pending) {
+      const it = item(need(pending.need_id).inventory_item_id);
+      seq.push(['🚚', `Dispatch created — ${pending.quantity} ${plural(it.unit || 'units', pending.quantity)} of ` +
+        `${it.name || 'supplies'} reserved for ${camp(pending.camp_id).name || 'camp'}`, 'dispatch']);
+    }
+    /* oldest -> newest, ~70s apart, so the newest lands on "just now" */
+    return seq.map(([icon, text, kind], i) =>
+      ({ icon, text, kind, ts: now - (seq.length - i) * 70 * 1000 }));
+  }
+
   /* [/pure] */
 
   /* ======================================================================
@@ -283,7 +336,7 @@
 
   function startPolling() {
     stopPolling(); /* never two handles */
-    if (_demo || document.hidden) return; /* hidden tabs don't poll */
+    if (_demo || document.hidden) return; /* static demo data can't diff; hidden tabs don't poll */
     _timer = setInterval(() => { if (!document.hidden && !_polling) poll(); }, POLL_INTERVAL);
   }
 
@@ -304,7 +357,7 @@
         const evts = diffEvents(_prev, snap);
         if (evts.length) pushEvents(evts);
       } else if (_demo) {
-        /* demo timeline lands in a later commit */
+        pushEvents(synthDemoEvents(snap));
       }
       _prev = snap;             /* only a successful fetch replaces the baseline */
       _lastCheck = Date.now();
@@ -335,7 +388,8 @@
     _listEl.innerHTML = '';
     if (!_events.length) {
       _listEl.append(UI.h('div', { class: 'ops-empty' },
-        'Watching operations… changes will appear here live.'));
+        _demo ? 'Demo data — timeline synthesized from the seed.'
+              : 'Watching operations… changes will appear here live.'));
       return;
     }
     _events.forEach((e, i) => {
@@ -356,7 +410,7 @@
   function paintStatus() {
     if (!_root || !_statusText || !_counterEl) return;
     let dot = 'live', label;
-    if (_demo) { dot = 'demo'; label = 'Demo mode — no live polling'; }
+    if (_demo) { dot = 'demo'; label = 'Demo mode — polling off, timeline synthesized'; }
     else if (_reconnecting) { dot = 'warn'; label = 'Reconnecting… holding the last snapshot'; }
     else label = 'Live — polling every 8s';
     const dotEl = _root.querySelector('.ops-dot');
@@ -385,19 +439,23 @@
       stopPolling(); /* first thing, every render — no stacked timers, ever */
 
       const root = UI.h('div', { class: 'opsfeed' });
+      const banner = UI.h('div', { class: 'ops-banner', role: 'note' }, [
+        UI.h('strong', {}, 'Demo data'),
+        ' — start the local API to see live events',
+      ]);
       const statusbar = UI.h('div', { class: 'ops-statusbar' }, [
         UI.h('span', { class: 'ops-dot live', 'aria-hidden': 'true' }),
         UI.h('span', { class: 'ops-status-text' }, 'Connecting…'),
         UI.h('span', { class: 'ops-counter' }, ''),
       ]);
       const list = UI.h('div', { class: 'ops-feed' });
-      root.append(UI.h('div', { class: 'panel ops-panel' }, [
+      root.append(banner, UI.h('div', { class: 'panel ops-panel' }, [
         UI.h('h3', {}, 'Live operations'),
         statusbar,
         list,
       ]));
 
-      _root = root; _bannerEl = null; _listEl = list;
+      _root = root; _bannerEl = banner; _listEl = list;
       _statusText = statusbar.querySelector('.ops-status-text');
       _counterEl = statusbar.querySelector('.ops-counter');
       paintList(false); /* replay anything already seen this session */
