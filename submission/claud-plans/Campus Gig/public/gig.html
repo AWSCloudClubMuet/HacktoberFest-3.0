@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opportunity Details — Campus Gig & SkillSwap Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Top Back Button -->
+    <div>
+      <a href="index.html" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors">
+        <i class="fa-solid fa-arrow-left"></i> Back to All Gigs
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-20 text-slate-400 dark:text-slate-500 font-semibold text-sm">
+      <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-3xl mb-3 block"></i>
+      Loading opportunity details...
+    </div>
+
+    <!-- Gig Container -->
+    <div id="gig-detail-container" class="hidden space-y-6">
+      
+      <!-- Gig Showcase Hero Image Banner (Fiverr Pro / Upwork style) -->
+      <div class="relative w-full h-56 sm:h-72 md:h-84 lg:h-96 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm group bg-slate-900">
+        <img id="gig-banner-img" src="" alt="Project Showcase" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+        <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-4 flex items-end justify-between">
+          <div class="space-y-1">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-lg backdrop-blur-md">
+              <i class="fa-solid fa-sparkles text-[10px]"></i> Verified Campus Project Showcase
+            </span>
+            <p class="text-white/90 text-xs sm:text-sm font-medium drop-shadow-sm hidden sm:block">
+              Deliverable preview & service scope
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gig Top Header Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+          <span id="gig-category" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"></span>
+          <span id="gig-status-badge"></span>
+          <span id="gig-payment-badge"></span>
+          <span id="gig-type-badge" class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
+        </div>
+
+        <h1 id="gig-title" class="font-display font-black text-2xl sm:text-3xl lg:text-4xl text-slate-900 dark:text-white leading-tight mb-3"></h1>
+        
+        <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+          <span><i class="fa-regular fa-user mr-1 text-emerald-600"></i> Posted by <strong id="owner-name-top" class="text-slate-800 dark:text-slate-200"></strong></span>
+          <span>•</span>
+          <span><i class="fa-regular fa-clock mr-1 text-emerald-600"></i> Application Deadline: <strong id="gig-deadline" class="text-slate-800 dark:text-slate-200"></strong></span>
+        </div>
+      </div>
+
+      <!-- 2-Column Responsive Layout (Upwork Job Detail Style) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Gig Details & Forms (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+          
+          <!-- Description Card -->
+          <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
+            <h2 class="font-display font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-align-left text-emerald-600"></i> Project Description & Requirements
+            </h2>
+            <div id="gig-description" class="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed whitespace-pre-line"></div>
+          </div>
+
+          <!-- Proposal Application Box (For Applicants) -->
+          <div id="apply-box" class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
+            <h2 class="font-display font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane text-emerald-600"></i> Submit Your Proposal
+            </h2>
+
+            <div id="apply-status-message" class="hidden p-4 rounded-2xl text-xs sm:text-sm font-semibold"></div>
+
+            <form id="apply-form" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Your Cover Letter & Pitch *
+                </label>
+                <textarea
+                  id="apply-message"
+                  rows="4"
+                  required
+                  placeholder="Introduce your relevant experience, technical tools, past coursework, and estimated timeline to deliver..."
+                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 placeholder:text-slate-400"
+                ></textarea>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Explain your qualifications clearly to the gig owner.</p>
+              </div>
+
+              <button
+                type="submit"
+                class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-transform active:scale-95 inline-flex items-center gap-2"
+              >
+                <i class="fa-solid fa-paper-plane"></i> Submit Proposal
+              </button>
+            </form>
+          </div>
+
+          <!-- Reviews Box (Shown when Completed) -->
+          <div id="reviews-box" class="hidden bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-6">
+            <h2 class="font-display font-extrabold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-star text-amber-400"></i> Completed Work & Peer Feedback
+            </h2>
+
+            <!-- Review form (for participants) -->
+            <div id="leave-review-section" class="hidden bg-slate-50 dark:bg-slate-800/60 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">Leave a Review</h3>
+              <form id="review-form" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Rating *</label>
+                  <select id="review-rating" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-emerald-500" required>
+                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                    <option value="3">⭐⭐⭐ 3 Stars</option>
+                    <option value="2">⭐⭐ 2 Stars</option>
+                    <option value="1">⭐ 1 Star</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Feedback Comment *</label>
+                  <textarea
+                    id="review-comment"
+                    rows="3"
+                    required
+                    placeholder="Share how the collaboration went, communication quality, and technical expertise..."
+                    class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
+                  Publish Review
+                </button>
+              </form>
+            </div>
+
+            <!-- Existing Reviews List -->
+            <div id="reviews-list" class="space-y-3"></div>
+          </div>
+
+        </div>
+
+        <!-- Right: Creator Sidebar & Owner Controls (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+          
+          <!-- Creator Profile Card -->
+          <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
+            <h3 class="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">
+              About the Creator
+            </h3>
+
+            <div class="flex items-center gap-3">
+              <img id="owner-avatar-img" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-sm flex-shrink-0" src="" alt="Owner Avatar" />
+              <div>
+                <div id="owner-name" class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white"></div>
+                <div id="owner-major-sem" class="text-xs text-slate-500 dark:text-slate-400"></div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Verified Skills</div>
+              <div id="owner-skills" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div class="pt-2">
+              <a id="owner-profile-link" href="#" class="block w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors">
+                View Student Profile →
+              </a>
+            </div>
+          </div>
+
+          <!-- Owner Management Panel (Shown only to Creator) -->
+          <div id="owner-panel" class="hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-emerald-500/40 dark:border-emerald-500/30 shadow-lg space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display font-extrabold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-emerald-600"></i> Owner Controls
+              </h3>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                You Own This
+              </span>
+            </div>
+
+            <!-- Complete Gig Action -->
+            <div id="mark-completed-section" class="hidden p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 space-y-2">
+              <p class="text-xs text-emerald-800 dark:text-emerald-300 font-medium leading-relaxed">
+                <i class="fa-solid fa-info-circle"></i> Work is currently <strong>In Progress</strong> with an accepted student. Mark it completed once delivered to unlock reviews.
+              </p>
+              <button id="btn-mark-completed" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-check"></i> Mark as Completed
+              </button>
+            </div>
+
+            <!-- Cancel Gig Action (If Open) -->
+            <div id="cancel-gig-section" class="hidden">
+              <button id="btn-cancel-gig" class="w-full py-2 px-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-xs border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-1.5 transition-colors">
+                <i class="fa-solid fa-ban"></i> Cancel Gig
+              </button>
+            </div>
+
+            <!-- Received Proposals List -->
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+              <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                <span>Received Proposals</span>
+                <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] flex items-center justify-center font-black" id="apps-count">0</span>
+              </h4>
+              <div id="owner-apps-list" class="space-y-3"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+      CampusGig &copy; 2026. Built with Node.js, Express & MongoDB.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { api, initNavbar, getCurrentUserId, renderStatusBadge, renderPaymentBadge, formatDate, showToast } from './js/app.js';
+    import { getGigCover, getUserAvatar } from './js/images.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const gigId = urlParams.get('id');
+
+    if (!gigId) {
+      window.location.href = 'index.html';
+    }
+
+    let gigData = null;
+
+    async function loadGig() {
+      try {
+        gigData = await api(`/gigs/${gigId}`);
+        const currentUserId = getCurrentUserId();
+        const isOwner = gigData.owner_id === currentUserId;
+
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('gig-detail-container').classList.remove('hidden');
+
+        // Banner Image
+        const bannerImg = document.getElementById('gig-banner-img');
+        if (bannerImg) {
+          bannerImg.src = getGigCover(gigData);
+        }
+
+        // Header info
+        document.getElementById('gig-title').textContent = gigData.title;
+        document.getElementById('gig-category').textContent = gigData.category;
+        document.getElementById('gig-status-badge').innerHTML = renderStatusBadge(gigData.status);
+        document.getElementById('gig-payment-badge').innerHTML = renderPaymentBadge(gigData.payment_type, gigData.budget);
+        document.getElementById('gig-type-badge').innerHTML = gigData.type === 'Offering' ? '📢 Offering Service' : '🙋 Requesting Help';
+        document.getElementById('owner-name-top').textContent = gigData.owner?.name || 'Student';
+        document.getElementById('gig-deadline').textContent = formatDate(gigData.deadline);
+        document.getElementById('gig-description').textContent = gigData.description;
+
+        // Creator sidebar
+        if (gigData.owner) {
+          document.getElementById('owner-name').textContent = gigData.owner.name;
+          const ownerAvatarImg = document.getElementById('owner-avatar-img');
+          if (ownerAvatarImg) {
+            ownerAvatarImg.src = getUserAvatar(gigData.owner_id);
+          }
+          document.getElementById('owner-major-sem').textContent = `${gigData.owner.major} • Semester ${gigData.owner.semester}`;
+          document.getElementById('owner-skills').innerHTML = (gigData.owner.skills || [])
+            .map(s => `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">${s}</span>`).join('');
+          document.getElementById('owner-profile-link').href = `profile.html?id=${gigData.owner.id}`;
+        }
+
+        // Apply Box Logic
+        const applyBox = document.getElementById('apply-box');
+        const applyMsg = document.getElementById('apply-status-message');
+        const applyForm = document.getElementById('apply-form');
+
+        const existingApp = (gigData.applications || []).find(a => a.applicant_id === currentUserId);
+
+        if (isOwner) {
+          applyBox.classList.add('hidden');
+        } else if (gigData.status !== 'Open') {
+          applyBox.classList.remove('hidden');
+          applyForm.classList.add('hidden');
+          applyMsg.className = 'p-4 rounded-2xl text-xs sm:text-sm font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800';
+          applyMsg.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> This gig has status <strong>${gigData.status}</strong> and is not open for new proposals.`;
+          applyMsg.classList.remove('hidden');
+        } else if (existingApp) {
+          applyBox.classList.remove('hidden');
+          applyForm.classList.add('hidden');
+          applyMsg.className = 'p-4 rounded-2xl text-xs sm:text-sm font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800';
+          applyMsg.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> You have already submitted a proposal with status: <strong>${existingApp.status}</strong>.`;
+          applyMsg.classList.remove('hidden');
+        } else {
+          applyBox.classList.remove('hidden');
+          applyForm.classList.remove('hidden');
+          applyMsg.classList.add('hidden');
+        }
+
+        // Owner Controls Logic
+        const ownerPanel = document.getElementById('owner-panel');
+        if (isOwner) {
+          ownerPanel.classList.remove('hidden');
+          document.getElementById('apps-count').textContent = (gigData.applications || []).length;
+
+          // In Progress -> Complete button
+          const markCompletedSec = document.getElementById('mark-completed-section');
+          if (gigData.status === 'In Progress') {
+            markCompletedSec.classList.remove('hidden');
+          } else {
+            markCompletedSec.classList.add('hidden');
+          }
+
+          // Open -> Cancel button
+          const cancelSec = document.getElementById('cancel-gig-section');
+          if (gigData.status === 'Open') {
+            cancelSec.classList.remove('hidden');
+          } else {
+            cancelSec.classList.add('hidden');
+          }
+
+          // Applications list with Accept / Reject buttons
+          const appsList = document.getElementById('owner-apps-list');
+          if (!gigData.applications || gigData.applications.length === 0) {
+            appsList.innerHTML = `<div class="text-center py-4 text-xs text-slate-400">No proposals received yet.</div>`;
+          } else {
+            appsList.innerHTML = gigData.applications.map(app => `
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <img src="${getUserAvatar(app.applicant_id)}" class="w-6 h-6 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${app.applicant_name}" />
+                    <span class="font-bold text-xs text-slate-900 dark:text-white">${app.applicant_name} <span class="text-slate-400 font-normal">(${app.applicant_major})</span></span>
+                  </div>
+                  ${renderStatusBadge(app.status)}
+                </div>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-snug">"${app.message}"</p>
+                ${app.status === 'Pending' && gigData.status === 'Open' ? `
+                  <div class="flex items-center gap-2 pt-1">
+                    <button class="btn-accept-app px-3 py-1 rounded-lg text-[11px] font-bold text-white bg-emerald-600 hover:bg-emerald-700" data-id="${app.id}">
+                      Accept Candidate
+                    </button>
+                    <button class="btn-reject-app px-3 py-1 rounded-lg text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40" data-id="${app.id}">
+                      Reject
+                    </button>
+                  </div>
+                ` : ''}
+              </div>
+            `).join('');
+          }
+        } else {
+          ownerPanel.classList.add('hidden');
+        }
+
+        // Reviews section
+        const reviewsBox = document.getElementById('reviews-box');
+        if (gigData.status === 'Completed') {
+          reviewsBox.classList.remove('hidden');
+          loadReviews();
+        } else {
+          reviewsBox.classList.add('hidden');
+        }
+
+      } catch (err) {
+        document.getElementById('loading').innerHTML = `
+          <div class="text-rose-500 font-bold mb-2">Error loading opportunity.</div>
+          <a href="index.html" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600">Return to Browse</a>
+        `;
+      }
+    }
+
+    async function loadReviews() {
+      try {
+        const reviews = await api(`/reviews?gig_id=${gigId}`);
+        const currentUserId = getCurrentUserId();
+        const reviewsList = document.getElementById('reviews-list');
+        const leaveSec = document.getElementById('leave-review-section');
+
+        const isOwner = gigData.owner_id === currentUserId;
+        const isApplicant = gigData.accepted_applicant_id === currentUserId;
+        const hasReviewed = reviews.some(r => r.reviewer_id === currentUserId);
+
+        if ((isOwner || isApplicant) && !hasReviewed) {
+          leaveSec.classList.remove('hidden');
+        } else {
+          leaveSec.classList.add('hidden');
+        }
+
+        if (reviews.length === 0) {
+          reviewsList.innerHTML = `<p class="text-xs text-slate-400">No reviews submitted yet for this completed gig.</p>`;
+        } else {
+          reviewsList.innerHTML = reviews.map(r => `
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <img src="${getUserAvatar(r.reviewer_id)}" class="w-6 h-6 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${r.reviewer_name}" />
+                  <strong class="text-xs font-bold text-slate-900 dark:text-white">${r.reviewer_name}</strong>
+                </div>
+                <span class="text-xs text-amber-500 font-bold">${'★'.repeat(r.rating)} (${r.rating}/5)</span>
+              </div>
+              <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${r.comment}</p>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Submit Application
+    document.getElementById('apply-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = document.getElementById('apply-message').value.trim();
+      if (!message) return;
+
+      try {
+        await api('/applications', {
+          method: 'POST',
+          body: JSON.stringify({ gig_id: gigId, message }),
+        });
+        showToast('Proposal submitted successfully!', 'success');
+        loadGig();
+      } catch (err) {}
+    });
+
+    // Accept / Reject buttons delegation
+    document.getElementById('owner-apps-list').addEventListener('click', async (e) => {
+      const acceptBtn = e.target.closest('.btn-accept-app');
+      const rejectBtn = e.target.closest('.btn-reject-app');
+
+      if (acceptBtn) {
+        try {
+          await api(`/applications/${acceptBtn.dataset.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'Accepted' }),
+          });
+          showToast('Candidate accepted! Gig marked In Progress.', 'success');
+          loadGig();
+        } catch (e) {}
+      }
+
+      if (rejectBtn) {
+        try {
+          await api(`/applications/${rejectBtn.dataset.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'Rejected' }),
+          });
+          showToast('Proposal rejected.', 'info');
+          loadGig();
+        } catch (e) {}
+      }
+    });
+
+    // Complete Gig button
+    document.getElementById('btn-mark-completed').addEventListener('click', async () => {
+      try {
+        await api(`/gigs/${gigId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'Completed' }),
+        });
+        showToast('Gig marked as Completed! Reviews unlocked.', 'success');
+        loadGig();
+      } catch (e) {}
+    });
+
+    // Cancel Gig button
+    document.getElementById('btn-cancel-gig').addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to cancel this gig?')) return;
+      try {
+        await api(`/gigs/${gigId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'Cancelled' }),
+        });
+        showToast('Gig has been cancelled.', 'info');
+        loadGig();
+      } catch (e) {}
+    });
+
+    // Submit Review
+    document.getElementById('review-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rating = Number(document.getElementById('review-rating').value);
+      const comment = document.getElementById('review-comment').value.trim();
+      const currentUserId = getCurrentUserId();
+      const revieweeId = gigData.owner_id === currentUserId ? gigData.accepted_applicant_id : gigData.owner_id;
+
+      try {
+        await api('/reviews', {
+          method: 'POST',
+          body: JSON.stringify({
+            gig_id: gigId,
+            reviewer_id: currentUserId,
+            reviewee_id: revieweeId,
+            rating,
+            comment,
+          }),
+        });
+        showToast('Review submitted successfully!', 'success');
+        loadGig();
+      } catch (e) {}
+    });
+
+    initNavbar();
+    loadGig();
+  </script>
+</body>
+</html>

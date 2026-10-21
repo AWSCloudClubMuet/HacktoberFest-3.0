@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Freelancer Profile — Campus Gig & SkillSwap Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-20 text-slate-400 dark:text-slate-500 font-semibold text-sm">
+      <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-3xl mb-3 block"></i>
+      Loading student freelancer profile...
+    </div>
+
+    <div id="profile-container" class="hidden space-y-6">
+      
+      <!-- Profile Header Card (Fiverr/Upwork Seller Header) -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors relative overflow-hidden">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          
+          <div class="flex items-center gap-4 sm:gap-6">
+            <img id="profile-avatar-img" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-lg shadow-emerald-600/20 flex-shrink-0" src="" alt="Student Profile" />
+            
+            <div class="space-y-1">
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 id="profile-name" class="font-display font-black text-xl sm:text-2xl text-slate-900 dark:text-white"></h1>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                  <i class="fa-solid fa-certificate text-[10px]"></i> Verified Campus Student
+                </span>
+              </div>
+              
+              <div id="profile-meta" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400"></div>
+              
+              <div class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 pt-0.5">
+                <i class="fa-solid fa-envelope"></i> <span id="profile-email"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex sm:flex-col items-center sm:items-end gap-2">
+            <a href="create.html" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-transform active:scale-95 inline-flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Post Opportunity
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Verified Skills Tags -->
+        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+          <h3 class="text-xs font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider mb-2.5">
+            Core Competencies & Tools
+          </h3>
+          <div id="profile-skills" class="flex flex-wrap gap-2"></div>
+        </div>
+
+      </div>
+
+      <!-- Reputation & Computed Stats Grid (Never hardcoded) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gigs Created</div>
+          <div id="stat-posted" class="font-display font-black text-3xl text-slate-900 dark:text-white">0</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Opportunities posted</div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gigs Completed</div>
+          <div id="stat-completed" class="font-display font-black text-3xl text-emerald-600 dark:text-emerald-400">0</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Owner or accepted collaborator</div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Community Rating</div>
+          <div id="stat-rating" class="font-display font-black text-3xl text-amber-500">N/A</div>
+          <div id="stat-reviews-count" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0 peer reviews</div>
+        </div>
+
+      </div>
+
+      <!-- Received Peer Reviews Section -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <h2 class="font-display font-extrabold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-comments text-emerald-600"></i> Peer Feedback & Testimonials
+          </h2>
+          <span class="text-xs text-slate-400">Verified collaboration reviews</span>
+        </div>
+
+        <div id="reviews-list" class="space-y-3 pt-2"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+      CampusGig &copy; 2026. Built with Node.js, Express & MongoDB.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { api, initNavbar, getCurrentUserId, formatDate } from './js/app.js';
+    import { getUserAvatar } from './js/images.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let userId = urlParams.get('id');
+
+    async function loadProfile() {
+      if (!userId) {
+        userId = getCurrentUserId();
+      }
+
+      try {
+        const user = await api(`/users/${userId}`);
+        const reviews = await api(`/reviews?user_id=${userId}`);
+
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('profile-container').classList.remove('hidden');
+
+        document.getElementById('profile-name').textContent = user.name;
+        const avatarImg = document.getElementById('profile-avatar-img');
+        if (avatarImg) {
+          avatarImg.src = getUserAvatar(userId);
+        }
+        document.getElementById('profile-meta').textContent = `${user.major} • Semester ${user.semester}`;
+        document.getElementById('profile-email').textContent = user.email;
+
+        // Skills
+        document.getElementById('profile-skills').innerHTML = (user.skills || [])
+          .map(s => `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> ${s}
+            </span>
+          `).join('');
+
+        // Dynamic metrics
+        document.getElementById('stat-posted').textContent = user.gigsPosted || 0;
+        document.getElementById('stat-completed').textContent = user.gigsCompleted || 0;
+
+        if (user.averageRating !== null && user.averageRating !== undefined) {
+          document.getElementById('stat-rating').textContent = `${user.averageRating} ★`;
+        } else {
+          document.getElementById('stat-rating').textContent = 'N/A';
+        }
+        document.getElementById('stat-reviews-count').textContent = `${user.reviewCount || 0} reviews received`;
+
+        // Reviews list
+        const reviewsList = document.getElementById('reviews-list');
+        if (!reviews || reviews.length === 0) {
+          reviewsList.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No reviews received yet. Completed gigs unlock peer reviews.</div>`;
+        } else {
+          reviewsList.innerHTML = reviews.map(r => `
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2.5">
+                  <img src="${getUserAvatar(r.reviewer_id)}" class="w-7 h-7 rounded-full object-cover ring-1 ring-emerald-500/30 flex-shrink-0" alt="${r.reviewer_name}" />
+                  <div>
+                    <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                      <a href="profile.html?id=${r.reviewer_id}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                        ${r.reviewer_name}
+                      </a>
+                    </strong>
+                    <span class="text-[11px] text-slate-400">(${r.reviewer_major || 'Student'})</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-amber-500 font-bold">${'★'.repeat(r.rating)} (${r.rating}/5)</span>
+                  <span class="text-[11px] text-slate-400">• ${formatDate(r.created_at)}</span>
+                </div>
+              </div>
+
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed pl-9">
+                "${r.comment}"
+              </p>
+              
+              <div class="text-[11px] text-slate-400 pl-9">
+                Gig: <span class="font-semibold text-slate-600 dark:text-slate-300">${r.gig_title}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+
+      } catch (err) {
+        document.getElementById('loading').innerHTML = `<span class="text-rose-500 font-bold">Student profile not found.</span>`;
+      }
+    }
+
+    initNavbar('profile');
+    loadProfile();
+  </script>
+</body>
+</html>

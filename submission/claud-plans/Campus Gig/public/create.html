@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post an Opportunity — Campus Gig & SkillSwap Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Navbar Mount -->
+  <div id="navbar-mount"></div>
+
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Top Back Link -->
+    <div>
+      <a href="index.html" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors">
+        <i class="fa-solid fa-arrow-left"></i> Back to All Gigs
+      </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="space-y-1">
+      <h1 class="font-display font-black text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
+        Post a Campus <span class="text-emerald-600 dark:text-emerald-400">Opportunity</span>
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+        Share your technical skills or request freelance assistance and skill-swaps from fellow university students.
+      </p>
+    </div>
+
+    <!-- Post Form Card (Upwork Style) -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-6">
+      
+      <!-- Error Banner -->
+      <div id="error-banner" class="hidden p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs sm:text-sm font-semibold flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <form id="create-gig-form" class="space-y-6">
+        
+        <!-- Gig Title -->
+        <div>
+          <label for="gig-title" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+            Opportunity Title *
+          </label>
+          <input
+            type="text"
+            id="gig-title"
+            required
+            placeholder="e.g. Full Stack MERN Analytics Dashboard or Calculus II Midterm Prep"
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 placeholder:text-slate-400 transition-all"
+          />
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Write a clear title that summarizes what needs to be done.</p>
+        </div>
+
+        <!-- 2-col Category & Type -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="gig-category" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+              Category *
+            </label>
+            <select id="gig-category" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-emerald-500" required>
+              <option value="Programming">💻 Programming</option>
+              <option value="Design">🎨 Design</option>
+              <option value="Writing">✍️ Writing</option>
+              <option value="Tutoring">📚 Tutoring</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="gig-type" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+              Opportunity Type *
+            </label>
+            <select id="gig-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-emerald-500" required>
+              <option value="Offering">📢 Offering a Service</option>
+              <option value="Requesting">🙋 Requesting Help</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 2-col Payment & Dynamic Budget -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="gig-payment" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+              Compensation Model *
+            </label>
+            <select id="gig-payment" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-emerald-500" required>
+              <option value="Paid">💰 Paid (PKR)</option>
+              <option value="SkillSwap">🤝 SkillSwap (Exchange Knowledge)</option>
+              <option value="Free">🎁 Free / Volunteer</option>
+            </select>
+          </div>
+
+          <!-- Dynamic Budget Input (Shown only when Paid) -->
+          <div id="budget-group">
+            <label for="gig-budget" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+              Budget (PKR) *
+            </label>
+            <input
+              type="number"
+              id="gig-budget"
+              min="1"
+              placeholder="e.g. 3500"
+              class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+            />
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Must be a positive number greater than 0 PKR for Paid gigs.</p>
+          </div>
+        </div>
+
+        <!-- Deadline -->
+        <div>
+          <label for="gig-deadline" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+            Application Deadline *
+          </label>
+          <input
+            type="datetime-local"
+            id="gig-deadline"
+            required
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white outline-none focus:border-emerald-500"
+          />
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Must be in the future. Past deadlines will display as Expired.</p>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="gig-desc" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+            Detailed Description & Deliverables *
+          </label>
+          <textarea
+            id="gig-desc"
+            rows="5"
+            required
+            placeholder="Explain required deliverables, necessary languages/tools (e.g. React, Docker, Figma), milestones, and expectations..."
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 placeholder:text-slate-400"
+          ></textarea>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
+          <a href="index.html" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            Cancel
+          </a>
+          <button
+            type="submit"
+            id="btn-submit"
+            class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-transform active:scale-95 inline-flex items-center gap-2"
+          >
+            <i class="fa-solid fa-paper-plane"></i> Publish Opportunity
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+      CampusGig &copy; 2026. Built with Node.js, Express & MongoDB.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { api, initNavbar, showToast } from './js/app.js';
+
+    // Set default deadline to 7 days in future
+    const now = new Date();
+    const defaultDeadline = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    document.getElementById('gig-deadline').value = defaultDeadline.toISOString().slice(0, 16);
+    document.getElementById('gig-deadline').min = now.toISOString().slice(0, 16);
+
+    const paymentSelect = document.getElementById('gig-payment');
+    const budgetGroup = document.getElementById('budget-group');
+    const budgetInput = document.getElementById('gig-budget');
+    const errorBanner = document.getElementById('error-banner');
+    const errorText = document.getElementById('error-text');
+
+    function updateBudgetVisibility() {
+      if (paymentSelect.value === 'Paid') {
+        budgetGroup.classList.remove('hidden');
+        budgetInput.required = true;
+      } else {
+        budgetGroup.classList.add('hidden');
+        budgetInput.required = false;
+        budgetInput.value = '';
+      }
+    }
+
+    paymentSelect.addEventListener('change', updateBudgetVisibility);
+    updateBudgetVisibility();
+
+    document.getElementById('create-gig-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBanner.classList.add('hidden');
+
+      const title = document.getElementById('gig-title').value.trim();
+      const category = document.getElementById('gig-category').value;
+      const type = document.getElementById('gig-type').value;
+      const payment_type = document.getElementById('gig-payment').value;
+      const budget = payment_type === 'Paid' ? Number(budgetInput.value) : null;
+      const deadline = new Date(document.getElementById('gig-deadline').value).toISOString();
+      const description = document.getElementById('gig-desc').value.trim();
+
+      try {
+        const newGig = await api('/gigs', {
+          method: 'POST',
+          body: JSON.stringify({
+            title,
+            category,
+            type,
+            payment_type,
+            budget,
+            deadline,
+            description,
+          }),
+        });
+
+        showToast('Opportunity published successfully!', 'success');
+        setTimeout(() => {
+          window.location.href = `gig.html?id=${newGig.id}`;
+        }, 400);
+
+      } catch (err) {
+        errorBanner.classList.remove('hidden');
+        errorText.textContent = err.message;
+      }
+    });
+
+    initNavbar('create');
+  </script>
+</body>
+</html>
