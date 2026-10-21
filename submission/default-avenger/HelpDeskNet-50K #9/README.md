@@ -78,6 +78,9 @@ The 60 disagreements breakdown is as follows:
 | Other -> Shipping | 3 | 5.0% |
 | Billing -> Other | 3 | 5.0% |
 
+### Error Distribution Chart
+<img src="chart.png" width="700" alt="Distribution of Annotation Disagreements" />
+
 ### Key Observations
 1. The noise is systematic rather than random. Errors heavily cluster around specific class boundaries:
    * Billing and Refund account for 26 out of 60 errors (43.3%).
