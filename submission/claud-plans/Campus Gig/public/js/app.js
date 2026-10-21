@@ -230,122 +230,186 @@ export async function initNavbar(activePage = '') {
     .join('');
 
   navMount.innerHTML = `
-    <nav class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16 gap-4">
-          
-          <!-- Logo & Brand -->
-          <div class="flex items-center gap-8">
-            <a href="index.html" class="flex items-center gap-2.5 group">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-briefcase text-lg"></i>
-              </div>
-              <div class="flex flex-col">
-                <span class="font-black text-xl tracking-tight text-slate-900 dark:text-white leading-none font-display">
-                  Campus<span class="text-emerald-600 dark:text-emerald-400">Gig</span>
-                </span>
-                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase mt-0.5">Freelance & SkillSwap</span>
-              </div>
-            </a>
-
-            <!-- Desktop Nav Links -->
-            <div class="hidden md:flex items-center gap-1">
-              <a href="index.html" class="px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                activePage === 'browse'
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
-              }">
-                <i class="fa-solid fa-compass mr-1.5 opacity-70"></i> Browse Gigs
-              </a>
-              <a href="create.html" class="px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                activePage === 'create'
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
-              }">
-                <i class="fa-solid fa-circle-plus mr-1.5 opacity-70"></i> Post a Gig
-              </a>
-              <a href="applications.html" class="px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                activePage === 'applications'
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
-              }">
-                <i class="fa-solid fa-file-contract mr-1.5 opacity-70"></i> My Applications
-              </a>
-              <a href="profile.html" class="px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                activePage === 'profile'
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800'
-              }">
-                <i class="fa-solid fa-user-check mr-1.5 opacity-70"></i> Profile
-              </a>
-            </div>
-          </div>
-
-          <!-- Right: Dark Mode Toggle, Role Switcher & Auth Trigger -->
-          <div class="flex items-center gap-2 sm:gap-3">
+    <header class="sticky top-0 z-50 w-full transition-all duration-300">
+      <!-- Translucent Glassmorphism Header Bar -->
+      <div class="border-b border-slate-200/60 dark:border-white/[0.08] bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl backdrop-saturate-150 transition-colors shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16 gap-4">
             
-            <!-- Dark Mode Toggle Button -->
-            <button
-              id="theme-toggle-btn"
-              class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center transition-colors text-slate-700 dark:text-slate-300 focus:outline-none"
-              title="Toggle Dark Theme"
-            >
-              <i class="fa-solid fa-moon"></i>
-            </button>
+            <!-- Left: Brand & Desktop Links -->
+            <div class="flex items-center gap-6 lg:gap-8 flex-shrink-0">
+              <a href="index.html" class="flex items-center gap-3 group flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-slate-900 dark:bg-emerald-500/10 border border-slate-800 dark:border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform duration-200 shadow-sm">
+                  <i class="fa-solid fa-graduation-cap text-base"></i>
+                </div>
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-1.5 leading-none">
+                    <span class="font-black text-lg tracking-tight text-slate-900 dark:text-white font-display">Campus<span class="text-emerald-600 dark:text-emerald-400">Gig</span></span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">PORTAL</span>
+                  </div>
+                  <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 tracking-wider uppercase mt-1">Student SkillSwap</span>
+                </div>
+              </a>
 
-            <!-- Role Switcher: "Acting as" (with automatic JWT generation) -->
-            <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 transition-colors">
-              <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
-                ${(currentUser?.name || 'U').charAt(0)}
-              </div>
-              <div class="flex flex-col">
-                <span class="text-[9px] font-black uppercase text-slate-400 dark:text-slate-400 tracking-wider leading-none">Acting As:</span>
-                <select id="user-switcher" class="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-100 outline-none cursor-pointer max-w-[130px] sm:max-w-[160px] truncate leading-tight mt-0.5">
-                  ${userOptions}
-                </select>
-              </div>
+              <!-- Desktop Nav Links: single-line, whitespace-nowrap, zero awkward wrapping -->
+              <nav class="hidden lg:flex items-center gap-1 flex-shrink-0">
+                <a href="index.html" class="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-150 ${
+                  activePage === 'browse'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60'
+                }">
+                  <i class="fa-solid fa-compass mr-1.5 opacity-70"></i> Explore Gigs
+                </a>
+                <a href="create.html" class="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-150 ${
+                  activePage === 'create'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60'
+                }">
+                  <i class="fa-solid fa-circle-plus mr-1.5 opacity-70"></i> Post a Gig
+                </a>
+                <a href="applications.html" class="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-150 ${
+                  activePage === 'applications'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60'
+                }">
+                  <i class="fa-solid fa-file-contract mr-1.5 opacity-70"></i> Proposals
+                </a>
+                <a href="profile.html" class="whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-150 ${
+                  activePage === 'profile'
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60'
+                }">
+                  <i class="fa-solid fa-user-check mr-1.5 opacity-70"></i> Profile
+                </a>
+              </nav>
             </div>
 
-            <!-- Auth Trigger Button (Sign In / Register modal) -->
-            <button
-              id="btn-open-auth-modal"
-              class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
-              title="Sign In or Register New Student"
-            >
-              <i class="fa-solid fa-lock text-emerald-600 dark:text-emerald-400"></i> Account
-            </button>
+            <!-- Right: Controls & Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              
+              <!-- Dark Theme Toggle Button -->
+              <button
+                id="theme-toggle-btn"
+                class="w-9 h-9 rounded-xl bg-white/60 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 flex items-center justify-center transition-all duration-150 shadow-xs"
+                title="Toggle Theme"
+              >
+                <i class="fa-solid fa-moon text-xs"></i>
+              </button>
 
-            <!-- Post Gig Quick Action Button -->
-            <a 
-              href="create.html" 
-              class="hidden lg:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition-transform hover:scale-105 active:scale-95"
-            >
-              <i class="fa-solid fa-plus"></i> Post Gig
-            </a>
+              <!-- Bespoke Frosted Student Persona Capsule & Popover -->
+              <div class="relative">
+                <button
+                  id="persona-dropdown-btn"
+                  class="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/70 dark:border-white/10 backdrop-blur-md transition-all shadow-xs group"
+                >
+                  <div class="relative flex-shrink-0">
+                    <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-500 text-white text-xs font-black flex items-center justify-center shadow-xs">
+                      ${(currentUser?.name || 'U').charAt(0)}
+                    </div>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border border-white dark:border-slate-900 rounded-full"></span>
+                  </div>
+                  <div class="text-left leading-none max-w-[110px] sm:max-w-[140px] truncate">
+                    <div class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                      ${currentUser?.name || 'Student'}
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium mt-1 truncate">
+                      ${currentUser?.major || 'CSE'} (S${currentUser?.semester || 1})
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-transform duration-200"></i>
+                </button>
 
-            <!-- Mobile Hamburger Button -->
-            <button 
-              id="mobile-menu-btn" 
-              class="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm"
-            >
-              <i class="fa-solid fa-bars"></i>
-            </button>
+                <!-- Frosted Glass Persona Popover Dropdown -->
+                <div
+                  id="persona-dropdown-menu"
+                  class="hidden absolute right-0 mt-2 w-72 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2"
+                >
+                  <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Switch Student Persona</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Click to test as any verified student</div>
+                  </div>
 
+                  <div class="max-h-60 overflow-y-auto py-1 space-y-0.5" id="persona-list-container">
+                    ${allUsers
+                      .map(
+                        (u) => `
+                      <button
+                        class="persona-item w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
+                          u.id === currentUser?.id
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold'
+                            : 'text-slate-700 dark:text-slate-200'
+                        }"
+                        data-id="${u.id}"
+                      >
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <div class="w-6 h-6 rounded-lg ${
+                            u.id === currentUser?.id ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                          } text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                            ${u.name.charAt(0)}
+                          </div>
+                          <div class="min-w-0">
+                            <div class="text-xs font-semibold truncate leading-tight">${u.name}</div>
+                            <div class="text-[10px] text-slate-400 truncate">${u.major} • Semester ${u.semester}</div>
+                          </div>
+                        </div>
+                        ${u.id === currentUser?.id ? '<i class="fa-solid fa-check text-xs text-emerald-600 flex-shrink-0"></i>' : ''}
+                      </button>
+                    `
+                      )
+                      .join('')}
+                  </div>
+
+                  <!-- Hidden select for compatibility -->
+                  <select id="user-switcher" class="hidden">
+                    ${userOptions}
+                  </select>
+
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between px-1">
+                    <button
+                      id="dropdown-open-auth-btn"
+                      class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 py-1"
+                    >
+                      <i class="fa-solid fa-user-plus text-[10px]"></i> Sign In / Register
+                    </button>
+                    <a href="profile.html" class="text-[11px] font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white py-1">
+                      My Profile &rarr;
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Post Gig Quick Action Button -->
+              <a 
+                href="create.html" 
+                class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-sm shadow-emerald-600/30 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
+              >
+                <i class="fa-solid fa-plus text-[11px]"></i> Post Gig
+              </a>
+
+              <!-- Mobile Hamburger Button -->
+              <button 
+                id="mobile-menu-btn" 
+                class="lg:hidden w-9 h-9 rounded-xl bg-white/60 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-white/10 flex items-center justify-center text-sm shadow-xs"
+              >
+                <i class="fa-solid fa-bars"></i>
+              </button>
+
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Mobile Dropdown Menu -->
-      <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 border-t border-slate-200 dark:border-slate-800 space-y-1 bg-white dark:bg-slate-900">
-        <a href="index.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Browse Gigs</a>
-        <a href="create.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Post a Gig</a>
-        <a href="applications.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">My Applications</a>
-        <a href="profile.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Student Profile</a>
-        <button id="mobile-open-auth-btn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800">
-          <i class="fa-solid fa-user-plus mr-1.5"></i> Sign In / Register
-        </button>
+        <!-- Mobile Frosted Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden px-4 pt-2 pb-4 border-t border-slate-200/60 dark:border-slate-800/60 space-y-1 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl">
+          <a href="index.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Explore Gigs</a>
+          <a href="create.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Post a Gig</a>
+          <a href="applications.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">My Applications</a>
+          <a href="profile.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Student Profile</a>
+          <button id="mobile-open-auth-btn" class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fa-solid fa-user-plus mr-1.5"></i> Sign In / Register
+          </button>
+        </div>
       </div>
-    </nav>
+    </header>
 
     <!-- Global Auth Modal (Login & Registration) -->
     <div id="auth-modal" class="fixed inset-0 z-[100] bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs hidden items-center justify-center p-4">
@@ -490,7 +554,48 @@ export async function initNavbar(activePage = '') {
     });
   }
 
-  // Switcher event with automatic JWT token issue
+  // Persona Popover dropdown toggle
+  const personaBtn = document.getElementById('persona-dropdown-btn');
+  const personaMenu = document.getElementById('persona-dropdown-menu');
+
+  if (personaBtn && personaMenu) {
+    personaBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      personaMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!personaMenu.contains(e.target) && !personaBtn.contains(e.target)) {
+        personaMenu.classList.add('hidden');
+      }
+    });
+
+    // 1-Click Persona Switching
+    document.querySelectorAll('.persona-item').forEach((item) => {
+      item.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const selectedId = item.dataset.id;
+        personaMenu.classList.add('hidden');
+        await setCurrentUserId(selectedId);
+        const selectedUser = allUsers.find((u) => u.id === selectedId);
+        showToast(`Switched persona to ${selectedUser?.name || selectedId} (JWT active)`, 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 250);
+      });
+    });
+  }
+
+  // Dropdown open auth modal button
+  const dropdownAuthBtn = document.getElementById('dropdown-open-auth-btn');
+  if (dropdownAuthBtn) {
+    dropdownAuthBtn.addEventListener('click', () => {
+      if (personaMenu) personaMenu.classList.add('hidden');
+      openModal();
+    });
+  }
+
+  // Switcher event with automatic JWT token issue (for backward compatibility)
   const switcher = document.getElementById('user-switcher');
   if (switcher) {
     switcher.addEventListener('change', async (e) => {
