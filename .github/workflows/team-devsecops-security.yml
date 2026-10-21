@@ -1,0 +1,317 @@
+name: Team DevSecOps - Security Pipeline
+
+# This workflow intentionally lives at the repository root because GitHub Actions
+# only discovers workflows in .github/workflows/. It is scoped to the team folder.
+
+on:
+  push:
+    paths:
+      - 'submission/team-devsecops/**'
+      - '.github/workflows/team-devsecops-security.yml'
+  pull_request:
+    paths:
+      - 'submission/team-devsecops/**'
+      - '.github/workflows/team-devsecops-security.yml'
+  workflow_dispatch:
+    inputs:
+      demo_failure:
+        description: 'Generate synthetic vulnerable input and demonstrate a failed security gate'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: team-devsecops-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DEMO_FAILURE: ${{ inputs.demo_failure || 'false' }}
+
+jobs:
+  app-test:
+    name: App tests (Node 20)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/team-devsecops/app
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: submission/team-devsecops/app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+  sast:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/team-devsecops
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep (pinned)
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --disable-pip-version-check --no-input "semgrep==1.100.0"
+          .venv/bin/semgrep --version
+
+      - name: Run Semgrep
+        run: |
+          mkdir -p reports
+          TARGETS="app/src"
+          if [ "$DEMO_FAILURE" = "true" ]; then
+            TARGETS="$TARGETS demo/vulnerable/app.js"
+          fi
+          .venv/bin/semgrep scan \
+            --config .semgrep \
+            --config p/javascript \
+            --metrics=off \
+            --disable-version-check \
+            --sarif \
+            --output reports/semgrep.sarif \
+            $TARGETS
+
+      - name: Upload SAST SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-sarif-sast
+          path: submission/team-devsecops/reports/semgrep.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload SAST SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: submission/team-devsecops/reports/semgrep.sarif
+          category: semgrep
+
+  secrets:
+    name: Secret scan (Gitleaks)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/team-devsecops
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Gitleaks (pinned)
+        run: |
+          GITLEAKS_VERSION="8.24.0"
+          curl -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            -o "${RUNNER_TEMP}/gitleaks.tar.gz"
+          tar -xzf "${RUNNER_TEMP}/gitleaks.tar.gz" -C "${RUNNER_TEMP}" gitleaks
+          sudo install -m 0755 "${RUNNER_TEMP}/gitleaks" /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Create generated demo files
+        run: |
+          mkdir -p .demo reports
+          echo "demo_failure=${DEMO_FAILURE}" > .demo/notes.txt
+          if [ "$DEMO_FAILURE" = "true" ]; then
+            printf 'DEMO_ONLY_TOKEN=ghp_%s\n' "$(openssl rand -hex 18)" > .demo/leaked.env
+            echo "Created a runtime-only dummy GitHub token in .demo/leaked.env"
+          else
+            rm -f .demo/leaked.env
+          fi
+
+      - name: Run Gitleaks
+        # "gitleaks dir" scans the working tree without Git history, the v8.24
+        # replacement for "detect --no-git". It does not honor .gitignore, so
+        # the runtime-generated dummy secret under .demo/ is detected.
+        run: |
+          gitleaks dir . \
+            --config .gitleaks.toml \
+            --report-format sarif \
+            --report-path reports/gitleaks.sarif \
+            --redact \
+            --exit-code 0 \
+            --no-banner
+
+      - name: Upload secret SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-sarif-secrets
+          path: submission/team-devsecops/reports/gitleaks.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload secret SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: submission/team-devsecops/reports/gitleaks.sarif
+          category: gitleaks
+
+  dependencies:
+    name: Dependency scan (Trivy filesystem)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Scan application dependencies
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: fs
+          scan-ref: submission/team-devsecops/app
+          format: sarif
+          output: submission/team-devsecops/reports/trivy-fs.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          cache: true
+
+      - name: Scan vulnerable demo dependencies
+        if: env.DEMO_FAILURE == 'true'
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: fs
+          scan-ref: submission/team-devsecops/demo/vulnerable
+          format: sarif
+          output: submission/team-devsecops/reports/trivy-fs-demo.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          cache: true
+
+      - name: Upload dependency SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-sarif-dependencies
+          path: submission/team-devsecops/reports/trivy-fs*.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload dependency SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: submission/team-devsecops/reports/trivy-fs.sarif
+          category: trivy-fs
+
+  container:
+    name: Container scan (Trivy image)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build container image
+        run: docker build --tag team-devsecops-app:ci submission/team-devsecops/app
+
+      - name: Scan container image
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          scan-type: image
+          image-ref: team-devsecops-app:ci
+          format: sarif
+          output: submission/team-devsecops/reports/trivy-image.sarif
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln
+          cache: true
+
+      - name: Upload container SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-sarif-container
+          path: submission/team-devsecops/reports/trivy-image.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload container SARIF to code scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: submission/team-devsecops/reports/trivy-image.sarif
+          category: trivy-image
+
+  gate:
+    name: Security gate
+    needs:
+      - app-test
+      - sast
+      - secrets
+      - dependencies
+      - container
+    if: always()
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: submission/team-devsecops
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download SARIF artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: security-sarif-*
+          path: submission/team-devsecops/reports
+          merge-multiple: true
+
+      - name: Evaluate security gate
+        id: gate
+        continue-on-error: true
+        run: node scripts/gate.mjs --reports reports --exceptions security-exceptions.json
+
+      - name: Write consolidated report
+        if: always()
+        env:
+          GATE_STATUS: ${{ steps.gate.outcome }}
+          SAST_RESULT: ${{ needs.sast.result }}
+          SECRETS_RESULT: ${{ needs.secrets.result }}
+          DEPENDENCIES_RESULT: ${{ needs.dependencies.result }}
+          CONTAINER_RESULT: ${{ needs.container.result }}
+        run: >-
+          node scripts/summarize.mjs
+          --reports reports
+          --output reports/security-summary.md
+          --exceptions security-exceptions.json
+
+      - name: Upload consolidated report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: |
+            submission/team-devsecops/reports/security-summary.md
+            submission/team-devsecops/reports/*.sarif
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Fail when the security gate failed
+        if: steps.gate.outcome == 'failure'
+        run: |
+          echo "Security gate failed. Review the report above and docs/SECURITY-GATE.md."
+          exit 1

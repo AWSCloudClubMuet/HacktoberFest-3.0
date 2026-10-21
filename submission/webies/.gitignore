@@ -1,0 +1,12 @@
+node_modules/
+.venv/
+reports/*
+!reports/.gitkeep
+.demo/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+.DS_Store
+Thumbs.db
