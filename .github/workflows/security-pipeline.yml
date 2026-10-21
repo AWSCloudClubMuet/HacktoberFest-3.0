@@ -47,6 +47,10 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install Dependencies
+        working-directory: submission/team_CodeCrafters/Automated_Security_Vulnerability_Scanning_in_a_CI
+        run: npm ci || npm install
+
       - name: Run Unit Tests
         working-directory: submission/team_CodeCrafters/Automated_Security_Vulnerability_Scanning_in_a_CI
         run: node --test
