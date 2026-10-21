@@ -9,7 +9,7 @@ This folder contains our team's project submissions for the hackathon. Each team
 | Member | Assigned Issue / Work | Key Deliverables | Detailed Docs |
 | :--- | :--- | :--- | :--- |
 | **Hamza Ali** | **Issue #2:** Automated Security Vulnerability Scanning in a CI/CD Pipeline | Core security pipeline (SAST, SCA, Secrets, Container) + **Bonus:** Azure ACR Cloud Delivery | [Issue #2 README](./issue2_Automated_Security_Vulnerability_Scanning/README.md) |
-| *[Teammate Name]* | *[Issue / Feature Title]* | *[Summary of deliverables]* | *[Link to folder]* |
+| **Team Member** | **Issue #13:** TuneWave Music Player (DSA) | Pure Java player core: DLL + HashMap, Queue + Stack, BST + Graph (49 passing tests) | [Issue #13 README](./issue-13-tunewave-music-player/README.md) |
 | *[Teammate Name]* | *[Issue / Feature Title]* | *[Summary of deliverables]* | *[Link to folder]* |
 
 ---
@@ -51,3 +51,20 @@ For complete technical logs, scan commands, rules, and local reproduction instru
 The screenshot below shows Run #5 on GitHub Actions (`cb6e5f3`): the security gate verified zero Critical/High vulnerabilities, approved the build, and pushed the container image to Azure Container Registry in 1m 29s.
 
 ![Verified Pipeline Run](./issue2_Automated_Security_Vulnerability_Scanning/docs/pipeline-success.png)
+
+---
+
+## Issue #13 Summary: TuneWave Music Player
+
+**Directory:** [`issue-13-tunewave-music-player/`](./issue-13-tunewave-music-player/)
+
+### What was built
+A pure Java 17 core music streaming player built with zero external dependencies (no Maven, Gradle, or JUnit), implementing all operations across three DSA milestones:
+- **Milestone 1 — Playlist**: Doubly Linked List (`SongNode`) + `HashMap<String, SongNode>` for $O(1)$ operations (`addSong`, `removeSong`, `next`, `previous`, `toggleRepeat`).
+- **Milestone 2 — Up Next & History**: FIFO Queue (`ArrayDeque`) + bounded 10-item LIFO Stack (`ArrayDeque`), enforcing cursor freezing during queue and back playback.
+- **Milestone 3 — Search & Artist Recommendations**: Custom Binary Search Tree with alphabetical prefix pruning and duplicate title support + Undirected Graph for 2-hop recommendations (excluding direct collaborators and self).
+
+Includes an interactive console player (`com.tunewave.Main`) and a standalone test runner verifying 49 unit and integration tests with a 100% pass rate.
+
+For complete details, see the **[Issue #13 Technical README](./issue-13-tunewave-music-player/README.md)**.
+
