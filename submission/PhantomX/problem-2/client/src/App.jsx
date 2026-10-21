@@ -218,7 +218,7 @@ export function App() {
               />
             ) : null}
             {user && !isPublic ? (
-              <Link to={`/gigs/new?type=${SECTIONS[section].type}`} className={`${buttonClass} hidden px-4 sm:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
+              <Link to={`/gigs/new?type=${SECTIONS[section].postType}`} className={`${buttonClass} hidden px-4 sm:inline-flex ${section === 'request' ? 'fill-request' : ''}`}>
                 {SECTIONS[section].post}
               </Link>
             ) : null}

@@ -7,7 +7,7 @@ import { CatalogueSkeleton, GigCard, GigRow, PageHeader } from '../ui.jsx';
 import { SECTIONS, isResultsView, parseSearch, presentGigs, toQuery } from '../section.js';
 
 export function GigsPage() {
-  const { section, query, navigate, users } = useApp();
+  const { section, query, navigate, users, userId } = useApp();
   const filters = parseSearch(query);
   const copy = SECTIONS[section] || SECTIONS.offer;
   const [gigs, setGigs] = useState(null);
@@ -15,7 +15,7 @@ export function GigsPage() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    params.set('type', copy.type);
+    params.set('type', copy.browseType);
     if (filters.category) params.set('category', filters.category);
     if (filters.payment_type) params.set('payment_type', filters.payment_type);
     if (filters.min.trim() !== '' && Number.isFinite(Number(filters.min))) params.set('min', filters.min.trim());
@@ -38,7 +38,7 @@ export function GigsPage() {
     return () => {
       cancelled = true;
     };
-  }, [copy.type, filters.category, filters.payment_type, filters.min, filters.max, filters.q]);
+  }, [copy.browseType, filters.category, filters.payment_type, filters.min, filters.max, filters.q]);
 
   function go(next) {
     navigate(`/${section}${toQuery(next)}`);
@@ -49,8 +49,9 @@ export function GigsPage() {
   }
 
   const results = isResultsView(filters);
-  const rows = gigs ? presentGigs(gigs, filters) : [];
-  const catalogue = gigs ? presentGigs(gigs, {}) : [];
+  const others = gigs ? gigs.filter((gig) => gig.user_id !== userId) : [];
+  const rows = gigs ? presentGigs(others, filters) : [];
+  const catalogue = gigs ? presentGigs(others, {}) : [];
   const newest = [...catalogue].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 8);
   const paid = catalogue.filter((gig) => gig.payment_type === 'Paid').slice(0, 8);
   const swapFree = catalogue.filter((gig) => gig.payment_type !== 'Paid').slice(0, 8);
@@ -60,7 +61,7 @@ export function GigsPage() {
     .slice(0, 8);
 
   const post = (
-    <Link to={`/gigs/new?type=${copy.type}`} className={`${buttonClass} ${section === 'request' ? 'fill-request' : ''}`}>
+    <Link to={`/gigs/new?type=${copy.postType}`} className={`${buttonClass} ${section === 'request' ? 'fill-request' : ''}`}>
       {copy.post}
     </Link>
   );
@@ -121,15 +122,15 @@ export function GigsPage() {
 
       {!results && gigs && catalogue.length === 0 && !error ? (
         <Empty>
-          No open {copy.short} yet.{' '}
-          <Link to={`/gigs/new?type=${copy.type}`} className="font-semibold text-offer underline-offset-2 hover:underline">{copy.post}</Link>
+          {copy.empty}{' '}
+          <Link to={`/gigs/new?type=${copy.postType}`} className={`font-semibold underline-offset-2 hover:underline ${section === 'request' ? 'text-request' : 'text-offer'}`}>{copy.post}</Link>
         </Empty>
       ) : null}
 
       {!results && catalogue.length > 0 ? (
         <div className="space-y-8">
-          <GigRow title="Newest gigs" gigs={newest} users={users} section={section} seeAllTo={`/${section}?sort=newest`} />
-          <GigRow title="Paid gigs" gigs={paid} users={users} section={section} seeAllTo={`/${section}?payment_type=Paid`} />
+          <GigRow title={`Newest ${copy.noun}`} gigs={newest} users={users} section={section} seeAllTo={`/${section}?sort=newest`} />
+          <GigRow title={`Paid ${copy.noun}`} gigs={paid} users={users} section={section} seeAllTo={`/${section}?payment_type=Paid`} />
           <GigRow title="SkillSwap & Free" gigs={swapFree} users={users} section={section} seeAllTo={`/${section}?group=unpaid`} />
           <GigRow title="Closing soon" gigs={closing} users={users} section={section} seeAllTo={`/${section}?group=closing&sort=deadline`} />
         </div>

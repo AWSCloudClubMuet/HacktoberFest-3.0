@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../context.js';
 import { api } from '../api.js';
 import { formatWhen } from '../format.js';
-import { SECTIONS } from '../section.js';
 import { PageHeader } from '../ui.jsx';
 import { Alert, Badge, Empty, Link, Loading, statusTone, textLinkClass } from '../components.jsx';
 
 export function ApplicationsPage() {
-  const { userId, section, chooseSection } = useApp();
+  const { userId, section } = useApp();
   const [rows, setRows] = useState(null);
   const [error, setError] = useState('');
 
@@ -21,14 +20,13 @@ export function ApplicationsPage() {
       .then(([applications, gigs]) => {
         if (cancelled) return;
         const byId = new Map(gigs.map((gig) => [gig.id, gig]));
-        const wanted = SECTIONS[section]?.type || 'Offering';
         const next = applications
           .slice()
-          .filter((application) => byId.get(application.gig_id)?.type === wanted)
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map((application) => ({
             ...application,
             gigTitle: byId.get(application.gig_id)?.title || 'Untitled gig',
+            gigStatus: byId.get(application.gig_id)?.status || '',
           }));
         setRows(next);
       })
@@ -41,21 +39,17 @@ export function ApplicationsPage() {
     return () => {
       cancelled = true;
     };
-  }, [userId, section]);
+  }, [userId]);
 
   return (
     <div className="space-y-5">
-      <PageHeader title="My applications" subtitle={section === 'request' ? 'Help you offered on requests.' : 'Services you requested from offers.'} />
-      <div className="grid grid-cols-2 gap-1 rounded-full bg-surface p-1 shadow-card" role="tablist" aria-label="Your applications">
-        <button type="button" role="tab" aria-selected={section === 'offer'} className={`min-h-11 rounded-full px-2 text-sm font-semibold ${section === 'offer' ? 'fill-offer text-white' : 'text-muted'}`} onClick={() => chooseSection('offer')}>To offers</button>
-        <button type="button" role="tab" aria-selected={section === 'request'} className={`min-h-11 rounded-full px-2 text-sm font-semibold ${section === 'request' ? 'fill-request text-white' : 'text-muted'}`} onClick={() => chooseSection('request')}>To requests</button>
-      </div>
+      <PageHeader title="My applications" subtitle="Every gig you have applied to, in either section." />
       <Alert>{error}</Alert>
       {rows === null && !error ? <Loading>Loading applications…</Loading> : null}
       {rows && rows.length === 0 && !error ? (
         <Empty>
           You have not applied to any gigs yet.{' '}
-          <Link to="/" className={textLinkClass}>Browse gigs</Link>
+          <Link to={`/${section}`} className={textLinkClass}>Keep browsing</Link>
         </Empty>
       ) : null}
       {rows && rows.length > 0 ? (

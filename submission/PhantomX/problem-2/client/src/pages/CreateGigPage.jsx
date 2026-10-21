@@ -19,7 +19,7 @@ const emptyForm = {
 export function CreateGigPage() {
   const { navigate, pushToast, section, query } = useApp();
   const preset = new URLSearchParams(query || '').get('type');
-  const starting = preset === 'Requesting' || preset === 'Offering' ? preset : (section === 'request' ? 'Requesting' : 'Offering');
+  const starting = preset === 'Requesting' || preset === 'Offering' ? preset : (SECTIONS[section]?.postType || 'Offering');
   const [form, setForm] = useState({ ...emptyForm, type: starting });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
@@ -72,7 +72,7 @@ export function CreateGigPage() {
     setSaving(true);
     try {
       const created = await api('/gigs', { method: 'POST', body: payload });
-      pushToast('success', 'Gig posted.');
+      pushToast('success', 'Gig posted. It is listed under My gigs.');
       navigate(`/gigs/${created.id}`);
     } catch (err) {
       setApiError(err.message);
