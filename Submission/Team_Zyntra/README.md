@@ -16,15 +16,27 @@
 
 ### 🌟 Executive Pitch Summary
 
-**Team Zyntra** presents a unified, production-grade technical submission solving all three challenges for Hacktoberfest 3.0. Our solutions bridge the gap between pure computer science fundamentals, deep learning mathematical rigor, and real-world machine learning reliability.
+**Team Zyntra** presents a unified, production-grade technical submission solving all three assigned challenge tracks for Hacktoberfest 3.0. Our solutions bridge the gap between pure computer science fundamentals, deep learning mathematical rigor, and real-world machine learning reliability.
 
 </div>
 
-| Track | Problem Title | Core Focus | Key Highlight / Result |
-| :--- | :--- | :--- | :--- |
-| **Track 1** | [🎵 TuneWave Music Player](./Prob1/) | Data Structures & Algorithms | $O(1)$ bidirectional playback, bounded history with position freezing, pruned BST prefix search, and 2-hop graph recommendations. |
-| **Track 2** | [🧠 ML Debugging, Attention & Evaluation](./Prob%202/) | Deep Learning & Production ML | 6 PyTorch pipeline bugs fixed, single-head attention derived from scratch with numerical grad check ($\text{rel\_err} < 10^{-7}$), fraud evaluation strategy ($p^* = 2.44\%$), and adversarial validation for covariate shift. |
-| **Track 3** | [📊 Noisy Labels: HelpDeskNet-50K](./Task-2/) | Statistical Audit & Noise Mitigation | 95% Wilson CI $[11.83\%, 18.83\%]$, Tier A vs B $z$-test ($z = 4.22, p < 0.0001$), 86.7% semantic boundary error clustering, theoretical $96.34\%$ ceiling proof, and 2,000-ticket active relabeling policy. |
+| Track | Problem Title | Lead Contributor | Core Focus | Key Highlight / Result |
+| :--- | :--- | :--- | :--- | :--- |
+| **Track 1** | [🎵 TuneWave Music Player](./Prob1/) | **Syed Fazeel** | Data Structures & Algorithms | $O(1)$ bidirectional playback, bounded history with position freezing, pruned BST prefix search, and 2-hop graph recommendations. |
+| **Track 2** | [🧠 ML Debugging, Attention & Evaluation](./Prob%202/) | **Abdul Latif** | Deep Learning & Production ML | 6 PyTorch pipeline bugs fixed, single-head attention derived from scratch with numerical grad check (`rel_err < 1e-7`), cost threshold ($p^* = 0.0244$), and adversarial validation. |
+| **Track 3** | [📊 Noisy Labels: HelpDeskNet-50K](./Task-2/) | **Ajwa Ahmed** | Statistical Audit & Noise Mitigation | 95% Wilson CI `[11.83%, 18.83%]`, Tier A vs B $z$-test ($z = 4.22, p < 0.0001$), 86.7% semantic boundary error clustering, theoretical 96.34% ceiling proof, and 2,000-ticket active relabeling. |
+
+---
+
+## 👥 Team Zyntra — Authors & Contributions
+
+Developed with passion, mathematical rigor, and systems engineering by **Team Zyntra**:
+
+| Contributor | Track & Role | Key Responsibilities & Deliverables |
+| :--- | :--- | :--- |
+| **Syed Fazeel** | **Problem 1 (Track 1): TuneWave Music Player** | Engineered Doubly Linked List + Hash Map playlist core, FIFO priority *Up Next* queue, bounded history stack with cursor-freezing invariants, and pruned BST prefix search + 2-hop undirected graph recommendation engine. |
+| **Abdul Latif** | **Problem 2 (Track 2): ML Debugging, Attention & Evaluation** | Diagnosed and eliminated 6 critical PyTorch pipeline bugs, derived full matrix calculus gradients for attention from scratch in NumPy with numerical checks, formulated fraud evaluation strategy ($p^* = 0.0244$), and proved covariate shift via adversarial validation. |
+| **Ajwa Ahmed** | **Task 2 (Track 3): Noisy Labels (HelpDeskNet-50K)** | Formulated rigorous statistical noise audit (95% Wilson CI & two-proportion $z$-test), uncovered systematic semantic error clustering (86.7% in 3 boundary pairs), derived theoretical accuracy ceiling proof (96.34%), and designed targeted 2,000-ticket relabeling & GCE/Co-Teaching mitigation roadmap. |
 
 ---
 
@@ -34,7 +46,7 @@
 Team_Zyntra/
 ├── README.md                                      # 🌟 Master Collective Pitch & Technical Walkthrough
 │
-├── Prob1/                                         # 🎵 Track 1: TuneWave Music Player
+├── Prob1/                                         # 🎵 Track 1: TuneWave Music Player (Syed Fazeel)
 │   ├── README.md                                  # Track 1 Overview & Quickstart
 │   ├── Milestone1_Playlist.ipynb                  # Doubly Linked List + Hash Map Engine
 │   ├── Milestone1_Theory.md                       # DLL & HashMap Complexity Analysis
@@ -43,7 +55,7 @@ Team_Zyntra/
 │   ├── Milestone3_Search_Recommendations.ipynb    # BST Prefix Search + 2-Hop Graph Engine
 │   └── Milestone3_Theory.md                       # BST Pruning & Graph Traversal Proofs
 │
-├── Prob 2/                                        # 🧠 Track 2: ML Debugging, Attention & Evaluation
+├── Prob 2/                                        # 🧠 Track 2: ML Debugging, Attention & Evaluation (Abdul Latif)
 │   ├── README.md                                  # Track 2 Executive Overview
 │   ├── Milestone_1.ipynb                          # 6 Critical PyTorch Bugs Resolved + Tests
 │   ├── Milestone_2.ipynb                          # Single-Head Attention: Scratch Forward/Backward
@@ -51,13 +63,14 @@ Team_Zyntra/
 │   ├── Milestone_4.ipynb                          # Learning Curve Diagnostics & Case D Adversarial Validation
 │   └── execute_notebook.py                        # Automated Notebook Execution Harness
 │
-└── Task-2/                                        # 📊 Track 3: HelpDeskNet-50K Label Noise Analysis
+└── Task-2/                                        # 📊 Track 3: HelpDeskNet-50K Label Noise Analysis (Ajwa Ahmed)
     └── HelpDeskNet50K_Label_Noise_Analysis.md     # Full 510-Line Comprehensive Research Report
 ```
 
 ---
 
 # 🎵 Track 1: TuneWave Music Player (`Prob1`)
+### *Led by Syed Fazeel*
 > **Goal:** Build the high-performance core engine of a music streaming app using fundamental data structures under strict playback rules and invariant guarantees.
 
 ```mermaid
@@ -110,6 +123,7 @@ flowchart LR
 ---
 
 # 🧠 Track 2: ML Debugging, Attention Gradients & Evaluation (`Prob 2`)
+### *Led by Abdul Latif*
 > **Goal:** Investigate silently failing deep learning pipelines, derive and implement attention backpropagation from scratch with numerical proofs, design real-world fraud evaluation strategies, and diagnose learning curves.
 
 ```mermaid
@@ -130,7 +144,7 @@ We diagnosed a tabular binary classifier failing with 55% oscillating validation
 | **2** | `np.random.shuffle(X_tr)` (without $y_{tr}$) | **Label Desynchronization:** Features mapped to wrong random targets, training on pure noise. | Use `train_test_split(..., stratify=y)` and PyTorch `DataLoader(shuffle=True)`. |
 | **3** | Missing `model.eval()` & `torch.no_grad()` | **Inference Instability:** Dropout randomly drops 50% neurons and BatchNorm uses mini-batch stats during eval. | Wrap evaluation loop in `model.eval()` and `with torch.no_grad():`. |
 | **4** | `Linear -> ReLU -> Dropout(0.5) -> BatchNorm` | **Variance Shift:** Dropout randomly zeros activations right before BatchNorm computes running variance. | Reorder to canonical `Linear -> BatchNorm -> ReLU -> Dropout(0.3)`. |
-| **5** | `StepLR(step_size=1, gamma=0.9)` | **Premature Learning Rate Decay:** LR decays by $0.90^{50} \approx 0.005$ within 50 epochs, freezing optimization. | Replace with `CosineAnnealingLR(opt, T_max=10, eta_min=1e-5)`. |
+| **5** | `StepLR(step_size=1, gamma=0.9)` | **Premature Learning Rate Decay:** LR decays by over 99% in 50 epochs, freezing optimization. | Replace with `CosineAnnealingLR(opt, T_max=10, eta_min=1e-5)`. |
 | **6** | `model(torch.tensor(X_val))` | **Precision Mismatch:** NumPy defaults to `float64` while PyTorch weights are `float32`. | Explicitly cast tensors: `torch.tensor(X, dtype=torch.float32)`. |
 
 *Black-box diagnostic protocols:* Overfitting a single mini-batch (proves architecture capacity), label shuffle permutation test (proves target dependency), and synthetic linear sanity checks.
@@ -158,7 +172,7 @@ $$\mathbf{S} = \frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d}}, \quad \mathbf{P} = \text
 Verified against two-sided finite difference numerical approximations:
 $$\text{grad}_{\text{num}} = \frac{f(\theta + h) - f(\theta - h)}{2h}, \quad h = 10^{-5}, \quad \text{Precision: Float64}$$
 
-$$\text{rel\_err}(A, B) = \frac{\|A - B\|_\infty}{\max(10^{-15}, \|A\|_\infty + \|B\|_\infty)} < 10^{-7}$$
+$$\text{rel-err}(A, B) = \frac{\|A - B\|_\infty}{\max(10^{-15}, \|A\|_\infty + \|B\|_\infty)} < 10^{-7}$$
 
 ```text
 dV error: 1.2847e-11  --> PASS
@@ -185,8 +199,8 @@ Causal Masked dQ error: 1.1084e-10 --> PASS
 - **Cost-Optimal Decision Threshold Derivation:**
   Given: False Negative cost $C_{FN} = \$200$, False Positive cost $C_{FP} = \$5$.
   $$\mathbb{E}[\text{Cost}(\text{Flag})] = (1 - p) \cdot C_{FP}, \quad \mathbb{E}[\text{Cost}(\text{Pass})] = p \cdot C_{FN}$$
-  $$\text{Flag if } (1-p) C_{FP} < p C_{FN} \iff p > p^* = \frac{C_{FP}}{C_{FN} + C_{FP}} = \frac{5}{200 + 5} = \frac{5}{205} \approx \mathbf{2.44\%}$$
-  *Result:* Setting the decision threshold at $2.44\%$ minimizes enterprise balance sheet loss.
+  $$\text{Flag if } (1-p) C_{FP} < p C_{FN} \iff p > p^* = \frac{C_{FP}}{C_{FN} + C_{FP}} = \frac{5}{200 + 5} = \frac{5}{205} \approx 0.0244$$
+  *Result:* Setting the decision threshold at **2.44%** minimizes enterprise balance sheet loss.
 - **Score Calibration:** Monitored via Brier Score and recalibrated using **Isotonic Regression**, cutting Brier loss significantly.
 - **Unsupervised Drift Detection:** Computed **Population Stability Index (PSI)** on live feature streams. Production alerts are automated at $\text{PSI} \ge 0.25$ to trigger model retraining before chargeback labels arrive.
 - **Deliverable:** [`Milestone_3.ipynb`](./Prob%202/Milestone_3.ipynb)
@@ -199,7 +213,7 @@ We established a diagnostic taxonomy across 4 real-world training behaviors:
 | Case | Train Acc | Val Acc | Diagnosis | Root Cause & Prescribed Intervention |
 |:---:|:---:|:---:|:---:|---|
 | **A** | 62% | 60% | **High Bias (Underfitting)** | Model capacity insufficient. Increase depth/width, add polynomial features, reduce regularization. |
-| **B** | 99% | 78% | **High Variance (Overfitting)** | Memorizing training data. Introduce weight decay, Dropout ($0.3-0.5$), data augmentation, or early stopping. |
+| **B** | 99% | 78% | **High Variance (Overfitting)** | Memorizing training data. Introduce weight decay, Dropout (0.3-0.5), data augmentation, or early stopping. |
 | **C** | 85% | 91% | **Inverted Generalization** | Regularization artifact. Dropout/noise active during `train()` penalizes train loss, while evaluation with full capacity yields higher accuracy. |
 | **D** | 88% | 70% | **Persistent 18% Domain Gap** | Adding $4\times$ data fails to close the gap. Indicates either **Covariate Shift** $P_{tr}(X) \neq P_{val}(X)$ or **Validation Label Noise**. |
 
@@ -213,6 +227,7 @@ We established a diagnostic taxonomy across 4 real-world training behaviors:
 ---
 
 # 📊 Track 3: Noisy Labels: HelpDeskNet-50K (`Task-2`)
+### *Led by Ajwa Ahmed*
 > **Goal:** Quantify crowd label noise with statistical confidence intervals, uncover systematic mislabeling patterns, evaluate theoretical accuracy ceilings, design an active relabeling policy for 2,000 tickets, and build a noise-robust production training and evaluation system.
 
 | Semantic Error Boundary | Disagreements | Error Share | Visual Distribution (60 Audited Errors) |
@@ -229,14 +244,14 @@ We established a diagnostic taxonomy across 4 real-world training behaviors:
   - Tier B: 30 newer workers labeled 25,000 tickets.
   - Random expert audit: 400 tickets revealed 60 disagreements.
 - **Point Estimate Noise Rate:**
-  $$\hat{p} = \frac{60}{400} = 15.0\% \implies \approx 6,750 \text{ corrupted crowd labels in the dataset}$$
+  $$\hat{p} = \frac{60}{400} = 0.15 \implies \approx 6{,}750 \text{ corrupted crowd labels in the dataset}$$
 - **95% Wilson Score Confidence Interval:**
-  $$\text{CI}_{95\%} = \frac{\hat{p} + \frac{z^2}{2n} \pm z\sqrt{\frac{\hat{p}(1-\hat{p})}{n} + \frac{z^2}{4n^2}}}{1 + \frac{z^2}{n}} \approx \mathbf{[11.83\%, 18.83\%]}$$
-  Plausible population noise volume ranges between **5,325 and 8,474 tickets**.
+  $$\text{Wilson CI}_{0.95} = \frac{\hat{p} + \frac{z^2}{2n} \pm z\sqrt{\frac{\hat{p}(1-\hat{p})}{n} + \frac{z^2}{4n^2}}}{1 + \frac{z^2}{n}}$$
+  *Evaluation Result:* Substituting $\hat{p} = 0.15, n = 400, z = 1.96$ yields **[11.83%, 18.83%]** (plausible crowd error volume of **5,325 to 8,474 tickets**).
 - **Tier A vs. Tier B Statistical Significance:**
-  - $\hat{p}_A = \frac{12}{180} = 6.67\%$, $\hat{p}_B = \frac{48}{220} = 21.82\%$ (Tier B is **$3.27\times$ noisier**).
+  - $\hat{p}_A = \frac{12}{180} = 0.0667$ (6.67%), $\hat{p}_B = \frac{48}{220} = 0.2182$ (21.82%) — Tier B is **$3.27\times$ noisier**.
   - Pooled Two-Proportion $z$-Test:
-    $$z = \frac{\hat{p}_B - \hat{p}_A}{\text{SE}_{\text{pool}}} = \frac{0.2182 - 0.0667}{0.03589} \approx \mathbf{4.22}, \quad p = 2 \times P(Z > 4.22) \approx \mathbf{0.000024} \ll 0.05$$
+    $$z = \frac{\hat{p}_B - \hat{p}_A}{\text{SE}_{\text{pool}}} = \frac{0.2182 - 0.0667}{0.03589} \approx 4.22, \quad p = 2 \times P(Z > 4.22) \approx 0.000024 \ll 0.05$$
   - *Finding:* The null hypothesis is rejected with extreme significance. Tier B accounts for **over 80%** of all label corruptions in the dataset despite labeling only 55.6% of tickets.
 
 ---
@@ -244,9 +259,9 @@ We established a diagnostic taxonomy across 4 real-world training behaviors:
 ### 🧩 Milestone 2 — Characterizing Systematic Noise Patterns
 The crowd error matrix demonstrates that labeling noise is **highly systematic and class-dependent**, not random:
 - **Semantic Clustering:** **86.7% of all disagreements (52 of 60)** occur within 3 adjacent semantic pairs:
-  1. **Billing $\leftrightarrow$ Refund:** 26 errors (43.3% of total). Symmetric confusion on dual-intent tickets (e.g., *"I was charged twice, refund me"*).
-  2. **Technical $\leftrightarrow$ Account Access:** 15 errors (25.0%). Overlap on authentication failures caused by application crashes.
-  3. **Shipping $\leftrightarrow$ Other:** 11 errors (18.3%). Inconsistent application of the 5% minority "Other" catch-all category.
+  1. **Billing ↔ Refund:** 26 errors (43.3% of total). Symmetric confusion on dual-intent tickets (e.g., *"I was charged twice, refund me"*).
+  2. **Technical ↔ Account Access:** 15 errors (25.0%). Overlap on authentication failures caused by application crashes.
+  3. **Shipping ↔ Other:** 11 errors (18.3%). Inconsistent application of the 5% minority "Other" catch-all category.
 - **Root Causes:** Missing priority tie-breaking rules in annotation guidelines, absence of negative examples for "Other", and insufficient onboarding qualification for Tier B workers.
 - **Annotation Process Overhaul:** Introduced priority decision trees, mandatory qualification sets with tricky boundary tickets, gold-standard honey-pot audits, and independent multi-annotator adjudication.
 
@@ -258,11 +273,11 @@ If a fine-tuned model plateaus at 82% on a test set containing 15% noise, what i
 #### 1. Closed-Form Derivation (Uniform Flipping Assumption):
 For $K = 6$ classes, observed test accuracy $q = 0.82$, and noise rate $\eta = 0.15$:
 $$q = (1 - \eta) a + \eta \left( \frac{1 - a}{K - 1} \right)$$
-$$a = \frac{q - \frac{\eta}{K - 1}}{1 - \eta - \frac{\eta}{K - 1}} = \frac{0.82 - \frac{0.15}{5}}{1 - 0.15 - \frac{0.15}{5}} = \frac{0.82 - 0.03}{0.85 - 0.03} = \frac{0.79}{0.82} \approx \mathbf{96.34\%}$$
+$$a = \frac{q - \frac{\eta}{K - 1}}{1 - \eta - \frac{\eta}{K - 1}} = \frac{0.82 - \frac{0.15}{5}}{1 - 0.15 - \frac{0.15}{5}} = \frac{0.82 - 0.03}{0.85 - 0.03} = \frac{0.79}{0.82} \approx 0.9634$$
 
-#### 2. Critical Reality Check: Why 96.34% is an Overestimate:
+#### 2. Critical Reality Check: Why 9696.34% is an Overestimate:
 The uniform noise assumption breaks down completely in practice:
-- Errors are clustered in specific pairs (43% in Billing/Refund), meaning random chance agreement is far higher than $\frac{1}{K-1} = 20\%$.
+- Errors are clustered in specific pairs (43% in Billing/Refund), meaning random chance agreement is far higher than $\frac{1}{K-1} = 0.20$ (20%).
 - The model trained on noisy crowd labels has learned the crowd's systematic biases, meaning model errors and test label errors are positively correlated rather than independent.
 - The 82% plateau reflects an evaluation artifact: the model is penalised for predicting the *true* class when the test set label is corrupt.
 
@@ -295,7 +310,7 @@ We designed an active relabeling policy maximizing error discovery and model gen
    $$\mathcal{L}_q(p_y) = \frac{1 - p_y^q}{q}, \quad q \in (0, 1]$$
    Interpolates between Cross-Entropy ($q \to 0$) and Mean Absolute Error ($q = 1$). Down-weights gradients from low-probability noisy samples while preserving convergence stability.
 2. **Co-Teaching:**
-   Trains two peer networks simultaneously. Each network selects the lowest-loss samples within each mini-batch (retaining $(1 - \eta) \approx 85\%$) and feeds them to its peer for parameter updates, preventing error accumulation.
+   Trains two peer networks simultaneously. Each network selects the lowest-loss samples within each mini-batch (retaining $1 - \eta \approx 0.85$ (85%)) and feeds them to its peer for parameter updates, preventing error accumulation.
 
 #### 2. Golden-Standard Evaluation Protocol:
 - **The Problem with Crowd Test Sets:** When training and test data share identical crowd error distributions, high test accuracy merely reflects memorization of crowd biases.
@@ -325,7 +340,7 @@ source venv/bin/activate
 pip install torch numpy scikit-learn jupyter
 ```
 
-### 2. Running Track 1 Notebooks (TuneWave Music Player)
+### 2. Running Track 1 Notebooks (TuneWave Music Player — Syed Fazeel)
 ```bash
 # Launch Jupyter Notebook
 jupyter notebook Prob1/
@@ -335,7 +350,7 @@ jupyter notebook Prob1/
 # - Milestone3_Search_Recommendations.ipynb
 ```
 
-### 3. Running Track 2 Notebooks (ML Debugging & Attention)
+### 3. Running Track 2 Notebooks (ML Debugging & Attention — Abdul Latif)
 ```bash
 # Execute all Prob 2 notebooks via automated runner
 python "Prob 2/execute_notebook.py"
@@ -345,7 +360,7 @@ jupyter notebook "Prob 2/"
 # Run Milestone_1.ipynb through Milestone_4.ipynb
 ```
 
-### 4. Inspecting Track 3 (HelpDeskNet-50K Research Report)
+### 4. Inspecting Track 3 (HelpDeskNet-50K Research Report — Ajwa Ahmed)
 ```bash
 # View the exhaustive statistical report
 cat Task-2/HelpDeskNet50K_Label_Noise_Analysis.md
@@ -355,26 +370,27 @@ cat Task-2/HelpDeskNet50K_Label_Noise_Analysis.md
 
 ## 📊 Summary of Engineering Outcomes
 
-| Metric / Feature | Team Zyntra Implementation | Impact / Validation |
-| :--- | :--- | :--- |
-| **Track 1 Playback** | Doubly Linked List + Hash Map | Instant $O(1)$ operations with zero duplicate leaks |
-| **Track 1 Queuing** | Queue + Bounded History Stack | Invariant strictly preserved; playlist position frozen |
-| **Track 1 Search** | BST with Branch Pruning | Subtree skips optimize prefix search to $O(K + \log N)$ |
-| **Track 1 Recs** | 2-Hop Graph Traversal | Direct friends eliminated; clean alphabetical output |
-| **Track 2 Debugging** | 6 Critical Bugs Identified & Fixed | Stratified split, leak-free scaling, frozen eval loop |
-| **Track 2 Attention** | Analytical NumPy Implementation | Numerical gradient check passed ($\text{rel\_err} < 10^{-7}$) |
-| **Track 2 Fraud** | Cost-Optimal Threshold Strategy | Optimal threshold $p^* = 2.44\%$, PSI drift telemetry |
-| **Track 2 Learning** | Adversarial Validation Framework | Covariate shift vs label noise isolated experimentally |
-| **Track 3 Audit** | 95% Wilson CI & Two-Proportion $z$-test | $\hat{p} = 15.0\%$, Tier B $3.27\times$ noisier ($p = 0.000024$) |
-| **Track 3 Ceiling** | Analytical Accuracy Formula | Proved theoretical $96.34\%$ ceiling vs empirical bias |
-| **Track 3 Relabeling**| Deduplicated 4-Arm Policy | 2,000 budget maximized via uncertainty & boundary sampling |
+| Metric / Feature | Author | Team Zyntra Implementation | Impact / Validation |
+| :--- | :--- | :--- | :--- |
+| **Track 1 Playback** | Syed Fazeel | Doubly Linked List + Hash Map | Instant $O(1)$ operations with zero duplicate leaks |
+| **Track 1 Queuing** | Syed Fazeel | Queue + Bounded History Stack | Invariant strictly preserved; playlist position frozen |
+| **Track 1 Search** | Syed Fazeel | BST with Branch Pruning | Subtree skips optimize prefix search to $O(K + \log N)$ |
+| **Track 1 Recs** | Syed Fazeel | 2-Hop Graph Traversal | Direct friends eliminated; clean alphabetical output |
+| **Track 2 Debugging** | Abdul Latif | 6 Critical Bugs Identified & Fixed | Stratified split, leak-free scaling, frozen eval loop |
+| **Track 2 Attention** | Abdul Latif | Analytical NumPy Implementation | Numerical gradient check passed (`rel_err < 1e-7`) |
+| **Track 2 Fraud** | Abdul Latif | Cost-Optimal Threshold Strategy | Optimal threshold $p^* = 0.0244$, PSI drift telemetry |
+| **Track 2 Learning** | Abdul Latif | Adversarial Validation Framework | Covariate shift vs label noise isolated experimentally |
+| **Track 3 Audit** | Ajwa Ahmed | 95% Wilson CI & Two-Proportion $z$-test | $\hat{p} = 0.15$ (15.0%), Tier B $3.27\times$ noisier ($p = 0.000024$) |
+| **Track 3 Ceiling** | Ajwa Ahmed | Analytical Accuracy Formula | Proved theoretical 96.34% ceiling vs empirical bias |
+| **Track 3 Relabeling**| Ajwa Ahmed | Deduplicated 4-Arm Policy | 2,000 budget maximized via uncertainty & boundary sampling |
 
 ---
 
 ## 👥 Team Zyntra
 
-Developed with passion and technical rigor by **Team Zyntra**:
-- **Syed Fazeel** — *Architecture, Algorithms, Deep Learning Mathematics & Systems Engineering*
-- *Team Zyntra Contributors*
+Developed with passion, mathematical rigor, and engineering excellence by **Team Zyntra**:
+- **Syed Fazeel** — *Problem 1: TuneWave Music Player (Data Structures & Algorithms)*
+- **Abdul Latif** — *Problem 2: ML Debugging, Attention Gradients & Evaluation (Deep Learning & Systems)*
+- **Ajwa Ahmed** — *Task 2: Noisy Labels HelpDeskNet-50K (Statistical Analysis & Noise Mitigation)*
 
 *Submitted for **Hacktoberfest 3.0** organized by **AWS Cloud Club MUET**.*
