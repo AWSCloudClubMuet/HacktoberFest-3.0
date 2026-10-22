@@ -115,9 +115,9 @@ flowchart LR
 ```mermaid
 flowchart TD
     subgraph Track2 ["Machine Learning Mastery Pipeline"]
-        M1["M1: Pipeline Debugging<br/>6 Critical PyTorch Bugs Fixed"] --> M2["M2: Attention Backprop<br/>NumPy Implementation & Grad Check"]
-        M2 --> M3["M3: Real-World Evaluation<br/>Cost Threshold & PSI Drift Telemetry"]
-        M3 --> M4["M4: Diagnostics<br/>Adversarial Validation for Covariate Shift"]
+        M1["M1: Pipeline Debugging (6 Critical Bugs Fixed)"] --> M2["M2: Attention Backprop (NumPy Scratch & Grad Check)"]
+        M2 --> M3["M3: Real-World Evaluation (Cost Optimal & PSI Drift)"]
+        M3 --> M4["M4: Diagnostics (Adversarial Validation & Shift)"]
     end
 ```
 
@@ -215,13 +215,13 @@ We established a diagnostic taxonomy across 4 real-world training behaviors:
 # 📊 Track 3: Noisy Labels: HelpDeskNet-50K (`Task-2`)
 > **Goal:** Quantify crowd label noise with statistical confidence intervals, uncover systematic mislabeling patterns, evaluate theoretical accuracy ceilings, design an active relabeling policy for 2,000 tickets, and build a noise-robust production training and evaluation system.
 
-```mermaid
-pie title Disagreement Distribution Across Semantic Pairs (60 Audited Errors)
-    "Billing ↔ Refund" : 26
-    "Technical ↔ Account Access" : 15
-    "Shipping ↔ Other" : 11
-    "Other Disagreements" : 8
-```
+| Semantic Error Boundary | Disagreements | Error Share | Visual Distribution (60 Audited Errors) |
+| :--- | :---: | :---: | :--- |
+| **Billing ↔ Refund** | **26** | **43.3%** | `█████████████████████▌` (43.3%) |
+| **Technical ↔ Account Access** | **15** | **25.0%** | `████████████▌` (25.0%) |
+| **Shipping ↔ Other** | **11** | **18.3%** | `█████████` (18.3%) |
+| **Remaining Disagreements** | **8** | **13.3%** | `██████▌` (13.3%) |
+| **Total Audited Disagreements** | **60** | **100.0%** | **86.7% concentrated in top 3 semantic pairs** |
 
 ### 🧩 Milestone 1 — Quantifying Annotation Noise & Tier Disparity
 - **Dataset Context:** 50,000 tickets (5,000 expert-labeled; 45,000 crowd-labeled).
