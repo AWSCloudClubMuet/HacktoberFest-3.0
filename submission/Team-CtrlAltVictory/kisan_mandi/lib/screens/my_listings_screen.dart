@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../services/api_service.dart';
 import '../services/app_state.dart';
+import '../utils/theme.dart';
 import '../widgets/common.dart';
 import '../widgets/listing_card.dart';
 import 'listing_form_screen.dart';
@@ -75,7 +76,7 @@ class MyListingsScreen extends StatelessWidget {
       buttons.add(
         TextButton.icon(
           onPressed: () => openForm(context, existing: listing),
-          icon: const Icon(Icons.edit_outlined),
+          icon: const Icon(Icons.edit_rounded, size: 18),
           label: const Text('Edit'),
         ),
       );
@@ -89,7 +90,7 @@ class MyListingsScreen extends StatelessWidget {
               'Marked as sold',
             );
           },
-          icon: const Icon(Icons.check_circle_outline),
+          icon: const Icon(Icons.check_circle_rounded, size: 18),
           label: const Text('Sold'),
         ),
       );
@@ -98,10 +99,10 @@ class MyListingsScreen extends StatelessWidget {
     buttons.add(
       TextButton.icon(
         onPressed: () => deleteListing(context, app, listing),
-        icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
-        label: Text(
+        icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.down),
+        label: const Text(
           'Delete',
-          style: TextStyle(color: Colors.red.shade700),
+          style: TextStyle(color: AppColors.down),
         ),
       ),
     );
@@ -126,27 +127,85 @@ class MyListingsScreen extends StatelessWidget {
       );
     }
 
+    final activeCount = myListings.where((l) => l.isActive).length;
+    final soldCount = myListings.length - activeCount;
+
     return Scaffold(
+      backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => openForm(context),
-        backgroundColor: const Color(0xFF1E6F3D),
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('New listing', style: TextStyle(fontWeight: FontWeight.w600)),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('New listing'),
       ),
       body: RefreshIndicator(
+        color: AppColors.green,
         onRefresh: () => refreshData(context),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
+            if (myListings.isNotEmpty) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: _summary('Active', '$activeCount',
+                        Icons.inventory_2_rounded, AppColors.green, AppColors.greenSoft),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _summary('Sold', '$soldCount',
+                        Icons.check_circle_rounded, AppColors.goldDark, AppColors.goldSoft),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
             if (myListings.isEmpty)
               const EmptyView(
                 'You have no listings yet.\nTap "New listing" to sell your produce.',
+                icon: Icons.inventory_2_outlined,
               ),
             ...cards,
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _summary(String label, String value, IconData icon, Color fg, Color bg) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.line),
+        boxShadow: AppShadows.soft,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+            child: Icon(icon, color: fg, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.ink)),
+              Text(label,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.muted)),
+            ],
+          ),
+        ],
       ),
     );
   }

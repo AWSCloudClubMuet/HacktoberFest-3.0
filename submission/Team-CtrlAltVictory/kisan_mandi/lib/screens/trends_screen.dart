@@ -2,16 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../services/app_state.dart';
+import '../utils/constants.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
 import '../widgets/common.dart';
 import '../widgets/price_chart.dart';
 import '../widgets/profit_calculator.dart';
 
+const Map<String, Map<String, int>> _districtDistances = {
+  'Hyderabad': {'Hyderabad': 0, 'Sukkur': 320, 'Mirpurkhas': 75},
+  'Sukkur': {'Hyderabad': 320, 'Sukkur': 0, 'Mirpurkhas': 350},
+  'Mirpurkhas': {'Hyderabad': 75, 'Sukkur': 350, 'Mirpurkhas': 0},
+  'Larkana': {'Hyderabad': 310, 'Sukkur': 85, 'Mirpurkhas': 375},
+  'Karachi': {'Hyderabad': 160, 'Sukkur': 470, 'Mirpurkhas': 230},
+};
+
 class MarketPrice {
   final Market market;
   final double price;
+  final int distance;
+  final double freight;
+  final double netPrice;
 
-  MarketPrice(this.market, this.price);
+  MarketPrice({
+    required this.market,
+    required this.price,
+    required this.distance,
+    required this.freight,
+    required this.netPrice,
+  });
 }
 
 class TrendsScreen extends StatefulWidget {
@@ -33,6 +52,9 @@ class TrendsScreen extends StatefulWidget {
 class _TrendsScreenState extends State<TrendsScreen> {
   int? selectedCropId;
   int selectedMarketId = 0;
+  String? originDistrict;
+  bool deductFreight = true;
+  double freightPer100Km = 35.0;
 
   @override
   void initState() {
@@ -50,7 +72,13 @@ class _TrendsScreenState extends State<TrendsScreen> {
 
     AppBar? appBar;
     if (widget.showAppBar) {
-      appBar = AppBar(title: const Text('Trends & Profit'));
+      appBar = AppBar(
+        title: const Text('Trends & Profit'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: AppColors.heroGradient),
+        ),
+        backgroundColor: Colors.transparent,
+      );
     }
 
     if (app.crops.isEmpty) {
@@ -100,22 +128,37 @@ class _TrendsScreenState extends State<TrendsScreen> {
       marketName = app.marketById(marketId)?.name ?? '';
     }
 
+    final String userOrigin =
+        originDistrict ?? app.user?.district ?? kDistricts.first;
+
     final List<MarketPrice> marketPrices = [];
     for (final m in app.markets) {
       final price = app.todayPrice(cropId, m.id);
       if (price != null) {
-        marketPrices.add(MarketPrice(m, price));
+        final dist = _districtDistances[userOrigin]?[m.district] ?? 0;
+        final freight = deductFreight
+            ? (dist * freightPer100Km / 100).roundToDouble()
+            : 0.0;
+        final net = price - freight;
+        marketPrices.add(MarketPrice(
+          market: m,
+          price: price,
+          distance: dist,
+          freight: freight,
+          netPrice: net,
+        ));
       }
     }
-    marketPrices.sort((a, b) => b.price.compareTo(a.price));
+    marketPrices.sort((a, b) => b.netPrice.compareTo(a.netPrice));
 
     return Scaffold(
       appBar: appBar,
       body: RefreshIndicator(
         onRefresh: () => refreshData(context),
+        color: AppColors.green,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
           children: [
             buildDropdowns(app, cropId),
             const SizedBox(height: 16),
@@ -130,9 +173,29 @@ class _TrendsScreenState extends State<TrendsScreen> {
             if (points.isNotEmpty)
               buildStatsRow(minPoint!, maxPoint!, average, points.length),
             const SizedBox(height: 16),
-            Text('Compare markets (today)', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 4),
-            buildMarketComparison(marketPrices),
+            Row(
+              children: [
+                Expanded(
+                  child: const Text('Compare markets (today)',
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.ink)),
+                ),
+                PillChip(
+                  icon: Icons.local_shipping_outlined,
+                  label: 'Freight',
+                  selected: deductFreight,
+                  onTap: () {
+                    setState(() {
+                      deductFreight = !deductFreight;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            buildMarketComparison(marketPrices, userOrigin),
             const SizedBox(height: 16),
             ProfitCalculator(
               key: ValueKey('$cropId-$selectedMarketId'),
@@ -148,7 +211,9 @@ class _TrendsScreenState extends State<TrendsScreen> {
   Widget buildDropdowns(AppState app, int cropId) {
     final List<DropdownMenuItem<int>> cropItems = [];
     for (final c in app.crops) {
-      cropItems.add(DropdownMenuItem(value: c.id, child: Text(c.name)));
+      final local = getCropLocalName(c.name);
+      final label = local.isNotEmpty ? '${c.name} ($local)' : c.name;
+      cropItems.add(DropdownMenuItem(value: c.id, child: Text(label)));
     }
 
     final List<DropdownMenuItem<int>> marketItems = [];
@@ -195,36 +260,77 @@ class _TrendsScreenState extends State<TrendsScreen> {
     required double? todayPrice,
     required dynamic change,
   }) {
-    String todayText = '';
-    if (todayPrice != null) {
-      todayText = 'Today ${fmtRs(todayPrice)}';
-      if (change != null) {
-        todayText =
-            '$todayText  (${fmtRs(change.abs, sign: true)}, ${fmtPct(change.pct)})';
-      }
-    }
+    final bool up = change != null && change.abs > 0;
+    final bool down = change != null && change.abs < 0;
+    final Color pillFg =
+        up ? AppColors.up : (down ? AppColors.down : AppColors.muted);
+    final Color pillBg =
+        up ? AppColors.upSoft : (down ? AppColors.downSoft : AppColors.bg);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Last ${points.length} days - $marketName',
-              style: theme.textTheme.titleMedium,
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: AppColors.line),
+        boxShadow: AppShadows.soft,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Last ${points.length} days • $marketName',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.muted,
             ),
-            if (todayPrice != null)
-              Text(todayText, style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 12),
-            PriceChart(points: points),
-            const SizedBox(height: 4),
-            Text(
-              'Green dot = highest, red dot = lowest (Rs per maund)',
-              style: theme.textTheme.bodySmall,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 6),
+          if (todayPrice != null)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  fmtRs(todayPrice),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.ink,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                if (change != null)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: pillBg,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${fmtRs(change.abs, sign: true)} (${fmtPct(change.pct)})',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: pillFg,
+                      ),
+                    ),
+                  ),
+              ],
+            )
+          else
+            const Text('No price today',
+                style: TextStyle(color: AppColors.muted)),
+          const SizedBox(height: 14),
+          PriceChart(points: points),
+          const SizedBox(height: 6),
+          const Text(
+            'Green dot = highest, red dot = lowest (Rs per maund)',
+            style: TextStyle(fontSize: 11.5, color: AppColors.muted),
+          ),
+        ],
       ),
     );
   }
@@ -242,7 +348,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
             label: 'Min',
             value: fmtRs(minPoint.price),
             subText: fmtDate(minPoint.date),
-            color: Colors.red.shade700,
+            color: AppColors.down,
           ),
         ),
         const SizedBox(width: 8),
@@ -259,19 +365,76 @@ class _TrendsScreenState extends State<TrendsScreen> {
             label: 'Max',
             value: fmtRs(maxPoint.price),
             subText: fmtDate(maxPoint.date),
-            color: Colors.green.shade700,
+            color: AppColors.up,
           ),
         ),
       ],
     );
   }
 
-  Widget buildMarketComparison(List<MarketPrice> marketPrices) {
+  Widget buildMarketComparison(
+      List<MarketPrice> marketPrices, String userOrigin) {
     if (marketPrices.isEmpty) {
       return const Card(child: EmptyView('No market prices available.'));
     }
 
     final List<Widget> tiles = [];
+
+    if (deductFreight) {
+      tiles.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: const BoxDecoration(
+            color: AppColors.bg,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.local_shipping_outlined,
+                  size: 15, color: AppColors.body),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'From $userOrigin (~Rs ${freightPer100Km.round()}/100km per maund)',
+                  style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.body,
+                      fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              PopupMenuButton<String>(
+                tooltip: 'Change origin district',
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Change',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.green,
+                            fontWeight: FontWeight.w600)),
+                    Icon(Icons.arrow_drop_down,
+                        size: 16, color: AppColors.green),
+                  ],
+                ),
+                onSelected: (dist) {
+                  setState(() {
+                    originDistrict = dist;
+                  });
+                },
+                itemBuilder: (context) => [
+                  for (final dist in kDistricts)
+                    PopupMenuItem(value: dist, child: Text(dist)),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+      tiles.add(
+          const Divider(height: 1, thickness: 0.8, color: AppColors.line));
+    }
+
     for (int i = 0; i < marketPrices.length; i++) {
       final item = marketPrices[i];
       final isSelected = selectedMarketId == item.market.id;
@@ -281,31 +444,46 @@ class _TrendsScreenState extends State<TrendsScreen> {
         badge = Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8F5E9),
+            color: AppColors.greenSoft,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Text(
-            'Highest • Best for sellers',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF2E7D32)),
+          child: Text(
+            deductFreight
+                ? 'Best Net Realization'
+                : 'Highest • Best for sellers',
+            style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.green),
           ),
         );
       } else if (i == marketPrices.length - 1) {
         badge = Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF3E0),
+            color: AppColors.goldSoft,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Text(
-            'Lowest • Best for buyers',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFE65100)),
+          child: Text(
+            deductFreight ? 'Lowest Net' : 'Lowest • Best for buyers',
+            style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.goldDark),
           ),
         );
       }
 
-      if (i > 0) {
-        tiles.add(const Divider(height: 1, thickness: 0.8, color: Color(0xFFE5E9E4)));
+      if (i > 0 || deductFreight) {
+        tiles.add(
+            const Divider(height: 1, thickness: 0.8, color: AppColors.line));
       }
+
+      final subtitleText = deductFreight
+          ? (item.distance == 0
+              ? '${item.market.district} • Local mandi (Rs 0 freight)'
+              : '${item.market.district} • ${item.distance} km (freight: -${fmtRs(item.freight)})')
+          : item.market.district;
 
       tiles.add(
         InkWell(
@@ -315,7 +493,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
             });
           },
           child: Container(
-            color: isSelected ? const Color(0xFFF0F7F0) : Colors.transparent,
+            color: isSelected ? AppColors.greenSoft : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
@@ -328,35 +506,62 @@ class _TrendsScreenState extends State<TrendsScreen> {
                           Text(
                             item.market.name,
                             style: TextStyle(
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                              fontWeight:
+                                  isSelected ? FontWeight.w700 : FontWeight.w600,
                               fontSize: 14,
-                              color: isSelected ? const Color(0xFF1E6F3D) : const Color(0xFF1B241B),
+                              color: isSelected
+                                  ? AppColors.green
+                                  : AppColors.ink,
                             ),
                           ),
                           if (isSelected) ...[
                             const SizedBox(width: 6),
-                            const Icon(Icons.check_circle, size: 14, color: Color(0xFF1E6F3D)),
+                            const Icon(Icons.check_circle,
+                                size: 14, color: AppColors.green),
                           ],
                         ],
                       ),
                       const SizedBox(height: 3),
-                      if (badge != null)
-                        badge
-                      else
-                        Text(
-                          item.market.district,
-                          style: const TextStyle(fontSize: 12, color: Color(0xFF6B7A6D)),
-                        ),
+                      if (badge != null) ...[
+                        badge,
+                        const SizedBox(height: 3),
+                      ],
+                      Text(
+                        subtitleText,
+                        style: const TextStyle(
+                            fontSize: 12, color: AppColors.muted),
+                      ),
                     ],
                   ),
                 ),
-                Text(
-                  fmtRs(item.price),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    color: isSelected ? const Color(0xFF1E6F3D) : const Color(0xFF1B241B),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      fmtRs(deductFreight ? item.netPrice : item.price),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: isSelected
+                            ? AppColors.green
+                            : AppColors.ink,
+                      ),
+                    ),
+                    Text(
+                      deductFreight
+                          ? 'net / maund'
+                          : (item.market.district == userOrigin
+                              ? 'local / maund'
+                              : 'gross / maund'),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: deductFreight
+                            ? AppColors.green
+                            : AppColors.muted,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -387,7 +592,7 @@ class StatBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -396,7 +601,7 @@ class StatBox extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF6B7A6D),
+                color: AppColors.muted,
               ),
             ),
             const SizedBox(height: 4),
@@ -407,14 +612,14 @@ class StatBox extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 16,
-                  color: color ?? const Color(0xFF1B241B),
+                  color: color ?? AppColors.ink,
                 ),
               ),
             ),
             const SizedBox(height: 2),
             Text(
               subText,
-              style: const TextStyle(fontSize: 11, color: Color(0xFF6B7A6D)),
+              style: const TextStyle(fontSize: 11, color: AppColors.muted),
             ),
           ],
         ),

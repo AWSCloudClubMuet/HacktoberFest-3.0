@@ -5,6 +5,7 @@ import '../services/api_service.dart';
 import '../services/app_state.dart';
 import '../utils/constants.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
 import '../widgets/common.dart';
 
 class ListingFormScreen extends StatefulWidget {
@@ -194,12 +195,44 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: AppColors.heroGradient),
+        ),
+        backgroundColor: Colors.transparent,
+      ),
       body: Form(
         key: formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.greenSoft,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline_rounded,
+                      size: 18, color: AppColors.greenDark),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Buyers will see this listing in the Marketplace and can call or WhatsApp you.',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: AppColors.greenDark,
+                        fontWeight: FontWeight.w600,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             buildCropDropdown(app),
             const SizedBox(height: 16),
             buildQuantityAndPrice(),
@@ -209,7 +242,47 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
             buildDateField(),
             const SizedBox(height: 16),
             buildContactField(),
-            const SizedBox(height: 24),
+            ListenableBuilder(
+              listenable: Listenable.merge([quantityController, priceController]),
+              builder: (context, _) {
+                final qty = double.tryParse(quantityController.text.trim()) ?? 0;
+                final price = double.tryParse(priceController.text.trim()) ?? 0;
+                if (qty > 0 && price > 0) {
+                  return Container(
+                    margin: const EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.greenSoft,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.greenSoft),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Estimated total value:',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.green,
+                          ),
+                        ),
+                        Text(
+                          fmtRs(qty * price),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.greenDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            const SizedBox(height: 20),
             buildSaveButton(),
           ],
         ),
@@ -220,7 +293,9 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
   Widget buildCropDropdown(AppState app) {
     final List<DropdownMenuItem<int>> items = [];
     for (final crop in app.crops) {
-      items.add(DropdownMenuItem(value: crop.id, child: Text(crop.name)));
+      final local = getCropLocalName(crop.name);
+      final label = local.isNotEmpty ? '${crop.name} ($local)' : crop.name;
+      items.add(DropdownMenuItem(value: crop.id, child: Text(label)));
     }
 
     return LabeledDropdown<int>(
@@ -245,7 +320,6 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
               labelText: 'Quantity (maund)',
-              border: OutlineInputBorder(),
             ),
             validator: (value) =>
                 validatePositiveNumber(value, 'Quantity', 100000),
@@ -258,7 +332,6 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
               labelText: 'Price / maund (Rs)',
-              border: OutlineInputBorder(),
             ),
             validator: (value) =>
                 validatePositiveNumber(value, 'Price', 1000000),
@@ -320,7 +393,6 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
       decoration: const InputDecoration(
         labelText: 'Available from',
         suffixIcon: Icon(Icons.calendar_today),
-        border: OutlineInputBorder(),
       ),
       validator: validateDate,
     );
@@ -333,7 +405,6 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
       decoration: const InputDecoration(
         labelText: 'Contact number',
         hintText: '03001234567',
-        border: OutlineInputBorder(),
       ),
       validator: validateContact,
     );
@@ -342,11 +413,7 @@ class _ListingFormScreenState extends State<ListingFormScreen> {
   Widget buildSaveButton() {
     Widget content;
     if (isSaving) {
-      content = const SizedBox(
-        height: 20,
-        width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2),
-      );
+      content = const ButtonSpinner();
     } else if (isEditing) {
       content = const Text('Save changes');
     } else {

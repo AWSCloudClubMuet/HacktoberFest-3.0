@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../services/app_state.dart';
 import '../utils/constants.dart';
+import '../utils/theme.dart';
 import '../widgets/common.dart';
 import '../widgets/listing_card.dart';
 
@@ -14,10 +15,17 @@ class MarketplaceScreen extends StatefulWidget {
 }
 
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
+  final TextEditingController searchController = TextEditingController();
   String searchText = '';
   String selectedDistrict = kAll;
   String selectedGrade = kAll;
   String selectedSort = 'newest';
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   List<Listing> getFilteredListings(AppState app) {
     final search = searchText.trim().toLowerCase();
@@ -26,11 +34,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     for (final listing in app.activeListings) {
       final crop = app.cropById(listing.cropId);
       String cropName = '';
+      String localName = '';
       if (crop != null) {
         cropName = crop.name.toLowerCase();
+        localName = getCropLocalName(crop.name).toLowerCase();
       }
 
-      final nameMatches = cropName.contains(search);
+      final nameMatches =
+          cropName.contains(search) || localName.contains(search);
       final districtMatches =
           selectedDistrict == kAll || listing.district == selectedDistrict;
       final gradeMatches =
@@ -74,29 +85,33 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     }
 
     return RefreshIndicator(
+      color: AppColors.green,
       onRefresh: () => refreshData(context),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
         children: [
           buildSearchBox(),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(child: buildDistrictDropdown()),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Expanded(child: buildSortDropdown()),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 14),
           buildGradeChips(),
-          const SizedBox(height: 4),
-          Text(
-            '${listings.length} active listing(s)',
-            style: Theme.of(context).textTheme.bodySmall,
+          const SizedBox(height: 16),
+          SectionTitle(
+            '${listings.length} active listing${listings.length == 1 ? '' : 's'}',
+            subtitle:
+                '${selectedDistrict == kAll ? 'All Sindh' : selectedDistrict} • ${selectedGrade == kAll ? 'All grades' : 'Grade $selectedGrade'}',
           ),
+          const SizedBox(height: 8),
           if (listings.isEmpty)
-            const EmptyView('No listings match these filters.'),
+            const EmptyView('No listings match these filters.',
+                icon: Icons.storefront_outlined),
           ...cards,
         ],
       ),
@@ -104,12 +119,16 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget buildSearchBox() {
-    return TextField(
-      decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.search),
-        hintText: 'Search crop',
-        border: OutlineInputBorder(),
-      ),
+    return AppSearchField(
+      controller: searchController,
+      hint: 'Search listings by crop (e.g. Wheat, چاول)',
+      hasText: searchText.isNotEmpty,
+      onClear: () {
+        searchController.clear();
+        setState(() {
+          searchText = '';
+        });
+      },
       onChanged: (value) {
         setState(() {
           searchText = value;
@@ -158,30 +177,20 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   Widget buildGradeChips() {
     final List<String> grades = [kAll, ...kGrades];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          const Text(
-            'Grade:',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF556353)),
+    return HScroll(
+      children: [
+        for (final grade in grades)
+          PillChip(
+            icon: grade == kAll ? Icons.grid_view_rounded : Icons.verified_outlined,
+            label: grade == kAll ? 'All grades' : 'Grade $grade',
+            selected: selectedGrade == grade,
+            onTap: () {
+              setState(() {
+                selectedGrade = grade;
+              });
+            },
           ),
-          const SizedBox(width: 8),
-          for (final grade in grades)
-            Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: ChoiceChip(
-                label: Text(grade == kAll ? 'All' : 'Grade $grade'),
-                selected: selectedGrade == grade,
-                onSelected: (_) {
-                  setState(() {
-                    selectedGrade = grade;
-                  });
-                },
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

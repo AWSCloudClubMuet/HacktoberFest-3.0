@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/profit_calc.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
 
 class ProfitCalculator extends StatefulWidget {
   const ProfitCalculator({super.key, required this.basePrice, required this.priceLabel});
@@ -49,18 +50,41 @@ class _ProfitCalculatorState extends State<ProfitCalculator> {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Profit calculator', style: theme.textTheme.titleMedium),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                      color: AppColors.goldSoft, shape: BoxShape.circle),
+                  child: const Icon(Icons.calculate_rounded,
+                      size: 21, color: AppColors.goldDark),
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'Profit calculator',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 4),
             if (base == null)
               const Text('No price available for this selection.')
             else ...[
-              Text('${widget.priceLabel}: ${fmtRs(base)} / maund. '
-                  'Sample costs are pre-filled - change them to your own.',
-                  style: theme.textTheme.bodySmall),
+              Text(
+                '${widget.priceLabel}: ${fmtRs(base)} / maund. Sample costs pre-filled.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.muted,
+                ),
+              ),
               const SizedBox(height: 12),
               Row(children: [
                 Expanded(child: _field(_qty, 'Quantity (maund)')),
@@ -96,7 +120,7 @@ class _ProfitCalculatorState extends State<ProfitCalculator> {
   Widget _field(TextEditingController c, String label) => TextField(
         controller: c,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: label),
         onChanged: (_) => setState(() {}),
       );
 
@@ -115,10 +139,10 @@ class _ProfitCalculatorState extends State<ProfitCalculator> {
       otherCosts: other,
     );
     final good = r.profit >= 0;
-    final bgTint = good ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE);
-    final borderTint = good ? const Color(0xFFC8E6C9) : const Color(0xFFFFCDD2);
-    final titleColor = good ? const Color(0xFF2E7D32) : const Color(0xFFC62828);
-    final valueColor = good ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C);
+    final bgTint = good ? AppColors.greenSoft : AppColors.downSoft;
+    final borderTint = good ? AppColors.greenSoft : AppColors.downSoft;
+    final titleColor = good ? AppColors.green : AppColors.down;
+    final valueColor = good ? AppColors.greenDark : AppColors.down;
 
     return [
       Container(
@@ -126,7 +150,7 @@ class _ProfitCalculatorState extends State<ProfitCalculator> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: bgTint,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(color: borderTint),
         ),
         child: Row(

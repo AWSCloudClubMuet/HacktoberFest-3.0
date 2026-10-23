@@ -4,6 +4,8 @@ import '../services/api_service.dart';
 import '../services/app_state.dart';
 import '../utils/constants.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
+import '../widgets/brand.dart';
 import '../widgets/common.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -76,96 +78,214 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 16),
-                Center(
-                  child: Container(
-                    width: 68,
-                    height: 68,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8F5E9),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFC8E6C9), width: 1.5),
-                    ),
-                    child: const Icon(
-                      Icons.agriculture_rounded,
-                      size: 38,
-                      color: Color(0xFF1E6F3D),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  'KisanMandi',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF1B241B),
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Crop prices & produce marketplace for Sindh',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF556353),
-                  ),
-                ),
-                const SizedBox(height: 28),
-                buildNameField(),
-                const SizedBox(height: 16),
-                buildPhoneField(),
-                const SizedBox(height: 16),
-                buildDistrictDropdown(),
-                const SizedBox(height: 16),
-                buildRoleButtons(),
-                const SizedBox(height: 24),
-                buildContinueButton(),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      backgroundColor: AppColors.bg,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            buildHero(),
+            Transform.translate(
+              offset: const Offset(0, -30),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF0F4EF),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFE0E7DE)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: AppShadows.lift,
                   ),
-                  child: Column(
-                    children: [
-                      const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.info_outline, size: 14, color: Color(0xFF556353)),
-                          SizedBox(width: 6),
-                          Text(
-                            'Sample accounts',
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFF2A362B)),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Get started',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.ink,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Farmer: 03001234501   •   Buyer: 03001234504',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Sign in or create your account in seconds.',
+                          style: TextStyle(color: AppColors.muted, fontSize: 13),
+                        ),
+                        const SizedBox(height: 20),
+                        buildRoleButtons(),
+                        const SizedBox(height: 16),
+                        buildNameField(),
+                        const SizedBox(height: 14),
+                        buildPhoneField(),
+                        const SizedBox(height: 14),
+                        buildDistrictDropdown(),
+                        const SizedBox(height: 22),
+                        buildContinueButton(),
+                        const SizedBox(height: 18),
+                        buildSampleAccounts(),
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildHero() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: AppColors.heroGradient,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -50,
+            top: -50,
+            child: Container(
+              width: 190,
+              height: 190,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: AppColors.gold.withValues(alpha: 0.2), width: 28),
+              ),
             ),
           ),
-        ),
+          Positioned(
+            left: -60,
+            bottom: -40,
+            child: Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
+              ),
+            ),
+          ),
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 22, 24, 62),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: AppShadows.soft,
+                    ),
+                    child: const KisanLogo(width: 168),
+                  ),
+                  const SizedBox(height: 26),
+                  const Text(
+                    'Smart Solutions',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                      height: 1.05,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const Text(
+                    'for Modern Farmers',
+                    style: TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                      height: 1.15,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Live crop prices, a produce marketplace and price alerts — made for Sindh.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.82),
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSampleAccounts() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.goldSoft,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.bolt_rounded, size: 16, color: AppColors.goldDark),
+              SizedBox(width: 6),
+              Text(
+                'Quick sign in with a sample account',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12.5,
+                  color: AppColors.goldDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              PillChip(
+                icon: Icons.agriculture_rounded,
+                label: 'Farmer • Ghulam Hussain',
+                selected: false,
+                onTap: () {
+                  nameController.text = 'Ghulam Hussain';
+                  phoneController.text = '03001234501';
+                  setState(() {
+                    selectedRole = 'farmer';
+                    selectedDistrict = 'Hyderabad';
+                  });
+                },
+              ),
+              PillChip(
+                icon: Icons.shopping_basket_rounded,
+                label: 'Buyer • Zeeshan Traders',
+                selected: false,
+                onTap: () {
+                  nameController.text = 'Zeeshan Traders';
+                  phoneController.text = '03001234504';
+                  setState(() {
+                    selectedRole = 'buyer';
+                    selectedDistrict = 'Karachi';
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -176,7 +296,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       textCapitalization: TextCapitalization.words,
       decoration: const InputDecoration(
         labelText: 'Full name',
-        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.green),
       ),
       validator: validateName,
     );
@@ -191,7 +311,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         hintText: '03001234567',
         helperText:
             'If this number is already registered, you are signed in to it.',
-        border: OutlineInputBorder(),
+        helperMaxLines: 2,
+        prefixIcon: Icon(Icons.phone_iphone_rounded, color: AppColors.green),
       ),
       validator: validatePhone,
     );
@@ -216,41 +337,97 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget buildRoleButtons() {
-    return SegmentedButton<String>(
-      segments: const [
-        ButtonSegment(
-          value: 'farmer',
-          label: Text('Farmer'),
-          icon: Icon(Icons.agriculture),
+    return Row(
+      children: [
+        Expanded(
+          child: roleCard(
+            'farmer',
+            'I am a Farmer',
+            'Sell produce',
+            Icons.agriculture_rounded,
+          ),
         ),
-        ButtonSegment(
-          value: 'buyer',
-          label: Text('Buyer'),
-          icon: Icon(Icons.shopping_basket),
+        const SizedBox(width: 12),
+        Expanded(
+          child: roleCard(
+            'buyer',
+            'I am a Buyer',
+            'Find produce',
+            Icons.shopping_basket_rounded,
+          ),
         ),
       ],
-      selected: {selectedRole},
-      onSelectionChanged: (selection) {
-        setState(() {
-          selectedRole = selection.first;
-        });
-      },
+    );
+  }
+
+  Widget roleCard(String role, String title, String sub, IconData icon) {
+    final selected = selectedRole == role;
+    return GestureDetector(
+      onTap: () => setState(() => selectedRole = role),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.green : AppColors.bg,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? AppColors.green : AppColors.line,
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: selected
+                    ? Colors.white.withValues(alpha: 0.18)
+                    : AppColors.greenSoft,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon,
+                  size: 20, color: selected ? Colors.white : AppColors.green),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                color: selected ? Colors.white : AppColors.ink,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sub,
+              style: TextStyle(
+                fontSize: 12,
+                color: selected
+                    ? Colors.white.withValues(alpha: 0.8)
+                    : AppColors.muted,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget buildContinueButton() {
-    Widget buttonContent = const Text('Continue');
-    if (isLoading) {
-      buttonContent = const SizedBox(
-        height: 20,
-        width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2),
-      );
-    }
-
     return FilledButton(
       onPressed: isLoading ? null : submit,
-      child: buttonContent,
+      child: isLoading
+          ? const ButtonSpinner()
+          : const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Continue'),
+                SizedBox(width: 8),
+                Icon(Icons.arrow_forward_rounded, size: 20),
+              ],
+            ),
     );
   }
 }

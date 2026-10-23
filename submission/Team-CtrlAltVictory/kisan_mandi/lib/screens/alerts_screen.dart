@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../services/api_service.dart';
 import '../services/app_state.dart';
+import '../utils/constants.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
 import '../widgets/common.dart';
 
 Future<void> runAlertAction(
@@ -64,26 +66,33 @@ class AlertsScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => openNewAlertSheet(context),
-        backgroundColor: const Color(0xFF1E6F3D),
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_alert),
-        label: const Text('New alert', style: TextStyle(fontWeight: FontWeight.w600)),
+        icon: const Icon(Icons.add_alert_rounded),
+        label: const Text('New alert'),
       ),
       body: RefreshIndicator(
+        color: AppColors.green,
         onRefresh: () => refreshData(context),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 96),
           children: [
-            Text(
-              '${app.triggeredCount} triggered at prices of ${fmtDate(app.latestDate)}. '
-              'Alerts are re-checked whenever prices refresh.',
-              style: Theme.of(context).textTheme.bodySmall,
+            InfoStrip(
+              icon: app.triggeredCount > 0
+                  ? Icons.notifications_active_rounded
+                  : Icons.notifications_none_rounded,
+              bg: app.triggeredCount > 0 ? AppColors.goldSoft : AppColors.greenSoft,
+              fg: app.triggeredCount > 0 ? AppColors.goldDark : AppColors.greenDark,
+              text:
+                  '${app.triggeredCount} triggered at prices of ${fmtDate(app.latestDate)}',
+              trailing: 'Re-checked on refresh',
             ),
+            const SizedBox(height: 8),
             if (alerts.isEmpty)
-              const EmptyView('No alerts yet.\nTap "New alert" to create one.'),
+              const EmptyView('No alerts yet.\nTap "New alert" to create one.',
+                  icon: Icons.notifications_none_rounded),
             ...cards,
           ],
         ),
@@ -120,20 +129,20 @@ class AlertCard extends StatelessWidget {
       margin: const EdgeInsets.only(top: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF3E0),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFFFCC80)),
+        color: AppColors.goldSoft,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.gold),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.notifications_active, size: 18, color: Color(0xFFE65100)),
+          const Icon(Icons.notifications_active, size: 18, color: AppColors.goldDark),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               'TRIGGERED: ${fmtRs(currentPrice)} is $conditionText target ${fmtRs(alert.targetPrice)}',
               style: const TextStyle(
-                color: Color(0xFFE65100),
+                color: AppColors.goldDark,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
@@ -152,7 +161,8 @@ class AlertCard extends StatelessWidget {
     String cropName = 'Crop';
     final crop = app.cropById(alert.cropId);
     if (crop != null) {
-      cropName = crop.name;
+      final local = getCropLocalName(crop.name);
+      cropName = local.isNotEmpty ? '${crop.name} ($local)' : crop.name;
     }
 
     String marketName = 'Market';
@@ -176,25 +186,33 @@ class AlertCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  isTriggered
-                      ? Icons.notifications_active
-                      : Icons.notifications_none,
-                  color: isTriggered ? const Color(0xFFE65100) : const Color(0xFF6B7A6D),
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: isTriggered ? AppColors.goldSoft : AppColors.greenSoft,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isTriggered
+                        ? Icons.notifications_active_rounded
+                        : Icons.notifications_none_rounded,
+                    color: isTriggered ? AppColors.goldDark : AppColors.green,
+                  ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     title,
                     style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1B241B),
+                      color: AppColors.ink,
                     ),
                   ),
                 ),
@@ -213,27 +231,27 @@ class AlertCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: alert.isAbove ? const Color(0xFFE8F5E9) : const Color(0xFFE3F2FD),
-                    borderRadius: BorderRadius.circular(4),
+                    color: alert.isAbove ? AppColors.greenSoft : AppColors.infoSoft,
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     alert.isAbove ? 'ABOVE' : 'BELOW',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: alert.isAbove ? const Color(0xFF2E7D32) : const Color(0xFF1565C0),
+                      color: alert.isAbove ? AppColors.up : AppColors.info,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Target: ${fmtRs(alert.targetPrice)}',
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Color(0xFF1B241B)),
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.ink),
                 ),
                 const Spacer(),
-                Text(currentText, style: const TextStyle(fontSize: 13, color: Color(0xFF6B7A6D))),
+                Text(currentText, style: const TextStyle(fontSize: 13, color: AppColors.muted)),
               ],
             ),
             if (isTriggered && currentPrice != null)
@@ -243,10 +261,10 @@ class AlertCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 onPressed: () => deleteAlert(context, app, title),
-                icon: Icon(Icons.delete_outline, size: 16, color: Colors.red.shade700),
-                label: Text(
+                icon: const Icon(Icons.delete_outline_rounded, size: 17, color: AppColors.down),
+                label: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red.shade700, fontSize: 13),
+                  style: TextStyle(color: AppColors.down, fontSize: 13),
                 ),
               ),
             ),
@@ -348,10 +366,10 @@ class _NewAlertSheetState extends State<NewAlertSheet> {
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        16,
-        16,
-        16,
-        16 + MediaQuery.of(context).viewInsets.bottom,
+        20,
+        14,
+        20,
+        24 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Form(
         key: formKey,
@@ -360,9 +378,36 @@ class _NewAlertSheetState extends State<NewAlertSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'New price alert',
-                style: Theme.of(context).textTheme.titleLarge,
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 18),
+                  decoration: BoxDecoration(
+                    color: AppColors.line,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                        color: AppColors.goldSoft, shape: BoxShape.circle),
+                    child: const Icon(Icons.add_alert_rounded,
+                        size: 21, color: AppColors.goldDark),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'New price alert',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                        ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               buildCropDropdown(app),
@@ -378,7 +423,6 @@ class _NewAlertSheetState extends State<NewAlertSheet> {
                 decoration: InputDecoration(
                   labelText: 'Target price (Rs / maund)',
                   helperText: hintText,
-                  border: const OutlineInputBorder(),
                 ),
                 validator: validateTargetPrice,
               ),
@@ -397,7 +441,9 @@ class _NewAlertSheetState extends State<NewAlertSheet> {
   Widget buildCropDropdown(AppState app) {
     final List<DropdownMenuItem<int>> items = [];
     for (final crop in app.crops) {
-      items.add(DropdownMenuItem(value: crop.id, child: Text(crop.name)));
+      final local = getCropLocalName(crop.name);
+      final label = local.isNotEmpty ? '${crop.name} ($local)' : crop.name;
+      items.add(DropdownMenuItem(value: crop.id, child: Text(label)));
     }
 
     return LabeledDropdown<int>(

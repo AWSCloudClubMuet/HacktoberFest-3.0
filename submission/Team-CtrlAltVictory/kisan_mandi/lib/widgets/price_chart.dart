@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../utils/format.dart';
+import '../utils/theme.dart';
 
 class PriceChart extends StatelessWidget {
   const PriceChart({super.key, required this.points, this.height = 200});
@@ -10,18 +11,17 @@ class PriceChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: height,
       width: double.infinity,
       child: CustomPaint(
         painter: _ChartPainter(
           points: points,
-          line: scheme.primary,
-          grid: scheme.outlineVariant,
-          text: scheme.onSurfaceVariant,
-          accentMax: Colors.green.shade700,
-          accentMin: Colors.red.shade700,
+          line: AppColors.green,
+          grid: AppColors.line,
+          text: AppColors.muted,
+          accentMax: AppColors.up,
+          accentMin: AppColors.down,
         ),
       ),
     );
@@ -110,7 +110,8 @@ class _ChartPainter extends CustomPainter {
       Paint()
         ..color = line
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round,
     );
 
@@ -135,4 +136,58 @@ class _ChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ChartPainter old) => true;
+}
+
+/// Tiny trend line used inside list tiles.
+class MiniSpark extends StatelessWidget {
+  const MiniSpark({super.key, required this.points, required this.color});
+  final List<PricePoint> points;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 64,
+        height: 22,
+        child: CustomPaint(painter: _SparkPainter(points, color)),
+      );
+}
+
+class _SparkPainter extends CustomPainter {
+  _SparkPainter(this.points, this.color);
+  final List<PricePoint> points;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (points.length < 2) return;
+    var lo = points.first.price, hi = points.first.price;
+    for (final p in points) {
+      if (p.price < lo) lo = p.price;
+      if (p.price > hi) hi = p.price;
+    }
+    final range = (hi - lo) < 1 ? 1.0 : (hi - lo);
+    final path = Path();
+    for (var i = 0; i < points.length; i++) {
+      final x = size.width * i / (points.length - 1);
+      final y = size.height - 3 - (size.height - 6) * (points[i].price - lo) / range;
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _SparkPainter old) =>
+      old.points != points || old.color != color;
 }
