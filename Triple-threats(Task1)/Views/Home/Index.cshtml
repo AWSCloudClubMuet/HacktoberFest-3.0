@@ -1,263 +1,143 @@
 ﻿@model CampusGigPortal.Models.ViewModels.DashboardViewModel
 @{
-    ViewData["Title"] = "Campus SkillSwap Dashboard";
+    ViewData["Title"] = "Academic Dashboard";
 }
 
-<!-- Hero Section -->
-<div class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-indigo-900/40">
-    <div class="max-w-7xl mx-auto relative z-10">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
-            <div class="max-w-2xl text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold mb-4 backdrop-blur">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
-                    Verified Campus Peer-to-Peer Marketplace
-                </div>
-                <h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
-                    Turn Your Skills into <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-pink-400 bg-clip-text text-transparent">Opportunities</span> & Reputation.
-                </h1>
-                <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-                    Collaborate with fellow students on programming, UI/UX design, essay editing, and STEM tutoring. 
-                    Trade skills, earn cash, or volunteer to build verified peer reviews.
-                </p>
+<!-- Hero Banner -->
+<div class="bg-[#0F172A] text-white rounded-2xl p-8 sm:p-12 shadow-sm mb-10 border border-slate-800 relative overflow-hidden">
+    <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-4 border border-amber-500/30">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Verified Academic Peer Network
+        </span>
+        <h1 class="text-3xl sm:text-5xl font-serif font-bold text-amber-50 leading-tight">
+            Exchange Knowledge, Offer Skills, & Collaborate.
+        </h1>
+        <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            Connect with campus peers for software development, research editing, graphic design, and course tutoring.
+        </p>
 
-                <!-- Search Form -->
-                <form asp-controller="Gigs" asp-action="Index" method="get" class="mt-8 flex flex-col sm:flex-row items-center gap-2 max-w-xl">
-                    <div class="relative w-full">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </div>
-                        <input type="text" name="q" placeholder="Search gigs (e.g. React, Figma, Calculus, Resume)..." class="w-full pl-11 pr-4 py-3 bg-white/10 text-white placeholder-slate-400 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white/20 transition-all text-sm backdrop-blur" />
-                    </div>
-                    <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 font-semibold rounded-xl text-sm shadow-lg shadow-indigo-500/30 transition-all whitespace-nowrap">
-                        Search Gigs
-                    </button>
-                </form>
+        <!-- Search Form -->
+        <form asp-controller="Gigs" asp-action="Index" method="get" class="mt-8 flex flex-col sm:flex-row items-center gap-2 max-w-lg">
+            <div class="relative w-full">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" name="q" placeholder="Search skills, courses, or services..." class="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" />
             </div>
-
-            <!-- Dashboard Stats Grid -->
-            <div class="w-full lg:w-auto grid grid-cols-2 gap-4">
-                <div class="bg-white/10 backdrop-blur border border-white/10 p-5 rounded-2xl shadow-xl">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-300">Total Gigs</span>
-                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-extrabold text-white">@Model.TotalGigs</div>
-                    <div class="text-xs text-slate-300 mt-1">Across 4 faculties</div>
-                </div>
-
-                <div class="bg-white/10 backdrop-blur border border-white/10 p-5 rounded-2xl shadow-xl">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-emerald-300">Open Gigs</span>
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-extrabold text-white">@Model.ActiveGigs</div>
-                    <div class="text-xs text-emerald-300 mt-1">Accepting applications</div>
-                </div>
-
-                <div class="bg-white/10 backdrop-blur border border-white/10 p-5 rounded-2xl shadow-xl">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-violet-300">Completed</span>
-                        <div class="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-extrabold text-white">@Model.CompletedGigs</div>
-                    <div class="text-xs text-slate-300 mt-1">Peer reviews posted</div>
-                </div>
-
-                <div class="bg-white/10 backdrop-blur border border-white/10 p-5 rounded-2xl shadow-xl">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-amber-300">Students</span>
-                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        </div>
-                    </div>
-                    <div class="text-3xl font-extrabold text-white">@Model.TotalStudents</div>
-                    <div class="text-xs text-slate-300 mt-1">Active on campus</div>
-                </div>
-            </div>
-        </div>
+            <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-amber-600 hover:bg-amber-700 font-semibold rounded-xl text-xs text-white shadow-sm transition-all whitespace-nowrap">
+                Search Network
+            </button>
+        </form>
     </div>
 </div>
 
-<!-- Main Body Container -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
+<!-- Category Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+    <!-- Programming -->
+    <a asp-controller="Gigs" asp-action="Index" asp-route-category="Programming" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group">
+        <div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 float-right">
+                @(Model.CategoryCounts.GetValueOrDefault("Programming", 0)) Active
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-serif font-bold text-lg mb-3">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <h3 class="font-serif font-bold text-slate-900 text-lg group-hover:text-amber-700 transition-colors">Software & Code</h3>
+            <p class="text-xs text-slate-500 mt-1">C#, Python, Web Dev, Algorithms</p>
+        </div>
+    </a>
 
-    <!-- Categories Grid with SVG Icons -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        
-        <!-- Programming -->
-        <a asp-controller="Gigs" asp-action="Index" asp-route-category="Programming" class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-400 transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                </div>
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    @(Model.CategoryCounts.GetValueOrDefault("Programming", 0)) gigs
-                </span>
+    <!-- Design -->
+    <a asp-controller="Gigs" asp-action="Index" asp-route-category="Design" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group">
+        <div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 float-right">
+                @(Model.CategoryCounts.GetValueOrDefault("Design", 0)) Active
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-serif font-bold text-lg mb-3">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
             </div>
-            <div>
-                <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Programming</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Web, Mobile, C#, Python, SQL</p>
+            <h3 class="font-serif font-bold text-slate-900 text-lg group-hover:text-amber-700 transition-colors">UI/UX & Design</h3>
+            <p class="text-xs text-slate-500 mt-1">Figma, Logos, Diagrams, Media</p>
+        </div>
+    </a>
+
+    <!-- Writing -->
+    <a asp-controller="Gigs" asp-action="Index" asp-route-category="Writing" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group">
+        <div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 float-right">
+                @(Model.CategoryCounts.GetValueOrDefault("Writing", 0)) Active
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-serif font-bold text-lg mb-3">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             </div>
+            <h3 class="font-serif font-bold text-slate-900 text-lg group-hover:text-amber-700 transition-colors">Writing & Papers</h3>
+            <p class="text-xs text-slate-500 mt-1">LaTeX, SOPs, Essay Editing</p>
+        </div>
+    </a>
+
+    <!-- Tutoring -->
+    <a asp-controller="Gigs" asp-action="Index" asp-route-category="Tutoring" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group">
+        <div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 float-right">
+                @(Model.CategoryCounts.GetValueOrDefault("Tutoring", 0)) Active
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-serif font-bold text-lg mb-3">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            </div>
+            <h3 class="font-serif font-bold text-slate-900 text-lg group-hover:text-amber-700 transition-colors">STEM Tutoring</h3>
+            <p class="text-xs text-slate-500 mt-1">Calculus, Physics, Statistics</p>
+        </div>
+    </a>
+</div>
+
+<!-- Recent Opportunities -->
+<div>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-serif font-bold text-slate-900">Recent Campus Postings</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Explore active listings from scholars across all faculties</p>
+        </div>
+        <a asp-controller="Gigs" asp-action="Index" class="text-xs font-semibold text-amber-700 hover:text-amber-900">
+            View All Gigs &rarr;
         </a>
-
-        <!-- Design -->
-        <a asp-controller="Gigs" asp-action="Index" asp-route-category="Design" class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-pink-400 transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center group-hover:bg-pink-600 group-hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
-                </div>
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    @(Model.CategoryCounts.GetValueOrDefault("Design", 0)) gigs
-                </span>
-            </div>
-            <div>
-                <h3 class="font-bold text-slate-900 group-hover:text-pink-600 transition-colors">UI/UX & Design</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Figma, Logos, 3D CAD, Flyers</p>
-            </div>
-        </a>
-
-        <!-- Writing -->
-        <a asp-controller="Gigs" asp-action="Index" asp-route-category="Writing" class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-400 transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                </div>
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    @(Model.CategoryCounts.GetValueOrDefault("Writing", 0)) gigs
-                </span>
-            </div>
-            <div>
-                <h3 class="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Writing & Editing</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Resumes, SOPs, LaTeX, Papers</p>
-            </div>
-        </a>
-
-        <!-- Tutoring -->
-        <a asp-controller="Gigs" asp-action="Index" asp-route-category="Tutoring" class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                </div>
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                    @(Model.CategoryCounts.GetValueOrDefault("Tutoring", 0)) gigs
-                </span>
-            </div>
-            <div>
-                <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">STEM Tutoring</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Calculus, Physics, Stats, Finance</p>
-            </div>
-        </a>
-
     </div>
 
-    <!-- Recent Opportunities Section -->
-    <div class="mt-12">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-                    Latest Campus Opportunities
-                </h2>
-                <p class="text-sm text-slate-500">Discover recent offerings and student requests</p>
-            </div>
-            <a asp-controller="Gigs" asp-action="Index" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                Browse All Gigs &rarr;
-            </a>
-        </div>
-
-        <!-- Gig Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach (var gig in Model.RecentGigs)
-            {
-                var isExpired = gig.EffectiveStatus == "Expired";
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group">
-                    
-                    <div class="p-5 pb-3">
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            @if (gig.Type == "Offering")
-                            {
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    Offering Skill
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                                    Requesting Help
-                                </span>
-                            }
-
-                            @if (gig.PaymentType == "Paid")
-                            {
-                                <span class="font-extrabold text-sm text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-100">
-                                    $@(gig.Budget?.ToString("N0"))
-                                </span>
-                            }
-                            else if (gig.PaymentType == "SkillSwap")
-                            {
-                                <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-lg border border-violet-100">
-                                    ⇄ Skill Swap
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg">
-                                    Free
-                                </span>
-                            }
-                        </div>
-
-                        <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1 text-base">
-                            <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id">@gig.Title</a>
-                        </h3>
-
-                        <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                            @gig.Description
-                        </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var gig in Model.RecentGigs)
+        {
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                            @gig.Type
+                        </span>
+                        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
+                            @(gig.PaymentType == "Paid" ? $"${gig.Budget?.ToString("N0")}" : gig.PaymentType)
+                        </span>
                     </div>
 
-                    <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between mt-auto">
-                        <a asp-controller="Profiles" asp-action="Index" asp-route-id="@gig.UserId" class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
-                                @(gig.User?.Name.Substring(0, 1) ?? "U")
-                            </div>
-                            <div>
-                                <span class="text-xs font-semibold text-slate-800 block">@gig.User?.Name</span>
-                                <span class="text-[10px] text-slate-400 block">@gig.Category</span>
-                            </div>
-                        </a>
+                    <h3 class="font-serif font-bold text-slate-900 text-base line-clamp-1 hover:text-amber-700 transition-colors">
+                        <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id">@gig.Title</a>
+                    </h3>
 
-                        <div>
-                            @if (isExpired)
-                            {
-                                <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">Expired</span>
-                            }
-                            else if (gig.Status == "In Progress")
-                            {
-                                <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">In Progress</span>
-                            }
-                            else if (gig.Status == "Completed")
-                            {
-                                <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md border border-indigo-200">Completed</span>
-                            }
-                            else
-                            {
-                                <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
-                                    View
-                                </a>
-                            }
-                        </div>
-                    </div>
-
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
+                        @gig.Description
+                    </p>
                 </div>
-            }
-        </div>
-    </div>
 
+                <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <a asp-controller="Profiles" asp-action="Index" asp-route-id="@gig.UserId" class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
+                            @(gig.User?.Name.Substring(0, 1) ?? "U")
+                        </div>
+                        <span class="text-xs font-medium text-slate-700">@gig.User?.Name</span>
+                    </a>
+                    <a asp-controller="Gigs" asp-action="Details" asp-route-id="@gig.Id" class="text-xs font-semibold text-amber-700 hover:underline">
+                        Details &rarr;
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
 </div>

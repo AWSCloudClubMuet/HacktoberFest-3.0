@@ -1,127 +1,171 @@
 @model CampusGigPortal.Models.ViewModels.GigCreateViewModel
 @{
-    ViewData["Title"] = "Post a Campus Gig";
+    ViewData["Title"] = "Post a Campus Opportunity";
 }
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="max-w-3xl mx-auto py-6 sm:py-8">
 
-    <div class="mb-8">
-        <a asp-action="Index" class="text-xs font-semibold text-slate-500 hover:text-indigo-600">&larr; Back to Gigs</a>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Create a Campus Gig</h1>
-        <p class="text-sm text-slate-500">Post a service you can offer or request help from campus peers.</p>
+    <!-- Header Block -->
+    <div class="mb-6 sm:mb-8">
+        <a asp-action="Index" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-amber-800 transition-colors mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Back to Opportunities
+        </a>
+        <h1 class="text-2xl sm:text-4xl font-serif font-bold text-slate-900 tracking-tight">
+            Post a Campus Opportunity
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-relaxed">
+            Offer a skill or request academic collaboration from fellow scholars across campus.
+        </p>
     </div>
 
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
-        <form asp-action="Create" method="post" class="space-y-6">
+    <!-- Main Card Container -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 sm:p-8 lg:p-10">
+        <form asp-action="Create" method="post" class="space-y-5 sm:space-y-6">
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl"></div>
+            <!-- Validation Summary -->
+            <div asp-validation-summary="ModelOnly" class="p-3.5 sm:p-4 bg-rose-50 border border-rose-200 text-rose-900 text-xs rounded-xl font-medium"></div>
 
             <!-- Role / Intent Selector -->
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Gig Intent</label>
-                <div class="grid grid-cols-2 gap-4">
+                <label class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">
+                    Engagement Type
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <label class="cursor-pointer">
-                        <input type="radio" name="Type" value="Requesting" class="peer sr-only" checked="@(Model.Type == " Requesting")" />
-                        <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/50 text-center">
-                            <span class="block text-sm font-bold text-slate-800">I Need Help</span>
-                            <span class="block text-[11px] text-slate-500">Request service or tutoring</span>
+                        <input type="radio" name="Type" value="Requesting" class="peer sr-only" checked="@(Model.Type == "Requesting")" />
+                        <div class="p-3.5 sm:p-4 rounded-xl border-2 border-slate-200 bg-slate-50/50 peer-checked:border-amber-600 peer-checked:bg-amber-50/40 transition-all text-left">
+                            <span class="flex items-center gap-2 text-xs sm:text-sm font-serif font-bold text-slate-900">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Seeking Assistance
+                            </span>
+                            <span class="block text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">Request tutoring, design, or project help</span>
                         </div>
                     </label>
 
                     <label class="cursor-pointer">
-                        <input type="radio" name="Type" value="Offering" class="peer sr-only" checked="@(Model.Type == " Offering")" />
-                        <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 text-center">
-                            <span class="block text-sm font-bold text-slate-800">I Am Offering a Skill</span>
-                            <span class="block text-[11px] text-slate-500">Offer coding, design, editing</span>
+                        <input type="radio" name="Type" value="Offering" class="peer sr-only" checked="@(Model.Type == "Offering")" />
+                        <div class="p-3.5 sm:p-4 rounded-xl border-2 border-slate-200 bg-slate-50/50 peer-checked:border-emerald-700 peer-checked:bg-emerald-50/40 transition-all text-left">
+                            <span class="flex items-center gap-2 text-xs sm:text-sm font-serif font-bold text-slate-900">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                Offering a Service
+                            </span>
+                            <span class="block text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">Provide coding, editing, or mentoring</span>
                         </div>
                     </label>
                 </div>
             </div>
 
+            <!-- Gig Title Input -->
             <div>
-                <label asp-for="Title" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Gig Title</label>
-                <input asp-for="Title" placeholder="e.g., Build a React + Node.js Student Club Portal" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
-                <span asp-validation-for="Title" class="text-rose-500 text-xs mt-1 block"></span>
+                <label asp-for="Title" class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-1.5">
+                    Opportunity Title
+                </label>
+                <input asp-for="Title" placeholder="e.g., Build a React + Node.js Student Club Portal" class="w-full px-3.5 sm:px-4 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all" />
+                <span asp-validation-for="Title" class="text-rose-600 text-[11px] sm:text-xs mt-1 block font-medium"></span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Category Select -->
                 <div>
-                    <label asp-for="Category" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Category</label>
-                    <select asp-for="Category" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500">
-                        <option value="Programming">💻 Programming & Web/Mobile</option>
-                        <option value="Design">🎨 Graphic & UI/UX Design</option>
-                        <option value="Writing">✍️ Writing & Editing</option>
-                        <option value="Tutoring">📚 STEM & Subject Tutoring</option>
+                    <label asp-for="Category" class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-1.5">
+                        Academic Area
+                    </label>
+                    <select asp-for="Category" class="w-full px-3 sm:px-3.5 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer transition-all">
+                        <option value="Programming">Programming & Web/Mobile</option>
+                        <option value="Design">Graphic & UI/UX Design</option>
+                        <option value="Writing">Writing & Editing</option>
+                        <option value="Tutoring">STEM & Subject Tutoring</option>
                     </select>
-                    <span asp-validation-for="Category" class="text-rose-500 text-xs mt-1 block"></span>
+                    <span asp-validation-for="Category" class="text-rose-600 text-[11px] sm:text-xs mt-1 block font-medium"></span>
                 </div>
 
+                <!-- Deadline Picker -->
                 <div>
-                    <label asp-for="Deadline" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Target Deadline</label>
-                    <input asp-for="Deadline" type="date" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500" />
-                    <span asp-validation-for="Deadline" class="text-rose-500 text-xs mt-1 block"></span>
+                    <label asp-for="Deadline" class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-1.5">
+                        Target Completion Date
+                    </label>
+                    <input asp-for="Deadline" type="date" class="w-full px-3 sm:px-3.5 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all" />
+                    <span asp-validation-for="Deadline" class="text-rose-600 text-[11px] sm:text-xs mt-1 block font-medium"></span>
                 </div>
             </div>
 
             <!-- Compensation Radios -->
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Compensation Type</label>
-                <div class="grid grid-cols-3 gap-3">
+                <label class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">
+                    Compensation Model
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                     <label class="cursor-pointer">
-                        <input type="radio" name="PaymentType" value="Paid" id="payPaid" class="peer sr-only" checked="@(Model.PaymentType == " Paid")" onchange="toggleBudgetInput(true)" />
-                        <div class="p-3 text-center border-2 border-slate-200 rounded-xl peer-checked:border-emerald-600 peer-checked:bg-emerald-50 text-xs font-bold text-slate-800">
-                            💵 Paid ($)
+                        <input type="radio" name="PaymentType" value="Paid" id="payPaid" class="peer sr-only" checked="@(Model.PaymentType == "Paid")" onchange="toggleBudgetInput(true)" />
+                        <div class="p-2.5 sm:p-3 flex items-center justify-center gap-1.5 border-2 border-slate-200 bg-slate-50/50 rounded-xl peer-checked:border-emerald-700 peer-checked:bg-emerald-50/50 text-xs font-bold text-slate-800 transition-all">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Paid Stipend ($)
                         </div>
                     </label>
 
                     <label class="cursor-pointer">
-                        <input type="radio" name="PaymentType" value="SkillSwap" id="paySwap" class="peer sr-only" checked="@(Model.PaymentType == " SkillSwap")" onchange="toggleBudgetInput(false)" />
-                        <div class="p-3 text-center border-2 border-slate-200 rounded-xl peer-checked:border-violet-600 peer-checked:bg-violet-50 text-xs font-bold text-slate-800">
-                            ⇄ Skill Swap
+                        <input type="radio" name="PaymentType" value="SkillSwap" id="paySwap" class="peer sr-only" checked="@(Model.PaymentType == "SkillSwap")" onchange="toggleBudgetInput(false)" />
+                        <div class="p-2.5 sm:p-3 flex items-center justify-center gap-1.5 border-2 border-slate-200 bg-slate-50/50 rounded-xl peer-checked:border-amber-600 peer-checked:bg-amber-50/50 text-xs font-bold text-slate-800 transition-all">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                            Skill Exchange
                         </div>
                     </label>
 
                     <label class="cursor-pointer">
-                        <input type="radio" name="PaymentType" value="Free" id="payFree" class="peer sr-only" checked="@(Model.PaymentType == " Free")" onchange="toggleBudgetInput(false)" />
-                        <div class="p-3 text-center border-2 border-slate-200 rounded-xl peer-checked:border-slate-800 peer-checked:bg-slate-100 text-xs font-bold text-slate-800">
-                            🎁 Free
+                        <input type="radio" name="PaymentType" value="Free" id="payFree" class="peer sr-only" checked="@(Model.PaymentType == "Free")" onchange="toggleBudgetInput(false)" />
+                        <div class="p-2.5 sm:p-3 flex items-center justify-center gap-1.5 border-2 border-slate-200 bg-slate-50/50 rounded-xl peer-checked:border-slate-800 peer-checked:bg-slate-100 text-xs font-bold text-slate-800 transition-all">
+                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V6a2 2 0 10-2 2h2zm0 13C10.832 19.477 9.246 19 7.5 19S4.168 19.477 3 20.253V6.253C4.168 5.477 5.754 5 7.5 5s3.332.477 4.5 1.253m0 13C13.168 19.477 14.754 19 16.5 19c1.747 0 3.332.477 4.5 1.253V6.253C19.832 5.477 18.247 5 16.5 5c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            Peer Volunteer
                         </div>
                     </label>
                 </div>
             </div>
 
-            <!-- Dynamic Budget Input for Paid Gigs -->
-            <div id="budgetWrapper" class="@(Model.PaymentType == " Paid" ? "" : "hidden" )">
-                <label asp-for="Budget" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Estimated Budget (USD $)</label>
+            <!-- Dynamic Budget Input -->
+            <div id="budgetWrapper" class="@(Model.PaymentType == "Paid" ? "" : "hidden")">
+                <label asp-for="Budget" class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-1.5">
+                    Stipend Amount (USD $)
+                </label>
                 <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold">$</span>
-                    <input asp-for="Budget" type="number" step="0.01" placeholder="50.00" class="w-full pl-8 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500" />
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold text-xs">$</span>
+                    <input asp-for="Budget" type="number" step="0.01" placeholder="50.00" class="w-full pl-8 pr-4 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all" />
                 </div>
-                <span asp-validation-for="Budget" class="text-rose-500 text-xs mt-1 block"></span>
+                <span asp-validation-for="Budget" class="text-rose-600 text-[11px] sm:text-xs mt-1 block font-medium"></span>
             </div>
 
+            <!-- Description Textarea -->
             <div>
-                <label asp-for="Description" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Description & Scope</label>
-                <textarea asp-for="Description" rows="5" placeholder="Specify deliverables, required tools, meeting cadence, etc..." class="w-full p-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500"></textarea>
-                <span asp-validation-for="Description" class="text-rose-500 text-xs mt-1 block"></span>
+                <label asp-for="Description" class="block text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider mb-1.5">
+                    Description & Deliverables
+                </label>
+                <textarea asp-for="Description" rows="5" placeholder="Specify project scope, required prerequisites, tools, meeting frequency..." class="w-full p-3 sm:p-3.5 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all"></textarea>
+                <span asp-validation-for="Description" class="text-rose-600 text-[11px] sm:text-xs mt-1 block font-medium"></span>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <a asp-action="Index" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl">Cancel</a>
-                <button type="submit" class="px-7 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md">Publish Gig</button>
+            <!-- Action Buttons -->
+            <div class="pt-5 sm:pt-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
+                <a asp-action="Index" class="px-5 py-2.5 text-center text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 text-center text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm transition-all">
+                    Publish Opportunity
+                </button>
             </div>
         </form>
     </div>
-
 </div>
 
 @section Scripts {
-<script>
+    <script>
         function toggleBudgetInput(show) {
             const wrapper = document.getElementById('budgetWrapper');
-            if (show) wrapper.classList.remove('hidden');
-            else wrapper.classList.add('hidden');
+            if (show) {
+                wrapper.classList.remove('hidden');
+            } else {
+                wrapper.classList.add('hidden');
+            }
         }
-</script>
+    </script>
 }
